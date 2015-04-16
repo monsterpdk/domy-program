@@ -1,0 +1,225 @@
+<?php
+
+/**
+ * This is the model class for table "dom_termekek".
+ *
+ * The followings are the available columns in table 'dom_termekek':
+ * @property string $id
+ * @property string $nev
+ * @property string $kodszam
+ * @property integer $meret_id
+ * @property integer $suly
+ * @property integer $zaras_id
+ * @property integer $ablakmeret_id
+ * @property integer $ablakhely_id
+ * @property integer $papir_id
+ * @property integer $afakulcs_id
+ * @property string $redotalp
+ * @property string $gyarto_id
+ * @property string $ksh_kod
+ * @property string $csom_egys
+ * @property string $minimum_raktarkeszlet
+ * @property string $maximum_raktarkeszlet
+ * @property double $doboz_suly
+ * @property string $raklap_db
+ * @property double $doboz_hossz
+ * @property double $doboz_szelesseg
+ * @property double $doboz_magassag
+ * @property string $megjegyzes
+ * @property string $megjelenes_mettol
+ * @property string $megjelenes_meddig
+ * @property string $datum
+ * @property integer $torolt
+ *
+ * virtual property string displayTermeknev (kódszám + terméknév)
+ */
+class Termekek extends CActiveRecord
+{
+	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
+	public $zaras_search;
+	
+	// amikor valamelyik űrlapról terméket tallózunk, akkor kódszám+terméknév formában jelenítjük meg a termékeket
+	private $displayTermeknev;
+	
+	/**
+	 * @return string the associated database table name
+	 */
+	public function tableName()
+	{
+		return 'dom_termekek';
+	}
+
+	
+	public function getClassName ()
+	{
+		return "Termék";
+	}
+	
+	/**
+	 * @return array validation rules for model attributes.
+	 */
+	public function rules()
+	{
+		// NOTE: you should only define rules for those attributes that
+		// will receive user inputs.
+		return array(
+			array('nev, kodszam, meret_id, suly, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, redotalp, gyarto_id, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjelenes_mettol, megjelenes_meddig', 'required'),
+			array('meret_id, suly, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, torolt', 'numerical', 'integerOnly'=>true),
+			array('doboz_suly, doboz_hossz, doboz_szelesseg, doboz_magassag', 'numerical'),
+			array('nev', 'length', 'max'=>127),
+			array('kodszam', 'length', 'max'=>15),
+			array('redotalp', 'length', 'max'=>50),
+			array('gyarto_id, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, raklap_db', 'length', 'max'=>10),
+			array('megjelenes_mettol, megjelenes_meddig', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
+			// The following rule is used by search().
+			// @todo Please remove those attributes that should not be searched.
+			array('id, nev, kodszam, meret_id, suly, zaras_id, zaras_search, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, redotalp, gyarto_id, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, megjelenes_mettol, megjelenes_meddig, datum, torolt', 'safe', 'on'=>'search'),
+		);
+	}
+
+	/**
+	 * @return array relational rules.
+	 */
+	public function relations()
+	{
+		// NOTE: you may need to adjust the relation name and the related
+		// class name for the relations automatically generated below.
+		return array(
+			'meret'    => array(self::BELONGS_TO, 'TermekMeretek', 'meret_id'),
+			'zaras'    => array(self::BELONGS_TO, 'TermekZarasiModok', 'zaras_id'),
+			'ablakmeret'    => array(self::BELONGS_TO, 'TermekAblakMeretek', 'ablakmeret_id'),
+			'ablakhely'    => array(self::BELONGS_TO, 'TermekAblakHelyek', 'ablakhely_id'),
+			'papirtipus'    => array(self::BELONGS_TO, 'PapirTipusok', 'papir_id'),
+			'afakulcs'    => array(self::BELONGS_TO, 'AfaKulcsok', 'afakulcs_id'),
+			'gyarto'    => array(self::BELONGS_TO, 'Gyartok', 'gyarto_id'),
+		);
+	}
+
+	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return array(
+			'id' => 'Termék ID',
+			'nev' => 'Terméknév',
+			'kodszam' => 'Kódszám',
+			'meret_id' => 'Méret',
+			'suly' => 'Súly (kg)',
+			'zaras_id' => 'Zárás',
+			'ablakmeret_id' => 'Ablakméret',
+			'ablakhely_id' => 'Ablakhely',
+			'papir_id' => 'Papír',
+			'afakulcs_id' => 'ÁFA kulcs',
+			'redotalp' => 'Redőtalp',
+			'gyarto_id' => 'Gyártó',
+			'ksh_kod' => 'KSH Kód',
+			'csom_egys' => 'Csomag egység (db)',
+			'minimum_raktarkeszlet' => 'Minimum raktárkészlet (db)',
+			'maximum_raktarkeszlet' => 'Maximum raktárkészlet (db)',
+			'doboz_suly' => 'Doboz súlya (kg)',
+			'raklap_db' => 'Raklap (db)',
+			'doboz_hossz' => 'Doboz hossza (mm)',
+			'doboz_szelesseg' => 'Doboz szélessége (mm)',
+			'doboz_magassag' => 'Doboz magassága (mm)',
+			'megjegyzes' => 'Megjegyzés',
+			'megjelenes_mettol' => 'Megjelenés mettől',
+			'megjelenes_meddig' => 'Megjelenés meddig',
+			'datum' => 'Dátum',
+			'torolt' => 'Törölt',
+		);
+	}
+
+	public function behaviors() {
+		return array( 'LoggableBehavior'=> 'application.modules.auditTrail.behaviors.LoggableBehavior', );
+	}
+	
+	/**
+	 * Retrieves a list of models based on the current search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
+	 */
+	public function search()
+	{
+		// @todo Please modify the following code to remove attributes that should not be searched.
+		$criteria=new CDbCriteria;
+
+		$criteria->together = true;
+		$criteria->with = array('zaras');
+		
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('t.nev',$this->nev,true);
+		$criteria->compare('kodszam',$this->kodszam,true);
+		$criteria->compare('meret_id',$this->meret_id);
+		$criteria->compare('suly',$this->suly);
+		$criteria->compare('zaras_id',$this->zaras_id);
+		
+		$criteria->compare('zaras.nev', $this->zaras_search, true );
+		
+		$criteria->compare('ablakmeret_id',$this->ablakmeret_id);
+		$criteria->compare('ablakhely_id',$this->ablakhely_id);
+		$criteria->compare('papir_id',$this->papir_id);
+		$criteria->compare('afakulcs_id',$this->afakulcs_id);
+		$criteria->compare('redotalp',$this->redotalp,true);
+		$criteria->compare('gyarto_id',$this->gyarto_id,true);
+		$criteria->compare('ksh_kod',$this->ksh_kod,true);
+		$criteria->compare('csom_egys',$this->csom_egys,true);
+		$criteria->compare('minimum_raktarkeszlet',$this->minimum_raktarkeszlet,true);
+		$criteria->compare('maximum_raktarkeszlet',$this->maximum_raktarkeszlet,true);
+		$criteria->compare('doboz_suly',$this->doboz_suly);
+		$criteria->compare('raklap_db',$this->raklap_db,true);
+		$criteria->compare('doboz_hossz',$this->doboz_hossz);
+		$criteria->compare('doboz_szelesseg',$this->doboz_szelesseg);
+		$criteria->compare('doboz_magassag',$this->doboz_magassag);
+		$criteria->compare('megjegyzes',$this->megjegyzes,true);
+		$criteria->compare('megjelenes_mettol',$this->megjelenes_mettol,true);
+		$criteria->compare('megjelenes_meddig',$this->megjelenes_meddig,true);
+		$criteria->compare('datum',$this->datum,true);
+
+		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
+		if (!Yii::app()->user->checkAccess('Admin'))
+			$criteria->condition=" torolt = '0'";
+		
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+
+	protected function afterFind(){
+		parent::afterFind();
+		$this -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_mettol)));
+		$this -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_meddig)));
+	}
+
+	// LI : a 'datum' mezőt automatikusan kitöltjük létrehozáskor
+	public function beforeSave() {
+		if ($this->isNewRecord)
+			$this->datum = new CDbExpression('NOW()');
+	 
+		return parent::beforeSave();
+	}
+	
+	/**
+	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
+	 * @param string $className active record class name.
+	 * @return Termekek the static model class
+	 */
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+	
+	public function getDisplayTermeknev()
+	{
+		return $this->kodszam . ' - ' . $this->nev;
+	}
+	
+}
