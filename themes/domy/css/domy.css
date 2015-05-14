@@ -727,3 +727,35 @@ div.form .active label
 .difference {
 	background-color: #FFAEAE;
 }
+.btn-storno {
+    background-color: #da4f49;
+    background-image: -moz-linear-gradient(center top , #ee5f5b, #bd362f);
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.btn-storno:hover,
+.btn-storno:focus,
+.btn-storno:active,
+.btn-storno.active,
+.open .dropdown-toggle.btn-storno {
+  color: #fff;
+  background-color: #d2322d;
+  border-color: #ac2925;
+}
+
+/* radiobutton-ok vízszintesen jelenjenek meg egymás mellett*/
+DIV.boritekMeretRadioGroup {
+	margin-bottom: 20px;
+    padding-left: 0px;
+}
+ 
+DIV.boritekMeretRadioGroup LABEL,
+DIV.boritekMeretRadioGroup INPUT {
+    display: inline!important;
+}
+
+DIV.boritekMeretRadioGroup INPUT {
+	margin-right : 15px!important;
+}

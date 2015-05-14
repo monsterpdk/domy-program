@@ -121,9 +121,8 @@ class ArajanlatokController extends Controller
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('Arajanlatok',
-			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"ajanlat_datum DESC",),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>"ajanlat_datum DESC",),)
 		);
-				
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -211,7 +210,9 @@ class ArajanlatokController extends Controller
 					'cimzett'=>$ugyfel->display_ugyfel_ugyintezok,
 					'adoszam'=>$ugyfel->adoszam,
 					'fizetesi_moral'=>$ugyfel->fizetesi_moral,
+					'max_fizetesi_keses'=>$ugyfel->max_fizetesi_keses,
 					'atlagos_fizetesi_keses'=>$ugyfel->atlagos_fizetesi_keses,
+					'rendelesi_tartozas_limit'=>$ugyfel->rendelesi_tartozasi_limit,
 					'fontos_megjegyzes'=>$ugyfel->fontos_megjegyzes,
 					'id'=>$ugyfel->id,
 					);      

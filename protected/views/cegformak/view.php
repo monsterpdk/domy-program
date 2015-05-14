@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 
 ?>
 
-<h1><?php echo $model->cegforma; ?> cégforma adatai</h1>
+<h1>'<?php echo $model->cegforma; ?>' cégforma adatai</h1>
 
 <p>
 	<?php $this->widget('zii.widgets.CDetailView', array(

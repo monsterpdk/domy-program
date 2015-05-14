@@ -24,6 +24,7 @@
  * @property string $jegyzet
  * @property string $reklamszoveg
  * @property string $egyeb_megjegyzes
+ * @property string $sztornozas_oka
  * @property string $megrendeles_forras_id
  * @property string $nyomdakonyv_munka_id
  * @property integer $sztornozva
@@ -36,7 +37,9 @@ class Megrendelesek extends CActiveRecord
 
 	public $autocomplete_ugyfel_adoszam;
 	public $autocomplete_ugyfel_fizetesi_moral;
+	public $autocomplete_ugyfel_max_fizetesi_keses;
 	public $autocomplete_ugyfel_atlagos_fizetesi_keses;
+	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
 
 	/**
@@ -67,12 +70,13 @@ class Megrendelesek extends CActiveRecord
 			array('proforma_szamla_sorszam, szamla_sorszam', 'length', 'max'=>15),
 			array('ugyfel_tel, ugyfel_fax', 'length', 'max'=>30),
 			array('visszahivas_jegyzet, reklamszoveg, egyeb_megjegyzes', 'length', 'max'=>127),
+			array('sztornozas_oka', 'length', 'max'=>255),
 			
 			array('ugyfel_id', 'isUgyfelEmpty'),
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, megrendeles_forras_id, nyomdakonyv_munka_id, sztornozva, torolt', 'safe', 'on'=>'search'),
+			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, nyomdakonyv_munka_id, sztornozva, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -115,7 +119,9 @@ class Megrendelesek extends CActiveRecord
 			'cimzett' => 'Címzett',
 			'autocomplete_ugyfel_adoszam' => 'Adószám',
 			'autocomplete_ugyfel_fizetesi_moral' => 'Fizetési morál',
+			'autocomplete_ugyfel_max_fizetesi_keses' => 'Max. fizetési késés',
 			'autocomplete_ugyfel_atlagos_fizetesi_keses' => 'Átlagos fizetési késés',
+			'autocomplete_ugyfel_rendelesi_tartozas_limit' => 'Rendelési tartozási limit (Ft)',
 			'autocomplete_ugyfel_fontos_megjegyzes' => 'Fontos megjegyzés',
 			'arkategoria_id' => 'Áruház árkategória beajánláshoz',
 			'egyedi_ar' => 'Egyedi ár',
@@ -133,6 +139,7 @@ class Megrendelesek extends CActiveRecord
 			'jegyzet' => 'Jegyzet',
 			'reklamszoveg' => 'Reklámszöveg',
 			'egyeb_megjegyzes' => 'Egyéb megjegyzés',
+			'sztornozas_oka' => 'Sztornózás oka',
 			'megrendeles_forras_id' => 'Megrendelés forrása',
 			'nyomdakonyv_munka_id' => 'Nyomdakönyv munka',
 			'sztornozva' => 'Sztornözva',
@@ -182,6 +189,7 @@ class Megrendelesek extends CActiveRecord
 		$criteria->compare('jegyzet',$this->jegyzet,true);
 		$criteria->compare('reklamszoveg',$this->reklamszoveg,true);
 		$criteria->compare('egyeb_megjegyzes',$this->egyeb_megjegyzes,true);
+		$criteria->compare('sztornozas_oka',$this->sztornozas_oka,true);
 		$criteria->compare('megrendeles_forras_id',$this->megrendeles_forras_id,true);
 		$criteria->compare('nyomdakonyv_munka_id',$this->nyomdakonyv_munka_id,true);
 		$criteria->compare('sztornozva',$this->sztornozva);
@@ -209,7 +217,9 @@ class Megrendelesek extends CActiveRecord
 
 			$this -> autocomplete_ugyfel_adoszam = $this -> ugyfel -> adoszam;
 			$this -> autocomplete_ugyfel_fizetesi_moral = $this -> ugyfel -> fizetesi_moral;
+			$this -> autocomplete_ugyfel_max_fizetesi_keses = $this -> ugyfel -> max_fizetesi_keses;
 			$this -> autocomplete_ugyfel_atlagos_fizetesi_keses = $this -> ugyfel -> atlagos_fizetesi_keses;
+			$this -> autocomplete_ugyfel_rendelesi_tartozas_limit = $this -> ugyfel -> rendelesi_tartozasi_limit;
 			$this -> autocomplete_ugyfel_fontos_megjegyzes = $this -> ugyfel -> fontos_megjegyzes;
 		}
 	}	

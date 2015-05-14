@@ -61,7 +61,7 @@
  * The followings are the available model relations:
  * @property UgyfelUgyintezok[] $ugyfelUgyintezok
  */
-class Ugyfelek extends CActiveRecord
+class Ugyfelek extends DomyModel
 {
 
 	// LI az ügyfél összes ügyintézőjét tárolom benne, vesszővel elválasztva
@@ -91,7 +91,7 @@ class Ugyfelek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, cegforma, adoszam, eu_adoszam, arkategoria, elso_vasarlas_datum, utolso_vasarlas_datum, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral, adatok_egyeztetve_datum, archivbol_vissza_datum', 'required'),
+			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, cegforma, adoszam, eu_adoszam, arkategoria, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral', 'required'),
 			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, torolt', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_tipus', 'length', 'max'=>9),
 			array('cegnev, ugyvezeto_nev, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_email, ceg_email, tevekenysegi_kor', 'length', 'max'=>127),
@@ -287,10 +287,30 @@ class Ugyfelek extends CActiveRecord
 	}
 
 	protected function afterFind(){
-		$this -> elso_vasarlas_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->elso_vasarlas_datum)));
-		$this -> utolso_vasarlas_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->utolso_vasarlas_datum)));
+		// első és utolsó vásárlási dátumot mindig frissítjük az adott ügyfél 'megnyitásakor'
+		 $megrendeles_datumok = Yii::app()->db->createCommand()
+			->select('min(rendeles_idopont) AS elso_vasarlas, max(rendeles_idopont) AS utolso_vasarlas')
+			->from('dom_megrendelesek')
+			->where('ugyfel_id = :ugyfel_id', array(':ugyfel_id' => $this -> id))
+			->queryAll();
+
+		$this -> elso_vasarlas_datum = date('Y-m-d', strtotime(str_replace("-", "", $megrendeles_datumok[0]["elso_vasarlas"])));
+		$this -> utolso_vasarlas_datum = date('Y-m-d', strtotime(str_replace("-", "", $megrendeles_datumok[0]["utolso_vasarlas"])));
 		$this -> adatok_egyeztetve_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->adatok_egyeztetve_datum)));
 		$this -> archivbol_vissza_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->archivbol_vissza_datum)));
+		
+		if ($this -> elso_vasarlas_datum == '1970-01-01')
+			$this -> elso_vasarlas_datum = '';
+		
+		if ($this -> utolso_vasarlas_datum == '1970-01-01')
+			$this -> utolso_vasarlas_datum = '';
+		
+		if ($this -> adatok_egyeztetve_datum == '1970-01-01')
+			$this -> adatok_egyeztetve_datum = '';
+		
+		if ($this -> archivbol_vissza_datum == '1970-01-01')
+			$this -> archivbol_vissza_datum = '';
+		
 		// $this -> felvetel_idopont = date('Y-m-d H:m:s', strtotime(str_replace("-", "", $this->felvetel_idopont)));
 		
 		// LI: mivel a városokhoz ID-t (key) kell tárolnunk, az előregépelős mezőben viszont

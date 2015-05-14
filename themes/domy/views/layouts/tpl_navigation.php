@@ -52,6 +52,7 @@
                         array ('label'=>'Általános beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
 									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('AfaKulcsok.index')),
+									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('SztornozasOkok.index')),
 		                    		array ('label'=>'Ügyfelekkel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
 	                            	array ('label'=>'Országok kezelése', 'url'=> Yii::app()->createUrl('/orszagok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
@@ -60,6 +61,7 @@
 																array ('label'=>'Adatforrások kezelése', 'url'=> Yii::app()->createUrl('/adatforrasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Besorolások kezelése', 'url'=> Yii::app()->createUrl('/besorolasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Árkategóriák kezelése', 'url'=> Yii::app()->createUrl('/arkategoriak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Fizetési morálok kezelése', 'url'=> Yii::app()->createUrl('/fizetesiMoralok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 															)),	                                                                          
 		                    		array ('label'=>'Raktárkezeléssel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (

@@ -60,11 +60,11 @@ class TermekArak extends CActiveRecord
 
 	public function isIntervalOverlap ()
 	{
+		$idCheck = $this->isNewRecord ? "" : " AND (id != $this->id)";
+		
 		$rawData = Yii::app() -> db -> createCommand  ("SELECT id FROM dom_termek_arak WHERE
 														(datum_mettol BETWEEN '$this->datum_mettol' AND '$this->datum_meddig' OR
-														'$this->datum_mettol' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $this->termek_id AND torolt = 0)
-														AND (id != $this->id)
-														") -> queryAll();
+														'$this->datum_mettol' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $this->termek_id AND torolt = 0)" . $idCheck) -> queryAll();
 		
 		if (count($rawData) > 0)
 			$this -> addError('datum_mettol', 'A termékár érvényességi dátuma már létező termékárba ütközik!');

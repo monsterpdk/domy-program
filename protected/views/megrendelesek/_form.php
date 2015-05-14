@@ -2,6 +2,17 @@
 /* @var $this ArajanlatokController */
 /* @var $model Arajanlatok */
 /* @var $form CActiveForm */
+
+	Yii::app() -> clientScript->registerScript('updateGridView', '
+		$.updateGridView = function(gridID, name, value) {
+			$("#" + gridID + " input[name=\'" + name + "\'], #" + gridID + " select[name=\'" + name + "\']").val(value);
+			
+			$.fn.yiiGridView.update(gridID, {data: $.param(
+				$("#"+gridID+" .filters input, #"+gridID+" .filters select")
+			)});
+		}
+		', CClientScript::POS_READY);
+
 ?>
 
 <div class="form">
@@ -71,7 +82,9 @@
 															$('#Megrendelesek_autocomplete_ugyfel_cim').val(ui.item.cim);
 															$('#Megrendelesek_autocomplete_ugyfel_adoszam').val(ui.item.adoszam);
 															$('#Megrendelesek_autocomplete_ugyfel_fizetesi_moral').val(ui.item.fizetesi_moral);
+															$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
 															$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
+															$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
 															$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').val(ui.item.fontos_megjegyzes);
 															$('#Megrendelesek_cimzett').val(ui.item.cimzett);
 														}",
@@ -84,7 +97,9 @@
 																$('#Megrendelesek_autocomplete_ugyfel_cim').val('');
 																$('#Megrendelesek_autocomplete_ugyfel_adoszam').val('');
 																$('#Megrendelesek_autocomplete_ugyfel_fizetesi_moral').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val('');
 																$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val('');
 																$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').val('');
 																$('#Megrendelesek_cimzett').val('');
 															}
@@ -133,16 +148,28 @@
 			<?php echo $form->textField($model,'autocomplete_ugyfel_fizetesi_moral',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_fizetesi_moral'); ?>
 		</div>
-	
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_ugyfel_max_fizetesi_keses'); ?>
+			<?php echo $form->textField($model,'autocomplete_ugyfel_max_fizetesi_keses',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_ugyfel_max_fizetesi_keses'); ?>
+		</div>
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_atlagos_fizetesi_keses'); ?>
 			<?php echo $form->textField($model,'autocomplete_ugyfel_atlagos_fizetesi_keses',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_atlagos_fizetesi_keses'); ?>
 		</div>
-		
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_ugyfel_rendelesi_tartozas_limit'); ?>
+			<?php echo $form->textField($model,'autocomplete_ugyfel_rendelesi_tartozas_limit',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_ugyfel_rendelesi_tartozas_limit'); ?>
+		</div>
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_fontos_megjegyzes'); ?>
-			<?php echo $form->textField($model,'autocomplete_ugyfel_fontos_megjegyzes',array('size'=>10, 'maxlength'=>255, 'readonly'=>true)); ?>
+			<?php echo $form->textArea($model,'autocomplete_ugyfel_fontos_megjegyzes',array('size'=>10, 'maxlength'=>255, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_fontos_megjegyzes'); ?>
 		</div>
 		
@@ -204,6 +231,14 @@
 			<?php echo $form->error($model,'egyeb_megjegyzes'); ?>
 		</div>
 
+		<?php if ($model -> sztornozva == 1): ?>
+			<div class="row">
+				<?php echo $form->labelEx($model,'sztornozas_oka'); ?>
+				<?php echo $form->textArea($model,'sztornozas_oka',array('size'=>60,'maxlength'=>255, 'readonly'=>true)); ?>
+				<?php echo $form->error($model,'sztornozas_oka'); ?>
+			</div>
+		<?php endif; ?>
+
 		<div class="row active">
 			<input id = "egyedi_ar_dsp" type="checkbox" value="<?php echo $model->egyedi_ar; ?>" <?php if ($model->egyedi_ar == 1) echo " checked "; ?> name="egyedi_ar_dsp" disabled >
 			<?php echo $form->label($model,'egyedi_ar'); ?>
@@ -217,7 +252,7 @@
 		</div>
 
 		<div class="row active">
-			<?php echo $form->checkBox($model,'sztornozva'); ?>
+			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
 			<?php echo $form->label($model,'sztornozva'); ?>
 			<?php echo $form->error($model,'sztornozva'); ?>
 		</div>
@@ -255,13 +290,13 @@
 			
 			// a dialógus ablak inicializálása
 			$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
-				'id'=>'dialogArajanlatTetel',
+				'id'=>'dialogMegrendelesTetel',
 				'options'=>array(
 					'title'=>'Termék hozzáadása',
 					'autoOpen'=>false,
 					'modal'=>true,
-					'width'=>550,
-					'height'=>500,
+					'width'=>750,
+					'height'=>650,
 				),
 			));
 			
@@ -295,6 +330,8 @@
 					'szinek_szama2',
 					'munka_neve',
 					'darabszam',
+					'hozott_boritek:boolean',
+					'egyedi_ar:boolean',
 					'netto_darabar:number',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -373,7 +410,7 @@
 			dialog_title = (isUpdate) ? "Tétel módosítása" : "Tétel hozzáadása";
 
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/megrendelesTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id",
+					'url'=> "js:'/index.php/megrendelesTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/grid_id/' + new Date().getTime()",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -383,8 +420,8 @@
 					{
 						if (data.status == 'failure')
 						{
-							$('#dialogArajanlatTetel div.divForForm').html(data.div);
-							$('#dialogArajanlatTetel div.divForForm form').submit(addUpdateMegrendelesTetel);
+							$('#dialogMegrendelesTetel div.divForForm').html(data.div);
+							$('#dialogMegrendelesTetel div.divForForm form').submit(addUpdateMegrendelesTetel);
 						}
 						else
 						{
@@ -394,16 +431,16 @@
 							$('#egyedi_ar_dsp').prop('checked', (data.egyedi == '1' ? true : false));
 							$('#Megrendelesek_egyedi_ar').val (data.egyedi);
 							
-							$('#dialogArajanlatTetel div.divForForm').html(data.div);
-							$('#dialogArajanlatTetel').dialog('close');
+							$('#dialogMegrendelesTetel div.divForForm').html(data.div);
+							$('#dialogMegrendelesTetel').dialog('close');
 						}
 		 
 					} ",
 			))?>;
 
 			
-			$("#dialogArajanlatTetel").dialog("open");
-			$("#dialogArajanlatTetel").dialog('option', 'title', dialog_title);
+			$("#dialogMegrendelesTetel").dialog("open");
+			$("#dialogMegrendelesTetel").dialog('option', 'title', dialog_title);
 			
 			return false; 
 		}

@@ -27,7 +27,7 @@ $this->breadcrumbs=array(
 				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
-						'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
+						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
                         'template' => '{view} {update} {delete}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
@@ -48,7 +48,7 @@ $this->breadcrumbs=array(
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => "Yii::app()->user->checkAccess('Aruhazak.Delete')",
+								'visible' => 'Yii::app()->user->checkAccess("Aruhazak.Delete") && $data->torolt != 1',
 							)
 						),
                 ),

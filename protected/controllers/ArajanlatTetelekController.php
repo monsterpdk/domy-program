@@ -28,13 +28,30 @@ class ArajanlatTetelekController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate ($id, $arkategoria_id)
+	public function actionCreate ($id, $arkategoria_id, $grid_id)
 	{
 		$model = new ArajanlatTetelek;
 
 		if ($id != null) {
 			$model -> arajanlat_id = $id;
 		}
+		
+		// Keresés esetén visszaadjuk a szűrt listát és kilépünk a metódusból
+		$termek=new Termekek('search');
+		$termek->unsetAttributes();  // clear any default values
+		
+		if (isset($_GET['ajax']) && strpos($_GET['ajax'], 'termekek-grid') !== FALSE) {
+			if(isset($_GET['Termekek'])) {
+				$termek->attributes=$_GET['Termekek'];
+			}
+			
+			// Stop jQuery from re-initialization
+			Yii::app()->clientScript->scriptMap['*.js'] = false;
+			Yii::app()->clientScript->scriptMap['*.css'] = false;
+			
+			$this->renderPartial('_form', array('model'=>$model, 'termek' => $termek, 'grid_id'=>$grid_id), false, true);
+			exit;
+		}		
 		
 		// beállítjuk a kiválasztott áruházhoz tartózó szorzót,
 		// ezzel tudunk majd árat beajánlani a termékkiválasztást követően
@@ -51,15 +68,21 @@ class ArajanlatTetelekController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+		$model = $this -> calculateNettoAr ($model);
+		
 		if(isset($_POST['ArajanlatTetelek']))
         {
             $model->attributes=$_POST['ArajanlatTetelek'];
+			$model = $this -> calculateNettoAr ($model);
 			
             if($model->save())
             {
-				// megnézzük, hogy egyedi árról van-e szó
-				$egyedi = Utils::isEgyediAr ($model->arajanlat_id, false);
+				// az egyedi árat most már tételenként is kezeljük
+				Utils::isEgyediAr ($model->id, false, $szorzo_tetel_arhoz) ? 1 : 0;
 				
+				// megnézzük, hogy egyedi árról van-e szó
+				$egyedi = Utils::isEgyediArMegrendelesArajanlat ($model->arajanlat_id, false);
+
                 if (Yii::app()->request->isAjaxRequest)
                 {
 					// Stop jQuery from re-initialization
@@ -86,7 +109,7 @@ class ArajanlatTetelekController extends Controller
 		
             echo CJSON::encode(array(
                 'status'=>'failure', 
-                'div'=>$this->renderPartial('_form', array('model'=>$model,), true, true)));
+                'div'=>$this->renderPartial('_form', array('model'=>$model, 'termek' => $termek, 'grid_id'=>$grid_id), true, true)));
             exit;               
         }
         else {
@@ -99,10 +122,27 @@ class ArajanlatTetelekController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id, $arkategoria_id)
+	public function actionUpdate($id, $arkategoria_id, $grid_id)
 	{
 		$model = $this->loadModel($id);
 
+		// Keresés esetén visszaadjuk a szűrt listát és kilépünk a metódusból
+		$termek=new Termekek('search');
+		$termek->unsetAttributes();  // clear any default values
+		
+		if (isset($_GET['ajax']) && strpos($_GET['ajax'], 'termekek-grid') !== FALSE) {
+			if(isset($_GET['Termekek'])) {
+				$termek->attributes=$_GET['Termekek'];
+			}
+			
+			// Stop jQuery from re-initialization
+			Yii::app()->clientScript->scriptMap['*.js'] = false;
+			Yii::app()->clientScript->scriptMap['*.css'] = false;
+			
+			$this->renderPartial('_form', array('model'=>$model, 'termek' => $termek, 'grid_id'=>$grid_id), false, true);
+			exit;
+		}
+		
 		// beállítjuk a kiválasztott áruházhoz tartózó szorzót,
 		// ezzel tudunk majd árat beajánlani a termékkiválasztást követően
 		$szorzo_tetel_arhoz = 1;
@@ -118,15 +158,21 @@ class ArajanlatTetelekController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+		$model = $this -> calculateNettoAr ($model);
+		
 		if(isset($_POST['ArajanlatTetelek']))
         {
             $model->attributes=$_POST['ArajanlatTetelek'];
+			$model = $this -> calculateNettoAr ($model);
 			
             if($model->save())
             {
+				// az egyedi árat most már tételenként is kezeljük
+				Utils::isEgyediAr ($model->id, false, $szorzo_tetel_arhoz) ? 1 : 0;
+
 				// megnézzük, hogy egyedi árról van-e szó
-				$egyedi = Utils::isEgyediAr ($model->arajanlat_id, false);
-				
+				$egyedi = Utils::isEgyediArMegrendelesArajanlat ($model->arajanlat_id, false);
+
                 if (Yii::app()->request->isAjaxRequest)
                 {
 					// Stop jQuery from re-initialization
@@ -153,7 +199,7 @@ class ArajanlatTetelekController extends Controller
 		
             echo CJSON::encode(array(
                 'status'=>'failure', 
-                'div'=>$this->renderPartial('_form', array('model'=>$model,), true, true)));
+                'div'=>$this->renderPartial('_form', array('model'=>$model, 'termek' => $termek, 'grid_id'=>$grid_id), true, true)));
             exit;               
         }
         else {
@@ -172,7 +218,7 @@ class ArajanlatTetelekController extends Controller
 		$arajanlat_id = $model->arajanlat_id;
 		$model->delete();
 		
-		$egyedi = Utils::isEgyediAr ($arajanlat_id, false);
+		$egyedi = Utils::isEgyediArMegrendelesArajanlat ($arajanlat_id, false);
 		
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax'])) {
@@ -269,4 +315,32 @@ class ArajanlatTetelekController extends Controller
 			Yii::app()->end();
 		}
 	}
+	
+private function calculateNettoAr ($model)
+	{
+		// nettó ár kiszámolása
+		if (is_numeric ($model -> netto_darabar) && is_numeric ($model -> darabszam) )
+			$model -> netto_ar = $model -> netto_darabar * $model -> darabszam;
+		else
+			$model ->netto_ar = 0;
+		
+		// beírjuk a termék nevét, ha van ID
+		
+		$termek_id = $model ->termek_id;
+		
+		if (is_numeric ($termek_id)) {
+			$termek = Termekek::model() -> findByPk ($termek_id);
+			
+			if ($termek != null) {
+				$model -> autocomplete_termek_name = $termek ->nev;
+			}
+		}
+		
+		return $model;
+	}
+
+	public function actionCalculateNettoDarabAr ($termek_id, $db, $szinszam1, $szinszam2) {
+			if (isset($termek_id)) return Utils::getActiveTermekarJSON($termek_id, $db, $szinszam1, $szinszam2);
+	}
+	
 }

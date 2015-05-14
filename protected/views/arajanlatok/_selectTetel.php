@@ -51,6 +51,8 @@
 					'szinek_szama1',
 					'szinek_szama2',
 					'darabszam',
+					'egyedi_ar:boolean',
+					'hozott_boritek:boolean',
 					'netto_darabar:number',
 				)
 			));

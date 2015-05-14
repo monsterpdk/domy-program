@@ -10,6 +10,6 @@ $this->breadcrumbs=array(
 
 ?>
 
-<h1><?php echo $model->cegforma; ?> cégforma szerkesztése</h1>
+<h1>'<?php echo $model->cegforma; ?>' cégforma szerkesztése</h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

@@ -116,16 +116,99 @@
 		}
 	
 		// LI: egy paraméterben kapott termék aktuálisan aktív termékárát adja vissza
-		function getActiveTermekar ($termek_id) {
+		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
+		function getActiveTermekar ($termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {
 			if ($termek_id != null && $termek_id != 0) {
 						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
 														") -> queryRow();
-
-						if ($termekAr != false) return $termekAr;
+			}
+			if ($termekAr != false && $darabszam > 0 && ($szinszam1 > 0 || $szinszam2 > 0)) {
+				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
+						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;				
+						$termek_meret_adatok = TermekMeretek::model()->findByPk($termek_reszletek->meret_id);	
+				
+						return $termek_meret_adatok->nev ;
+						
+						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_nyomasi_arak WHERE
+														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
+														") -> queryRow();
+ 				
 			}
 			
+			if ($termekAr != false) 
+				return $termekAr;			
+			
 			return 0;
+		}
+	
+		// LI: egy paraméterben kapott termék aktuálisan aktív termékárát adja vissza JSON-ben
+		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
+		function getActiveTermekarJSON ($termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {
+			$result = 0;
+
+			if ($termek_id != null && $termek_id != 0) {
+						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
+														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
+														") -> queryRow();
+						$db_ar = $termekAr["db_eladasi_ar"] ;
+			}
+
+			if ($termekAr != false && $darabszam > 0 && ($szinszam1 > 0 || $szinszam2 > 0)) {
+				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
+						$db_ar = $termekAr["db_ar_nyomashoz"] ;
+						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;				
+						$termek_meret_adatok = TermekMeretek::model()->findByPk($termek_reszletek["meret_id"]);	
+						$termek_meret_nev = $termek_meret_adatok["nev"] ;
+						
+//TODO: Lekérdezni a felülnyomási árat, és megnövelni vele a db árat, ez lesz az új db ár
+						
+						$sql = "SELECT * FROM dom_nyomasi_arak WHERE
+														boritek_fajtak like ('% " . $termek_meret_nev . "%') AND '" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig
+														" ;						
+						$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
+						$nyomasi_ar = 0 ;
+						if ($nyomasiAr != false) {
+							switch ($szinszam1) {
+								case 1: $elooldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
+									break ;
+								case 2: $elooldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
+									break ;
+								case 3: $elooldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
+									break ;
+								case 0: $elooldali_nyomasi_ar = 0 ;
+									break ;
+								default: $elooldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
+							}
+							
+							switch ($szinszam2) {
+								case 1: $hatoldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
+									break ;
+								case 2: $hatoldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
+									break ;
+								case 3: $hatoldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
+									break ;
+								case 0: $hatoldali_nyomasi_ar = 0 ;
+									break ;
+								default: $hatoldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
+							}
+							$nyomasi_ar = $elooldali_nyomasi_ar + $hatoldali_nyomasi_ar ;
+						}
+						$db_ar = $db_ar + $nyomasi_ar ;
+ 				
+			}
+			
+			if ($termekAr != false) 
+				$result = $db_ar;
+			
+			$ar = ($db_ar == 0) ? 0 : $db_ar;
+				
+			$arr[] = array(
+				'status'=>'success', 
+				'ar'=>$ar,
+			);      
+
+			echo CJSON::encode($arr);
 		}
 	
 		// LI: 	egy paraméterben kapott árajánlathoz tartozó ügyfélnek ellenőrzi le a rendelési limitösszegét.
@@ -185,17 +268,17 @@
 		
 		// LI: 	egy paraméterben kapott megrendelés/árajánlat tételein megy végig. Azt vizsgálja, hogy át lett-e írva az ár kézzel valamelyik tételnél.
 		//		Ha igen, akkor TRUE értékkel, egyébként FALSE-szal tér vissza.
-		function isEgyediAr ($id, $isMegrendeles) {
+		function isEgyediArMegrendelesArajanlat ($id, $isMegrendeles) {
 			$egyedi = false;
 			
 			if ($id != null) {
 				// megkeressük a paraméterben kapott megrendelést / árajánlatot
 				$model = $isMegrendeles ? (Megrendelesek::model() -> with('tetelek') -> findByAttributes(array('id' => $id))) : (Arajanlatok::model() -> with('tetelek') -> findByAttributes(array('id' => $id)));
-				
+
 				// ha megtaláltuk a megrendelést/árajánlatot továbbmegyünk
 				if ($model != null) {
 					foreach ($model->tetelek as $tetel) {
-						if (Utils::getActiveTermekar ($tetel->termek_id) != $tetel->netto_darabar) {
+						if ( $tetel->egyedi_ar == 1) {
 							$egyedi = true;
 							break;
 						}
@@ -205,11 +288,37 @@
 			
 			$model->egyedi_ar = ($egyedi ? 1 : 0);
 			$model->save();
-			
+
 			return $egyedi;
 			
 		}
 		
+		// LI: 	egy paraméterben kapott megrendelés/árajánlat tételét vizsgálja, hogy át lett-e írva az ár kézzel rajta vagy sem.
+		//		Ha igen, akkor TRUE értékkel, egyébként FALSE-szal tér vissza.
+		function isEgyediAr ($id, $isMegrendeles, $szorzo_tetel_arhoz) {
+			$egyedi = false;
+			
+			if ($id != null) {
+				// megkeressük a paraméterben kapott megrendelést / árajánlatot
+				$tetel = $isMegrendeles ? (MegrendelesTetelek::model() -> findByAttributes(array('id' => $id))) : (ArajanlatTetelek::model() -> findByAttributes(array('id' => $id)));
+				
+				// ha megtaláltuk a tételt továbbmegyünk
+				if ($tetel != null) {
+					$termekAr = Utils::getActiveTermekar ($tetel->termek_id);
+
+					if ( ( (($termekAr == 0) ? 0 : $termekAr["db_eladasi_ar"]) * (int)$szorzo_tetel_arhoz ) != $tetel->netto_darabar) {
+						$egyedi = true;
+					}
+					
+					$tetel->egyedi_ar = ($egyedi ? 1 : 0);
+					$tetel->save();
+				}
+			}
+
+			return $egyedi;
+			
+		}
+
 	}
-	
+
 ?>

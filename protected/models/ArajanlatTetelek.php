@@ -15,12 +15,14 @@
  * @property integer $mutacio
  * @property integer $hozott_boritek
  * @property integer $torolt
+ * @property integer $egyedi_ar 
  */
 class ArajanlatTetelek extends CActiveRecord
 {
 
 	public $autocomplete_termek_name;
 	public $szorzo_tetel_arhoz;
+	public $netto_ar;
 
 	/**
 	 * @return string the associated database table name
@@ -44,13 +46,13 @@ class ArajanlatTetelek extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('arajanlat_id, termek_id, darabszam, netto_darabar', 'required'),
-			array('termek_id, szinek_szama1, szinek_szama2, mutacio, hozott_boritek, torolt', 'numerical', 'integerOnly'=>true),
+			array('termek_id, szinek_szama1, szinek_szama2, mutacio, hozott_boritek, torolt, egyedi_ar', 'numerical', 'integerOnly'=>true),
 			array('netto_darabar', 'numerical'),
 			array('arajanlat_id, darabszam', 'length', 'max'=>10),
 			array('megjegyzes', 'length', 'max'=>127),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, arajanlat_id, termek_id, szinek_szama1, szinek_szama2, darabszam, netto_darabar, megjegyzes, mutacio, hozott_boritek, torolt', 'safe', 'on'=>'search'),
+			array('id, arajanlat_id, termek_id, szinek_szama1, szinek_szama2, darabszam, netto_darabar, megjegyzes, mutacio, hozott_boritek, torolt, egyedi_ar', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -87,6 +89,9 @@ class ArajanlatTetelek extends CActiveRecord
 			'mutacio' => 'Mutáció',
 			'hozott_boritek' => 'Hozott boríték',
 			'torolt' => 'Törölt',
+			'egyedi_ar' => 'Egyedi ár',
+			
+			'netto_ar' => 'Nettó ár',
 		);
 	}
 
@@ -119,6 +124,7 @@ class ArajanlatTetelek extends CActiveRecord
 		$criteria->compare('mutacio',$this->mutacio);
 		$criteria->compare('hozott_boritek',$this->hozott_boritek);
 		$criteria->compare('torolt',$this->torolt);
+		$criteria->compare('egyedi_ar',$this->egyedi_ar);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

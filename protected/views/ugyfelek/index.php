@@ -58,7 +58,7 @@
 				'szamlaszam1',
 				'szamlaszam2',
 				'display_ugyfel_ugyintezok',
-				'utolso_vasarlas_datum',
+				'elso_vasarlas_datum',
 				'utolso_vasarlas_datum',
 				'megjegyzes',
 				'felvetel_idopont',
@@ -70,7 +70,7 @@
 				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
-						'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
+						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
                         'template' => '{view} {update} {delete}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
@@ -91,7 +91,7 @@
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => "Yii::app()->user->checkAccess('Ugyfelek.Delete')",
+								'visible' => 'Yii::app()->user->checkAccess("Ugyfelek.Delete") && $data->torolt != 1',
 							)
 						),
                 ),

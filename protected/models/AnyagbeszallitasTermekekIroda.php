@@ -34,7 +34,7 @@ class AnyagbeszallitasTermekekIroda extends DomyModel
 		// will receive user inputs.
 		return array(
 			array('anyagbeszallitas_id, termek_id, darabszam, netto_darabar', 'required'),
-			array('netto_darabar', 'numerical'),
+			array('netto_darabar, darabszam', 'numerical'),
 			array('anyagbeszallitas_id, termek_id, darabszam', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

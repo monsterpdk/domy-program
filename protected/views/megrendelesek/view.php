@@ -33,6 +33,7 @@
 			'jegyzet',
 			'reklamszoveg',
 			'egyeb_megjegyzes',
+			'sztornozas_oka',
 			'megrendeles_forras.aruhaz_nev',
 			'nyomdakonyv_munka_id',
 			'sztornozva:boolean',
@@ -70,6 +71,8 @@
 					'szinek_szama1',
 					'szinek_szama2',
 					'darabszam',
+					'hozott_boritek:boolean',
+					'egyedi_ar:boolean',
 					'netto_darabar:number',
 				array(
 							'class' => 'bootstrap.widgets.TbButtonColumn',

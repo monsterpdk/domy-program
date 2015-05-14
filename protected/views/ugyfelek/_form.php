@@ -20,7 +20,9 @@
 			'title'=>"<strong>Cégadatok #1</strong>",
 		));
 	?>
-		
+
+	<?php echo CHtml::hiddenField('Hidden_ugyel_archiv' , $model->archiv, array('id' => 'Hidden_ugyel_archiv')); ?>
+	
 	<div class="row">
 		<?php echo $form->labelEx($model,'ugyfel_tipus'); ?>
 		<?php echo DHtml::enumDropDownList($model, 'ugyfel_tipus'); ?>
@@ -309,13 +311,13 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'megjegyzes'); ?>
-		<?php echo $form->textField($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
+		<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'megjegyzes'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'fontos_megjegyzes'); ?>
-		<?php echo $form->textField($model,'fontos_megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
+		<?php echo $form->textArea($model,'fontos_megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'fontos_megjegyzes'); ?>
 	</div>
 	<?php $this->endWidget(); ?>
@@ -378,29 +380,13 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'elso_vasarlas_datum'); ?>
-		
-			<?php
-				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$model,
-					'attribute'=>'elso_vasarlas_datum',
-					'options'=>array('dateFormat'=>'yy-mm-dd',)
-				));
-			?>
-		
+		<?php echo $form->textField($model,'elso_vasarlas_datum',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 		<?php echo $form->error($model,'elso_vasarlas_datum'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'utolso_vasarlas_datum'); ?>
-		
-			<?php
-				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$model,
-					'attribute'=>'utolso_vasarlas_datum',
-					'options'=>array('dateFormat'=>'yy-mm-dd',)
-				));
-			?>
-		
+		<?php echo $form->textField($model,'utolso_vasarlas_datum',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 		<?php echo $form->error($model,'utolso_vasarlas_datum'); ?>
 	</div>
 
@@ -444,15 +430,7 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'archivbol_vissza_datum'); ?>
-		
-			<?php
-				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$model,
-					'attribute'=>'archivbol_vissza_datum',
-					'options'=>array('dateFormat'=>'yy-mm-dd',)
-				));
-			?>
-		
+		<?php echo $form->textField($model,'archivbol_vissza_datum',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 		<?php echo $form->error($model,'archivbol_vissza_datum'); ?>
 	</div>
 
@@ -465,7 +443,7 @@
 	<?php endif; ?>
 
 	<div class="row buttons">
-			<?php echo CHtml::submitButton('Mentés'); ?>
+			<?php echo CHtml::submitButton('Mentés', array('title'=>'OK', 'onclick'=>'js: return checkFlags();')); ?>
 			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
 	</div>
 	
@@ -493,24 +471,85 @@
 </div><!-- form -->
 
 <?php
+	// archiváláskor meg kell adni az archiválás okáta
+	// inicializáljuk a dialog-ot hozzá
+	$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+		'id'=>'dialogArchiveReason',
+		'options'=>array(
+			'title'=>'Archiválás oka',
+			'autoOpen'=>false,
+			'modal'=>true,
+			'width'=>450,
+			'height'=>270,
+		),
+	));?>
+	
+	<div class="divForForm">
+		<?php echo CHtml::label('Archiválás oka:', 'editTextArchiveReason'); ?>
+		<?php echo CHtml::textArea('editTextArchiveReason', '', array('style' => "width: 405px; height: 103px;")); ?>
+		
+		<div align = 'right'>
+			<?php echo CHtml::button('Ok', array('title'=>'Ok', 'onclick'=>'js: return saveArchiveReason();')); ?>
+			<?php echo CHtml::button('Mégse', array('title'=>'Mégse', 'onclick'=>'js: $("#dialogArchiveReason").dialog("close"); return false;')); ?>
+		</div>
+	</div>
+	 
+<?php $this->endWidget();?>
+	
+<script language = 'JavaScript'>
+	function checkFlags() {
+		// ha bepipáltuk az archiv flag-et (és eddig nem volt archiv az ügyfél),
+		// akkor feldobunk egy dialog-ot, amiben meg kell adni az archiválás okát
+		var checkedArchive = $("#Ugyfelek_archiv").is(':checked');
+		var oldArchive = $("#Hidden_ugyel_archiv").val() == '1' ? true : false;
+		
+		if (checkedArchive && !oldArchive)
+			$('#dialogArchiveReason').dialog('open');
+		else if (!checkedArchive && oldArchive) {
+			var today = new Date();
+			// archive-ból veszük vissza, ki kell tölteni az archive-ból visszavett dátumot
+			$("#Ugyfelek_archivbol_vissza_datum").val(today.toISOString().substring(0, 10));
+			
+			return true;
+		}
+		else 
+			return true;
+		
+		return false;
+	}
+	
+	function saveArchiveReason() {
+		$('#dialogArchiveReason').dialog('close');
+		
+		// hozzáfűzzük a 'fontos megjegyzés' mezőhöz az archiválás okát
+		var sFontosMegjegyzes = $("#Ugyfelek_fontos_megjegyzes").val();
+		var sArchivReason = $("#editTextArchiveReason").val();
+		
+		$("#Ugyfelek_fontos_megjegyzes").val( (( sFontosMegjegyzes.length > 0) ? sFontosMegjegyzes + ' ' :  '') + 'Archiválás oka: ' + sArchivReason );
+
+		$("#ugyfelek-form").submit();
+	}
+</script>
+
+<?php
 Yii::app()->clientScript->registerCoreScript('jquery');
 Yii::app()->clientScript->registerScript('ugyfelugyintezo', '
-var _index = ' . $index . ';
-$("#loadUgyfelUgyintezoByAjax").click(function(e){
-    e.preventDefault();
-    var _url = "' . Yii::app()->controller->createUrl("loadUgyfelUgyintezoByAjax", array("load_for" => $this->action->id)) . '&index="+_index;
-    $.ajax({
-        url: _url,
-        success:function(response){
-            $("#ugyfelUgyintezok").append(response);
-            $("#ugyfelUgyintezok .crow").last().animate({
-                opacity : 1,
-                left: "+50",
-                height: "toggle"
-            });
-        }
-    });
-    _index++;
-});
+	var _index = ' . $index . ';
+	$("#loadUgyfelUgyintezoByAjax").click(function(e){
+		e.preventDefault();
+		var _url = "' . Yii::app()->controller->createUrl("loadUgyfelUgyintezoByAjax", array("load_for" => $this->action->id)) . '&index="+_index;
+		$.ajax({
+			url: _url,
+			success:function(response){
+				$("#ugyfelUgyintezok").append(response);
+				$("#ugyfelUgyintezok .crow").last().animate({
+					opacity : 1,
+					left: "+50",
+					height: "toggle"
+				});
+			}
+		});
+		_index++;
+	});
 ', CClientScript::POS_END);
 ?>

@@ -34,7 +34,7 @@ class AnyagrendelesTermekek extends DomyModel
 		// will receive user inputs.
 		return array(
 			array('anyagrendeles_id, termek_id, rendelt_darabszam, rendeleskor_netto_darabar', 'required'),
-			array('rendeleskor_netto_darabar', 'numerical'),
+			array('rendeleskor_netto_darabar, rendelt_darabszam', 'numerical'),
 			array('anyagrendeles_id, termek_id, rendelt_darabszam', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

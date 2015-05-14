@@ -127,7 +127,7 @@ class MegrendelesekController extends Controller
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('Megrendelesek',
-			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
 				
 		$this->render('index',array(
@@ -199,7 +199,9 @@ class MegrendelesekController extends Controller
 					'cimzett'=>$ugyfel->display_ugyfel_ugyintezok,
 					'adoszam'=>$ugyfel->adoszam,
 					'fizetesi_moral'=>$ugyfel->fizetesi_moral,
+					'max_fizetesi_keses'=>$ugyfel->max_fizetesi_keses,
 					'atlagos_fizetesi_keses'=>$ugyfel->atlagos_fizetesi_keses,
+					'rendelesi_tartozas_limit'=>$ugyfel->rendelesi_tartozasi_limit,
 					'fontos_megjegyzes'=>$ugyfel->fontos_megjegyzes,
 					'id'=>$ugyfel->id,
 					);      
@@ -259,7 +261,7 @@ class MegrendelesekController extends Controller
 
 			// elmentjük a modelt, hogy legyen model id a kezünkben
 			$megrendeles -> save(false);
-			
+
 			// az árajánlatnál beállítjuk, hogy van már hozzá megrendelés
 			$arajanlat -> van_megrendeles = 1;
 			$arajanlat -> save(false);
@@ -279,6 +281,7 @@ class MegrendelesekController extends Controller
 					$megrendeles_tetel -> megjegyzes = $termek -> megjegyzes;
 					$megrendeles_tetel -> mutacio = $termek -> mutacio;
 					$megrendeles_tetel -> hozott_boritek = $termek -> hozott_boritek;
+					$megrendeles_tetel -> egyedi_ar = $termek -> egyedi_ar;
 
 					// az árajánlatból létrehozott tételeket külön jelezzük, mert azoknak az adatai nem szerkeszthettők többé
 					$megrendeles_tetel -> arajanlatbol_letrehozva = 1;
@@ -288,10 +291,35 @@ class MegrendelesekController extends Controller
 				}
 			}
 			
+			// frissítjük az egyedi ár flag-et a megrendelésen
+			Utils::isEgyediArMegrendelesArajanlat ($megrendeles -> id, true);
+
 			$this->redirect(array('megrendelesek/update', 'id' => $megrendeles -> id,));
 		}
 	}
 
+	/**
+	 * Megrendelés sztornózása.
+	 */
+	public function actionStorno ()
+	{
+		if ( isset($_POST['megrendeles_id']) ) {
+			$model_id = $_POST['megrendeles_id'];
+			$storno_ok = isset($_POST['selected_storno']) ? $_POST['selected_storno'] : '';
+			
+			$megrendeles = Megrendelesek::model() -> findByPk ($model_id);
+
+			if ($megrendeles != null) {
+				$megrendeles -> sztornozas_oka = $storno_ok;
+				$megrendeles -> sztornozva = 1;
+				
+				$megrendeles -> save(false);
+			}
+		}
+		
+		$this->redirect(array('megrendelesek/index'));
+	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

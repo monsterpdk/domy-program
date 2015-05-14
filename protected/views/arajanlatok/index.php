@@ -15,11 +15,13 @@ $this->breadcrumbs=array(
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
                 'sorszam',
+				array(
+					'name'=>'ugyfel.cegnev',
+					'htmlOptions'=>array('width'=>'500'),
+				 ),
 				'ajanlat_datum',
-				'ervenyesseg_datum',
-				'hatarido',
-				'ugyfel.cegnev',
 				'van_megrendeles:boolean',
+				'egyedi_ar:boolean',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',
@@ -58,7 +60,7 @@ $this->breadcrumbs=array(
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => "Yii::app()->user->checkAccess('Arajanlatok.Delete')",
+								'visible' => 'Yii::app()->user->checkAccess("Arajanlatok.Delete") && $data->torolt != 1',
 							),
 							'create_megrendeles' => array(
 								'label' => 'Megrendelés létrehozása',

@@ -31,7 +31,9 @@ class Arajanlatok extends CActiveRecord
 
 	public $autocomplete_ugyfel_adoszam;
 	public $autocomplete_ugyfel_fizetesi_moral;
+	public $autocomplete_ugyfel_max_fizetesi_keses;
 	public $autocomplete_ugyfel_atlagos_fizetesi_keses;
+	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
 	
 	/**
@@ -122,9 +124,12 @@ class Arajanlatok extends CActiveRecord
 			
 			'autocomplete_ugyfel_cim' => 'Cím',
 			'cimzett' => 'Címzett',
+			
 			'autocomplete_ugyfel_adoszam' => 'Adószám',
 			'autocomplete_ugyfel_fizetesi_moral' => 'Fizetési morál',
+			'autocomplete_ugyfel_max_fizetesi_keses' => 'Max. fizetési késés',
 			'autocomplete_ugyfel_atlagos_fizetesi_keses' => 'Átlagos fizetési késés',
+			'autocomplete_ugyfel_rendelesi_tartozas_limit' => 'Rendelési tartozási limit (Ft)',
 			'autocomplete_ugyfel_fontos_megjegyzes' => 'Fontos megjegyzés',
 		);
 	}
@@ -199,7 +204,9 @@ class Arajanlatok extends CActiveRecord
 			
 			$this -> autocomplete_ugyfel_adoszam = $this -> ugyfel -> adoszam;
 			$this -> autocomplete_ugyfel_fizetesi_moral = $this -> ugyfel -> fizetesi_moral;
+			$this -> autocomplete_ugyfel_max_fizetesi_keses = $this -> ugyfel -> max_fizetesi_keses;
 			$this -> autocomplete_ugyfel_atlagos_fizetesi_keses = $this -> ugyfel -> atlagos_fizetesi_keses;
+			$this -> autocomplete_ugyfel_rendelesi_tartozas_limit = $this -> ugyfel -> rendelesi_tartozasi_limit;
 			$this -> autocomplete_ugyfel_fontos_megjegyzes = $this -> ugyfel -> fontos_megjegyzes;
 		}
 	}

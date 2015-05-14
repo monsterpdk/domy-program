@@ -21,6 +21,7 @@ $this->breadcrumbs=array(
 				'rendeles_idopont',
 				'ugyfel.cegnev',
 				'egyedi_ar:boolean',
+				'sztornozva:boolean',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',
@@ -29,8 +30,8 @@ $this->breadcrumbs=array(
 				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
-						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
-                        'template' => '{print} {view} {update} {delete}',
+						'htmlOptions'=>array('style'=>'width: 180px; text-align: left;'),
+                        'template' => '{print} {view} {update} {delete} {storno}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
 						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
@@ -54,12 +55,22 @@ $this->breadcrumbs=array(
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => '(Yii::app()->user->checkAccess("Megrendelesek.Update") || Yii::app()->user->checkAccess("Admin")) && ($data->nyomdakonyv_munka_id == 0 && $data->proforma_szamla_sorszam == "")',
+								'visible' => '(Yii::app()->user->checkAccess("Megrendelesek.Update") || Yii::app()->user->checkAccess("Admin")) && ($data->nyomdakonyv_munka_id == 0 && $data->proforma_szamla_sorszam == "") && $data->sztornozva != 1',
 							),
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => "Yii::app()->user->checkAccess('Megrendelesek.Delete')",
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Delete") && $data->torolt != 1',
+							),
+							'storno' => array(
+								'label' => 'Sztornózás',
+								'icon'=>'icon-white icon-minus-sign',
+								'options'=>array(
+											'class'=>'btn btn-storno btn-mini',
+											'style'=>'margin-left: 15px',
+											'onclick' => 'js: openStornoSelectDialog ($(this))',
+											),
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Storno") && $data->sztornozva != 1',
 							),
 						),
                 ),
@@ -92,11 +103,42 @@ $this->breadcrumbs=array(
 				'buttons' => array('Proforma készítése' => 'js:function() { alert ("Ide jön majd a proforma nyomtatási lehetőség."); }'),
                 'autoOpen'=>false,
         )));
-		
-		echo '<p> Proforma számla készítése. </p>';
-		
+
 		$this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
+
+<?php	
+	// LI: sztornózás oka dialog inicializálása
+    $this->beginWidget('zii.widgets.jui.CJuiDialog',
+        array(
+            'id'=>'dialogStornozas',
+            
+            'options'=>array(
+                'title'=>'Sztornózás oka',
+				'width'=> '400px',
+                'modal' => true,
+				'buttons' => array('Ok' => 'js:function() { model_id = $(this).data("model_id"); storno (model_id) }', 'Mégse' => 'js:function() { $("#dialogStornozas").dialog("close"); }'),
+                'autoOpen'=>false,
+        )));
+		
+		echo "Sztornózás oka:";
+		
+		$options = CHtml::listData(SztornozasOkok::model()->findAll(),'ok', 'ok');
+		echo CHtml::dropDownList('sztornozasOk', '', $options, array('empty'=>''));
+
+		$this->endWidget('zii.widgets.jui.CJuiDialog');
+?>
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+	'id'=>'select-storno-form',
+	'action' => Yii::app()->createUrl("megrendelesek/storno"),
+	'enableAjaxValidation'=>false,
+)); 
+
+	echo CHtml::hiddenField('selected_storno' , '', array('id' => 'selected_storno'));
+	echo CHtml::hiddenField('megrendeles_id' , '', array('id' => 'megrendeles_id'));
+	
+$this->endWidget(); ?>
 
 <script type="text/javascript">
 		function openPrintDialog (button_obj) {
@@ -105,4 +147,24 @@ $this->breadcrumbs=array(
 			
 			$("#dialogMegrendelesPrint").data('model_id', row_id).dialog("open");
 		}
+</script>
+
+<script type="text/javascript">
+
+	function openStornoSelectDialog (button_obj) {
+		hrefString = button_obj.parent().children().eq(1).attr("href");
+		row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);
+		
+		$("#dialogStornozas").data('model_id', row_id).dialog("open");			
+		
+		return false;
+	}
+	
+	function storno (model_id) {
+        $('#selected_storno').val ($('#sztornozasOk').val());
+		$('#megrendeles_id').val (model_id);
+
+		$('#select-storno-form').submit();
+	}
+	
 </script>
