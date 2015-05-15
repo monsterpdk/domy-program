@@ -72,11 +72,12 @@ class Termekek extends CActiveRecord
 			array('nev', 'length', 'max'=>127),
 			array('kodszam', 'length', 'max'=>15),
 			array('redotalp', 'length', 'max'=>50),
+			array('kategoria_tipus', 'length', 'max'=>1),
 			array('gyarto_id, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, raklap_db', 'length', 'max'=>10),
 			array('megjelenes_mettol, megjelenes_meddig', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, kodszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, megjelenes_mettol, megjelenes_meddig, datum, torolt', 'safe', 'on'=>'search'),
+			array('id, nev, kodszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, megjelenes_mettol, megjelenes_meddig, datum, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -115,6 +116,7 @@ class Termekek extends CActiveRecord
 			'papir_id' => 'Papír',
 			'afakulcs_id' => 'ÁFA kulcs',
 			'redotalp' => 'Redőtalp',
+			'kategoria_tipus' => 'Kategóriatípus',
 			'gyarto_id' => 'Gyártó',
 			'ksh_kod' => 'KSH Kód',
 			'csom_egys' => 'Csomag egység (db)',
@@ -174,6 +176,7 @@ class Termekek extends CActiveRecord
 		$criteria->compare('papir_id',$this->papir_id);
 		$criteria->compare('afakulcs_id',$this->afakulcs_id);
 		$criteria->compare('redotalp',$this->redotalp,true);
+		$criteria->compare('kategoria_tipus',$this->kategoria_tipus,true);
 		$criteria->compare('gyarto_id',$this->gyarto_id,true);
 		$criteria->compare('ksh_kod',$this->ksh_kod,true);
 		$criteria->compare('csom_egys',$this->csom_egys,true);

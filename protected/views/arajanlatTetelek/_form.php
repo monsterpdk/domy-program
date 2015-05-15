@@ -86,11 +86,22 @@
 		$( "#ArajanlatTetelek_darabszam" ).on("keyup", keyPressEvent);
 		$( "#ArajanlatTetelek_netto_darabar" ).on("keyup", keyPressEvent);
 		
-		function keyPressEvent() {
+		//2000 db alatt fix árat kapunk a nyomási árnál, ezeknél a db ár egyenlő lesz az összeggel, tehát nem kell darabszámmal szorozni, ekkor fix_ar = true
+		function osszegSzamol(fix_ar) {
 			var darabszam = $.isNumeric ($( "#ArajanlatTetelek_darabszam" ).val()) ? $( "#ArajanlatTetelek_darabszam" ).val() : 0;
 			var netto_darabar = $.isNumeric ($( "#ArajanlatTetelek_netto_darabar" ).val()) ? $( "#ArajanlatTetelek_netto_darabar" ).val() : 0;
 			
-			$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(darabszam * netto_darabar));
+			if (fix_ar) {
+				$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(netto_darabar));
+			}
+			else
+			{
+				$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(darabszam * netto_darabar));
+			}
+		}
+		
+		function keyPressEvent() {
+			osszegSzamol(true) ;
 		}
 		
 		function nettoar_kalkulal() {
@@ -117,8 +128,8 @@
 						else
 						{
 							var szorzo = $('#ArajanlatTetelek_szorzo_tetel_arhoz').val ();
-							$('#ArajanlatTetelek_netto_darabar').val (data[0].ar * szorzo);
-							keyPressEvent() ;
+							$('#ArajanlatTetelek_netto_darabar').val (data[0].ar * szorzo);	
+							osszegSzamol(data[0].fix_ar) ;
 						}
 		 
 					} ",

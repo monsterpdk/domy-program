@@ -157,15 +157,32 @@
 			if ($termekAr != false && $darabszam > 0 && ($szinszam1 > 0 || $szinszam2 > 0)) {
 				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
 						$db_ar = $termekAr["db_ar_nyomashoz"] ;
-						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;				
-						$termek_meret_adatok = TermekMeretek::model()->findByPk($termek_reszletek["meret_id"]);	
-						$termek_meret_nev = $termek_meret_adatok["nev"] ;
+						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
+						$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
+						$nyomasi_ar_kategoria_tipus = "" ;
+						//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
+						//Alapból most a nagyobbik értéket veszem, aztán meglátjuk
+						$szinszam = max($szinszam1,$szinszam2) ;
+						if ($termek_kategoria_tipus == "A") {
+							if ($szinszam > 2) {
+								$nyomasi_ar_kategoria_tipus = "C" ;
+							}
+							else {
+								$nyomasi_ar_kategoria_tipus = "A" . $szinszam ;	
+							}
+						}
+						else if ($termek_kategoria_tipus == "B") {
+							//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
+							//Alapból most az összegüket veszem, aztán meglátjuk
+							if ($szinszam > 2) {
+								$nyomasi_ar_kategoria_tipus = "D" ;
+							}
+							else {
+								$nyomasi_ar_kategoria_tipus = "B" . $szinszam ;	
+							}							
+						}
 						
-//TODO: Lekérdezni a felülnyomási árat, és megnövelni vele a db árat, ez lesz az új db ár
-						
-						$sql = "SELECT * FROM dom_nyomasi_arak WHERE
-														boritek_fajtak like ('% " . $termek_meret_nev . "%') AND '" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig
-														" ;						
+						$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0)" ;
 						$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
 						$nyomasi_ar = 0 ;
 						if ($nyomasiAr != false) {
@@ -201,11 +218,16 @@
 			if ($termekAr != false) 
 				$result = $db_ar;
 			
+			$fix_ar = false ;
+			if ($szinszam > 0 && $darabszam < 2000)
+				$fix_ar = true ;				
+			
 			$ar = ($db_ar == 0) ? 0 : $db_ar;
 				
 			$arr[] = array(
-				'status'=>'success', 
+				'status'=>'success',
 				'ar'=>$ar,
+				'fix_ar'=>$fix_ar,
 			);      
 
 			echo CJSON::encode($arr);

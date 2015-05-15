@@ -49,10 +49,30 @@ $this->breadcrumbs=array(
 				'lehetseges_szinek',
 				'peldanyszam_tol',
 				'peldanyszam_ig',
-				'szin_egy:number',
-				'szin_ketto:number',
-				'szin_harom:number',
-				'szin_tobb:number',
+				array(
+						'header'=>'Egy szín <br />(Ft / db)',
+						'value'=>function($data){
+							return number_format($data->szin_egy, 2);
+						},					
+				),
+				array(
+						'header'=>'Két szín <br />(Ft / szín / db)',
+						'value'=>function($data){
+							return number_format($data->szin_ketto, 2);
+						},					
+				),
+				array(
+						'header'=>'Három szín <br />(Ft / szín / db)',
+						'value'=>function($data){
+							return number_format($data->szin_harom, 2);
+						},					
+				),
+				array(
+						'header'=>'Több szín <br />(Ft / szín / db)',
+						'value'=>function($data){
+							return number_format($data->szin_tobb, 2);
+						},					
+				),
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',

@@ -21,10 +21,30 @@ $this->breadcrumbs=array(
 			'lehetseges_szinek',
 			'peldanyszam_tol',
 			'peldanyszam_ig',
-			'szin_egy:number',
-			'szin_ketto:number',
-			'szin_harom:number',
-			'szin_tobb:number',
+				array(
+						'name'=>'szin_egy',
+						'value'=>function($data){
+							return number_format($data->szin_egy, 2);
+						},					
+				),
+				array(
+						'name'=>'szin_ketto',
+						'value'=>function($data){
+							return number_format($data->szin_ketto, 2);
+						},					
+				),
+				array(
+						'name'=>'szin_harom',
+						'value'=>function($data){
+							return number_format($data->szin_harom, 2);
+						},					
+				),
+				array(
+						'name'=>'szin_tobb',
+						'value'=>function($data){
+							return number_format($data->szin_tobb, 2);
+						},					
+				),
 			'grafika',
 			'grafika_roviden',
 			'megjegyzes',

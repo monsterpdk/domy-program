@@ -116,6 +116,12 @@
 			<?php echo $form->textField($model,'redotalp',array('size'=>50,'maxlength'=>50)); ?>
 			<?php echo $form->error($model,'redotalp'); ?>
 		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'kategoria_tipus'); ?>
+			<?php echo $form->textField($model,'kategoria_tipus',array('size'=>1,'maxlength'=>1)); ?>
+			<?php echo $form->error($model,'kategoria_tipus'); ?>
+		</div>
 		
 	<?php $this->endWidget(); ?>
 

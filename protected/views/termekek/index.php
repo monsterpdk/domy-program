@@ -25,6 +25,7 @@ $this->breadcrumbs=array(
 				'papirtipus.nev',
 				'afakulcs.afa_szazalek',
 				'redotalp',
+				'kategoria_tipus',
 				'gyarto.cegnev',
 				'megjelenes_mettol',
 				'megjelenes_meddig',

@@ -62,6 +62,11 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->label($model,'kategoria_tipus'); ?>
+		<?php echo $form->textField($model,'kategoria_tipus',array('size'=>32,'maxlength'=>32)); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->label($model,'gyarto_id'); ?>
 		<?php echo $form->textField($model,'gyarto_id',array('size'=>10,'maxlength'=>10)); ?>
 	</div>
