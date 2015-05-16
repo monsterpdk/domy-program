@@ -337,8 +337,8 @@ class MegrendelesTetelekController extends Controller
 		return $model;
 	}
 
-	public function actionCalculateNettoDarabAr ($termek_id) {
-			if (isset($termek_id)) return Utils::getActiveTermekarJSON($termek_id);
+	public function actionCalculateNettoDarabAr ($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2) {
+			if (isset($termek_id)) return Utils::getActiveTermekarJSON($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2);
 	}
 	
 }

@@ -57,19 +57,19 @@
  
 	<div class="row">
 		<?php echo $form->labelEx($model,'szinek_szama1'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinek_szama1', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true') : array())); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinek_szama1', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true','onChange'=>'javascript:nettoar_kalkulal();') : array('onChange'=>'javascript:nettoar_kalkulal();'))); ?>
 		<?php echo $form->error($model,'szinek_szama1'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'szinek_szama2'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinek_szama2', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true') : array())); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinek_szama2', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true','onChange'=>'javascript:nettoar_kalkulal();') : array('onChange'=>'javascript:nettoar_kalkulal();'))); ?>
 		<?php echo $form->error($model,'szinek_szama2'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'darabszam'); ?>
-		<?php echo $form->textField($model,'darabszam',array('size'=>10,'maxlength'=>10, 'disabled' => ($model->arajanlatbol_letrehozva == 1 ? 'true' : ''))); ?>
+		<?php echo $form->textField($model,'darabszam',array('size'=>10,'maxlength'=>10,'onChange'=>'javascript:nettoar_kalkulal();', 'disabled' => ($model->arajanlatbol_letrehozva == 1 ? 'true' : ''))); ?>
 		<?php echo $form->error($model,'darabszam'); ?>
 	</div>
 
@@ -86,16 +86,36 @@
 		$( "#MegrendelesTetelek_darabszam" ).on("keyup", keyPressEvent);
 		$( "#MegrendelesTetelek_netto_darabar" ).on("keyup", keyPressEvent);
 		
-		function keyPressEvent() {
+		//2000 db alatt fix árat kapunk a nyomási árnál, ezeknél a db ár egyenlő lesz az összeggel, tehát nem kell darabszámmal szorozni, ekkor fix_ar = true
+		function osszegSzamol(fix_ar) {
 			var darabszam = $.isNumeric ($( "#MegrendelesTetelek_darabszam" ).val()) ? $( "#MegrendelesTetelek_darabszam" ).val() : 0;
 			var netto_darabar = $.isNumeric ($( "#MegrendelesTetelek_netto_darabar" ).val()) ? $( "#MegrendelesTetelek_netto_darabar" ).val() : 0;
 			
-			$( "#MegrendelesTetelek_netto_ar" ).val (darabszam * netto_darabar);
+			if (fix_ar) {
+				$( "#MegrendelesTetelek_netto_ar" ).val (Math.round(netto_darabar));
+			}
+			else
+			{
+				$( "#MegrendelesTetelek_netto_ar" ).val (Math.round(darabszam * netto_darabar));
+			}
+		}
+		
+		function keyPressEvent() {
+//			osszegSzamol(true) ;
+		}
+		
+		function nettoar_kalkulal() {
+			var termek_id = $("#MegrendelesTetelek_termek_id").val() ;
+			calculateTermekNettoDarabAr(termek_id) ;
 		}
 		
 		function calculateTermekNettoDarabAr (termekId) {
+			var darabszam = $.isNumeric ($( "#MegrendelesTetelek_darabszam" ).val()) ? $( "#MegrendelesTetelek_darabszam" ).val() : 0;
+			var szinszam1 = $.isNumeric ($( "#MegrendelesTetelek_szinek_szama1" ).val()) ? $( "#MegrendelesTetelek_szinek_szama1" ).val() : 0;
+			var szinszam2 = $.isNumeric ($( "#MegrendelesTetelek_szinek_szama2" ).val()) ? $( "#MegrendelesTetelek_szinek_szama2" ).val() : 0;
+			var ugyfel_id = $('#Megrendelesek_ugyfel_id').val ();			
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/megrendelesTetelek/calculateNettoDarabAr/termek_id/' + termekId",
+					'url'=> "js:'/index.php/megrendelesTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -108,8 +128,8 @@
 						}
 						else
 						{
-							var szorzo = $('#MegrendelesTetelek_szorzo_tetel_arhoz').val ();
-							$('#MegrendelesTetelek_netto_darabar').val (data[0].ar * szorzo);
+							$('#MegrendelesTetelek_netto_darabar').val (data[0].ar);
+							$('#MegrendelesTetelek_netto_ar' ).val (data[0].netto_osszeg);
 						}
 		 
 					} ",

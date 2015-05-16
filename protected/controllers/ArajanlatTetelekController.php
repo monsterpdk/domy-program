@@ -339,8 +339,8 @@ private function calculateNettoAr ($model)
 		return $model;
 	}
 
-	public function actionCalculateNettoDarabAr ($termek_id, $db, $szinszam1, $szinszam2) {
-			if (isset($termek_id)) return Utils::getActiveTermekarJSON($termek_id, $db, $szinszam1, $szinszam2);
+	public function actionCalculateNettoDarabAr ($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2) {
+			if (isset($termek_id)) return Utils::getActiveTermekarJSON($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2);
 	}
 	
 }

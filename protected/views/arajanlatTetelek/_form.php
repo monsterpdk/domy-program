@@ -101,7 +101,7 @@
 		}
 		
 		function keyPressEvent() {
-			osszegSzamol(true) ;
+//			osszegSzamol(true) ;
 		}
 		
 		function nettoar_kalkulal() {
@@ -113,8 +113,9 @@
 			var darabszam = $.isNumeric ($( "#ArajanlatTetelek_darabszam" ).val()) ? $( "#ArajanlatTetelek_darabszam" ).val() : 0;
 			var szinszam1 = $.isNumeric ($( "#ArajanlatTetelek_szinek_szama1" ).val()) ? $( "#ArajanlatTetelek_szinek_szama1" ).val() : 0;
 			var szinszam2 = $.isNumeric ($( "#ArajanlatTetelek_szinek_szama2" ).val()) ? $( "#ArajanlatTetelek_szinek_szama2" ).val() : 0;
+			var ugyfel_id = $('#Arajanlatok_ugyfel_id').val ();
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/arajanlatTetelek/calculateNettoDarabAr/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2",
+					'url'=> "js:'/index.php/arajanlatTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -127,9 +128,8 @@
 						}
 						else
 						{
-							var szorzo = $('#ArajanlatTetelek_szorzo_tetel_arhoz').val ();
-							$('#ArajanlatTetelek_netto_darabar').val (data[0].ar * szorzo);	
-							osszegSzamol(data[0].fix_ar) ;
+							$('#ArajanlatTetelek_netto_darabar').val (data[0].ar);
+							$('#ArajanlatTetelek_netto_ar' ).val (data[0].netto_osszeg);
 						}
 		 
 					} ",

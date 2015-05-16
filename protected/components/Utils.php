@@ -144,9 +144,14 @@
 	
 		// LI: egy paraméterben kapott termék aktuálisan aktív termékárát adja vissza JSON-ben
 		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
-		function getActiveTermekarJSON ($termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {
+		// TÁ: Bővítettem az ugyfel_id paraméterrel is, mert a szorzót is itt kell alkalmazni, már kész árat adunk vissza, nem számolgatunk javascriptben
+		function getActiveTermekarJSON ($ugyfel_id, $termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {
 			$result = 0;
 
+			$ugyfel_reszletek = Ugyfelek::model()->findByPk($ugyfel_id) ;
+			$arkategoria_reszletek = Arkategoriak::model()->findByPk($ugyfel_reszletek["arkategoria"]) ;
+			$szorzo = $arkategoria_reszletek["szorzo"] ;
+			
 			if ($termek_id != null && $termek_id != 0) {
 						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
@@ -154,80 +159,129 @@
 						$db_ar = $termekAr["db_eladasi_ar"] ;
 			}
 
-			if ($termekAr != false && $darabszam > 0 && ($szinszam1 > 0 || $szinszam2 > 0)) {
+			$selejt = $selejt1 = $selejt2 = 0 ;
+			$szinszam = max($szinszam1,$szinszam2) ;
+			if ($termekAr != false && $darabszam > 0 && ($szinszam > 0)) {
 				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
-						$db_ar = $termekAr["db_ar_nyomashoz"] ;
-						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
-						$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
-						$nyomasi_ar_kategoria_tipus = "" ;
-						//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
-						//Alapból most a nagyobbik értéket veszem, aztán meglátjuk
-						$szinszam = max($szinszam1,$szinszam2) ;
-						if ($termek_kategoria_tipus == "A") {
-							if ($szinszam > 2) {
-								$nyomasi_ar_kategoria_tipus = "C" ;
-							}
-							else {
-								$nyomasi_ar_kategoria_tipus = "A" . $szinszam ;	
-							}
-						}
-						else if ($termek_kategoria_tipus == "B") {
-							//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
-							//Alapból most az összegüket veszem, aztán meglátjuk
-							if ($szinszam > 2) {
-								$nyomasi_ar_kategoria_tipus = "D" ;
-							}
-							else {
-								$nyomasi_ar_kategoria_tipus = "B" . $szinszam ;	
-							}							
-						}
-						
-						$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0)" ;
-						$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
-						$nyomasi_ar = 0 ;
-						if ($nyomasiAr != false) {
-							switch ($szinszam1) {
-								case 1: $elooldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
-									break ;
-								case 2: $elooldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
-									break ;
-								case 3: $elooldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
-									break ;
-								case 0: $elooldali_nyomasi_ar = 0 ;
-									break ;
-								default: $elooldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
-							}
-							
-							switch ($szinszam2) {
-								case 1: $hatoldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
-									break ;
-								case 2: $hatoldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
-									break ;
-								case 3: $hatoldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
-									break ;
-								case 0: $hatoldali_nyomasi_ar = 0 ;
-									break ;
-								default: $hatoldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
-							}
-							$nyomasi_ar = $elooldali_nyomasi_ar + $hatoldali_nyomasi_ar ;
-						}
-						$db_ar = $db_ar + $nyomasi_ar ;
- 				
-			}
-			
-			if ($termekAr != false) 
-				$result = $db_ar;
-			
-			$fix_ar = false ;
-			if ($szinszam > 0 && $darabszam < 2000)
-				$fix_ar = true ;				
-			
-			$ar = ($db_ar == 0) ? 0 : $db_ar;
+				$db_ar = $termekAr["db_ar_nyomashoz"] ;
+				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
+				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
+				$nyomasi_ar_kategoria_tipus = "" ;
+				//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
+				//Alapból most a nagyobbik értéket veszem, aztán meglátjuk
+				if ($termek_kategoria_tipus == "A") {
+					if ($szinszam > 2) {
+						$nyomasi_ar_kategoria_tipus = "C" ;
+					}
+					else {
+						$nyomasi_ar_kategoria_tipus = "A" . $szinszam ;	
+					}
+				}
+				else if ($termek_kategoria_tipus == "B") {
+					//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
+					//Alapból most az összegüket veszem, aztán meglátjuk
+					if ($szinszam > 2) {
+						$nyomasi_ar_kategoria_tipus = "D" ;
+					}
+					else {
+						$nyomasi_ar_kategoria_tipus = "B" . $szinszam ;	
+					}							
+				}
 				
+				$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0)" ;
+				$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
+				$nyomasi_ar = 0 ;
+				if ($nyomasiAr != false) {					
+					switch ($szinszam1) {
+						case 1: $elooldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
+							break ;
+						case 2: $elooldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
+							break ;
+						case 3: $elooldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
+							break ;
+						case 0: $elooldali_nyomasi_ar = 0 ;
+							break ;
+						default: $elooldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
+					}
+					
+					switch ($szinszam2) {
+						case 1: $hatoldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
+							break ;
+						case 2: $hatoldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
+							break ;
+						case 3: $hatoldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
+							break ;
+						case 0: $hatoldali_nyomasi_ar = 0 ;
+							break ;
+						default: $hatoldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
+					}
+					$nyomasi_ar = $elooldali_nyomasi_ar + $hatoldali_nyomasi_ar ;
+				}
+//				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
+
+				//Selejtszámítás a nyomáshoz						
+				if ($szinszam1 > 0) {
+					if ($szinszam1 > 2) {
+						$selejt1=($szinszam1)*(($darabszam<10000) ? 200 : $darabszam*.02);
+					}
+					else
+					{
+						if ($darabszam < 10000) {
+							$selejt1 = $szinszam1 * 300 ;
+						}			
+						else if ($darabszam >= 10000 && $darabszam < 20000) {
+							$selejt1 = $szinszam1 * ($darabszam * .03) ;
+						}
+						else {
+							$selejt1 = $szinszam1 * ($darabszam * .02) ;
+						}
+					}
+				}
+				
+				if ($szinszam2 > 0) {
+					if ($szinszam2 > 2) {
+						$selejt2=($szinszam2)*(($darabszam<10000) ? 200 : $darabszam*.02);
+					}
+					else
+					{
+						if ($darabszam < 10000) {
+							$selejt2 = $szinszam2 * 300 ;
+						}			
+						else if ($darabszam >= 10000 && $darabszam < 20000) {
+							$selejt2 = $szinszam2 * ($darabszam * .03) ;
+						}
+						else {
+							$selejt2 = $szinszam2 * ($darabszam * .02) ;
+						}
+					}
+				}
+				$selejt = $selejt1 + $selejt2 ;	
+				//Selejtszámítás eddig 		
+				$darabszam_osszesen = $darabszam + $selejt ;
+				
+//				echo "nyomasi_ar: $nyomasi_ar, boritek_ar:  " . ($darabszam_osszesen * $db_ar) ;
+				if ($darabszam >= 2000) {
+					$netto_osszeg = ($darabszam * $db_ar) + ($nyomasi_ar * $darabszam) ;
+				}
+				else
+				{					
+					$netto_osszeg = $nyomasi_ar + $darabszam_osszesen * $db_ar ;									
+				}				
+			}
+							
+			$ar = ($db_ar == 0) ? 0 : $db_ar;
+			if ($szinszam == 0)
+				$netto_osszeg = round($darabszam * $ar) ;			
+			else
+				$ar = round($netto_osszeg / $darabszam, 2) ;	
+			
+			$netto_osszeg = round($netto_osszeg * $szorzo) ;
+			$ar = round($ar * $szorzo, 2) ;
+			
 			$arr[] = array(
 				'status'=>'success',
 				'ar'=>$ar,
-				'fix_ar'=>$fix_ar,
+				'netto_osszeg'=>$netto_osszeg,
 			);      
 
 			echo CJSON::encode($arr);
