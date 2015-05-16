@@ -87,21 +87,15 @@
 		$( "#ArajanlatTetelek_netto_darabar" ).on("keyup", keyPressEvent);
 		
 		//2000 db alatt fix árat kapunk a nyomási árnál, ezeknél a db ár egyenlő lesz az összeggel, tehát nem kell darabszámmal szorozni, ekkor fix_ar = true
-		function osszegSzamol(fix_ar) {
+		function osszegSzamol() {
 			var darabszam = $.isNumeric ($( "#ArajanlatTetelek_darabszam" ).val()) ? $( "#ArajanlatTetelek_darabszam" ).val() : 0;
 			var netto_darabar = $.isNumeric ($( "#ArajanlatTetelek_netto_darabar" ).val()) ? $( "#ArajanlatTetelek_netto_darabar" ).val() : 0;
 			
-			if (fix_ar) {
-				$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(netto_darabar));
-			}
-			else
-			{
-				$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(darabszam * netto_darabar));
-			}
+			$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(darabszam * netto_darabar));
 		}
 		
 		function keyPressEvent() {
-//			osszegSzamol(true) ;
+			osszegSzamol() ;
 		}
 		
 		function nettoar_kalkulal() {
