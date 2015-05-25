@@ -192,6 +192,7 @@
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Megrendelés adatai #2</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
 		));
 	?>
 
@@ -263,18 +264,13 @@
 				<?php echo $form->label($model,'torolt'); ?>
 				<?php echo $form->error($model,'torolt'); ?>
 			</div>
-		<?php endif; ?>
-	
-		<div class="row buttons">
-			<?php echo CHtml::submitButton('Mentés', array('id' => 'megrendelesek_form_submit')); ?>
-			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
-		</div>
-		
+		<?php endif; ?>	
 	<?php $this->endWidget(); ?>
-	
+		
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Megrendelt tételek</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
 		));
 
 			if (Yii::app()->user->checkAccess('MegrendelesTetelek.Create')) {
@@ -383,6 +379,46 @@
 	$this->endWidget();
 	?>
 
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Vezérlőpult</strong>",
+		));
+	?>		
+		<div class="row buttons">
+			<?php echo CHtml::submitButton('Mentés', array('id' => 'megrendelesek_form_submit')); ?>
+			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
+		</div>
+
+		<div class="row buttons">		
+	<?php
+		if ($model->ugyfel_id > 0 && $model->rendelest_rogzito_user_id > 0 && count($model->tetelek) > 0) {
+			if (Yii::app()->user->checkAccess('MegrendelesSzallitolevelek.Create')) {
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_create_szallitolevel',
+					'caption'=>'Szállítólevél készítése',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {szallitolevelek("create");}'),
+					'htmlOptions'=>array('class'=>'btn btn-primary'),
+				));
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_list_szallitolevel',
+					'caption'=>'Elkészült szállítólevelek',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {szallitolevelek("list");}'),
+					'htmlOptions'=>array('class'=>'btn btn-info'),
+				));
+				
+			}
+		}
+	?>
+		</div>
+		
+
+	<?php $this->endWidget(); ?>
+
+	
 <?php $this->endWidget(); ?>
 
 
@@ -443,6 +479,19 @@
 			$("#dialogMegrendelesTetel").dialog('option', 'title', dialog_title);
 			
 			return false; 
+		}
+		
+		function szallitolevelek(createOrList) {
+			var redirectUrl = "" ;
+			var megrendelesId = $("#Megrendelesek_id").val() ;
+			if (createOrList == "create") {
+				redirectUrl = "/szallitolevelek/create/" + megrendelesId ;
+			}
+			else
+			{
+				redirectUrl = "/szallitolevelek/index/" + megrendelesId ;	
+			}
+			window.location = redirectUrl ;			
 		}
 	 
 	</script>

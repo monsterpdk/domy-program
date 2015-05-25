@@ -12,13 +12,13 @@
 			)});
 		}
 		', CClientScript::POS_READY);
-		
+
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'arajanlatok-form',
+	'id'=>'megrendelesek-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -34,7 +34,7 @@
 
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Árajánlat adatai #1</strong>",
+			'title'=>"<strong>Megrendelés adatai #1</strong>",
 		));
 	?>
 	
@@ -75,33 +75,33 @@
 					'options'=> array(
 						'showAnim'=>'fold',
 						'select'=>"js:function(event, ui) {
-															$('#Arajanlatok_ugyfel_id').val (ui.item.id);
-															$('#Arajanlatok_ugyfel_tel').val (ui.item.tel);
-															$('#Arajanlatok_ugyfel_fax').val (ui.item.fax);
+															$('#Megrendelesek_ugyfel_id').val (ui.item.id);
+															$('#Megrendelesek_ugyfel_tel').val (ui.item.tel);
+															$('#Megrendelesek_ugyfel_fax').val (ui.item.fax);
 															
-															$('#Arajanlatok_autocomplete_ugyfel_cim').val(ui.item.cim);
-															$('#Arajanlatok_autocomplete_ugyfel_adoszam').val(ui.item.adoszam);
-															$('#Arajanlatok_autocomplete_ugyfel_fizetesi_moral').val(ui.item.fizetesi_moral);
-															$('#Arajanlatok_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
-															$('#Arajanlatok_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
-															$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
-															$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').val(ui.item.fontos_megjegyzes);
-															$('#Arajanlatok_cimzett').val(ui.item.cimzett);
+															$('#Megrendelesek_autocomplete_ugyfel_cim').val(ui.item.cim);
+															$('#Megrendelesek_autocomplete_ugyfel_adoszam').val(ui.item.adoszam);
+															$('#Megrendelesek_autocomplete_ugyfel_fizetesi_moral').val(ui.item.fizetesi_moral);
+															$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
+															$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
+															$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
+															$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').val(ui.item.fontos_megjegyzes);
+															$('#Megrendelesek_cimzett').val(ui.item.cimzett);
 														}",
 						'change'=>"js:function(event, ui) {
 															if (!ui.item) {
-																$('#Arajanlatok_ugyfel_id').val('');
-																$('#Arajanlatok_ugyfel_tel').val('');
-																$('#Arajanlatok_ugyfel_fax').val('');
+																$('#Megrendelesek_ugyfel_id').val('');
+																$('#Megrendelesek_ugyfel_tel').val('');
+																$('#Megrendelesek_ugyfel_fax').val('');
 																
-																$('#Arajanlatok_autocomplete_ugyfel_cim').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_adoszam').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_fizetesi_moral').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_max_fizetesi_keses').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_atlagos_fizetesi_keses').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').val('');
-																$('#Arajanlatok_cimzett').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_cim').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_adoszam').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_fizetesi_moral').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val('');
+																$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').val('');
+																$('#Megrendelesek_cimzett').val('');
 															}
 														   }",
 														
@@ -122,6 +122,7 @@
 					'url'=>array('ugyfelek/create'),
 				));
 			?>
+			
 		</div>
 		
 		<div class="row">
@@ -135,7 +136,7 @@
 			<?php echo $form->textField($model,'cimzett',array('size'=>10,'maxlength'=>255)); ?>
 			<?php echo $form->error($model,'cimzett'); ?>
 		</div>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_adoszam'); ?>
 			<?php echo $form->textField($model,'autocomplete_ugyfel_adoszam',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
@@ -147,97 +148,53 @@
 			<?php echo $form->textField($model,'autocomplete_ugyfel_fizetesi_moral',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_fizetesi_moral'); ?>
 		</div>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_max_fizetesi_keses'); ?>
 			<?php echo $form->textField($model,'autocomplete_ugyfel_max_fizetesi_keses',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_max_fizetesi_keses'); ?>
 		</div>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_atlagos_fizetesi_keses'); ?>
 			<?php echo $form->textField($model,'autocomplete_ugyfel_atlagos_fizetesi_keses',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_atlagos_fizetesi_keses'); ?>
 		</div>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_rendelesi_tartozas_limit'); ?>
 			<?php echo $form->textField($model,'autocomplete_ugyfel_rendelesi_tartozas_limit',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_rendelesi_tartozas_limit'); ?>
 		</div>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_ugyfel_fontos_megjegyzes'); ?>
 			<?php echo $form->textArea($model,'autocomplete_ugyfel_fontos_megjegyzes',array('size'=>10, 'maxlength'=>255, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'autocomplete_ugyfel_fontos_megjegyzes'); ?>
 		</div>
-	
-	<?php $this->endWidget(); ?>
-
-	<?php
-		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Árajánlat adatai #2</strong>",
-			'htmlOptions'=>array('class'=>"portlet right-widget"),
-		));
-	?>
-	
-		<div class="row">
-			<?php echo $form->labelEx($model,'ajanlat_datum'); ?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'model'=>$model,
-						'attribute'=>'ajanlat_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
-					));
-				?>
-				
-			<?php echo $form->error($model,'ajanlat_datum'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'ervenyesseg_datum'); ?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'model'=>$model,
-						'attribute'=>'ervenyesseg_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
-					));
-				?>
-				
-			<?php echo $form->error($model,'ervenyesseg_datum'); ?>
-		</div>
 		
 		<div class="row">
-			<?php echo $form->labelEx($model,'kovetkezo_hivas_ideje'); ?>
+			<?php echo $form->labelEx($model,'rendeles_idopont'); ?>
 				
 				<?php
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
-						'attribute'=>'kovetkezo_hivas_ideje',
+						'attribute'=>'rendeles_idopont',
 						'options'=>array('dateFormat'=>'yy-mm-dd',)
 					));
 				?>
 				
-			<?php echo $form->error($model,'kovetkezo_hivas_ideje'); ?>
-		</div>	
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'hatarido'); ?>
-			<?php echo $form->textField($model,'hatarido',array('size'=>15,'maxlength'=>15)); ?>
-			<?php echo $form->error($model,'hatarido'); ?>
+			<?php echo $form->error($model,'rendeles_idopont'); ?>
 		</div>
 	
 	<?php $this->endWidget(); ?>
-	
+
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Árajánlat adatai #3</strong>",
-			'htmlOptions'=>array('class'=>"portlet right-widget"),
+			'title'=>"<strong>Megrendelés adatai #2</strong>",
 		));
 	?>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'ugyfel_tel'); ?>
 			<?php echo $form->textField($model,'ugyfel_tel',array('size'=>30,'maxlength'=>30)); ?>
@@ -274,7 +231,14 @@
 			<?php echo $form->error($model,'egyeb_megjegyzes'); ?>
 		</div>
 
-		
+		<?php if ($model -> sztornozva == 1): ?>
+			<div class="row">
+				<?php echo $form->labelEx($model,'sztornozas_oka'); ?>
+				<?php echo $form->textArea($model,'sztornozas_oka',array('size'=>60,'maxlength'=>255, 'readonly'=>true)); ?>
+				<?php echo $form->error($model,'sztornozas_oka'); ?>
+			</div>
+		<?php endif; ?>
+
 		<div class="row active">
 			<input id = "egyedi_ar_dsp" type="checkbox" value="<?php echo $model->egyedi_ar; ?>" <?php if ($model->egyedi_ar == 1) echo " checked "; ?> name="egyedi_ar_dsp" disabled >
 			<?php echo $form->label($model,'egyedi_ar'); ?>
@@ -282,9 +246,15 @@
 		</div>
 
 		<div class="row active">
-			<?php echo $form->checkBox($model,'visszahivas_lezarva'); ?>
-			<?php echo $form->label($model,'visszahivas_lezarva'); ?>
-			<?php echo $form->error($model,'visszahivas_lezarva'); ?>
+			<?php echo $form->checkBox($model,'proforma_szamla_fizetve'); ?>
+			<?php echo $form->label($model,'proforma_szamla_fizetve'); ?>
+			<?php echo $form->error($model,'proforma_szamla_fizetve'); ?>
+		</div>
+
+		<div class="row active">
+			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
+			<?php echo $form->label($model,'sztornozva'); ?>
+			<?php echo $form->error($model,'sztornozva'); ?>
 		</div>
 
 		<?php if (Yii::app()->user->checkAccess('Admin')): ?>
@@ -296,7 +266,7 @@
 		<?php endif; ?>
 	
 		<div class="row buttons">
-			<?php echo CHtml::submitButton('Mentés', array('id' => 'anyagrendelesek_form_submit')); ?>
+			<?php echo CHtml::submitButton('Mentés', array('id' => 'megrendelesek_form_submit')); ?>
 			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
 		</div>
 		
@@ -304,16 +274,16 @@
 	
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Ajánlati lista</strong>",
+			'title'=>"<strong>Megrendelt tételek</strong>",
 		));
 
-			if (Yii::app()->user->checkAccess('ArajanlatTetelek.Create')) {
+			if (Yii::app()->user->checkAccess('MegrendelesTetelek.Create')) {
 				
 				$this->widget('zii.widgets.jui.CJuiButton', array(
-					'name'=>'button_create_arajanlatTetel',
+					'name'=>'button_create_megrendelesTetel',
 					'caption'=>'Tétel hozzáadása',
 					'buttonType'=>'link',
-					'onclick'=>new CJavaScriptExpression('function() {addUpdateArajanlatTetel("create", $(this));}'),
+					'onclick'=>new CJavaScriptExpression('function() {addUpdateMegrendelesTetel("create", $(this));}'),
 					'htmlOptions'=>array('class'=>'btn btn-success'),
 				));
 			}
@@ -336,7 +306,8 @@
 			
 			
 		// GRIDVIEW BEGIN
-			$dataProvider=new CActiveDataProvider('ArajanlatTetelek',
+			$config = array();
+			$dataProvider=new CActiveDataProvider('MegrendelesTetelek',
 				array( 'data' => $model->tetelek,
 						'sort'=>array(
 							'attributes'=>array(
@@ -350,17 +321,18 @@
 			);
 
 			$this->widget('zii.widgets.grid.CGridView', array(
-				'id' => 'arajanlatTetelek-grid',
+				'id' => 'megrendelesTetelek-grid',
 				'enablePagination' => false,
 				'dataProvider'=>$dataProvider,
 				'columns'=>array(
 					'termek.nev',
 					'szinek_szama1',
 					'szinek_szama2',
+					'munka_neve',
 					'darabszam',
 					'hozott_boritek:boolean',
 					'egyedi_ar:boolean',
-					'netto_darabar:number',
+					'netto_darabar',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
 								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -373,10 +345,10 @@
 										'label' => 'Szerkeszt',
 										'icon'=>'icon-white icon-pencil',
 										'url'=>'',
-										'click'=>'function() {addUpdateArajanlatTetel("update", $(this));}',
-										'visible' => "Yii::app()->user->checkAccess('ArajanlatTetelek.Update')",
+										'click'=>'function() {addUpdateMegrendelesTetel("update", $(this));}',
+										'visible' => "Yii::app()->user->checkAccess('MegrendelesTetelek.Update')",
 									),
-									'delete_item' => array
+							        'delete_item' => array
 									(
 										'label'=>'Töröl',
 										'icon'=>'icon-white icon-remove-sign',
@@ -384,24 +356,24 @@
 											'class'=>'btn btn-danger btn-mini',
 											),
 										'url'=>'"#"',
-										'visible' => "Yii::app()->user->checkAccess('ArajanlatTetelek.Delete')",
+										'visible' => "Yii::app()->user->checkAccess('MegrendelesTetelek.Delete')",
 										'click'=>"function(){
-														$.fn.yiiGridView.update('arajanlatTetelek-grid', {
+														$.fn.yiiGridView.update('megrendelesTetelek-grid', {
 															type:'POST',
 															dataType:'json',
 															url:$(this).attr('href'),
 															success:function(data) {
 																// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyens érték van, csak a UI-on kell az interaktivitás miatt változtatni)
 																$('#egyedi_ar_dsp').prop('checked', (data.egyedi == '1' ? true : false));
-																$('#Arajanlatok_egyedi_ar').val (data.egyedi);
+																$('#Megrendelesek_egyedi_ar').val (data.egyedi);
 																
-																$.fn.yiiGridView.update('arajanlatTetelek-grid');
+																$.fn.yiiGridView.update('megrendelesTetelek-grid');
 															}
 														})
 														return false;
 												  }
 										 ",
-										 'url'=> 'Yii::app()->createUrl("arajanlatTetelek/delete/" . $data->id)',
+										 'url'=> 'Yii::app()->createUrl("megrendelesTetelek/delete/" . $data->id)',
 									),
 								),
 						),
@@ -418,7 +390,7 @@
 
 <script type="text/javascript">
 	
-		function addUpdateArajanlatTetel (createOrUpdate, buttonObj)
+		function addUpdateMegrendelesTetel (createOrUpdate, buttonObj)
 		{
 		
 			redirectUrl = "";
@@ -433,12 +405,12 @@
 				
 			isUpdate = createOrUpdate == "update" || (typeof redirectUrl != 'undefined' && redirectUrl != '' && redirectUrl.indexOf("update") != -1);
 			op = (isUpdate) ? "update" : "create";
-			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Arajanlatok_id").val();
-			arkategoria_id = $("#Arajanlatok_arkategoria_id").val();
+			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Megrendelesek_id").val();
+			arkategoria_id = $("#Megrendelesek_arkategoria_id").val();
 			dialog_title = (isUpdate) ? "Tétel módosítása" : "Tétel hozzáadása";
 
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/arajanlatTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/grid_id/' + new Date().getTime()",
+					'url'=> "js:'/index.php/megrendelesTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/grid_id/' + new Date().getTime()",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -449,15 +421,15 @@
 						if (data.status == 'failure')
 						{
 							$('#dialogArajanlatTetel div.divForForm').html(data.div);
-							$('#dialogArajanlatTetel div.divForForm form').submit(addUpdateArajanlatTetel);
+							$('#dialogArajanlatTetel div.divForForm form').submit(addUpdateMegrendelesTetel);
 						}
 						else
 						{
-							$.fn.yiiGridView.update(\"arajanlatTetelek-grid\",{ complete: function(jqXHR, status) {}})
+							$.fn.yiiGridView.update(\"megrendelesTetelek-grid\",{ complete: function(jqXHR, status) {}})
 							
-							// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyens érték van, csak a UI-on kell az interaktivits miatt változtatni)
+							// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyens érték van, csak a UI-on kell az interaktivitás miatt változtatni)
 							$('#egyedi_ar_dsp').prop('checked', (data.egyedi == '1' ? true : false));
-							$('#Arajanlatok_egyedi_ar').val (data.egyedi);
+							$('#Megrendelesek_egyedi_ar').val (data.egyedi);
 							
 							$('#dialogArajanlatTetel div.divForForm').html(data.div);
 							$('#dialogArajanlatTetel').dialog('close');

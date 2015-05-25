@@ -65,7 +65,7 @@ class Megrendelesek extends CActiveRecord
 		return array(
 			array('sorszam, ugyfel_id, arkategoria_id, rendeles_idopont, sztornozva, torolt', 'required'),
 			array('egyedi_ar, afakulcs_id, proforma_szamla_fizetve, sztornozva, torolt', 'numerical', 'integerOnly'=>true),
-			array('sorszam, ugyfel_id, arkategoria_id, rendelest_rogzito_user_id, rendelest_lezaro_user_id, arajanlat_id, megrendeles_forras_id, nyomdakonyv_munka_id', 'length', 'max'=>10),
+			array('sorszam, ugyfel_id, arkategoria_id, rendelest_rogzito_user_id, rendelest_lezaro_user_id, arajanlat_id, megrendeles_forras_id, nyomdakonyv_munka_id', 'length', 'max'=>12),
 			array('cimzett, jegyzet', 'length', 'max'=>255),
 			array('proforma_szamla_sorszam, szamla_sorszam', 'length', 'max'=>15),
 			array('ugyfel_tel, ugyfel_fax', 'length', 'max'=>30),

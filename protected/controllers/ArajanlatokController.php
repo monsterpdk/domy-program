@@ -51,13 +51,13 @@ class ArajanlatokController extends Controller
 			$model->ajanlat_datum = date('Y-m-d');
 			
 			// megkeressük a legutóbb felvett árajánlatot és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
-			// formátum: AJ0001, ahol 0001 a rekord ID-ja 4 jeggyel reprezentálva, balról 0-ákkal feltöltve
+			// formátum: AJ2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
 			$criteria = new CDbCriteria;
 			$criteria->select = 'max(id) AS id';
 			$row = Arajanlatok::model() -> find ($criteria);
 			$utolsoArajanlat = $row['id'];
 
-			$model -> sorszam = "AJ" . str_pad( ($utolsoArajanlat != null) ? ($utolsoArajanlat + 1) : "0001", 4, '0', STR_PAD_LEFT );
+			$model -> sorszam = "AJ" . date("Y") . str_pad( ($utolsoArajanlat != null) ? ($utolsoArajanlat + 1) : "000001", 6, '0', STR_PAD_LEFT );
 				
 			$model -> save(false);
 			$this -> redirect(array('update', 'id'=>$model -> id,));

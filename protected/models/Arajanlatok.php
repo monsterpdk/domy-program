@@ -59,7 +59,7 @@ class Arajanlatok extends CActiveRecord
 		return array(
 			array('sorszam, ugyfel_id, arkategoria_id, ajanlat_datum, ervenyesseg_datum, torolt', 'required'),
 			array('afakulcs_id, visszahivas_lezarva, egyedi_ar, torolt', 'numerical', 'integerOnly'=>true),
-			array('sorszam, ugyfel_id, arkategoria_id', 'length', 'max'=>10),
+			array('sorszam, ugyfel_id, arkategoria_id', 'length', 'max'=>12),
 			array('hatarido', 'length', 'max'=>15),
 			array('ugyfel_tel, ugyfel_fax', 'length', 'max'=>30),
 			array('visszahivas_jegyzet, reklamszoveg, egyeb_megjegyzes', 'length', 'max'=>127),

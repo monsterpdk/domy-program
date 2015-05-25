@@ -1,6 +1,6 @@
 <?php
 
-class MegrendelesekController extends Controller
+class SzallitolevelekController extends Controller
 {
 
 	/**
@@ -30,34 +30,27 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Megrendelesek;
+		$model=new Szallitolevelek;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if (isset($_POST['Megrendelesek']))
+		if (isset($_POST['szallitolevelek']))
 		{
-			$model->attributes=$_POST['Megrendelesek'];
+			$model->attributes=$_POST['szallitolevelek'];
 			if($model->save())
 				$this->redirect(array('index'));
 		} else {
-			// LI : új árajánlat létrehozásánál beállítjuk az alapértelmezettnek beállított ÁFA kulcsot
-			$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
-
-			if ($afaKulcs != null) {
-				$model -> afakulcs_id = $afaKulcs -> id;
-			}
-			
-			$model->rendeles_idopont = date('Y-m-d');
+			$model->datum = date('Y-m-d');
 			
 			// megkeressük a legutóbb felvett megrendelést és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
 			// formátum: RE2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
 			$criteria = new CDbCriteria;
 			$criteria->select = 'max(id) AS id';
-			$row = Megrendelesek::model() -> find ($criteria);
-			$utolsoMegrendeles = $row['id'];
+			$row = Szallitolevelek::model() -> find ($criteria);
+			$utolsoSzallitolevel = $row['id'];
 
-			$model -> sorszam = "MR" . date("Y") . str_pad( ($utolsoMegrendeles != null) ? ($utolsoMegrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
+			$model -> sorszam = "SZ" . date("Y") . str_pad( ($utolsoSzallitolevel != null) ? ($utolsoSzallitolevel + 1) : "000001", 6, '0', STR_PAD_LEFT );
 			
 			$model -> save(false);
 			$this -> redirect(array('update', 'id'=>$model -> id,));
@@ -75,32 +68,7 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
-
-		if ($model->nyomdakonyv_munka_id != 0 || $model->proforma_szamla_sorszam != "") {
-			throw new CHttpException(403, "Hozzáférés megtagadva!, nincs jogosultsága a kért lap megtekintéséhez.");
-		}
-		
-		/*
-		if ($model -> van_megrendeles == 1 && !Yii::app()->user->checkAccess("Admin"))
-		{
-			throw new CHttpException(403, "Hozzáférés megtagadva!, nincs jogosultsága a kért lap megtekintéséhez.");
-		}			
-		*/
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Megrendelesek']))
-		{
-			$model->attributes=$_POST['Megrendelesek'];
-			if($model->save())
-				$this->redirect(array('index'));
-		}
-
-		$this->render('update',array(
-			'model'=>$model,
-		));
+//
 	}
 
 	/**
@@ -126,8 +94,8 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Megrendelesek',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+		$dataProvider=new CActiveDataProvider('Szallitolevelek',
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"datum DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
 				
 		$this->render('index',array(
@@ -163,11 +131,11 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Megrendelesek('search');
+		$model=new Szallitolevelek('search');
 		$model->unsetAttributes();  // clear any default values
 		
-		if (isset($_GET['Megrendelesek']))
-			$model->attributes=$_GET['Megrendelesek'];
+		if (isset($_GET['Szallitolevelek']))
+			$model->attributes=$_GET['Szallitolevelek'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -227,7 +195,7 @@ class MegrendelesekController extends Controller
 			}
 
 			$arajanlat = Arajanlatok::model() -> with('tetelek') -> findByPk ($arajanlat_id);
-			$megrendeles = new Megrendelesek;
+			$Szallitolevel = new Szallitolevelek;
 			
 			if ( Utils::reachedUgyfelLimit ($arajanlat->id) )
 			{
@@ -235,35 +203,35 @@ class MegrendelesekController extends Controller
 			}
 			
 			// megkeressük a legutóbb felvett megrendelést és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
-			// formátum: RE201500001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
+			// formátum: RE0001, ahol 0001 a rekord ID-ja 4 jeggyel reprezentálva, balról 0-ákkal feltöltve
 			$criteria = new CDbCriteria;
 			$criteria->select = 'max(id) AS id';
-			$row = Megrendelesek::model() -> find ($criteria);
-			$utolsoMegrendeles = $row['id'];
+			$row = Szallitolevelek::model() -> find ($criteria);
+			$utolsoSzallitolevel = $row['id'];
 
-			$megrendeles -> sorszam = "MR" . date("Y") . str_pad( ($utolsoMegrendeles != null) ? ($utolsoMegrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
+			$Szallitolevel -> sorszam = "MR" . str_pad( ($utolsoSzallitolevel != null) ? ($utolsoSzallitolevel + 1) : "0001", 4, '0', STR_PAD_LEFT );
 			
 			// alapadatok átvétele
-			$megrendeles -> ugyfel_id = $arajanlat -> ugyfel_id;
-			$megrendeles -> cimzett = $arajanlat -> cimzett;
-			$megrendeles -> arkategoria_id = $arajanlat -> arkategoria_id;
-			$megrendeles -> afakulcs_id = $arajanlat -> afakulcs_id;
-			$megrendeles -> ugyfel_tel = $arajanlat -> ugyfel_tel;
-			$megrendeles -> ugyfel_fax = $arajanlat -> ugyfel_fax;
-			$megrendeles -> visszahivas_jegyzet = $arajanlat -> visszahivas_jegyzet;
-			$megrendeles -> jegyzet = $arajanlat -> jegyzet;
-			$megrendeles -> reklamszoveg = $arajanlat -> reklamszoveg;
-			$megrendeles -> egyeb_megjegyzes = $arajanlat -> egyeb_megjegyzes;
+			$Szallitolevel -> ugyfel_id = $arajanlat -> ugyfel_id;
+			$Szallitolevel -> cimzett = $arajanlat -> cimzett;
+			$Szallitolevel -> arkategoria_id = $arajanlat -> arkategoria_id;
+			$Szallitolevel -> afakulcs_id = $arajanlat -> afakulcs_id;
+			$Szallitolevel -> ugyfel_tel = $arajanlat -> ugyfel_tel;
+			$Szallitolevel -> ugyfel_fax = $arajanlat -> ugyfel_fax;
+			$Szallitolevel -> visszahivas_jegyzet = $arajanlat -> visszahivas_jegyzet;
+			$Szallitolevel -> jegyzet = $arajanlat -> jegyzet;
+			$Szallitolevel -> reklamszoveg = $arajanlat -> reklamszoveg;
+			$Szallitolevel -> egyeb_megjegyzes = $arajanlat -> egyeb_megjegyzes;
 
-			$megrendeles -> arajanlat_id = $arajanlat -> id;
-			$megrendeles -> rendelest_rogzito_user_id = Yii::app()->user->getId();
-			$megrendeles -> rendeles_idopont = date('Y-m-d');
+			$Szallitolevel -> arajanlat_id = $arajanlat -> id;
+			$Szallitolevel -> rendelest_rogzito_user_id = Yii::app()->user->getId();
+			$Szallitolevel -> rendeles_idopont = date('Y-m-d');
 
 			// elmentjük a modelt, hogy legyen model id a kezünkben
-			$megrendeles -> save(false);
+			$Szallitolevel -> save(false);
 
 			// az árajánlatnál beállítjuk, hogy van már hozzá megrendelés
-			$arajanlat -> van_megrendeles = 1;
+			$arajanlat -> van_Szallitolevel = 1;
 			$arajanlat -> save(false);
 			
 			// az árajánlathoz felvett termékek átmásolása az újonnan létrejövő megrendelésre
@@ -271,30 +239,30 @@ class MegrendelesekController extends Controller
 			// egyébként az összeset
 			foreach ($arajanlat -> tetelek as $termek) {
 				if ( empty($selected_tetel_list) || (in_array($termek -> id, $selected_tetel_list)) ) {
-					$megrendeles_tetel = new MegrendelesTetelek;
-					$megrendeles_tetel -> megrendeles_id = $megrendeles -> id;
-					$megrendeles_tetel -> termek_id = $termek -> termek_id;
-					$megrendeles_tetel -> szinek_szama1 = $termek -> szinek_szama1;
-					$megrendeles_tetel -> szinek_szama2 = $termek -> szinek_szama2;
-					$megrendeles_tetel -> darabszam = $termek -> darabszam;
-					$megrendeles_tetel -> netto_darabar = $termek -> netto_darabar;
-					$megrendeles_tetel -> megjegyzes = $termek -> megjegyzes;
-					$megrendeles_tetel -> mutacio = $termek -> mutacio;
-					$megrendeles_tetel -> hozott_boritek = $termek -> hozott_boritek;
-					$megrendeles_tetel -> egyedi_ar = $termek -> egyedi_ar;
+					$Szallitolevel_tetel = new SzallitolevelTetelek;
+					$Szallitolevel_tetel -> Szallitolevel_id = $Szallitolevel -> id;
+					$Szallitolevel_tetel -> termek_id = $termek -> termek_id;
+					$Szallitolevel_tetel -> szinek_szama1 = $termek -> szinek_szama1;
+					$Szallitolevel_tetel -> szinek_szama2 = $termek -> szinek_szama2;
+					$Szallitolevel_tetel -> darabszam = $termek -> darabszam;
+					$Szallitolevel_tetel -> netto_darabar = $termek -> netto_darabar;
+					$Szallitolevel_tetel -> megjegyzes = $termek -> megjegyzes;
+					$Szallitolevel_tetel -> mutacio = $termek -> mutacio;
+					$Szallitolevel_tetel -> hozott_boritek = $termek -> hozott_boritek;
+					$Szallitolevel_tetel -> egyedi_ar = $termek -> egyedi_ar;
 
 					// az árajánlatból létrehozott tételeket külön jelezzük, mert azoknak az adatai nem szerkeszthettők többé
-					$megrendeles_tetel -> arajanlatbol_letrehozva = 1;
+					$Szallitolevel_tetel -> arajanlatbol_letrehozva = 1;
 	
 					
-					$megrendeles_tetel ->save (false);
+					$Szallitolevel_tetel ->save (false);
 				}
 			}
 			
 			// frissítjük az egyedi ár flag-et a megrendelésen
-			Utils::isEgyediArMegrendelesArajanlat ($megrendeles -> id, true);
+			Utils::isEgyediArSzallitolevelArajanlat ($Szallitolevel -> id, true);
 
-			$this->redirect(array('megrendelesek/update', 'id' => $megrendeles -> id,));
+			$this->redirect(array('Szallitolevelek/update', 'id' => $Szallitolevel -> id,));
 		}
 	}
 
@@ -303,33 +271,33 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionStorno ()
 	{
-		if ( isset($_POST['megrendeles_id']) ) {
-			$model_id = $_POST['megrendeles_id'];
+		if ( isset($_POST['Szallitolevel_id']) ) {
+			$model_id = $_POST['Szallitolevel_id'];
 			$storno_ok = isset($_POST['selected_storno']) ? $_POST['selected_storno'] : '';
 			
-			$megrendeles = Megrendelesek::model() -> findByPk ($model_id);
+			$Szallitolevel = Szallitolevelek::model() -> findByPk ($model_id);
 
-			if ($megrendeles != null) {
-				$megrendeles -> sztornozas_oka = $storno_ok;
-				$megrendeles -> sztornozva = 1;
+			if ($Szallitolevel != null) {
+				$Szallitolevel -> sztornozas_oka = $storno_ok;
+				$Szallitolevel -> sztornozva = 1;
 				
-				$megrendeles -> save(false);
+				$Szallitolevel -> save(false);
 			}
 		}
 		
-		$this->redirect(array('megrendelesek/index'));
+		$this->redirect(array('Szallitolevelek/index'));
 	}
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Megrendelesek the loaded model
+	 * @return Szallitolevelek the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Megrendelesek::model()->findByPk($id);
+		$model=Szallitolevelek::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -337,7 +305,7 @@ class MegrendelesekController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Megrendelesek $model the model to be validated
+	 * @param Szallitolevelek $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{

@@ -29,19 +29,12 @@ body {
   border-radius:5px;
 }
 
-.form {
-	max-width: 1400px;	
-}
-
-.right-widget {
-	float: right !important;	
-}
-
 #yw0 {
 	margin-right:0px;
 }
 
 #yw1 {
+	margin-top: 10px;
 	margin-right: 0px;
 }
 
@@ -658,7 +651,6 @@ div.form .active label
 	margin-right: 20px;
 	width : 45%;
 }
-
 #arajanlatok-form .row {
 	float: left;
 	margin-left: 20px;
