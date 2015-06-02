@@ -80,7 +80,7 @@
 					'darabszam',
 					'hozott_boritek:boolean',
 					'egyedi_ar:boolean',
-					'netto_darabar:number',
+					'netto_darabar',
 				array(
 							'class' => 'bootstrap.widgets.TbButtonColumn',
 							'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
