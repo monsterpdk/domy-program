@@ -47,6 +47,12 @@
 		<?php echo $form->error($model,'vastagsag'); ?>
 	</div>
 
+	<div class="row">
+		<?php echo $form->labelEx($model,'suly'); ?>
+		<?php echo $form->textField($model,'suly'); ?>
+		<?php echo $form->error($model,'suly'); ?>
+	</div>
+
 	<div class="row active">
 		<?php echo $form->checkBox($model,'aktiv'); ?>
 		<?php echo $form->label($model,'aktiv'); ?>

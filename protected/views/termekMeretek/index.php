@@ -18,6 +18,7 @@ $this->breadcrumbs=array(
 				'magassag:number',
 				'szelesseg:number',
 				'vastagsag:number',
+				'suly:number',
 				'aktiv:boolean',
 				array(
 						'header' => 'Törölt',
