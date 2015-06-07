@@ -259,7 +259,7 @@
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
 				
-//				echo "nyomasi_ar: $nyomasi_ar, boritek_ar:  " . ($darabszam_osszesen * $db_ar) ;
+				
 				if ($darabszam >= 2000) {
 					$netto_osszeg = ($darabszam * $db_ar) + ($nyomasi_ar * $darabszam) ;
 				}
@@ -268,6 +268,7 @@
 					$netto_osszeg = $nyomasi_ar + $darabszam_osszesen * $db_ar ;									
 				}				
 			}
+						
 							
 			$ar = ($db_ar == 0) ? 0 : $db_ar;
 			if ($szinszam == 0)
@@ -282,7 +283,7 @@
 				'status'=>'success',
 				'ar'=>$ar,
 				'netto_osszeg'=>$netto_osszeg,
-			);      
+			);						
 
 			echo CJSON::encode($arr);
 		}

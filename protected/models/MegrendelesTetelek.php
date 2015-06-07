@@ -48,7 +48,8 @@ class MegrendelesTetelek extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('megrendeles_id, termek_id, darabszam, netto_darabar', 'required'),
-			array('termek_id, netto_darabar, darabszam, szinek_szama1, szinek_szama2, mutacio, hozott_boritek, torolt, egyedi_ar', 'numerical', 'integerOnly'=>true),
+			array('termek_id, darabszam, szinek_szama1, szinek_szama2, mutacio, hozott_boritek, torolt, egyedi_ar', 'numerical', 'integerOnly'=>true),
+			array('netto_darabar', 'numerical'),
 			array('megrendeles_id, darabszam', 'length', 'max'=>10),
 			array('megjegyzes, munka_neve', 'length', 'max'=>127),
 			// The following rule is used by search().
