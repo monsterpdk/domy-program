@@ -1,25 +1,36 @@
 <?php
-/* @var $this TermekMeretekController */
+/* @var $this NyomasiArakSzazalekController */
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Termékméretek',
+	'Nyomási termékár %',
 );
 
 ?>
+<h1>Nyomási árak</h1>
 
-<h1>Termékméretek</h1>
+<?php
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_search_nyomasi_ar',
+		'caption'=>'Keresés',
+		'buttonType'=>'link',
+		'htmlOptions'=>array('class'=>'bt btn-primary search-button'),
+	));
+?>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
+	'id'=>'nyomasi-arak-szazelek-gridview',
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'nev',
-				'magassag:number',
-				'szelesseg:number',
-				'vastagsag:number',
-				'suly:number',
-				'aktiv:boolean',
+				'peldanyszam_tol',
+				'peldanyszam_ig',
+				'alap:number',
+				'kp:number',
+				'utal:number',
+				'kis_tetel:number',
+				'nagy_tetel:number',
+				'user.username',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',
@@ -39,17 +50,17 @@ $this->breadcrumbs=array(
 							'view' => array(
 								'label' => 'Megtekint',
 								'icon'=>'icon-white icon-eye-open',
-								'visible' => "Yii::app()->user->checkAccess('TermekMeretek.View')",
+								'visible' => "Yii::app()->user->checkAccess('NyomasiArakSzazalek.View')",
 							),
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => "Yii::app()->user->checkAccess('TermekMeretek.Update')",
+								'visible' => "Yii::app()->user->checkAccess('NyomasiArakSzazalek.Update')",
 							),
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => 'Yii::app()->user->checkAccess("TermekMeretek.Delete") && $data->torolt != 1',
+								'visible' => 'Yii::app()->user->checkAccess("NyomasiArakSzazalek.Delete") && $data->torolt != 1',
 							)
 						),
                 ),
@@ -57,13 +68,15 @@ $this->breadcrumbs=array(
 )); ?>
 
 <?php
-	if (Yii::app()->user->checkAccess('TermekMeretek.Create')) {
+
+	if (Yii::app()->user->checkAccess('NyomasiArakSzazalek.Create')) {
 		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_termekmeret',
-			'caption'=>'Új termékméret hozzáadása',
+			'name'=>'button_create_nyomasi_ar_szazalek',
+			'caption'=>'Új nyomási termékár hozzáadása',
 			'buttonType'=>'link',
 			'htmlOptions'=>array('class'=>'btn btn-success'),
 			'url'=>array('create'),
 		));
 	}
+	
 ?>

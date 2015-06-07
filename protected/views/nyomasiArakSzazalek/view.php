@@ -1,27 +1,29 @@
 <?php
-/* @var $this TermekMeretekController */
-/* @var $model TermekMeretek */
+/* @var $this NyomasiArakSzazalekController */
+/* @var $model NyomasiArakSzazalek */
 
 $this->breadcrumbs=array(
-	'Termékméretek'=>array('index'),
+	'Nyomási árak %'=>array('index'),
 	$model->id,
 );
 
 ?>
 
-<h1>'<?php echo $model->nev; ?>' termékméretek adatai</h1>
+<h1>'<?php echo $model->id; ?>' nyomási termékár adatai</h1>
 
 <p>
 	<?php $this->widget('zii.widgets.CDetailView', array(
 		'data'=>$model,
 		'attributes'=>array(
 			'id',
-			'nev',
-			'magassag:number',
-			'szelesseg:number',
-			'vastagsag:number',
-			'suly:number',
-			'aktiv:boolean',
+			'peldanyszam_tol',
+			'peldanyszam_ig',
+			'alap:number',
+			'kp:number',
+			'utal:number',
+			'kis_tetel:number',
+			'nagy_tetel:number',
+			'user.username',
 			array(
 				'name' => 'torolt',
 				'type'=>'boolean',

@@ -28,6 +28,7 @@
 							),
                             array ('label'=>'Termékek árazása', 'url'=> Yii::app()->createUrl('/termekarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                             array ('label'=>'Nyomási árak', 'url'=> Yii::app()->createUrl('/nyomasiarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+							array ('label'=>'Nyomási termékárak %', 'url'=> Yii::app()->createUrl('/nyomasiarakszazalek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                             array ('label'=>'Raktárkészletek', 'url'=> Yii::app()->createUrl('/raktartermekek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                             array ('label'=>'ZUH beállítások', 'url'=> Yii::app()->createUrl('#'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 							array ('label'=>'Áruházak', 'url'=> Yii::app()->createUrl('/aruhazak/index'),),
