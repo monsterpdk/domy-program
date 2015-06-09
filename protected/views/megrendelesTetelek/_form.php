@@ -199,6 +199,18 @@
 									'value' => '$data->papirtipus->nev',
 								),
 								array(
+									'name' => 'zaras.nev',
+									'header' => 'Záródás',
+									'filter' => CHtml::activeTextField($termek, 'zaras_search'),
+									'value' => '$data->zaras->nev',
+								),
+								array(
+									'name' => 'ablakhely.nev',
+									'header' => 'Ablakhely',
+									'filter' => CHtml::activeTextField($termek, 'ablakhely_search'),
+									'value' => '$data->ablakhely->nev',
+								),
+								array(
 								  'header'=>'',
 								  'type'=>'raw',
 								  'value'=>'CHtml::Button("+", 
