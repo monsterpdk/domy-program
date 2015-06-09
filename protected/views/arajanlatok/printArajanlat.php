@@ -87,7 +87,7 @@
 		<td class = 'col1'><strong>Email</strong></td>
 		<td class = 'col2'> <?php echo $ugyfel -> ceg_email; ?> </td>
 		<td class = 'col3'><strong>Ügyintéző</strong></td>
-		<td class = 'col4'></td>
+		<td class = 'col4'> <?php echo $model -> ugyintezo -> nev; ?> </td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Telefon</strong></td>

@@ -7,9 +7,13 @@
  * @property string $id
  * @property string $cegnev
  * @property string $kapcsolattarto
+ * @property string $irsz
+ * @property string $orszag
+ * @property integer $varos
  * @property string $cim
  * @property string $telefon
  * @property string $fax
+ * @property string $email
  * @property integer $netto_ar
  * @property integer $torolt
  */
@@ -36,14 +40,14 @@ class Gyartok extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cegnev, kapcsolattarto, cim, telefon, fax, netto_ar', 'required'),
+			array('cegnev, kapcsolattarto, irsz, orszag, varos, cim, telefon, fax, netto_ar', 'required'),
 			array('netto_ar, torolt', 'numerical', 'integerOnly'=>true),
-			array('cegnev, kapcsolattarto', 'length', 'max'=>127),
+			array('cegnev, kapcsolattarto, email', 'length', 'max'=>127),
 			array('cim', 'length', 'max'=>255),
 			array('telefon, fax', 'length', 'max'=>20),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, cegnev, kapcsolattarto, cim, telefon, fax, netto_ar, torolt', 'safe', 'on'=>'search'),
+			array('id, cegnev, kapcsolattarto, irsz, orszag, varos, cim, telefon, fax, email, netto_ar, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -71,9 +75,13 @@ class Gyartok extends CActiveRecord
 			'id' => 'Gyártó ID',
 			'cegnev' => 'Cégnév',
 			'kapcsolattarto' => 'Kapcsolattartó',
+			'irsz' => 'Irányítószám',
+			'orszag' => 'Ország',
+			'varos' => 'Város',
 			'cim' => 'Cím',
 			'telefon' => 'Telefon',
 			'fax' => 'Fax',
+			'email' => 'E-mail',
 			'netto_ar' => 'Nettó ár',
 			'torolt' => 'Törölt',
 		);
@@ -100,9 +108,13 @@ class Gyartok extends CActiveRecord
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('cegnev',$this->cegnev,true);
 		$criteria->compare('kapcsolattarto',$this->kapcsolattarto,true);
+		$criteria->compare('irsz',$this->irsz,true);
+		$criteria->compare('orszag',$this->orszag,true);
+		$criteria->compare('varos',$this->varos,true);
 		$criteria->compare('cim',$this->cim,true);
 		$criteria->compare('telefon',$this->telefon,true);
 		$criteria->compare('fax',$this->fax,true);
+		$criteria->compare('email',$this->email,true);
 		$criteria->compare('netto_ar',$this->netto_ar);
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
@@ -114,6 +126,75 @@ class Gyartok extends CActiveRecord
 		));
 	}
 
+	protected function afterFind(){
+		// LI: mivel a városokhoz ID-t (key) kell tárolnunk, az előregépelős mezőben viszont
+		// szöveg van (value), ezért itt meg kell cserélnünk őket
+		if ($this -> varos != null) {
+			$check_varos = Varosok::model()->findByPk($this -> varos);
+			if ($check_varos != null)
+				$this -> varos = $check_varos -> varosnev;
+		}
+
+		parent::afterFind();
+	}
+	
+	// LI : városok ellenőrzésére, ha valamelyik (székhely/posta város) nem létezik a db-ben, akkor felvesszük
+	public function beforeValidate() {
+		$varos = $this -> varos;
+		
+		$match1 = addcslashes($varos, '%_'); // escape LIKE's special characters
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :varos",
+			'params'    => array(':varos' => "$match1")
+		) );
+        $varosok = Varosok::model()->findAll($q);
+		
+		// LI: ha nem létezik még ilyen város felvesszük
+		if (count($varosok) == 0) {
+			$uj_varos = new Varosok;
+			$uj_varos -> varosnev = $match1;
+			$uj_varos -> save();
+		}
+		
+		// LI: mivel a városokhoz ID-t (key) kell tárolnunk, az előregépelős mezőben viszont
+		// szöveg van (value), ezért itt meg kell cserélnünk őket
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :varos AND torolt = 0",
+			'params'    => array(':varos' => "$varos")
+		) );
+		
+		$check_varos = Varosok::model()->find($q);
+		if ($check_varos != null)
+			$this -> varos = $check_varos -> id;
+			
+		return parent::beforeValidate();
+	}
+
+	public function afterValidate() {
+		if ($this -> varos != null) {
+			$check_varos = Varosok::model()->findByPk($this -> varos);
+			if ($check_varos != null)
+				$this -> varos = $check_varos -> varosnev;
+		}
+		
+		return parent::afterValidate();
+	}
+	
+	public function beforeSave() {
+		$varos = $this -> varos;
+		
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :varos AND torolt = 0",
+			'params'    => array(':varos' => "$varos")
+		) );
+		
+		$check_varos = Varosok::model()->find($q);
+		if ($check_varos != null)
+			$this -> varos = $check_varos -> id;
+		
+		return parent::beforeSave();
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -124,4 +205,17 @@ class Gyartok extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	// LI : összefűzi 1 string-ként adja vissza a címhez tartozó mezőket
+	public  function getTeljes_cim () {
+		
+		$orszag = Orszagok::model() -> findByPk ($this -> orszag);
+		$orszag = ($orszag == null) ? "" : $orszag -> nev;
+		return
+			$orszag . (strlen($orszag) > 0 ? ", " : "") .
+			$this -> irsz . (strlen($this -> irsz) > 0 ? " " : "") .
+			$this -> varos . (strlen($this -> varos) > 0 ? ", " : "") .
+			$this -> cim;
+	}
+	
 }

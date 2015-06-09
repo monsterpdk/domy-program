@@ -13,6 +13,7 @@
  * @property string $ervenyesseg_datum
  * @property string $hatarido
  * @property integer $afakulcs_id
+ * @property integer $ugyintezo_id
  * @property string $kovetkezo_hivas_ideje
  * @property integer $visszahivas_lezarva
  * @property string $ugyfel_tel
@@ -58,8 +59,8 @@ class Arajanlatok extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('sorszam, ugyfel_id, arkategoria_id, ajanlat_datum, ervenyesseg_datum, torolt', 'required'),
-			array('afakulcs_id, visszahivas_lezarva, egyedi_ar, torolt', 'numerical', 'integerOnly'=>true),
-			array('sorszam, ugyfel_id, arkategoria_id', 'length', 'max'=>12),
+			array('afakulcs_id, ugyintezo_id, visszahivas_lezarva, egyedi_ar, torolt', 'numerical', 'integerOnly'=>true),
+			array('sorszam, ugyfel_id, arkategoria_id, ugyintezo_id', 'length', 'max'=>12),
 			array('hatarido', 'length', 'max'=>15),
 			array('ugyfel_tel, ugyfel_fax', 'length', 'max'=>30),
 			array('visszahivas_jegyzet, reklamszoveg, egyeb_megjegyzes', 'length', 'max'=>127),
@@ -70,7 +71,7 @@ class Arajanlatok extends CActiveRecord
 			array('ajanlat_datum, ervenyesseg_datum, kovetkezo_hivas_ideje', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, torolt', 'safe', 'on'=>'search'),
+			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -91,6 +92,7 @@ class Arajanlatok extends CActiveRecord
 			'ugyfel'    => array(self::BELONGS_TO, 'Ugyfelek', 'ugyfel_id'),
 			'arkategoria'    => array(self::BELONGS_TO, 'Arkategoriak', 'arkategoria_id'),
 			'afakulcs'    => array(self::BELONGS_TO, 'AfaKulcsok', 'afakulcs_id'),
+			'ugyintezo'    => array(self::BELONGS_TO, 'UgyfelUgyintezok', 'ugyintezo_id'),
 			
 			'tetelek' => array(self::HAS_MANY, 'ArajanlatTetelek', 'arajanlat_id'),
 		);
@@ -110,6 +112,7 @@ class Arajanlatok extends CActiveRecord
 			'ervenyesseg_datum' => 'Érvényesség dátuma',
 			'hatarido' => 'Határidő (nap)',
 			'afakulcs_id' => 'Áfakulcs (%)',
+			'ugyintezo_id' => 'Ügyintéző',
 			'kovetkezo_hivas_ideje' => 'Következő hívás ideje',
 			'visszahivas_lezarva' => 'Visszahívás lezárva',
 			'ugyfel_tel' => 'Ügyfél telefon',
@@ -165,6 +168,7 @@ class Arajanlatok extends CActiveRecord
 		$criteria->compare('ervenyesseg_datum',$this->ervenyesseg_datum,true);
 		$criteria->compare('hatarido',$this->hatarido,true);
 		$criteria->compare('afakulcs_id',$this->afakulcs_id);
+		$criteria->compare('ugyintezo_id',$this->ugyintezo_id);
 		$criteria->compare('kovetkezo_hivas_ideje',$this->kovetkezo_hivas_ideje,true);
 		$criteria->compare('visszahivas_lezarva',$this->visszahivas_lezarva);
 		$criteria->compare('ugyfel_tel',$this->ugyfel_tel,true);

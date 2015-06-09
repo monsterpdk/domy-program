@@ -48,6 +48,7 @@
  * @property integer $egyedi_kuponkedvezmeny
  * @property string $elso_vasarlas_datum
  * @property string $utolso_vasarlas_datum
+ * @property integer $fizetesi_hatarido
  * @property integer $max_fizetesi_keses
  * @property integer $atlagos_fizetesi_keses
  * @property string $rendelesi_tartozasi_limit
@@ -91,12 +92,13 @@ class Ugyfelek extends DomyModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, cegforma, adoszam, eu_adoszam, arkategoria, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral', 'required'),
-			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, torolt', 'numerical', 'integerOnly'=>true),
+			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, cegforma, adoszam, arkategoria, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral', 'required'),
+			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, torolt', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_tipus', 'length', 'max'=>9),
 			array('cegnev, ugyvezeto_nev, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_email, ceg_email, tevekenysegi_kor', 'length', 'max'=>127),
 			array('cegnev_teljes, posta_cim, szekhely_cim, megjegyzes, fontos_megjegyzes', 'length', 'max'=>255),
 			array('szekhely_irsz, posta_irsz', 'length', 'max'=>6),
+			array('fizetesi_hatarido', 'length', 'max'=>6),
 			array('szekhely_orszag, posta_orszag', 'length', 'max'=>3),
 			array('rendelesi_tartozasi_limit', 'length', 'max'=>10),
 			array('ugyvezeto_telefon, kapcsolattarto_telefon, ceg_telefon, ceg_fax, szamlaszam1, szamlaszam2, arbevetel, foglalkoztatottak_szama', 'length', 'max'=>30),
@@ -109,7 +111,7 @@ class Ugyfelek extends DomyModel
 			array('elso_vasarlas_datum, utolso_vasarlas_datum, adatok_egyeztetve_datum, archivbol_vissza_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ugyfel_tipus, cegnev, cegnev_teljes, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, posta_cim, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, ceg_honlap, cegforma, szamlaszam1, szamlaszam2, adoszam, eu_adoszam, teaor, tevekenysegi_kor, arbevetel, foglalkoztatottak_szama, adatforras, arkategoria, besorolas, megjegyzes, fontos_megjegyzes, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, elso_vasarlas_datum, utolso_vasarlas_datum, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral, adatok_egyeztetve_datum, archiv, archivbol_vissza_datum, felvetel_idopont, torolt', 'safe', 'on'=>'search'),
+			array('id, ugyfel_tipus, cegnev, cegnev_teljes, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, posta_cim, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, ceg_honlap, cegforma, szamlaszam1, szamlaszam2, adoszam, eu_adoszam, teaor, tevekenysegi_kor, arbevetel, foglalkoztatottak_szama, adatforras, arkategoria, besorolas, megjegyzes, fontos_megjegyzes, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, elso_vasarlas_datum, utolso_vasarlas_datum, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral, adatok_egyeztetve_datum, archiv, archivbol_vissza_datum, felvetel_idopont, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -237,6 +239,7 @@ class Ugyfelek extends DomyModel
 			'egyedi_kuponkedvezmeny' => 'Egyedi kuponkedvezmény',
 			'elso_vasarlas_datum' => 'Első vásárlás dátum',
 			'utolso_vasarlas_datum' => 'Utolsó vásárlás dátum',
+			'fizetesi_hatarido' => 'Fizetési határidő (napok száma)',
 			'max_fizetesi_keses' => 'Max. fizetési késés',
 			'atlagos_fizetesi_keses' => 'Átlagos fizetési késés',
 			'rendelesi_tartozasi_limit' => 'Rendelési tartozási limit (Ft)',
@@ -335,6 +338,27 @@ class Ugyfelek extends DomyModel
 		if ($this->isNewRecord)
 			$this->felvetel_idopont = new CDbExpression('NOW()');
 	 
+		// LI: mivel a városokhoz ID-t (key) kell tárolnunk, az előregépelős mezőben viszont
+		// szöveg van (value), ezért itt meg kell cserélnünk őket
+		$szekhely_varos = $this -> szekhely_varos;
+		$posta_varos = $this -> posta_varos;
+		
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :szekhely_varos AND torolt = 0",
+			'params'    => array(':szekhely_varos' => "$szekhely_varos")
+		) );
+        $check_szekhely_varos = Varosok::model()->find($q);
+		if ($check_szekhely_varos != null)
+			$this -> szekhely_varos = $check_szekhely_varos -> id;
+
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :posta_varos AND torolt = 0",
+			'params'    => array(':posta_varos' => "$posta_varos")
+		) );
+        $check_posta_varos = Varosok::model()->find($q);
+		if ($check_posta_varos != null)
+			$this -> posta_varos = $check_posta_varos -> id;
+		
 		return parent::beforeSave();
 	}
 	
@@ -392,6 +416,24 @@ class Ugyfelek extends DomyModel
 		return parent::beforeValidate();
 	}
 
+	public function afterValidate() {
+		// LI: mivel a városokhoz ID-t (key) kell tárolnunk, az előregépelős mezőben viszont
+		// szöveg van (value), ezért itt meg kell cserélnünk őket
+		if ($this -> szekhely_varos != null) {
+			$check_szekhely_varos = Varosok::model()->findByPk($this -> szekhely_varos);
+			if ($check_szekhely_varos != null)
+				$this -> szekhely_varos = $check_szekhely_varos -> varosnev;
+		}
+				
+		if ($this -> posta_varos != null) {
+			$check_posta_varos = Varosok::model()->findByPk($this -> posta_varos);
+			if ($check_posta_varos != null)
+				$this -> posta_varos = $check_posta_varos -> varosnev;
+		}
+		
+		return parent::afterValidate();
+	}
+	
 	/**
 	 * LI
 	 * A nézetben meg kell jelenjen az adott ügyfél összes, hozzá felvett ügyintézője.

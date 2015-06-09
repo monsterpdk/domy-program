@@ -18,8 +18,12 @@ $this->breadcrumbs=array(
 			'id',
 			'cegnev',
 			'kapcsolattarto',
+			'irsz',
+			'orszag',
+			'varos',
 			'cim',
 			'telefon',
+			'email',
 			'fax',
 			'netto_ar:boolean',
 			array(

@@ -391,6 +391,12 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'fizetesi_hatarido'); ?>
+		<?php echo $form->textField($model,'fizetesi_hatarido',array('size'=>60,'maxlength'=>5)); ?>
+		<?php echo $form->error($model,'fizetesi_hatarido'); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->labelEx($model,'max_fizetesi_keses'); ?>
 		<?php echo $form->textField($model,'max_fizetesi_keses'); ?>
 		<?php echo $form->error($model,'max_fizetesi_keses'); ?>
@@ -410,7 +416,12 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'fizetesi_moral'); ?>
-		<?php echo $form->dropDownList($model, 'fizetesi_moral',array("0"=>"0","1"=>"1","2"=>"2","3"=>"3","4"=>"4","5"=>"5"), array()); ?>
+		
+		<?php //echo $form->dropDownList($model, 'fizetesi_moral',array("0"=>"0","1"=>"1","2"=>"2","3"=>"3","4"=>"4","5"=>"5"), array());
+		?>
+		
+		<?php echo $form->textField($model,'fizetesi_moral',array('size'=>10,'maxlength'=>10, 'readonly'=>true)); ?>
+		
 		<?php echo $form->error($model,'fizetesi_moral'); ?>
 	</div>
 

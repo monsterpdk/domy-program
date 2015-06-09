@@ -36,6 +36,44 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'irsz'); ?>
+		<?php echo $form->textField($model,'irsz',array('size'=>6,'maxlength'=>6)); ?>
+		<?php echo $form->error($model,'irsz'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'orszag'); ?>
+		
+			<?php echo CHtml::activeDropDownList($model, 'orszag',
+				CHtml::listData(Orszagok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev')
+			); ?>
+			
+		<?php echo $form->error($model,'orszag'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'varos'); ?>
+		<?php
+			$this->widget('ext.typeahead.TbTypeAhead',array(
+				 'model' => $model,
+				 'attribute' => 'varos',
+				 'enableHogan' => true,
+				 'options' => array(
+					 array(
+						 'name' => 'countries',
+						 'valueKey' => 'varosnev',
+						 'remote' => array(
+							 'url' => Yii::app()->createUrl('/ugyfelek/autocomplete') . '?term=%QUERY',
+						 ),
+						 'template' => '<p>{{varosnev}}</p>',
+						 'engine' => new CJavaScriptExpression('Hogan'),
+					 )
+				 ),
+			));
+		?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->labelEx($model,'cim'); ?>
 		<?php echo $form->textField($model,'cim',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'cim'); ?>
@@ -53,6 +91,13 @@
 		<?php echo $form->error($model,'fax'); ?>
 	</div>
 
+	<div class="row">
+		<?php echo $form->labelEx($model,'email'); ?>
+		<?php echo $form->textField($model,'email',array('size'=>20,'maxlength'=>127)); ?>
+		<?php echo $form->error($model,'email'); ?>
+	</div>
+	
+	
 	<div class="row active">
 		<?php echo $form->checkBox($model,'netto_ar'); ?>
 		<?php echo $form->label($model,'netto_ar'); ?>

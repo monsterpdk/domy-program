@@ -20,9 +20,10 @@ $this->menu=array(
 	'columns'=>array(
                 'cegnev',
 				'kapcsolattarto',
-				'cim',
+				'teljes_cim',
 				'telefon',
 				'fax',
+				'email',
 				'netto_ar:boolean',
 				array(
 						'header' => 'Törölt',

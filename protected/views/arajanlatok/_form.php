@@ -239,6 +239,23 @@
 	?>
 	
 		<div class="row">
+			<?php echo $form->labelEx($model,'ugyintezo_id'); ?>
+			
+				<?php
+					$ugyfel_id = $model->ugyfel->id;
+					
+					echo CHtml::activeDropDownList($model, 'ugyintezo_id',
+					CHtml::listData(UgyfelUgyintezok::model()->findAll(array("condition"=>"torolt=0 AND ugyfel_id = $ugyfel_id")), 'id', 'nev')
+				); ?>
+				
+			<?php echo $form->error($model,'ugyintezo_id'); ?>
+		</div>
+
+		<div class="row">
+			
+		</div>
+		
+		<div class="row">
 			<?php echo $form->labelEx($model,'ugyfel_tel'); ?>
 			<?php echo $form->textField($model,'ugyfel_tel',array('size'=>30,'maxlength'=>30)); ?>
 			<?php echo $form->error($model,'ugyfel_tel'); ?>

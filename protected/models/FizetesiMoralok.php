@@ -36,7 +36,8 @@ class FizetesiMoralok extends CActiveRecord
 			array('moral_szam, keses_tol, keses_ig', 'required'),
 			array('moral_szam, keses_tol, keses_ig, torolt', 'numerical', 'integerOnly'=>true),
 			array('moral_szam', 'length', 'max'=>1),
-			array('keses_tol, keses_ig', 'length', 'max'=>4),
+			array('keses_tol', 'length', 'max'=>4),
+			array('keses_ig', 'length', 'max'=>11),
 			
 			array('moral_szam', 'unique', 'className' => 'FizetesiMoralok',	'attributeName' => 'moral_szam', 'message'=>'Ehhez a morál számhoz már tartozik fizetési morál intervallum!'),
 			array('keses_tol', 'isIntervalOverlap'),

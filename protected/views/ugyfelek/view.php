@@ -60,6 +60,7 @@ $this->breadcrumbs=array(
 			'egyedi_kuponkedvezmeny:boolean',
 			'elso_vasarlas_datum',
 			'utolso_vasarlas_datum',
+			'fizetesi_hatarido',
 			'max_fizetesi_keses',
 			'atlagos_fizetesi_keses',
 			'rendelesi_tartozasi_limit',
