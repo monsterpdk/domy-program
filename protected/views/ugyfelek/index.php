@@ -44,6 +44,7 @@
 	'columns'=>array(
                 'id',
 				'cegnev',
+				'cegforma_dsp.cegforma',
 				'arkategoria_dsp.nev',
 				'szekhely_irsz',
 				'szekhely_varos',

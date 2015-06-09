@@ -42,6 +42,16 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'cegforma'); ?>
+		
+			<?php echo CHtml::activeDropDownList($model, 'cegforma',
+				CHtml::listData(Cegformak::model()->findAll(array("condition"=>"torolt=0")), 'id', 'cegforma')
+			); ?>
+			
+		<?php echo $form->error($model,'cegforma'); ?>
+	</div>
+
+	<div class="row">
 		<?php echo $form->labelEx($model,'szekhely_irsz'); ?>
 		<?php echo $form->textField($model,'szekhely_irsz',array('size'=>6,'maxlength'=>6)); ?>
 		<?php echo $form->error($model,'szekhely_irsz'); ?>
@@ -227,16 +237,6 @@
 		<?php echo $form->labelEx($model,'ceg_honlap'); ?>
 		<?php echo $form->textField($model,'ceg_honlap',array('size'=>60,'maxlength'=>60)); ?>
 		<?php echo $form->error($model,'ceg_honlap'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'cegforma'); ?>
-		
-			<?php echo CHtml::activeDropDownList($model, 'cegforma',
-				CHtml::listData(Cegformak::model()->findAll(array("condition"=>"torolt=0")), 'id', 'cegforma')
-			); ?>
-			
-		<?php echo $form->error($model,'cegforma'); ?>
 	</div>
 
 	<div class="row">
