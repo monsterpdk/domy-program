@@ -87,6 +87,13 @@
 															$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
 															$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').val(ui.item.fontos_megjegyzes);
 															$('#Arajanlatok_cimzett').val(ui.item.cimzett);
+															
+															// frissítjük a választható ügyintézők listáját
+															$('#Arajanlatok_ugyintezo_id')
+																.find('option')
+																.remove()
+																.end()
+																.append(ui.item.ugyintezok);
 														}",
 						'change'=>"js:function(event, ui) {
 															if (!ui.item) {

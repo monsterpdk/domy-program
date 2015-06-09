@@ -201,6 +201,12 @@ class ArajanlatokController extends Controller
 			$ugyfelek = Ugyfelek::model()->findAll( $q );
 
 			foreach($ugyfelek as $ugyfel) {
+				$ugyintezok = UgyfelUgyintezok::model()->findAll(array("condition"=>"torolt=0 AND ugyfel_id = " . $ugyfel->id));
+				$ugyintezokSelect = "";
+				foreach($ugyintezok as $ugyintezo) {
+					$ugyintezokSelect .= CHtml::tag('option', array('value'=>$ugyintezo->id),CHtml::encode($ugyintezo->nev), true);
+				}
+				
 				$arr[] = array(
 					'label'=>$ugyfel->cegnev,
 					'value'=>$ugyfel->cegnev,
@@ -214,10 +220,12 @@ class ArajanlatokController extends Controller
 					'atlagos_fizetesi_keses'=>$ugyfel->atlagos_fizetesi_keses,
 					'rendelesi_tartozas_limit'=>$ugyfel->rendelesi_tartozasi_limit,
 					'fontos_megjegyzes'=>$ugyfel->fontos_megjegyzes,
+					'ugyintezok'=>$ugyintezokSelect,
 					'id'=>$ugyfel->id,
 					);      
 			}
 		}
+		
 		echo CJSON::encode($arr);
 	}
 	
