@@ -45,6 +45,8 @@ class Termekek extends CActiveRecord
 	// amikor valamelyik űrlapról terméket tallózunk, akkor kódszám+terméknév formában jelenítjük meg a termékeket
 	private $displayTermeknev;
 	
+	private $activeTermekAr;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -207,6 +209,10 @@ class Termekek extends CActiveRecord
 		parent::afterFind();
 		$this -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_mettol)));
 		$this -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_meddig)));
+		
+		// beírjuk a model-be az aktív termékárat
+		$termekAr = Utils::getActiveTermekar ($this->id);
+		$this->activeTermekAr = ($termekAr == 0) ? 0 : $termekAr["db_eladasi_ar"];
 	}
 
 	// LI : a 'datum' mezőt automatikusan kitöltjük létrehozáskor
@@ -232,5 +238,10 @@ class Termekek extends CActiveRecord
 	{
 		return $this->kodszam . ' - ' . $this->nev;
 	}
-	
+
+	public function getActiveTermekAr ()
+	{
+		return $this->activeTermekAr;
+	}
+
 }

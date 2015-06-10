@@ -18,6 +18,7 @@ $this->breadcrumbs=array(
 				'gyarto.cegnev',
 				'beszallitas_datum',
 				'kifizetes_datum',
+				'displayOsszertek:number',
 				'megjegyzes',
 				'user.username',
 				'anyagrendeles.displayBizonylatszamDatum',

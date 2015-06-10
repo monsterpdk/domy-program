@@ -62,6 +62,12 @@
 				
 			<?php echo $form->error($model,'rendeles_datum'); ?>
 		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'displayOsszertek'); ?>
+			<?php echo $form->textField($model,'displayOsszertek',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
+			<?php echo $form->error($model,'displayOsszertek'); ?>
+		</div>
 		
 		<div class="row">
 			<?php echo $form->labelEx($model,'megjegyzes'); ?>
@@ -164,6 +170,7 @@
 							else
 							{
 								$.fn.yiiGridView.update(\"anyagrendelesTermekek-grid\",{ complete: function(jqXHR, status) {}})
+								$('#Anyagrendelesek_displayOsszertek').val(data.displayOsszertek);
 								
 								$('#dialogAnyagrendelesTermek div.divForForm').html(data.div);
 								$('#dialogAnyagrendelesTermek').dialog('close');
@@ -201,10 +208,13 @@
 			'id' => 'anyagrendelesTermekek-grid',
 			'dataProvider'=>$dataProvider,
 			'enablePagination' => false,
+			'afterAjaxUpdate'=>'function(id,data){
+				refreshOsszertek ();
+			}',
 			'columns'=>array(
 				'termek.nev',
 				'rendelt_darabszam',
-				'rendeleskor_netto_darabar:number',
+				'rendeleskor_netto_darabar',
 				array(
 							'class' => 'bootstrap.widgets.TbButtonColumn',
 							'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -309,3 +319,22 @@
 	
     ?>
 <?php endif; ?>
+
+<script>
+	function refreshOsszertek () {
+		$.ajax({
+			type: 'GET',
+			dataType: 'JSON',
+			url: '<?php echo Yii::app()->createUrl("anyagrendelesek/refreshOsszertek") . "/anyagrendeles_id/" . $model->id; ?>',
+			success:function(data){
+				if (data !== null) {
+					$('#Anyagrendelesek_displayOsszertek').val(data.osszertek);
+
+					return false;
+				}
+			},
+		});
+
+		return false;
+	}
+</script>

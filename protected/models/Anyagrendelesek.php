@@ -17,6 +17,10 @@ class Anyagrendelesek extends CActiveRecord
 {
 	// a lenyíló listákban a bizonylatszám és rendelés dátuma egyszerre jelenjen meg
 	private $displayBizonylatszamDatum;
+	
+	// összérték tárolására
+	private $displayOsszertek;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -40,7 +44,7 @@ class Anyagrendelesek extends CActiveRecord
 		return array(
 			array('user_id, gyarto_id, rendeles_datum', 'required'),
 			array('user_id, gyarto_id, sztornozva, lezarva', 'numerical', 'integerOnly'=>true),
-			array('bizonylatszam', 'length', 'max'=>10),
+			array('bizonylatszam', 'length', 'max'=>16),
 			array('megjegyzes', 'length', 'max'=>255),
 			array('rendeles_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			
@@ -101,6 +105,7 @@ class Anyagrendelesek extends CActiveRecord
 			'user_id' => 'Felhasználó',
 			'sztornozva' => 'Sztornózva',
 			'lezarva' => 'Lezárva',
+			'displayOsszertek' => 'Összérték (Ft)',
 		);
 	}
 
@@ -139,7 +144,20 @@ class Anyagrendelesek extends CActiveRecord
 	
 	protected function afterFind(){
 		parent::afterFind();
+		
 		$this -> rendeles_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->rendeles_datum)));
+		
+		$this->recalculateOsszertek ();
+	}
+	
+	public function recalculateOsszertek () {
+		// a rendelésen lévő termékek értékének összegzése
+		$osszertek = 0;
+		foreach ($this -> termekek as $termek) {
+			$osszertek +=  $termek->rendelt_darabszam * $termek->rendeleskor_netto_darabar;
+		}
+		
+		$this->displayOsszertek = $osszertek;
 	}
 	
 	/**
@@ -155,6 +173,10 @@ class Anyagrendelesek extends CActiveRecord
 	
 	public function getDisplayBizonylatszamDatum () {
 		return $this->bizonylatszam . ' - ' . date('Y.m.d', strtotime($this->rendeles_datum));
+	}
+
+	public function getDisplayOsszertek () {
+		return $this->displayOsszertek;
 	}
 	
 }

@@ -200,6 +200,16 @@ class AnyagbeszallitasokController extends Controller
 		
 		exit();
 	}
+
+	// AJAX-os híváshoz: visszaadja egy adott anyagbeszállítás összértékét
+	public function actionRefreshOsszertek($anyagbeszallitas_id) {
+		$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk ($anyagbeszallitas_id);
+
+		echo CJSON::encode(array(
+				'osszertek'=>$anyagbeszallitas == null ? 0 : $anyagbeszallitas->displayOsszertek,
+				));
+		Yii::app()->end();
+	}
 	
 	/**
 	 * Manages all models.

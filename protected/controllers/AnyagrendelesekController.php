@@ -44,6 +44,15 @@ class AnyagrendelesekController extends Controller
 			$model -> user_id = Yii::app()->user->getId();
 			$model -> rendeles_datum = date('Y-m-d');
 			
+			// megkeressük a legutóbb felvett árajánlatot és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
+			// formátum: AJ2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
+			$criteria = new CDbCriteria;
+			$criteria->select = 'max(id) AS id';
+			$row = Anyagrendelesek::model() -> find ($criteria);
+			$utolsoAnyagrendeles = $row['id'];
+
+			$model -> bizonylatszam = "TM" . date("Y") . str_pad( ($utolsoAnyagrendeles != null) ? ($utolsoAnyagrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
+			
 			$model -> save(false);
 			$this->redirect(array('update', 'id'=>$model -> id,));
 		}
@@ -235,6 +244,16 @@ class AnyagrendelesekController extends Controller
 			# Outputs ready PDF
 			$mPDF1->Output();
 		}
+	}
+	
+	// AJAX-os híváshoz: visszaadja egy adott anyagrendelés összértékét
+	public function actionRefreshOsszertek($anyagrendeles_id) {
+		$anyagrendeles = Anyagrendelesek::model()->findByPk ($anyagrendeles_id);
+
+		echo CJSON::encode(array(
+				'osszertek'=>$anyagrendeles == null ? 0 : $anyagrendeles->displayOsszertek,
+				));
+		Yii::app()->end();
 	}
 	
 	/**

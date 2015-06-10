@@ -22,6 +22,7 @@ $this->menu=array(
                 'bizonylatszam',
 				'gyarto.cegnev',
 				'rendeles_datum',
+				'displayOsszertek:number',
 				'megjegyzes',
 				'user.username',
 				'sztornozva:boolean',

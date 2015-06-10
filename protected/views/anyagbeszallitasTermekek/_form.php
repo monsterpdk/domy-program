@@ -58,7 +58,10 @@
 								  'value'=>'CHtml::Button("+", 
 															array("name" => "send_termek", 
 																"id" => "send_termek", 
-																"onClick" => "$(\"#termek_dialog\").dialog(\"close\"); $(\"#termeknev\").val(\"$data->nev\"); $(\"#AnyagbeszallitasTermekek_termek_id\").val(\"$data->id\");"))',
+																"onClick" => "$(\"#termek_dialog\").dialog(\"close\");
+																$(\"#termeknev\").val(\"$data->nev\");
+																$(\"#AnyagbeszallitasTermekek_netto_darabar\").val(\"$data->activeTermekAr\");
+																$(\"#AnyagbeszallitasTermekek_termek_id\").val(\"$data->id\");"))',
 															),
 								   ),
 				));

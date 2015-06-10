@@ -93,8 +93,14 @@
 		</div>	
 
 		<div class="row">
+			<?php echo $form->labelEx($model,'displayOsszertek'); ?>
+			<?php echo $form->textField($model,'displayOsszertek',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
+			<?php echo $form->error($model,'displayOsszertek'); ?>
+		</div>
+		
+		<div class="row">
 			<?php echo $form->labelEx($model,'megjegyzes'); ?>
-			<?php echo $form->textField($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
 			<?php echo $form->error($model,'megjegyzes'); ?>
 		</div>
 
@@ -237,10 +243,13 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 				'id' => 'AnyagbeszallitasTermekek-grid',
 				'dataProvider'=>$dataProvider,
 				'enablePagination' => false,
+				'afterAjaxUpdate'=>'function(id,data){
+					refreshOsszertek ();
+				}',
 				'columns'=>array(
 					'termek.nev',
 					'darabszam',
-					'netto_darabar:number',
+					'netto_darabar',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
 								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -383,10 +392,13 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 				'id' => 'AnyagbeszallitasTermekekIroda-grid',
 				'dataProvider'=>$dataProvider,
 				'enablePagination' => false,
+				'afterAjaxUpdate'=>'function(id,data){
+					refreshOsszertek ();
+				}',
 				'columns'=>array(
 					'termek.nev',
 					'darabszam',
-					'netto_darabar:number',
+					'netto_darabar',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
 								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -525,3 +537,22 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 		$this->endWidget();			
     ?>
 <?php endif; ?>
+
+<script>
+	function refreshOsszertek () {
+		$.ajax({
+			type: 'GET',
+			dataType: 'JSON',
+			url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/refreshOsszertek") . "/anyagbeszallitas_id/" . $model->id; ?>',
+			success:function(data){
+				if (data !== null) {
+					$('#Anyagbeszallitasok_displayOsszertek').val(data.osszertek);
+
+					return false;
+				}
+			},
+		});
+
+		return false;
+	}
+</script>

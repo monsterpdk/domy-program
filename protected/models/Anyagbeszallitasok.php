@@ -19,6 +19,9 @@ class Anyagbeszallitasok extends DomyModel
 	// a lenyíló listákban a bizonylatszám és beszállítás dátuma egyszerre jelenjen meg
 	private $displayBizonylatszamDatum;
 	
+	// összérték tárolására
+	private $displayOsszertek;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -127,7 +130,8 @@ class Anyagbeszallitasok extends DomyModel
 			'megjegyzes' => 'Megjegyzés',
 			'user_id' => 'Ügyintéző',
 			'anyagrendeles_id' => 'Anyagrendelés',
-			'lezarva' => 'Lezárva',			
+			'lezarva' => 'Lezárva',
+			'displayOsszertek' => 'Összérték (Ft)',			
 		);
 	}
 
@@ -171,6 +175,21 @@ class Anyagbeszallitasok extends DomyModel
 		if ($this->kifizetes_datum != null && $this->kifizetes_datum != ""&& $this->kifizetes_datum != "0000-00-00 00:00:00")
 			$this -> kifizetes_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->kifizetes_datum)));
 		else $this -> kifizetes_datum = null;
+		
+		$this -> recalculateOsszertek ();
+	}
+
+	public function recalculateOsszertek () {
+		// a beszállításon lévő termékek értékének összegzése
+		$osszertek = 0;
+		foreach ($this -> termekek as $termek) {
+			$osszertek +=  $termek->darabszam * $termek->netto_darabar;
+		}
+		foreach ($this -> termekekIroda as $termek) {
+			$osszertek +=  $termek->darabszam * $termek->netto_darabar;
+		}
+		
+		$this -> displayOsszertek = $osszertek;
 	}
 	
 	// sikeres mentés után frissítjük a raktár eltérés lista megfelelő sorát arra az esetre, hogy
@@ -218,4 +237,9 @@ class Anyagbeszallitasok extends DomyModel
 	public function getDisplayBizonylatszamDatum () {
 		return $this->bizonylatszam . ' - ' . date('Y.m.d', strtotime($this->beszallitas_datum));
 	}
+	
+	public function getDisplayOsszertek () {
+		return $this->displayOsszertek;
+	}
+	
 }
