@@ -2,16 +2,45 @@
 /* @var $this ArajanlatokController */
 /* @var $dataProvider CActiveDataProvider */
 
-$this->breadcrumbs=array(
-	'Árajánlatok',
-);
+	$this->breadcrumbs=array(
+		'Árajánlatok',
+	);
 
+	Yii::app()->clientScript->registerScript('search', "
+		$('.search-button').click(function(){
+			$('.search-form').toggle();
+			return false;
+		});
+		$('.search-form form').submit(function(){
+			$.fn.yiiGridView.update('arajanlatok-gridview', { 
+				data: $(this).serialize()
+			});
+			return false;
+		});
+	");
+	
 ?>
 
 <h1>Árajánlatok</h1>
 
+<?php
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_search_arajanlat',
+		'caption'=>'Keresés',
+		'buttonType'=>'link',
+		'htmlOptions'=>array('class'=>'bt btn-primary search-button'),
+	));
+?>
+
+<div class="search-form" style="display:none">
+	<?php  $this->renderPartial('_search',array(
+		'model'=>$model,
+	)); ?>
+</div>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$dataProvider,
+	'dataProvider'=>$model -> search(),
+	'id'=>'arajanlatok-gridview',
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
                 'sorszam',

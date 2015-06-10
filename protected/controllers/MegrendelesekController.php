@@ -126,13 +126,19 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		$model=new Megrendelesek('search');
+		$model->unsetAttributes();
+		if(isset($_GET['Megrendelesek']))
+			$model->attributes=$_GET['Megrendelesek'];
+	 	
 		$dataProvider=new CActiveDataProvider('Megrendelesek',
 			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
-				
+		
+		//send model object for search
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+			'model'=>$model)
+		);
 
 	}
 

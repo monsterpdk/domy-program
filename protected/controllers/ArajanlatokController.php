@@ -120,13 +120,19 @@ class ArajanlatokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		$model=new Arajanlatok('search');
+		$model->unsetAttributes();
+		if(isset($_GET['Arajanlatok']))
+			$model->attributes=$_GET['Arajanlatok'];
+	 	
 		$dataProvider=new CActiveDataProvider('Arajanlatok',
 			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"ajanlat_datum DESC",),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>"ajanlat_datum DESC",),)
 		);
+		
+		//send model object for search
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-
+			'model'=>$model)
+		);
 	}
 
 	public function actionPrintPDF()

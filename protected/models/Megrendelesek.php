@@ -42,6 +42,9 @@ class Megrendelesek extends CActiveRecord
 	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
 
+	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
+	public $cegnev_search;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -76,7 +79,7 @@ class Megrendelesek extends CActiveRecord
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, nyomdakonyv_munka_id, sztornozva, torolt', 'safe', 'on'=>'search'),
+			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, nyomdakonyv_munka_id, sztornozva, cegnev_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -144,6 +147,8 @@ class Megrendelesek extends CActiveRecord
 			'nyomdakonyv_munka_id' => 'Nyomdakönyv munka',
 			'sztornozva' => 'Sztornözva',
 			'torolt' => 'Törölt',
+			
+			'cegnev_search' => 'Cégnév',
 		);
 	}
 
@@ -169,6 +174,9 @@ class Megrendelesek extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->together = true;
+		$criteria->with = array('ugyfel');
+		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('sorszam',$this->sorszam,true);
 		$criteria->compare('ugyfel_id',$this->ugyfel_id,true);
@@ -194,6 +202,8 @@ class Megrendelesek extends CActiveRecord
 		$criteria->compare('nyomdakonyv_munka_id',$this->nyomdakonyv_munka_id,true);
 		$criteria->compare('sztornozva',$this->sztornozva);
 
+		$criteria->compare('ugyfel.cegnev', $this->cegnev_search, true );
+		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
 			$criteria->condition=" torolt = '0'";

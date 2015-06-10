@@ -37,6 +37,9 @@ class Arajanlatok extends CActiveRecord
 	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
 	
+	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
+	public $cegnev_search;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -71,7 +74,7 @@ class Arajanlatok extends CActiveRecord
 			array('ajanlat_datum, ervenyesseg_datum, kovetkezo_hivas_ideje', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, torolt', 'safe', 'on'=>'search'),
+			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, cegnev_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -134,6 +137,8 @@ class Arajanlatok extends CActiveRecord
 			'autocomplete_ugyfel_atlagos_fizetesi_keses' => 'Átlagos fizetési késés',
 			'autocomplete_ugyfel_rendelesi_tartozas_limit' => 'Rendelési tartozási limit (Ft)',
 			'autocomplete_ugyfel_fontos_megjegyzes' => 'Fontos megjegyzés',
+			
+			'cegnev_search' => 'Cégnév',
 		);
 	}
 
@@ -159,6 +164,9 @@ class Arajanlatok extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->together = true;
+		$criteria->with = array('ugyfel');
+		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('sorszam',$this->sorszam,true);
 		$criteria->compare('ugyfel_id',$this->ugyfel_id,true);
@@ -179,6 +187,8 @@ class Arajanlatok extends CActiveRecord
 		$criteria->compare('reklamszoveg',$this->reklamszoveg,true);
 		$criteria->compare('egyeb_megjegyzes',$this->egyeb_megjegyzes,true);
 
+		$criteria->compare('ugyfel.cegnev', $this->cegnev_search, true );
+		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
 			$criteria->condition=" torolt = '0'";
