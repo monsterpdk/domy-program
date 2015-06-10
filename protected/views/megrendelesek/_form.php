@@ -198,13 +198,27 @@
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'ugyfel_tel'); ?>
-			<?php echo $form->textField($model,'ugyfel_tel',array('size'=>30,'maxlength'=>30)); ?>
+
+			<?php $this->widget("ext.maskedInput.MaskedInput", array(
+					"model" => $model,
+					"attribute" => "ugyfel_tel",
+					"mask" => '(99) 99-999-9999'                
+				));
+			?>
+			
 			<?php echo $form->error($model,'ugyfel_tel'); ?>
 		</div>
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'ugyfel_fax'); ?>
-			<?php echo $form->textField($model,'ugyfel_fax',array('size'=>30,'maxlength'=>30)); ?>
+
+			<?php $this->widget("ext.maskedInput.MaskedInput", array(
+					"model" => $model,
+					"attribute" => "ugyfel_fax",
+					"mask" => '(99) 99-999-9999'                
+				));
+			?>
+			
 			<?php echo $form->error($model,'ugyfel_fax'); ?>
 		</div>
 

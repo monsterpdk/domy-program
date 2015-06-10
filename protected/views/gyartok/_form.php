@@ -37,7 +37,49 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'irsz'); ?>
-		<?php echo $form->textField($model,'irsz',array('size'=>6,'maxlength'=>6)); ?>
+		
+		<?php
+			$this->widget('ext.typeahead.TbTypeAhead',array(
+				 'model' => $model,
+				 'attribute' => 'irsz',
+				 'enableHogan' => true,
+				 'options' => array(
+					 array(
+						 'name' => 'irsz',
+						 'valueKey' => 'iranyitoszam',
+						 'minLength' => 2,
+						 'remote' => array(
+							 'url' => Yii::app()->createUrl('/varosok/autoCompleteZipCode') . '?term=%QUERY',
+							 'filter' => new CJavaScriptExpression('function(parsedResponse) {
+								  var dataset = [];
+									for(i = 0; i < parsedResponse.length; i++) {
+										if (i == 0) {
+											$("#Gyartok_varos").val(parsedResponse[i].varosnev).off("blur");
+										}
+										
+										dataset.push({
+											iranyitoszam: parsedResponse[i].iranyitoszam,
+											varosnev: parsedResponse[i].varosnev,
+										});
+									}
+									return dataset;
+							 }'),
+						 ),
+						 'template' => '<p>{{iranyitoszam}}</p>',
+						 'engine' => new CJavaScriptExpression('Hogan'),
+					 )
+				 ),
+				'events' => array(
+					   'selected' => new CJavascriptExpression("function(evt,data) {
+						   $('#Gyartok_varos').val (data.varosnev).off('blur');
+					   }"),
+					   'autocompleted' => new CJavascriptExpression("function(evt,data) {
+						   $('#Gyartok_varos').val (data.varosnev).off('blur');
+					   }"),
+				),
+			));
+		?>		
+		
 		<?php echo $form->error($model,'irsz'); ?>
 	</div>
 
@@ -81,13 +123,27 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'telefon'); ?>
-		<?php echo $form->textField($model,'telefon',array('size'=>20,'maxlength'=>20)); ?>
+
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "telefon",
+                "mask" => '(99) 99-999-9999'                
+            ));
+		?>
+
 		<?php echo $form->error($model,'telefon'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'fax'); ?>
-		<?php echo $form->textField($model,'fax',array('size'=>20,'maxlength'=>20)); ?>
+
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "fax",
+                "mask" => '(99) 99-999-9999'                
+            ));
+		?>
+		
 		<?php echo $form->error($model,'fax'); ?>
 	</div>
 

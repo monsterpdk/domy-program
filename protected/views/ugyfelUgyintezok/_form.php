@@ -37,7 +37,14 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'telefon'); ?>
-		<?php echo $form->textField($model,'telefon',array('size'=>30,'maxlength'=>30)); ?>
+
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+				"model" => $model,
+				"attribute" => "telefon",
+				"mask" => '(99) 99-999-9999'                
+			));
+		?>
+		
 		<?php echo $form->error($model,'telefon'); ?>
 	</div>
 

@@ -19,7 +19,14 @@
 	
     <div class="row" style="width:200px; margin-right:20px; float: left;">
         <?php echo CHtml::activeLabelEx($model, '[' . $index . ']telefon'); ?>
-        <?php echo CHtml::activeTextField($model, '[' . $index . ']telefon', array('size'=>30,'maxlength'=>30)); ?>
+		
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+				"model" => $model,
+				"attribute" => '[' . $index . ']telefon',
+				"mask" => '(99) 99-999-9999'                
+			));
+		?>
+		
         <?php echo CHtml::error($model, '[' . $index . ']telefon'); ?>
     </div>
 	

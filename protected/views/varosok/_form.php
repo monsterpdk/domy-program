@@ -24,6 +24,19 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'iranyitoszam'); ?>
+
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "iranyitoszam",
+                "mask" => '9999'                
+            ));
+		?>
+
+		<?php echo $form->error($model,'iranyitoszam'); ?>
+	</div>
+
+	<div class="row">
 		<?php echo $form->labelEx($model,'varosnev'); ?>
 		<?php echo $form->textField($model,'varosnev',array('size'=>60,'maxlength'=>60)); ?>
 		<?php echo $form->error($model,'varosnev'); ?>

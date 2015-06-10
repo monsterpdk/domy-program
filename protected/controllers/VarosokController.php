@@ -103,6 +103,29 @@ class VarosokController extends Controller
 		));
 	}
 
+	// LI : irányítószámok  előregépeléséhez
+	public function actionAutoCompleteZipCode(){
+		$term = Yii::app()->request->getQuery('term');
+		
+		$match = addcslashes($term, '%_'); // escape LIKE's special characters
+		$q = new CDbCriteria( array(
+			'condition' => "iranyitoszam LIKE :term AND torolt = 0",
+			'params'    => array(':term' => "$term%")
+		) );
+        $cities = Varosok::model()->findAll($q);
+
+        $lists = array();
+		
+        foreach($cities as $city) {
+            $lists[] = array(
+                'id' => $city->id,
+				'iranyitoszam' => $city->iranyitoszam,
+                'varosnev' => $city->varosnev,
+            );
+        }
+        echo json_encode($lists);
+	}
+
 	/**
 	 * Manages all models.
 	 */

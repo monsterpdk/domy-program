@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'dom_varosok':
  * @property string $id
+ * @property integer $iranyitoszam
  * @property string $varosnev
  * @property integer $torolt
  */
@@ -31,12 +32,13 @@ class Varosok extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('varosnev', 'required'),
-			array('torolt', 'numerical', 'integerOnly'=>true),
+			array('iranyitoszam, varosnev', 'required'),
+			array('iranyitoszam, torolt', 'numerical', 'integerOnly'=>true),
+			array('iranyitoszam', 'length', 'max'=>4),
 			array('varosnev', 'length', 'max'=>60),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, varosnev, torolt', 'safe', 'on'=>'search'),
+			array('id, iranyitoszam, varosnev, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,6 +64,7 @@ class Varosok extends CActiveRecord
 	{
 		return array(
 			'id' => 'Város ID',
+			'iranyitoszam' => 'Irányítószám',
 			'varosnev' => 'Városnév',
 			'torolt' => 'Törölt',
 		);
@@ -86,6 +89,7 @@ class Varosok extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
+		$criteria->compare('iranyitoszam',$this->iranyitoszam,true);
 		$criteria->compare('varosnev',$this->varosnev,true);
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg

@@ -53,7 +53,49 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'szekhely_irsz'); ?>
-		<?php echo $form->textField($model,'szekhely_irsz',array('size'=>6,'maxlength'=>6)); ?>
+		
+		<?php
+			$this->widget('ext.typeahead.TbTypeAhead',array(
+				 'model' => $model,
+				 'attribute' => 'szekhely_irsz',
+				 'enableHogan' => true,
+				 'options' => array(
+					 array(
+						 'name' => 'szekhely_irsz',
+						 'valueKey' => 'iranyitoszam',
+						 'minLength' => 2,
+						 'remote' => array(
+							 'url' => Yii::app()->createUrl('/varosok/autoCompleteZipCode') . '?term=%QUERY',
+							 'filter' => new CJavaScriptExpression('function(parsedResponse) {
+								  var dataset = [];
+									for(i = 0; i < parsedResponse.length; i++) {
+										if (i == 0) {
+											$("#Ugyfelek_szekhely_varos").val(parsedResponse[i].varosnev).off("blur");
+										}
+										
+										dataset.push({
+											iranyitoszam: parsedResponse[i].iranyitoszam,
+											varosnev: parsedResponse[i].varosnev,
+										});
+									}
+									return dataset;
+							 }'),
+						 ),
+						 'template' => '<p>{{iranyitoszam}}</p>',
+						 'engine' => new CJavaScriptExpression('Hogan'),
+					 )
+				 ),
+				'events' => array(
+					   'selected' => new CJavascriptExpression("function(evt,data) {
+						   $('#Ugyfelek_szekhely_varos').val (data.varosnev).off('blur');
+					   }"),
+					   'autocompleted' => new CJavascriptExpression("function(evt,data) {
+						   $('#Ugyfelek_szekhely_varos').val (data.varosnev).off('blur');
+					   }"),
+				),
+			));
+		?>			
+		
 		<?php echo $form->error($model,'szekhely_irsz'); ?>
 	</div>
 
@@ -129,7 +171,49 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'posta_irsz'); ?>
-		<?php echo $form->textField($model,'posta_irsz',array('size'=>6,'maxlength'=>6)); ?>
+
+		<?php
+			$this->widget('ext.typeahead.TbTypeAhead',array(
+				 'model' => $model,
+				 'attribute' => 'posta_irsz',
+				 'enableHogan' => true,
+				 'options' => array(
+					 array(
+						 'name' => 'posta_irsz',
+						 'valueKey' => 'iranyitoszam',
+						 'minLength' => 2,
+						 'remote' => array(
+							 'url' => Yii::app()->createUrl('/varosok/autoCompleteZipCode') . '?term=%QUERY',
+							 'filter' => new CJavaScriptExpression('function(parsedResponse) {
+								  var dataset = [];
+									for(i = 0; i < parsedResponse.length; i++) {
+										if (i == 0) {
+											$("#Ugyfelek_posta_varos").val(parsedResponse[i].varosnev).off("blur");
+										}
+										
+										dataset.push({
+											iranyitoszam: parsedResponse[i].iranyitoszam,
+											varosnev: parsedResponse[i].varosnev,
+										});
+									}
+									return dataset;
+							 }'),
+						 ),
+						 'template' => '<p>{{iranyitoszam}}</p>',
+						 'engine' => new CJavaScriptExpression('Hogan'),
+					 )
+				 ),
+				'events' => array(
+					   'selected' => new CJavascriptExpression("function(evt,data) {
+						   $('#Ugyfelek_posta_varos').val (data.varosnev).off('blur');
+					   }"),
+					   'autocompleted' => new CJavascriptExpression("function(evt,data) {
+						   $('#Ugyfelek_posta_varos').val (data.varosnev).off('blur');
+					   }"),
+				),
+			));
+		?>		
+		
 		<?php echo $form->error($model,'posta_irsz'); ?>
 	</div>
 
@@ -152,7 +236,7 @@
 				 'enableHogan' => true,
 				 'options' => array(
 					 array(
-						 'name' => 'countries',
+						 'name' => 'posta_varos',
 						 'valueKey' => 'varosnev',
 						 'remote' => array(
 							 'url' => Yii::app()->createUrl('/ugyfelek/autocomplete') . '?term=%QUERY',
@@ -179,7 +263,14 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'ugyvezeto_telefon'); ?>
-		<?php echo $form->textField($model,'ugyvezeto_telefon',array('size'=>30,'maxlength'=>30)); ?>
+		
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "ugyvezeto_telefon",
+                "mask" => '(99) 99-999-9999'                
+            ));
+		?>
+		
 		<?php echo $form->error($model,'ugyvezeto_telefon'); ?>
 	</div>
 
@@ -197,7 +288,14 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'kapcsolattarto_telefon'); ?>
-		<?php echo $form->textField($model,'kapcsolattarto_telefon',array('size'=>30,'maxlength'=>30)); ?>
+		
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "kapcsolattarto_telefon",
+                "mask" => '(99) 99-999-9999'                
+            ));
+		?>
+
 		<?php echo $form->error($model,'kapcsolattarto_telefon'); ?>
 	</div>
 
@@ -217,13 +315,27 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'ceg_telefon'); ?>
-		<?php echo $form->textField($model,'ceg_telefon',array('size'=>30,'maxlength'=>30)); ?>
+		
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "ceg_telefon",
+                "mask" => '(99) 99-999-9999'                
+            ));
+		?>
+
 		<?php echo $form->error($model,'ceg_telefon'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'ceg_fax'); ?>
-		<?php echo $form->textField($model,'ceg_fax',array('size'=>30,'maxlength'=>30)); ?>
+		
+		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+                "model" => $model,
+                "attribute" => "ceg_fax",
+                "mask" => '(99) 99-999-9999'                
+            ));
+		?>
+		
 		<?php echo $form->error($model,'ceg_fax'); ?>
 	</div>
 

@@ -16,6 +16,7 @@ $this->breadcrumbs=array(
 		'data'=>$model,
 		'attributes'=>array(
 			'id',
+			'iranyitoszam',
 			'varosnev',
 			array(
 				'name' => 'torolt',

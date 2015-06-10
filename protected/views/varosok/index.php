@@ -18,6 +18,7 @@ $this->menu=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
+				'iranyitoszam',
                 'varosnev',
 				array(
 						'header' => 'Törölt',
