@@ -53,7 +53,12 @@ class UgyfelekController extends Controller
 	public function actionCreate()
 	{
 	    $model = new Ugyfelek;
- 
+
+		// lekérdezzük és beállítjuk az alapértelmezett rendelés tartozás limitet
+		$defaultTartozasiLimit = Yii::app()->config->get('alapertelmezettRendelesTartozasLimit');
+		if ($defaultTartozasiLimit != null)
+			$model -> rendelesi_tartozasi_limit = $defaultTartozasiLimit;
+		
 		// székhely és szállítási ország alapértelmezettként 'Magyarország' legyen
 		$modelOrszag = Orszagok::model()->findByAttributes(array('nev' => 'Magyarország'));
 		if ($modelOrszag != null) {

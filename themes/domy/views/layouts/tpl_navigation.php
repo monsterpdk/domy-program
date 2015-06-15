@@ -63,6 +63,7 @@
 																array ('label'=>'Besorolások kezelése', 'url'=> Yii::app()->createUrl('/besorolasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Árkategóriák kezelése', 'url'=> Yii::app()->createUrl('/arkategoriak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Fizetési morálok kezelése', 'url'=> Yii::app()->createUrl('/fizetesiMoralok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Egyéb beállítások', 'url'=> Yii::app()->createUrl('/ugyfelekEgyebBeallitasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 															)),	                                                                          
 		                    		array ('label'=>'Raktárkezeléssel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
