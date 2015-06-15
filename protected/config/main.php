@@ -175,6 +175,15 @@ return array(
 				)
 			),
 		),
+		// LI:
+		// 'Settings' típusú adatok tárolását segítő extension key->value formában tárolja az adabázisban, cache mechanizmust is használva,
+		// ami default-ból ki vna kapcsolva, nem tudom, hogy érdemes lesz-e használni, hányan és hogy fogják használi az alkalmazást, igény
+		// esetén bekapcsoljuk
+		'config' => array(
+			'class' => 'application.extensions.EConfig',
+			'configTableName' => 'dom_settings',
+			'strictMode' => false,
+		),		
 	),
 	// LI : login force-hoz kell
 	'behaviors' => array(
