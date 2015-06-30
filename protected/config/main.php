@@ -1,5 +1,6 @@
 <?php
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
+Yii::setPathOfAlias('editable', dirname(__FILE__).'/../extensions/x-editable');
 
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
@@ -28,6 +29,9 @@ return array(
 		// LI : jogosultságkezelő extension
 		'application.modules.rights.*',
 		'application.modules.rights.components.*',
+		
+		// LI : jelenleg gridview oszlop inline szerkesztésére használom
+		'editable.*',
 	),
 
 	// LI : ajax-os fájlfeltöltéshez
@@ -183,7 +187,16 @@ return array(
 			'class' => 'application.extensions.EConfig',
 			'configTableName' => 'dom_settings',
 			'strictMode' => false,
-		),		
+		),
+		// LI: X-editable beállítások (jelenleg grdivewi oszlopok inline edit-álására használom)
+        'editable' => array(
+            'class'     => 'editable.EditableConfig',
+            'form'      => 'bootstrap',        //form style: 'bootstrap', 'jqueryui', 'plain' 
+            'mode'      => 'popup',            //mode: 'popup' or 'inline'  
+            'defaults'  => array(              //default settings for all editable elements
+               'emptytext' => 'Szerkesztéshez kattintson ide'
+            )
+        ),		
 	),
 	// LI : login force-hoz kell
 	'behaviors' => array(

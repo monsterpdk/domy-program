@@ -3,12 +3,9 @@
 assets/*
 !assets/.gitignore
 protected/runtime/*
+protected/runtime/*.db
 !protected/runtime/.gitignore
 protected/data/*.db
 themes/classic/views/
-protected/runtime/application.log
 *.db
-protected/runtime/session-1.1.14.db
-*.log
-protected/runtime/application.log
 *.log

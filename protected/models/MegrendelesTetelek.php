@@ -13,7 +13,7 @@
  * @property double $netto_darabar
  * @property string $megjegyzes
  * @property string $munka_neve
-  * @property integer $mutacio
+ * @property integer $mutacio
  * @property integer $hozott_boritek
  * @property integer $torolt
  * @property integer $anyag_foglalva
@@ -25,7 +25,8 @@ class MegrendelesTetelek extends CActiveRecord
 	public $autocomplete_termek_name;
 	public $szorzo_tetel_arhoz;
 	public $netto_ar;
-
+	public $darabszam_szallitora;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -54,7 +55,7 @@ class MegrendelesTetelek extends CActiveRecord
 			array('megjegyzes, munka_neve', 'length', 'max'=>127),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, megrendeles_id, termek_id, szinek_szama1, szinek_szama2, darabszam, netto_darabar, munka_neve, megjegyzes, mutacio, hozott_boritek, torolt, egyedi_ar', 'safe', 'on'=>'search'),
+			array('id, megrendeles_id, termek_id, szinek_szama1, szinek_szama2, darabszam, netto_darabar, munka_neve, megjegyzes, mutacio, hozott_boritek, torolt, egyedi_ar, darabszam_szallitora', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -158,4 +159,5 @@ class MegrendelesTetelek extends CActiveRecord
 	public function getSzorzo_tetel_arhoz () {
 		return $szorzo_tetel_arhoz;
 	}
+
 }

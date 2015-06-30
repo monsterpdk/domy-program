@@ -6,6 +6,32 @@
 <h1>'<?php echo $model->sorszam; ?>' adatai</h1>
 
 <p>
+	<?php
+		if ($model->ugyfel_id > 0 && $model->rendelest_rogzito_user_id > 0 && count($model->tetelek) > 0) {
+			if (Yii::app()->user->checkAccess('MegrendelesSzallitolevelek.Create')) {
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_create_szallitolevel',
+					'caption'=>'Szállítólevél készítése',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {szallitolevelek("create");}'),
+					'htmlOptions'=>array('class'=>'btn btn-primary'),
+				));
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_list_szallitolevel',
+					'caption'=>'Elkészült szállítólevelek',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {szallitolevelek("list");}'),
+					'htmlOptions'=>array('class'=>'btn btn-info'),
+				));
+				
+			}
+		}
+	?>
+</p>
+
+<p>
 	<?php $this->widget('zii.widgets.CDetailView', array(
 		'data'=>$model,
 		'attributes'=>array(
@@ -87,3 +113,20 @@
 <?php
 	$this->widget( 'application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array( 'model' => $model, ) );
 ?>
+
+<script type="text/javascript">
+
+	function szallitolevelek(createOrList) {
+		var redirectUrl = "" ;
+		var megrendelesId = <?php echo $model->id; ?>;
+		if (createOrList == "create") {
+			redirectUrl = "/index.php/szallitolevelek/create/" + megrendelesId ;
+		}
+		else
+		{
+			redirectUrl = "/index.php/szallitolevelek/index/" + megrendelesId ;	
+		}
+		window.open (redirectUrl);
+	}
+
+</script>

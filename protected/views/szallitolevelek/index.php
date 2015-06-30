@@ -1,26 +1,22 @@
 <?php
-/* @var $this MegrendelesekController */
+/* @var $this SzallitolevelekController */
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Megrendelések',
+	'Szállítólevelek',
 );
 
 ?>
 
-<h1>Megrendelések</h1>
+<h1><?php echo $megrendeles->sorszam; ?> megrendelés szállítólevelei</h1>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
                 'sorszam',
-				'arajanlat.sorszam',
-				'proforma_szamla_sorszam',
-				'proforma_szamla_fizetve:boolean',
-				'rendeles_idopont',
-				'ugyfel.cegnev',
-				'egyedi_ar:boolean',
+				'datum',
+				'megjegyzes',
 				'sztornozva:boolean',
 				array(
 						'header' => 'Törölt',
@@ -45,22 +41,22 @@ $this->breadcrumbs=array(
 											'class'=>'btn btn-info btn-mini',
 											'onclick' => 'js: openPrintDialog($(this))',
 											),
-								'visible' => "Yii::app()->user->checkAccess('Megrendelesek.Print')",
+								'visible' => "Yii::app()->user->checkAccess('Szallitolevelek.Print')",
 							),
 							'view' => array(
 								'label' => 'Megtekint',
 								'icon'=>'icon-white icon-eye-open',
-								'visible' => "Yii::app()->user->checkAccess('Megrendelesek.View')",
+								'visible' => "Yii::app()->user->checkAccess('Szallitolevelek.View')",
 							),
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => '(Yii::app()->user->checkAccess("Megrendelesek.Update") || Yii::app()->user->checkAccess("Admin")) && ($data->nyomdakonyv_munka_id == 0 && $data->proforma_szamla_sorszam == "") && $data->sztornozva != 1',
+								'visible' => '(Yii::app()->user->checkAccess("Szallitolevelek.Update") || Yii::app()->user->checkAccess("Admin")) && $data->sztornozva != 1',
 							),
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Delete") && $data->torolt != 1',
+								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Delete") && $data->torolt != 1',
 							),
 							'storno' => array(
 								'label' => 'Sztornózás',
@@ -68,75 +64,53 @@ $this->breadcrumbs=array(
 								'options'=>array(
 											'class'=>'btn btn-storno btn-mini',
 											'style'=>'margin-left: 15px',
-											'onclick' => 'js: openStornoSelectDialog ($(this))',
+											'onclick' => 'js: openStornoDialog ($(this))',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Storno") && $data->sztornozva != 1',
+								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Storno") && $data->sztornozva != 1',
 							),
 						),
                 ),
 			)
 )); ?>
 
-<?php
-	if (Yii::app()->user->checkAccess('Megrendelesek.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_megrendelesek',
-			'caption'=>'Új megrendelés létrehozása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>
-
 <?php	
 	// LI: print dialog inicializálása
     $this->beginWidget('zii.widgets.jui.CJuiDialog',
         array(
-            'id'=>'dialogMegrendelesPrint',
+            'id'=>'dialogSzellitolevelPrint',
             
             'options'=>array(
-                'title'=>'Proforma számla',
+                'title'=>'Szállítólevél nyomtatása',
 				'width'=> '400px',
                 'modal' => true,
-                //'buttons' => array('Előnézet' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "printPDF?id=" + model_id)}'),
-				'buttons' => array('Proforma készítése' => 'js:function() { alert ("Ide jön majd a proforma nyomtatási lehetőség."); }'),
+				'buttons' => array('Nyomtatás' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "/index.php/szallitolevelek/printPDF?id=" + model_id);}'),
                 'autoOpen'=>false,
         )));
 
+		echo '<p> A kiválaszott szállítólevél és a hozzá kapcsolódó tételek nyomtatása. </p>';
+		
 		$this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
 
-<?php	
-	// LI: sztornózás oka dialog inicializálása
-    $this->beginWidget('zii.widgets.jui.CJuiDialog',
-        array(
-            'id'=>'dialogStornozas',
-            
-            'options'=>array(
-                'title'=>'Sztornózás oka',
-				'width'=> '400px',
-                'modal' => true,
-				'buttons' => array('Ok' => 'js:function() { model_id = $(this).data("model_id"); storno (model_id) }', 'Mégse' => 'js:function() { $("#dialogStornozas").dialog("close"); }'),
-                'autoOpen'=>false,
-        )));
-		
-		echo "Sztornózás oka:";
-		
-		$options = CHtml::listData(SztornozasOkok::model()->findAll(),'ok', 'ok');
-		echo CHtml::dropDownList('sztornozasOk', '', $options, array('empty'=>''));
-
-		$this->endWidget('zii.widgets.jui.CJuiDialog');
+<?php
+	if (Yii::app()->user->checkAccess('Szallitolevelek.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_szallitolevlek',
+			'caption'=>'Új szállítólevél létrehozása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create', 'id'=>$megrendeles->id),
+		));
+	}
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'select-storno-form',
-	'action' => Yii::app()->createUrl("megrendelesek/storno"),
+	'action' => Yii::app()->createUrl("szallitolevelek/storno"),
 	'enableAjaxValidation'=>false,
 )); 
 
-	echo CHtml::hiddenField('selected_storno' , '', array('id' => 'selected_storno'));
-	echo CHtml::hiddenField('megrendeles_id' , '', array('id' => 'megrendeles_id'));
+	echo CHtml::hiddenField('szallitolevel_id' , '', array('id' => 'szallitolevel_id'));
 	
 $this->endWidget(); ?>
 
@@ -145,26 +119,17 @@ $this->endWidget(); ?>
 			hrefString = button_obj.parent().children().eq(1).attr("href");
 			row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);
 			
-			$("#dialogMegrendelesPrint").data('model_id', row_id).dialog("open");
+			$("#dialogSzellitolevelPrint").data('model_id', row_id).dialog("open");
 		}
-</script>
 
-<script type="text/javascript">
-
-	function openStornoSelectDialog (button_obj) {
-		hrefString = button_obj.parent().children().eq(1).attr("href");
-		row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);
-		
-		$("#dialogStornozas").data('model_id', row_id).dialog("open");			
-		
-		return false;
-	}
-	
-	function storno (model_id) {
-        $('#selected_storno').val ($('#sztornozasOk').val());
-		$('#megrendeles_id').val (model_id);
-
-		$('#select-storno-form').submit();
-	}
-	
+		function openStornoDialog (button_obj) {
+			var result = confirm("Biztos benne, hogy sztornózza a kiválasztott szállítóelvelet ?");
+			if (result == true) {
+				var hrefString = button_obj.parent().children().eq(1).attr("href");
+				var row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);
+				
+				$('#szallitolevel_id').val (row_id);
+				$('#select-storno-form').submit();
+			}
+		}
 </script>

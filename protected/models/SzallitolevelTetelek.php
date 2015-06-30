@@ -12,8 +12,6 @@
  */
 class SzallitolevelTetelek extends CActiveRecord
 {
-	public $autocomplete_termek_name;
-
 	/**
 	 * @return string the associated database table name
 	 */
@@ -67,7 +65,7 @@ class SzallitolevelTetelek extends CActiveRecord
 	{
 		return array(
 			'id' => 'Tétel ID',
-			'megrendeles_id' => 'Szállítólevél ID',
+			'szallitolevel_id' => 'Szállítólevél ID',
 			'megrendeles_tetel_id' => 'Megrendelés tétel',
 			'darabszam' => 'Darabszám',
 			'torolt' => 'Törölt',
@@ -105,10 +103,6 @@ class SzallitolevelTetelek extends CActiveRecord
 
 	protected function afterFind(){
 		parent::afterFind();
-
-		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
-		// terméknevet kézzel kell kitöltenünk
-		$this -> autocomplete_termek_name = $this -> termek -> nev;
 	}	
 	
 	/**

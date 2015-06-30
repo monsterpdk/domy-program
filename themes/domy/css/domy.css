@@ -717,6 +717,15 @@ div.form .active label
 	float: left;
 	margin-left: 20px;
 }
+#szallitolevelek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#szallitolevelek-form .row {
+	float: left;
+	margin-right: 20px;
+}
 .search-form .portlet {
 	float: left;
 	width : 100%;

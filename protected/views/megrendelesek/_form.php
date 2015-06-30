@@ -499,13 +499,13 @@
 			var redirectUrl = "" ;
 			var megrendelesId = $("#Megrendelesek_id").val() ;
 			if (createOrList == "create") {
-				redirectUrl = "/szallitolevelek/create/" + megrendelesId ;
+				redirectUrl = "/index.php/szallitolevelek/create/" + megrendelesId ;
 			}
 			else
 			{
-				redirectUrl = "/szallitolevelek/index/" + megrendelesId ;	
+				redirectUrl = "/index.php/szallitolevelek/index/" + megrendelesId ;	
 			}
-			window.location = redirectUrl ;			
+			window.open (redirectUrl);
 		}
 	 
 	</script>

@@ -28,35 +28,54 @@ class SzallitolevelekController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($id)
 	{
+		if ($id == null)
+			$this -> redirect(array('index',));
+
 		$model=new Szallitolevelek;
+		$model -> megrendeles_id = $id;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if (isset($_POST['szallitolevelek']))
+		if (isset($_POST['Szallitolevelek']))
 		{
-			$model->attributes=$_POST['szallitolevelek'];
-			if($model->save())
-				$this->redirect(array('index'));
+			$model->attributes=$_POST['Szallitolevelek'];
+
+			if ($model->save()) {
+				// LI : miután elmentettük az újonnan létrehozott szállítólevelet elmentjük a hozzá tartozó tételeket is
+				$tetelekAMegrendelon = Utils::getSzallitolevelTetelToMegrendeles($id);
+				$tetelekASzallitolevelen = explode('$#$', $model -> szallito_darabszamok);
+				
+				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
+					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
+						$tetelASzalliton = new SzallitolevelTetelek;
+						
+						$tetelASzalliton -> szallitolevel_id = $model -> id;
+						$tetelASzalliton -> megrendeles_tetel_id = $tetelekAMegrendelon[$i] -> id;
+						$tetelASzalliton -> darabszam = $tetelekASzallitolevelen[$i];
+						
+						$tetelASzalliton -> save();
+					}
+				}
+				
+				$this->redirect(array('szallitolevelek/index','id'=>$model->megrendeles_id,));
+			}
 		} else {
-			$model->datum = date('Y-m-d');
-			
-			// megkeressük a legutóbb felvett megrendelést és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
-			// formátum: RE2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
+			// megkeressük a legutóbb felvett szállítólevelet és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
+			// formátum: SZ2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
 			$criteria = new CDbCriteria;
 			$criteria->select = 'max(id) AS id';
 			$row = Szallitolevelek::model() -> find ($criteria);
-			$utolsoSzallitolevel = $row['id'];
+			$utolsoArajanlat = $row['id'];
 
-			$model -> sorszam = "SZ" . date("Y") . str_pad( ($utolsoSzallitolevel != null) ? ($utolsoSzallitolevel + 1) : "000001", 6, '0', STR_PAD_LEFT );
-			
-			$model -> save(false);
-			$this -> redirect(array('update', 'id'=>$model -> id,));
+			$model -> sorszam = "SZ" . date("Y") . str_pad( ($utolsoArajanlat != null) ? ($utolsoArajanlat + 1) : "000001", 6, '0', STR_PAD_LEFT );
 		}
-
+		
+		$dataProvider = new CArrayDataProvider(Utils::getSzallitolevelTetelToMegrendeles($id));
 		$this->render('create',array(
+			'dataProvider'=>$dataProvider,
 			'model'=>$model,
 		));
 	}
@@ -68,7 +87,49 @@ class SzallitolevelekController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-//
+		if ($id == null)
+			$this -> redirect(array('index',));
+
+		$model = $this->loadModel($id);
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		if (isset($_POST['Szallitolevelek']))
+		{
+			$model->attributes=$_POST['Szallitolevelek'];
+
+			if ($model->save()) {
+				// LI : miután elmentettük az újonnan létrehozott szállítólevelet elmentjük a hozzá tartozó tételeket is
+				$tetelekAMegrendelon = Utils::getSzallitolevelTetelToMegrendeles($model -> megrendeles_id, $model -> id);
+				$tetelekASzallitolevelen = explode('$#$', $model -> szallito_darabszamok);
+				
+				// töröljük a szállítólevélhez már felvett tételeket, majd újra létrehozzuk őket az új darabszámmal
+				$command = Yii::app()->db->createCommand("DELETE FROM dom_szallitolevel_tetelek WHERE szallitolevel_id = " . $id);
+				$command -> execute ();
+				
+				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
+					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
+						$tetelASzalliton = new SzallitolevelTetelek;
+						
+						$tetelASzalliton -> szallitolevel_id = $model -> id;
+						$tetelASzalliton -> megrendeles_tetel_id = $tetelekAMegrendelon[$i] -> id;
+						$tetelASzalliton -> darabszam = $tetelekASzallitolevelen[$i];
+						
+						$tetelASzalliton -> save();
+					}
+				}
+				
+				$this->redirect(array('szallitolevelek/index','id'=>$model->megrendeles_id,));
+			}
+		}
+		
+		$dataProvider = new CArrayDataProvider(Utils::getSzallitolevelTetelToMegrendeles($model -> megrendeles_id, $model -> id));
+		
+		$this->render('update', array(
+			'dataProvider'=>$dataProvider,
+			'model'=>$model,
+		));
 	}
 
 	/**
@@ -80,9 +141,9 @@ class SzallitolevelekController extends Controller
 	{
 		// logikai törlést alkalmazunk, 'torolt' mező értékét állítjuk 1-re
 		$model=$this->loadModel($id);
-		
+
 		$model->torolt = 1;
-		$model->save();
+		$model->save(false);
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -92,21 +153,30 @@ class SzallitolevelekController extends Controller
 	/**
 	 * Lists all models.
 	 */
-	public function actionIndex()
+	public function actionIndex($id)
 	{
+		if ($id == null)
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+		
+		$megrendeles = Megrendelesek::model() -> findByPk ($id);		
+		
 		$dataProvider=new CActiveDataProvider('Szallitolevelek',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"datum DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"datum ASC", 'condition'=>'megrendeles_id = ' . $id),) : array( 'criteria'=>array('condition'=>"torolt = 0 AND megrendeles_id = " . $id,),)
 		);
-				
+		
+		// ha még nem létezik szállítólevél az adott megrendeléshez, akkor átirányítjuk a létrehozó oldalra a felhasználót
+		if ($dataProvider->getTotalItemCount() == 0)
+			$this->redirect(array('szallitolevelek/create','id'=>$id,));
+		
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
+			'megrendeles'=>$megrendeles,
 		));
 
 	}
 
 	public function actionPrintPDF()
 	{
-		/*
 		if (isset($_GET['id'])) {
 			$model = $this -> loadModel($_GET['id']);
 		}
@@ -115,15 +185,14 @@ class SzallitolevelekController extends Controller
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
-			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
+			$mPDF1->SetHtmlHeader("SZÁLLÍTÓLEVÉL #" . $model->sorszam);
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printArajanlat", array('model' => $model), true));
+			$mPDF1->WriteHTML($this->renderPartial("printSzallitolevel", array('model' => $model), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
 		}
-		*/
 	}	
 	
 	/**
@@ -143,149 +212,23 @@ class SzallitolevelekController extends Controller
 	}
 
 	/**
-	 * Az előregépelős ügyfélkiválasztóhoz kell.
-	 */
-	public function actionAutoCompleteUgyfel ()
-	{
-		$arr = array();
-		if ($_GET['term']) {
-			$match = addcslashes($_GET['term'], '%_');
-			$q = new CDbCriteria( array(
-				'condition' => "cegnev LIKE :match",
-				'params'    => array(':match' => "%$match%")
-			) );
-			 
-			$ugyfelek = Ugyfelek::model()->findAll( $q );
-
-			foreach($ugyfelek as $ugyfel) {
-				$arr[] = array(
-					'label'=>$ugyfel->cegnev,
-					'value'=>$ugyfel->cegnev,
-					'tel'=>$ugyfel->ceg_telefon,
-					'fax'=>$ugyfel->ceg_fax,
-					'cim'=>$ugyfel->display_ugyfel_cim,
-					'cimzett'=>$ugyfel->display_ugyfel_ugyintezok,
-					'adoszam'=>$ugyfel->adoszam,
-					'fizetesi_moral'=>$ugyfel->fizetesi_moral,
-					'max_fizetesi_keses'=>$ugyfel->max_fizetesi_keses,
-					'atlagos_fizetesi_keses'=>$ugyfel->atlagos_fizetesi_keses,
-					'rendelesi_tartozas_limit'=>$ugyfel->rendelesi_tartozasi_limit,
-					'fontos_megjegyzes'=>$ugyfel->fontos_megjegyzes,
-					'id'=>$ugyfel->id,
-					);      
-			}
-		}
-		echo CJSON::encode($arr);
-	}
-
-	/**
-	 * Árajánlatról indított megrendelés létrehozása.
-	 * Létrehozás után rámentjük az árajánlat megfelelő mezőit ill. a
-	 * hozzá tartozó tételeket.
-	 */
-	public function actionCreateFromArajanlat ()
-	{
-		if ( isset($_POST['arajanlat_id']) && isset($_POST['selected_tetel_list']) ) {
-			$arajanlat_id = $_POST['arajanlat_id'];
-			$selected_tetels = $_POST['selected_tetel_list'];
-			
-			$selected_tetel_list = array ();
-			if (strlen($selected_tetels) > 0) {
-				$selected_tetel_list = explode (',', $selected_tetels);
-			}
-
-			$arajanlat = Arajanlatok::model() -> with('tetelek') -> findByPk ($arajanlat_id);
-			$Szallitolevel = new Szallitolevelek;
-			
-			if ( Utils::reachedUgyfelLimit ($arajanlat->id) )
-			{
-				throw new CHttpException(403, "Elérte az ügyfélhez tartozó rendelési limitet., így nincs jogosultsága a funkció használatához!");
-			}
-			
-			// megkeressük a legutóbb felvett megrendelést és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
-			// formátum: RE0001, ahol 0001 a rekord ID-ja 4 jeggyel reprezentálva, balról 0-ákkal feltöltve
-			$criteria = new CDbCriteria;
-			$criteria->select = 'max(id) AS id';
-			$row = Szallitolevelek::model() -> find ($criteria);
-			$utolsoSzallitolevel = $row['id'];
-
-			$Szallitolevel -> sorszam = "MR" . str_pad( ($utolsoSzallitolevel != null) ? ($utolsoSzallitolevel + 1) : "0001", 4, '0', STR_PAD_LEFT );
-			
-			// alapadatok átvétele
-			$Szallitolevel -> ugyfel_id = $arajanlat -> ugyfel_id;
-			$Szallitolevel -> cimzett = $arajanlat -> cimzett;
-			$Szallitolevel -> arkategoria_id = $arajanlat -> arkategoria_id;
-			$Szallitolevel -> afakulcs_id = $arajanlat -> afakulcs_id;
-			$Szallitolevel -> ugyfel_tel = $arajanlat -> ugyfel_tel;
-			$Szallitolevel -> ugyfel_fax = $arajanlat -> ugyfel_fax;
-			$Szallitolevel -> visszahivas_jegyzet = $arajanlat -> visszahivas_jegyzet;
-			$Szallitolevel -> jegyzet = $arajanlat -> jegyzet;
-			$Szallitolevel -> reklamszoveg = $arajanlat -> reklamszoveg;
-			$Szallitolevel -> egyeb_megjegyzes = $arajanlat -> egyeb_megjegyzes;
-
-			$Szallitolevel -> arajanlat_id = $arajanlat -> id;
-			$Szallitolevel -> rendelest_rogzito_user_id = Yii::app()->user->getId();
-			$Szallitolevel -> rendeles_idopont = date('Y-m-d');
-
-			// elmentjük a modelt, hogy legyen model id a kezünkben
-			$Szallitolevel -> save(false);
-
-			// az árajánlatnál beállítjuk, hogy van már hozzá megrendelés
-			$arajanlat -> van_Szallitolevel = 1;
-			$arajanlat -> save(false);
-			
-			// az árajánlathoz felvett termékek átmásolása az újonnan létrejövő megrendelésre
-			// ha volt kiválasztva valami a léterhozás előtt, akkor csak azokat visszük ár,
-			// egyébként az összeset
-			foreach ($arajanlat -> tetelek as $termek) {
-				if ( empty($selected_tetel_list) || (in_array($termek -> id, $selected_tetel_list)) ) {
-					$Szallitolevel_tetel = new SzallitolevelTetelek;
-					$Szallitolevel_tetel -> Szallitolevel_id = $Szallitolevel -> id;
-					$Szallitolevel_tetel -> termek_id = $termek -> termek_id;
-					$Szallitolevel_tetel -> szinek_szama1 = $termek -> szinek_szama1;
-					$Szallitolevel_tetel -> szinek_szama2 = $termek -> szinek_szama2;
-					$Szallitolevel_tetel -> darabszam = $termek -> darabszam;
-					$Szallitolevel_tetel -> netto_darabar = $termek -> netto_darabar;
-					$Szallitolevel_tetel -> megjegyzes = $termek -> megjegyzes;
-					$Szallitolevel_tetel -> mutacio = $termek -> mutacio;
-					$Szallitolevel_tetel -> hozott_boritek = $termek -> hozott_boritek;
-					$Szallitolevel_tetel -> egyedi_ar = $termek -> egyedi_ar;
-
-					// az árajánlatból létrehozott tételeket külön jelezzük, mert azoknak az adatai nem szerkeszthettők többé
-					$Szallitolevel_tetel -> arajanlatbol_letrehozva = 1;
-	
-					
-					$Szallitolevel_tetel ->save (false);
-				}
-			}
-			
-			// frissítjük az egyedi ár flag-et a megrendelésen
-			Utils::isEgyediArSzallitolevelArajanlat ($Szallitolevel -> id, true);
-
-			$this->redirect(array('Szallitolevelek/update', 'id' => $Szallitolevel -> id,));
-		}
-	}
-
-	/**
 	 * Megrendelés sztornózása.
 	 */
 	public function actionStorno ()
 	{
-		if ( isset($_POST['Szallitolevel_id']) ) {
-			$model_id = $_POST['Szallitolevel_id'];
-			$storno_ok = isset($_POST['selected_storno']) ? $_POST['selected_storno'] : '';
+		if ( isset($_POST['szallitolevel_id']) ) {
+			$model_id = $_POST['szallitolevel_id'];
 			
-			$Szallitolevel = Szallitolevelek::model() -> findByPk ($model_id);
+			$szallitolevel = Szallitolevelek::model() -> findByPk ($model_id);
 
-			if ($Szallitolevel != null) {
-				$Szallitolevel -> sztornozas_oka = $storno_ok;
-				$Szallitolevel -> sztornozva = 1;
+			if ($szallitolevel != null) {
+				$szallitolevel -> sztornozva = 1;
 				
-				$Szallitolevel -> save(false);
+				$szallitolevel -> save(false);
 			}
 		}
 		
-		$this->redirect(array('Szallitolevelek/index'));
+		$this->redirect(array('szallitolevelek/index/' . $szallitolevel -> megrendeles_id));
 	}
 	
 	/**

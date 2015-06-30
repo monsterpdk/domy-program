@@ -59,8 +59,8 @@
 				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
-						'htmlOptions'=>array('style'=>'width: 180px; text-align: left;'),
-                        'template' => '{print} {view} {update} {delete} {storno}',
+						'htmlOptions'=>array('style'=>'width: 210px; text-align: left;'),
+                        'template' => '{print} {view} {update} {deliveryNote} {delete} {storno}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
 						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
@@ -85,6 +85,15 @@
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
 								'visible' => '(Yii::app()->user->checkAccess("Megrendelesek.Update") || Yii::app()->user->checkAccess("Admin")) && ($data->nyomdakonyv_munka_id == 0 && $data->proforma_szamla_sorszam == "") && $data->sztornozva != 1',
+							),
+							'deliveryNote' => array(
+								'label' => 'Szállítólevél felvétele',
+								'icon'=>'icon-white icon-list',
+								'url'=>'Yii::app()->createUrl("szallitolevelek/index", array("id"=>$data->id))',
+								'options'=>array(
+												'class'=>'btn btn-inverse btn-mini',
+											),
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.DeliveryNote") && $data->sztornozva != 1',
 							),
 							'delete' => array(
 								'label' => 'Töröl',

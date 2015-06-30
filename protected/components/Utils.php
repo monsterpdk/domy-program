@@ -396,6 +396,64 @@
 			
 		}
 
+		// LI: 		egy paraméterben kapott megrendelés azon tételeit adja vissza, amik még nem szerepelnek egy szállítólevélen sem
+		// TODO:	ezeket a kevert nyelvű függvényneveket majd egyszer lehet átírnám, nem szokásom ilyen elnevezéseket csinálni, de mivel
+		//			az adatbázisban is így tároljuk őket, valahogy így álltam neki
+		// $skipId: ha ez TRUE, akkor a lekérdezésben az adott ID-hoz tartozó szállítólevél tételeket is visszaadjuk (pl. szerkesztésnél kell)
+		function getSzallitolevelTetelToMegrendeles ($id, $skipId = null) {
+			$result = array();
+
+			if ($id != null) {
+				$megrendeles = Megrendelesek::model() -> with('tetelek') -> findByAttributes(array('id' => $id));
+
+				if ($megrendeles != null) {
+					$skipIDCondition = ($skipId != null) ? " AND dom_szallitolevelek.id <> $skipId" : "";
+					$marSzallitonLevoTetelekSql =
+						"
+							SELECT megrendeles_tetel_id, SUM(darabszam) AS darabszam FROM dom_szallitolevelek
+							JOIN dom_szallitolevel_tetelek
+							ON dom_szallitolevelek.id = dom_szallitolevel_tetelek.szallitolevel_id 
+							WHERE sztornozva = 0 AND dom_szallitolevelek.torolt = 0 AND megrendeles_id = :id" . $skipIDCondition . " 
+							GROUP BY megrendeles_tetel_id
+						";
+
+						$command = Yii::app()->db->createCommand($marSzallitonLevoTetelekSql);
+						$command->bindParam(':id', $id);
+						$megrendelesTetelek = $command->queryAll();
+
+						// végigmegyünk a megrendelés tételein és külön gyűjtjük azokat, amiket nem találunk a szállítóleveleken még
+						foreach ($megrendeles->tetelek as $tetel )
+						{
+							$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
+							if ($darabszamKulonbozet == -1)
+								array_push ($result, $tetel);
+							else if ($darabszamKulonbozet > 0) {
+								$tetel->darabszam = $darabszamKulonbozet;
+								array_push ($result, $tetel);
+							}
+						}
+				}
+			}
+
+			return $result;
+		}
+		
+		// LI: 	megnézei, hogy az adott megnredelés tétel rajta van-e a szállítókon.
+		//	   	Ha rajta van, akkor megnézi, hogy a darabszámuk egyezik-e (minden darab szállítón van-e már).
+		//		Visszatérési értékek: 		-1 - nincs rajta
+		//									 0 - minden megrendelt termék szállítón van már
+		//									 ezektől eltérő - nincs minden megrendelt termék szállítón, a különbözetet adjuk vissza (ennyi választható még)
+		function isTetelOnDeliveryNote ($megrendelesTetel, $szallitonLevoTetelek) {
+			foreach ($szallitonLevoTetelek as $tetel) {
+				if ($megrendelesTetel->id == $tetel['megrendeles_tetel_id']) {
+					if ($megrendelesTetel->darabszam == $tetel['darabszam']) return 0;
+						else return $megrendelesTetel->darabszam - $tetel['darabszam'];
+				}
+			}
+
+			return -1;
+		}
+
 	}
 
 ?>

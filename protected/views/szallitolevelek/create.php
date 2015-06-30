@@ -1,8 +1,8 @@
 <?php
-/* @var $this MegrendelesekController */
+/* @var $this SzallitolevelekController */
 /* @var $model Megrendelesek */
 ?>
 
-<h1>Új megrendelés</h1>
+<h1>Új szállítólevél</h1>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('dataProvider'=>$dataProvider, 'model'=>$model,)); ?>
