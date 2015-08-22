@@ -116,7 +116,7 @@ class TermekekController extends Controller
             $this->exportCSV(array(), null, false);
 			
 			// mindig az aktuális
-            $this->exportCSV($dataProvider, array('id', 'nev', 'kodszam', 'meret.id', 'meret.nev', 'suly', 'zaras.id', 'zaras.nev', 'ablakmeret.id', 'ablakmeret.nev', 'ablakhely.id', 'ablakhely.nev', 'papirtipus.id', 'papirtipus.nev', 'afakulcs.id', 'afakulcs.afa_szazalek', 'redotalp', 'kategoria_tipus', 'gyarto.id', 'gyarto.cegnev', 'ksh_kod', 'csom_egys', 'minimum_raktarkeszlet', 'maximum_raktarkeszlet', 'doboz_suly', 'raklap_db', 'doboz_hossz', 'doboz_szelesseg', 'doboz_magassag', 'megjegyzes', 'megjelenes_mettol', 'megjelenes_meddig', 'datum', 'torolt'));
+            $this->exportCSV($dataProvider, array('id', 'nev', 'kodszam', 'cikkszam', 'meret.id', 'meret.nev', 'suly', 'zaras.id', 'zaras.nev', 'ablakmeret.id', 'ablakmeret.nev', 'ablakhely.id', 'ablakhely.nev', 'papirtipus.id', 'papirtipus.nev', 'afakulcs.id', 'afakulcs.afa_szazalek', 'redotalp', 'kategoria_tipus', 'gyarto.id', 'gyarto.cegnev', 'ksh_kod', 'csom_egys', 'minimum_raktarkeszlet', 'maximum_raktarkeszlet', 'doboz_suly', 'raklap_db', 'doboz_hossz', 'doboz_szelesseg', 'doboz_magassag', 'megjegyzes', 'megjelenes_mettol', 'megjelenes_meddig', 'datum', 'torolt'));
         }
 		
 		// LI : importhoz kell ez

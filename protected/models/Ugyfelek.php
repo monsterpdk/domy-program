@@ -92,7 +92,7 @@ class Ugyfelek extends DomyModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, cegforma, adoszam, arkategoria, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral', 'required'),
+			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, cegforma, arkategoria, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral', 'required'),
 			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, torolt', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_tipus', 'length', 'max'=>9),
 			array('cegnev, ugyvezeto_nev, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_email, ceg_email, tevekenysegi_kor', 'length', 'max'=>127),
@@ -120,7 +120,7 @@ class Ugyfelek extends DomyModel
 	{
 		if ($this->adoszam != "") {
 			$ugyfelek = Ugyfelek::model()->findAllByAttributes (array('adoszam' => $this->adoszam));
-			
+			print_r($ugyfelek) ;
 			if (count($ugyfelek) > 0) {
 				$ugyfel = $ugyfelek[0];
 
@@ -136,34 +136,40 @@ class Ugyfelek extends DomyModel
 	public function checkAdoszam ($attribute)
 	{
 		$adoszam = $this->adoszam;
-		$pattern = "/^(\d{7})(\d)\-([1-5])\-(0[2-9]|[13][0-9]|2[02-9]|4[0-4]|51)$/";
-
-		$result = preg_match ($pattern, $adoszam, $matches);
-
-		if ($result == 1) {
-			$mul = array (9, 7, 3, 1, 9, 7, 3);
-			$base = str_split($matches[1]);
-
-			$check = $matches[2];
-			$sum = 0;
-			
-			for ($i = 0; $i < 7; $i++) {
-				$sum += $base[$i] * $mul[$i];
+		if ($adoszam != "") {
+			$pattern = "/^(\d{7})(\d)\-([1-5])\-(0[2-9]|[13][0-9]|2[02-9]|4[0-4]|51)$/";
+	
+			$result = preg_match ($pattern, $adoszam, $matches);
+	
+			if ($result == 1) {
+				$mul = array (9, 7, 3, 1, 9, 7, 3);
+				$base = str_split($matches[1]);
+	
+				$check = $matches[2];
+				$sum = 0;
+				
+				for ($i = 0; $i < 7; $i++) {
+					$sum += $base[$i] * $mul[$i];
+				}
+				
+				$last = $sum % 10;
+				if ($last > 0) { $last = 10 - $last; }
+	
+				if ($last != $check) {
+					$this->addError($attribute, 'Hibás az adószám formátuma!');
+				}
+	
+				return $last == $check;
 			}
+	
+			$this->addError($attribute, 'Hibás az adószám formátuma!');
 			
-			$last = $sum % 10;
-			if ($last > 0) { $last = 10 - $last; }
-
-			if ($last != $check) {
-				$this->addError($attribute, 'Hibás az adószám formátuma!');
-			}
-
-			return $last == $check;
+			return false;
 		}
-
-		$this->addError($attribute, 'Hibás az adószám formátuma!');
-		
-		return false;
+		else
+		{
+			return true ;	
+		}
 	}
 	
 	/**
@@ -464,6 +470,54 @@ class Ugyfelek extends DomyModel
 			$this -> szekhely_cim;
 	}
 
+	/**
+	 * TÁ
+	 * Ügyfél létrehozása tömbből. A webáruházakból a megrendelések beimportálásánál kerülhet felhasználásra, ha még a rendszerben nem szerepelt a megrendelő ügyfélként, létre kell hozni.
+	 * Annyi adattal, amennyi a webáruházból rendelkezésre áll
+	 * @param array $ugyfel_adatok A létrehozandó ügyfél adatait tartalmazó tömb
+	 * @return a létrejött ügyfél id-je
+	 */
+	 public function insertUgyfelFromArray($ugyfel_adatok) {
+	 	$model = new Ugyfelek;
+		// lekérdezzük és beállítjuk az alapértelmezett rendelés tartozás limitet
+		$defaultTartozasiLimit = Yii::app()->config->get('alapertelmezettRendelesTartozasLimit');
+		if ($defaultTartozasiLimit != null)
+			$model -> rendelesi_tartozasi_limit = $defaultTartozasiLimit;
+	
+		$modelOrszag = Orszagok::model()->findByAttributes(array('iso2' => $ugyfel_adatok["orszag"]));
+		if ($modelOrszag != null) {
+			$model->szekhely_orszag = $modelOrszag->id;
+			$model->posta_orszag = $modelOrszag->id;;
+		}
+		$model->ugyfel_tipus = "vasarlo" ;
+		$model->cegnev = $ugyfel_adatok["cegnev"] ;
+		$model->kapcsolattarto_nev = "Nincs megadva" ;
+		$model->kapcsolattarto_telefon = $ugyfel_adatok["telefon"] ;
+		$model->kapcsolattarto_email = $ugyfel_adatok["email"] ;
+		$model->cegforma = 3 ;	//3 = nincs megadva. Mivel a webáruházakban nem kérünk be külön cégformát, ezt onnan nem lehet egyértelműen kinyerni.
+		$model->max_fizetesi_keses = 10 ;	//Nem tudom mennyi lesz az alapértelmezett, most 10-re állítom
+		$model->atlagos_fizetesi_keses = 0 ;
+		$model->rendelesi_tartozasi_limit = 500000 ;
+		$model->fizetesi_moral = 5 ;	//Mivel webáruházas, nagy valószínűséggel azonnal fizet
+		$model->szekhely_irsz = $ugyfel_adatok["irsz"] ;	 	
+		$model->szekhely_varos = $ugyfel_adatok["telepules"] ;	 	
+		$model->szekhely_cim = $ugyfel_adatok["cim"] ;	 	
+		$model->posta_irsz = $ugyfel_adatok["irsz"] ;	 	
+		$model->posta_varos = $ugyfel_adatok["telepules"] ;	 	
+		$model->posta_cim = $ugyfel_adatok["cim"] ;	 	
+		$model->ceg_telefon = $ugyfel_adatok["telefon"] ;	 	
+		$model->ceg_fax = $ugyfel_adatok["fax"] ;	 	
+		$model->ceg_email = $ugyfel_adatok["email"] ;	 	
+		$model->adoszam = $ugyfel_adatok["adoszam"] ;	 	
+		$model->arkategoria = $ugyfel_adatok["arkategoria_id"] ;	 	
+		$model->elso_vasarlas_datum = substr($ugyfel_adatok["elso_vasarlas_datum"],0,10) ;
+		$model->felvetel_idopont = date("Y-m-d H:i:s") ;
+		$model->save() ;	 	
+//		print_r($model) ;
+	 	$ugyfel_id = $model->id ;
+	 	return $ugyfel_id ;
+	 }
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

@@ -42,6 +42,18 @@
 		</div>
 
 		<div class="row">
+			<?php echo $form->labelEx($model,'aruhaz_megrendelesek_xml_url'); ?>
+			<?php echo $form->textField($model,'aruhaz_megrendelesek_xml_url',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->error($model,'aruhaz_megrendelesek_xml_url'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'aruhaz_megrendeles_order_prefix'); ?>
+			<?php echo $form->textField($model,'aruhaz_megrendeles_order_prefix',array('size'=>4,'maxlength'=>2)); ?>
+			<?php echo $form->error($model,'aruhaz_megrendeles_order_prefix'); ?>
+		</div>
+		
+		<div class="row">
 			<?php echo $form->labelEx($model,'arkategoria_id'); ?>
 			
 				<?php echo CHtml::activeDropDownList($model, 'arkategoria_id',

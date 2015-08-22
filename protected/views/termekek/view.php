@@ -18,6 +18,7 @@ $this->breadcrumbs=array(
 			'id',
 			'nev',
 			'kodszam',
+			'cikkszam',
 			'meret.nev',
 			'suly:number',
 			'zaras.nev',

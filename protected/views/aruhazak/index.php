@@ -17,6 +17,7 @@ $this->breadcrumbs=array(
                 'kod',
 				'aruhaz_nev',
 				'aruhaz_url',
+				'aruhaz_megrendelesek_xml_url',
 				'arkategoria.nev',
 				'ingyen_szallitas:boolean',
 				array(

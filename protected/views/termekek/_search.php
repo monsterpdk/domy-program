@@ -27,6 +27,12 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->label($model,'cikkszam'); ?>
+		<?php echo $form->textField($model,'cikkszam',array('size'=>30,'maxlength'=>30)); ?>
+	</div>
+	
+	
+	<div class="row">
 		<?php echo $form->label($model,'meret_id'); ?>
 		<?php echo $form->textField($model,'meret_id'); ?>
 	</div>

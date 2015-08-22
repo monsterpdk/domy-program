@@ -21,6 +21,14 @@
 	<?php echo CHtml::encode($data->aruhaz_url); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('aruhaz_megrendelesek_xml_url')); ?>:</b>
+	<?php echo CHtml::encode($data->aruhaz_megrendelesek_xml_url); ?>
+	<br />	
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('aruhaz_megrendeles_order_prefix')); ?>:</b>
+	<?php echo CHtml::encode($data->aruhaz_megrendeles_order_prefix); ?>
+	<br />	
+	
 	<b><?php echo CHtml::encode($data->getAttributeLabel('arkategoria_id')); ?>:</b>
 	<?php echo CHtml::encode($data->arkategoria_id); ?>
 	<br />

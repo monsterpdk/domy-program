@@ -17,6 +17,10 @@
 	<?php echo CHtml::encode($data->kodszam); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('cikkszam')); ?>:</b>
+	<?php echo CHtml::encode($data->cikkszam); ?>
+	<br />	
+	
 	<b><?php echo CHtml::encode($data->getAttributeLabel('meret_id')); ?>:</b>
 	<?php echo CHtml::encode($data->meret_id); ?>
 	<br />

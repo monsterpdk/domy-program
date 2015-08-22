@@ -37,7 +37,7 @@ class TermekAblakHelyek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nev, hely, x_pozicio_honnan, x_pozicio_mm, y_pozicio_honnan, y_pozicio_mm', 'required'),
+			array('nev', 'required'),
 			array('x_pozicio_mm, y_pozicio_mm, aktiv, torolt', 'numerical', 'integerOnly'=>true),
 			array('nev', 'length', 'max'=>30),
 			array('hely', 'length', 'max'=>4),

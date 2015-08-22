@@ -48,16 +48,8 @@ class MegrendelesekController extends Controller
 				$model -> afakulcs_id = $afaKulcs -> id;
 			}
 			
-			$model->rendeles_idopont = date('Y-m-d');
-			
-			// megkeressük a legutóbb felvett megrendelést és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
-			// formátum: RE2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
-			$criteria = new CDbCriteria;
-			$criteria->select = 'max(id) AS id';
-			$row = Megrendelesek::model() -> find ($criteria);
-			$utolsoMegrendeles = $row['id'];
-
-			$model -> sorszam = "MR" . date("Y") . str_pad( ($utolsoMegrendeles != null) ? ($utolsoMegrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
+			$model->rendeles_idopont = date('Y-m-d');		
+			$model -> sorszam = $this->ujMegrendelesIdGeneralas();
 			
 			$model -> save(false);
 			$this -> redirect(array('update', 'id'=>$model -> id,));
@@ -122,10 +114,138 @@ class MegrendelesekController extends Controller
 	}
 
 	/**
+	 * Új megrendeléshez ID generálás
+	 */
+	 private function ujMegrendelesIdGeneralas() {
+		$criteria = new CDbCriteria;
+		$criteria->select = 'max(id) AS id';
+		$row = Megrendelesek::model() -> find ($criteria);
+		$utolsoMegrendeles = $row['id'];
+		$sorszam = "MR" . date("Y") . str_pad( ($utolsoMegrendeles != null) ? ($utolsoMegrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
+	 	return $sorszam ;
+	 }
+	
+	/**
+	 * Rögzítünk egy xml-ben megkapott megrendelést.
+	 * @param SimpleXMLElement $xml a megrendelés adatait tartalmazó objektum
+	 */
+	public function insertMegrendelesFromXml($xml, $forras) {
+//		print_r($xml) ;
+		$tomb = array() ;
+		$tomb["megrendeles_forras_id"] = $forras->id ;
+		$tomb["megrendeles_forras_megrendeles_id"] = (string)$xml->orderhead_code ;
+		
+/* Itt egyelőre az alapértelmezett áfakulcsot használjuk, mert úgyis minden ugyanazzal az áfával megy, legalább a webáruházakban nem lehet elrontani... */		
+		$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
+		if ($afaKulcs != null) {
+			$tomb["afakulcs_id"] = $afaKulcs->id;
+		}		
+		$tomb["rendeles_idopont"] = (string)$xml->orderhead_timestamp;		
+		$tomb["sorszam"] = $this->ujMegrendelesIdGeneralas();
+		
+/* Ügyfél lekérése az adatbázisból a megkapott adatok alapján */		
+		$criteria=new CDbCriteria();
+		$criteria->select='id, arkategoria';
+		$criteria->condition="cegnev=:cegnev";
+		$criteria->addCondition("cegnev_teljes=:cegnev_teljes",'OR');
+		$criteria->addCondition("ugyvezeto_email=:email",'OR');
+		$criteria->params=array(":cegnev"=>urldecode((string)$xml->orderhead_partner_name),":cegnev_teljes"=>urldecode((string)$xml->orderhead_partner_name),":email"=>(string)$xml->orderhead_partner_email);
+		
+		$ugyfel = Ugyfelek::model()->find($criteria) ;
+		if ($ugyfel != null) {
+			$tomb["ugyfel_id"] = $ugyfel->id ;
+			$tomb["ugyfel_arkategoria_id"] = $ugyfel->arkategoria ;
+		}
+		else
+		{
+/* Ha még nem szerepel az adatbázisban az ügyfél, létrehozzuk */			
+			$ugyfel_adatok = array() ;
+			$ugyfel_adatok["cegnev"] = urldecode((string)$xml->orderhead_partner_name) ;
+			$ugyfel_adatok["irsz"] = (string)$xml->orderhead_partner_zip ;
+			$ugyfel_adatok["telepules"] = (string)$xml->orderhead_partner_city ;
+			$ugyfel_adatok["cim"] = (string)$xml->orderhead_partner_address ;
+			$ugyfel_adatok["orszag"] = (string)$xml->orderhead_partner_country ;
+			$ugyfel_adatok["email"] = (string)$xml->orderhead_partner_email ;
+			$ugyfel_adatok["telefon"] = (string)$xml->orderhead_partner_phone ;
+			$ugyfel_adatok["fax"] = (string)$xml->orderhead_partner_fax ;
+			$ugyfel_adatok["adoszam"] = (string)$xml->orderhead_partner_vatnumber ;
+			$ugyfel_adatok["arkategoria_id"] = (string)$forras->arkategoria_id ;
+			$ugyfel_adatok["elso_vasarlas_datum"] = (string)$xml->orderhead_timestamp ;
+			$tomb["ugyfel_id"] = Ugyfelek::model()->insertUgyfelFromArray($ugyfel_adatok) ;
+			$tomb["ugyfel_arkategoria_id"] = $ugyfel_adatok["arkategoria_id"];
+		}
+//		print_r($tomb) ;
+//		die() ;
+
+/* A megrendelés létrehozása az adatbázisban */		
+		if (count($xml->orderitems->orderitem) > 0) {
+			$model=new Megrendelesek;
+			
+			$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
+			$model->sorszam = $tomb["sorszam"] ;
+
+			if ($afaKulcs != null) {
+				$model -> afakulcs_id = $afaKulcs -> id;
+			}
+			
+			$model->rendeles_idopont = date('Y-m-d', strtotime((string)$xml->orderhead_timestamp));		
+
+			$model->ugyfel_id = $tomb["ugyfel_id"] ;
+			$model->arkategoria_id = $tomb["ugyfel_arkategoria_id"] ;
+			$model->sztornozva = "0" ;
+			$model->torolt = "0" ;		
+			$model->megrendeles_forras_id = $tomb["megrendeles_forras_id"] ;
+			$model->megrendeles_forras_megrendeles_id = $tomb["megrendeles_forras_megrendeles_id"] ;
+			
+			$model -> save(false);	
+			$megrendeles_id = $model->id ;			
+			for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
+				$termek = $xml->orderitems->orderitem[$i] ;
+				$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model)) ;
+				
+				$szinekszama1 = $szinekszama2 = 0 ;
+				if (preg_match('/(\d)\+(\d)/', (string)$termek->orderitem_name, $matches)) {
+					$szinekszama1 = $matches[1] ;
+					$szinekszama2 = $matches[2] ;
+				}
+				$megrendeles_tetel = new MegrendelesTetelek;
+				$megrendeles_tetel -> megrendeles_id = $megrendeles_id;
+				$megrendeles_tetel -> termek_id = $termek_adatok->id;
+				$megrendeles_tetel -> szinek_szama1 = $szinekszama1;
+				$megrendeles_tetel -> szinek_szama2 = $szinekszama2;
+				$megrendeles_tetel -> darabszam = (int)$termek -> orderitem_qty;
+				$megrendeles_tetel -> netto_darabar = (string)$termek -> orderitem_price;				
+				$megrendeles_tetel ->save (false);
+				
+			}
+		}
+	}
+	 
+	 
+	/**
+	 * Importáljuk a webáruházakból a megrendeléseket
+	 */
+	 public function webaruhazMegrendelesekBegyujt() {
+	 	 $webaruhazak = Aruhazak::model()->findAllByAttributes(array(),"aruhaz_megrendelesek_xml_url != ''");
+	 	 if ($webaruhazak != null) {
+	 	 		foreach ($webaruhazak as $webaruhaz) {
+	 	 			$xml = new SimpleXMLElement($webaruhaz->aruhaz_megrendelesek_xml_url, NULL, TRUE);
+					if ($xml->count() > 0) {
+						foreach ($xml->children() as $megrendeles) {
+							$this->insertMegrendelesFromXml($megrendeles, $webaruhaz) ;
+//							die() ;
+						}
+					}
+	 	 		}
+	 	 }
+	 }
+	
+	/**
 	 * Lists all models.
 	 */
 	public function actionIndex()
 	{
+		$this->webaruhazMegrendelesekBegyujt() ;
 		$model=new Megrendelesek('search');
 		$model->unsetAttributes();
 		if(isset($_GET['Megrendelesek']))

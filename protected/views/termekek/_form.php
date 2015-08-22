@@ -36,6 +36,13 @@
 		</div>
 
 		<div class="row">
+			<?php echo $form->labelEx($model,'cikkszam'); ?>
+			<?php echo $form->textField($model,'cikkszam',array('size'=>30,'maxlength'=>30)); ?>
+			<?php echo $form->error($model,'cikkszam'); ?>
+		</div>
+		
+		
+		<div class="row">
 			<?php echo $form->labelEx($model,'meret_id'); ?>
 			
 				<?php echo CHtml::activeDropDownList($model, 'meret_id',

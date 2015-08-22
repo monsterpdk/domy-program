@@ -42,6 +42,8 @@ class Aruhazak extends CActiveRecord
 			array('kod', 'length', 'max'=>2),
 			array('aruhaz_nev', 'length', 'max'=>30),
 			array('aruhaz_url', 'length', 'max'=>127),
+			array('aruhaz_megrendelesek_xml_url', 'length', 'max'=>255),
+			array('aruhaz_megrendeles_order_prefix', 'length', 'max'=>2),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, kod, aruhaz_nev, aruhaz_url, arkategoria_id, ingyen_szallitas, torolt', 'safe', 'on'=>'search'),
@@ -70,6 +72,8 @@ class Aruhazak extends CActiveRecord
 			'kod' => 'Kód',
 			'aruhaz_nev' => 'Áruház név',
 			'aruhaz_url' => 'Áruház URL',
+			'aruhaz_megrendelesek_xml_url' => 'Áruház megrendelések import XML URL',
+			'aruhaz_megrendeles_order_prefix' => 'Megrendelés azonosító prefix',
 			'arkategoria_id' => 'Árkategória',
 			'ingyen_szallitas' => 'Ingyen szállítás',
 			'torolt' => 'Törölt',
@@ -102,6 +106,8 @@ class Aruhazak extends CActiveRecord
 		$criteria->compare('kod',$this->kod,true);
 		$criteria->compare('aruhaz_nev',$this->aruhaz_nev,true);
 		$criteria->compare('aruhaz_url',$this->aruhaz_url,true);
+		$criteria->compare('aruhaz_megrendelesek_xml_url',$this->aruhaz_megrendelesek_xml_url,true);
+		$criteria->compare('aruhaz_megrendeles_order_prefix',$this->aruhaz_megrendeles_order_prefix,true);
 		$criteria->compare('arkategoria_id',$this->arkategoria_id);
 		$criteria->compare('ingyen_szallitas',$this->ingyen_szallitas);
 
