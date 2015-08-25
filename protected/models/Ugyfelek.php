@@ -489,8 +489,20 @@ class Ugyfelek extends DomyModel
 			$model->szekhely_orszag = $modelOrszag->id;
 			$model->posta_orszag = $modelOrszag->id;;
 		}
+		if ($ugyfel_adatok["cegnev"] != "") {
+			$cegforma_string = substr($ugyfel_adatok["cegnev"] , strrpos($ugyfel_adatok["cegnev"], " ") + 1) ;
+			$cegforma = Cegformak::model()->findByAttributes(array('cegforma' => trim($cegforma_string))) ;
+			if ($cegforma != null) {
+				$model->cegforma = (int)$cegforma->id ;
+				$model->cegnev = substr($ugyfel_adatok["cegnev"] , 0,  strrpos($ugyfel_adatok["cegnev"], " ")) ;
+			}
+			else
+			{
+				$model->cegnev = $ugyfel_adatok["cegnev"] ;				
+			}
+		}
+		
 		$model->ugyfel_tipus = "vasarlo" ;
-		$model->cegnev = $ugyfel_adatok["cegnev"] ;
 		$model->kapcsolattarto_nev = "Nincs megadva" ;
 		$model->kapcsolattarto_telefon = $ugyfel_adatok["telefon"] ;
 		$model->kapcsolattarto_email = $ugyfel_adatok["email"] ;

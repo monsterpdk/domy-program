@@ -179,44 +179,53 @@ class MegrendelesekController extends Controller
 
 /* A megrendelés létrehozása az adatbázisban */		
 		if (count($xml->orderitems->orderitem) > 0) {
-			$model=new Megrendelesek;
-			
-			$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
-			$model->sorszam = $tomb["sorszam"] ;
-
-			if ($afaKulcs != null) {
-				$model -> afakulcs_id = $afaKulcs -> id;
-			}
-			
-			$model->rendeles_idopont = date('Y-m-d', strtotime((string)$xml->orderhead_timestamp));		
-
-			$model->ugyfel_id = $tomb["ugyfel_id"] ;
-			$model->arkategoria_id = $tomb["ugyfel_arkategoria_id"] ;
-			$model->sztornozva = "0" ;
-			$model->torolt = "0" ;		
-			$model->megrendeles_forras_id = $tomb["megrendeles_forras_id"] ;
-			$model->megrendeles_forras_megrendeles_id = $tomb["megrendeles_forras_megrendeles_id"] ;
-			
-			$model -> save(false);	
-			$megrendeles_id = $model->id ;			
-			for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
-				$termek = $xml->orderitems->orderitem[$i] ;
-				$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model)) ;
+			$checked_order_id = Megrendelesek::model()->findByAttributes(array('megrendeles_forras_megrendeles_id' => $tomb["megrendeles_forras_megrendeles_id"])) ;
+			/* Csak akkor rögzítjük a megrendelést, ha az még nem volt rögzítve korábban */
+			if ($checked_order_id == null) {
+				$model=new Megrendelesek;
 				
-				$szinekszama1 = $szinekszama2 = 0 ;
-				if (preg_match('/(\d)\+(\d)/', (string)$termek->orderitem_name, $matches)) {
-					$szinekszama1 = $matches[1] ;
-					$szinekszama2 = $matches[2] ;
+				$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
+				$model->sorszam = $tomb["sorszam"] ;
+	
+				if ($afaKulcs != null) {
+					$model -> afakulcs_id = $afaKulcs -> id;
 				}
-				$megrendeles_tetel = new MegrendelesTetelek;
-				$megrendeles_tetel -> megrendeles_id = $megrendeles_id;
-				$megrendeles_tetel -> termek_id = $termek_adatok->id;
-				$megrendeles_tetel -> szinek_szama1 = $szinekszama1;
-				$megrendeles_tetel -> szinek_szama2 = $szinekszama2;
-				$megrendeles_tetel -> darabszam = (int)$termek -> orderitem_qty;
-				$megrendeles_tetel -> netto_darabar = (string)$termek -> orderitem_price;				
-				$megrendeles_tetel ->save (false);
 				
+				$model->rendeles_idopont = date('Y-m-d', strtotime((string)$xml->orderhead_timestamp));		
+	
+				$model->ugyfel_id = $tomb["ugyfel_id"] ;
+				$model->arkategoria_id = $tomb["ugyfel_arkategoria_id"] ;
+				$model->sztornozva = "0" ;
+				$model->torolt = "0" ;		
+				$model->megrendeles_forras_id = $tomb["megrendeles_forras_id"] ;
+				$model->megrendeles_forras_megrendeles_id = $tomb["megrendeles_forras_megrendeles_id"] ;
+				
+				$model -> save(false);	
+				$megrendeles_id = $model->id ;			
+				for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
+					$termek = $xml->orderitems->orderitem[$i] ;
+					$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model)) ;
+					if ($termek_adatok != null) {
+						$szinekszama1 = $szinekszama2 = 0 ;
+						if (preg_match('/(\d)\+(\d)/', (string)$termek->orderitem_name, $matches)) {
+							$szinekszama1 = $matches[1] ;
+							$szinekszama2 = $matches[2] ;
+						}
+						$megrendeles_tetel = new MegrendelesTetelek;
+						$megrendeles_tetel -> megrendeles_id = $megrendeles_id;
+						$megrendeles_tetel -> termek_id = $termek_adatok->id;
+						$megrendeles_tetel -> szinek_szama1 = $szinekszama1;
+						$megrendeles_tetel -> szinek_szama2 = $szinekszama2;
+						$megrendeles_tetel -> darabszam = (int)$termek -> orderitem_qty;
+						$megrendeles_tetel -> netto_darabar = (string)$termek -> orderitem_price;				
+						$megrendeles_tetel ->save (false);
+					}
+					else
+					{
+						/* Ha nincs az adott cikkszámmal termék a domy programban, akkor mit csináljunk a termékkel? */						
+					}
+					
+				}
 			}
 		}
 	}
@@ -229,11 +238,14 @@ class MegrendelesekController extends Controller
 	 	 $webaruhazak = Aruhazak::model()->findAllByAttributes(array(),"aruhaz_megrendelesek_xml_url != ''");
 	 	 if ($webaruhazak != null) {
 	 	 		foreach ($webaruhazak as $webaruhaz) {
-	 	 			$xml = new SimpleXMLElement($webaruhaz->aruhaz_megrendelesek_xml_url, NULL, TRUE);
-					if ($xml->count() > 0) {
-						foreach ($xml->children() as $megrendeles) {
-							$this->insertMegrendelesFromXml($megrendeles, $webaruhaz) ;
-//							die() ;
+	 	 			$xml_string = file_get_contents($webaruhaz->aruhaz_megrendelesek_xml_url);
+	 	 			if (!empty($xml_string)) {
+	 	 				$xml = new SimpleXMLElement($xml_string);
+						if ($xml->count() > 0) {
+							foreach ($xml->children() as $megrendeles) {
+								$this->insertMegrendelesFromXml($megrendeles, $webaruhaz) ;
+	//							die() ;
+							}
 						}
 					}
 	 	 		}
