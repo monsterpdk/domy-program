@@ -37,6 +37,9 @@ class Arajanlatok extends CActiveRecord
 	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
 	
+	public $netto_ar;
+	public $brutto_ar;
+	
 	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
 	public $cegnev_search;
 	
@@ -138,6 +141,9 @@ class Arajanlatok extends CActiveRecord
 			'autocomplete_ugyfel_rendelesi_tartozas_limit' => 'Rendelési tartozási limit (Ft)',
 			'autocomplete_ugyfel_fontos_megjegyzes' => 'Fontos megjegyzés',
 			
+			'netto_ar' => 'Nettó összeg',
+			'brutto_ar' => 'Bruttó összeg',
+			
 			'cegnev_search' => 'Cégnév',
 		);
 	}
@@ -164,8 +170,12 @@ class Arajanlatok extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->select .= "t.id, sorszam, cimzett, ajanlat_datum, hatarido, van_megrendeles, t.torolt, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
 		$criteria->together = true;
 		$criteria->with = array('ugyfel');
+		$criteria->join = "LEFT JOIN dom_arajanlat_tetelek as tetelek ON (t.id = tetelek.arajanlat_id)" ;
+		$criteria->join .= "LEFT JOIN dom_afakulcsok as afakulcsok ON (t.afakulcs_id = afakulcsok.id)" ;
+		$criteria->group = "t.id" ;
 		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('sorszam',$this->sorszam,true);
@@ -191,10 +201,13 @@ class Arajanlatok extends CActiveRecord
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
-			$criteria->condition=" torolt = '0'";
+			$criteria->condition=" torolt = '0'";			
 			
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+                        'defaultOrder'=>'ajanlat_datum DESC',
+                    ),						
 		));
 	}
 
@@ -209,6 +222,14 @@ class Arajanlatok extends CActiveRecord
 		
 		if ($this -> kovetkezo_hivas_ideje != null)
 			$this -> kovetkezo_hivas_ideje = date('Y-m-d', strtotime(str_replace("-", "", $this->kovetkezo_hivas_ideje)));
+		
+		if (!is_numeric($this -> netto_ar)) {
+			$this -> netto_ar = 0;	
+		}
+
+		if (!is_numeric($this -> brutto_ar)) {
+			$this -> brutto_ar = 0;	
+		}
 		
 		// autocomplete mező esetén az ügyfél ID van csak meg, így a beszédes
 		// cégnevet, címet kézzel kell kitöltenünk

@@ -14,16 +14,6 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'nev',
-				'magassag:number',
-				'szelesseg:number',
-				'aktiv:boolean',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -51,6 +41,16 @@ $this->breadcrumbs=array(
 							)
 						),
                 ),
+                'nev',
+				'magassag:number',
+				'szelesseg:number',
+				'aktiv:boolean',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

@@ -14,25 +14,6 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'termek.nev',
-				'csomag_beszerzesi_ar:number',
-				'db_beszerzesi_ar:number',
-				'csomag_ar_nyomashoz:number',
-				'db_ar_nyomashoz:number',
-				'csomag_eladasi_ar:number',
-				'db_eladasi_ar:number',
-				'csomag_ar2:number',
-				'db_ar2:number',
-				'csomag_ar3:number',
-				'db_ar3:number',
-				'datum_mettol',
-				'datum_meddig',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -60,6 +41,25 @@ $this->breadcrumbs=array(
 							)
 						),
                 ),
+                'termek.nev',
+				'csomag_beszerzesi_ar:number',
+				'db_beszerzesi_ar:number',
+				'csomag_ar_nyomashoz:number',
+				'db_ar_nyomashoz:number',
+				'csomag_eladasi_ar:number',
+				'db_eladasi_ar:number',
+				'csomag_ar2:number',
+				'db_ar2:number',
+				'csomag_ar3:number',
+				'db_ar3:number',
+				'datum_mettol',
+				'datum_meddig',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

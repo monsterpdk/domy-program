@@ -14,15 +14,6 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'bizonylatszam',
-				'gyarto.cegnev',
-				'beszallitas_datum',
-				'kifizetes_datum',
-				'displayOsszertek:number',
-				'megjegyzes',
-				'user.username',
-				'anyagrendeles.displayBizonylatszamDatum',
-				'lezarva:boolean',
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 172px; text-align: left;'),
@@ -70,6 +61,15 @@ $this->breadcrumbs=array(
 							
 						),
                 ),
+                'bizonylatszam',
+				'gyarto.cegnev',
+				'beszallitas_datum',
+				'kifizetes_datum',
+				'displayOsszertek:number',
+				'megjegyzes',
+				'user.username',
+				'anyagrendeles.displayBizonylatszamDatum',
+				'lezarva:boolean',
 			)
 )); ?>
 

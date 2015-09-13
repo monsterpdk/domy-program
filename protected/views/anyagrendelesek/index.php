@@ -19,14 +19,6 @@ $this->menu=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'bizonylatszam',
-				'gyarto.cegnev',
-				'rendeles_datum',
-				'displayOsszertek:number',
-				'megjegyzes',
-				'user.username',
-				'sztornozva:boolean',
-				'lezarva:boolean',
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -63,6 +55,15 @@ $this->menu=array(
 							)
 						),
                 ),
+                'bizonylatszam',
+				'gyarto.cegnev',
+				'rendeles_datum',
+				'displayOsszertek:number',
+				'megjegyzes',
+				'user.username',
+				'sztornozva:boolean',
+				'lezarva:boolean',
+
 			)
 )); ?>
 

@@ -126,12 +126,12 @@ class ArajanlatokController extends Controller
 			$model->attributes=$_GET['Arajanlatok'];
 	 	
 		$dataProvider=new CActiveDataProvider('Arajanlatok',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"ajanlat_datum DESC",),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>"ajanlat_datum DESC",),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'ajanlat_datum DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'ajanlat_datum DESC',),)
 		);
 		
 		//send model object for search
 		$this->render('index',array(
-			'model'=>$model)
+			'model'=>$model,)
 		);
 	}
 

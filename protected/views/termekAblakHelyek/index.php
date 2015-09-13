@@ -14,19 +14,6 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'nev',
-				'hely',
-				'x_pozicio_honnan',
-				'x_pozicio_mm:number',
-				'y_pozicio_honnan',
-				'y_pozicio_mm:number',
-				'aktiv:boolean',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -54,6 +41,19 @@ $this->breadcrumbs=array(
 							)
 						),
                 ),
+                'nev',
+				'hely',
+				'x_pozicio_honnan',
+				'x_pozicio_mm:number',
+				'y_pozicio_honnan',
+				'y_pozicio_mm:number',
+				'aktiv:boolean',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

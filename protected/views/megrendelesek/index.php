@@ -43,20 +43,6 @@
 	'id'=>'megrendelesek-gridview',
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'sorszam',
-				'arajanlat.sorszam',
-				'proforma_szamla_sorszam',
-				'proforma_szamla_fizetve:boolean',
-				'rendeles_idopont',
-				'ugyfel.cegnev',
-				'egyedi_ar:boolean',
-				'sztornozva:boolean',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 210px; text-align: left;'),
@@ -112,6 +98,29 @@
 							),
 						),
                 ),
+                'sorszam',
+				'arajanlat_sorszam',
+				'proforma_szamla_sorszam',
+				'proforma_szamla_fizetve:boolean',
+				'rendeles_idopont',
+				'ugyfel.cegnev',
+				array(										
+					'name'=>'netto_ar',
+					'value'=>'number_format($data -> netto_ar, 0, ",", " ") . " Ft"',	
+					'htmlOptions'=>array('align'=>'right'),
+				),
+				array(										
+					'name'=>'brutto_ar',
+					'value'=>'number_format($data -> brutto_ar, 0, ",", " ") . " Ft"',	
+					'htmlOptions'=>array('align'=>'right'),
+				),
+				'sztornozva:boolean',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

@@ -205,6 +205,7 @@ class MegrendelesekController extends Controller
 				for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
 					$termek = $xml->orderitems->orderitem[$i] ;
 					$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model)) ;
+					print_r($termek_adatok) ;
 					if ($termek_adatok != null) {
 						$szinekszama1 = $szinekszama2 = 0 ;
 						if (preg_match('/(\d)\+(\d)/', (string)$termek->orderitem_name, $matches)) {

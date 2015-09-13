@@ -43,6 +43,33 @@ $this->breadcrumbs=array(
 	'id'=>'nyomasi-arak-gridview',
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
+				array(
+                        'class' => 'bootstrap.widgets.TbButtonColumn',
+						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
+                        'template' => '{view} {update} {delete}',
+						
+			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
+						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
+						'deleteButtonOptions'=>array('class'=>'btn btn-danger btn-mini'),
+
+						'buttons' => array(
+							'view' => array(
+								'label' => 'Megtekint',
+								'icon'=>'icon-white icon-eye-open',
+								'visible' => "Yii::app()->user->checkAccess('NyomasiArak.View')",
+							),
+							'update' => array(
+								'label' => 'Szerkeszt',
+								'icon'=>'icon-white icon-pencil',
+								'visible' => "Yii::app()->user->checkAccess('NyomasiArak.Update')",
+							),
+							'delete' => array(
+								'label' => 'Töröl',
+								'icon'=>'icon-white icon-remove-sign',
+								'visible' => 'Yii::app()->user->checkAccess("NyomasiArak.Delete") && $data->torolt != 1',
+							)
+						),
+                ),
 				'kategoria_tipus',
 				'boritek_fajtak',
 				'grafika_roviden',
@@ -79,33 +106,6 @@ $this->breadcrumbs=array(
 						'value' => '$data->torolt',
 						'visible' => Yii::app()->user->checkAccess('Admin'),
 				),
-				array(
-                        'class' => 'bootstrap.widgets.TbButtonColumn',
-						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
-                        'template' => '{view} {update} {delete}',
-						
-			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
-						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
-						'deleteButtonOptions'=>array('class'=>'btn btn-danger btn-mini'),
-
-						'buttons' => array(
-							'view' => array(
-								'label' => 'Megtekint',
-								'icon'=>'icon-white icon-eye-open',
-								'visible' => "Yii::app()->user->checkAccess('NyomasiArak.View')",
-							),
-							'update' => array(
-								'label' => 'Szerkeszt',
-								'icon'=>'icon-white icon-pencil',
-								'visible' => "Yii::app()->user->checkAccess('NyomasiArak.Update')",
-							),
-							'delete' => array(
-								'label' => 'Töröl',
-								'icon'=>'icon-white icon-remove-sign',
-								'visible' => 'Yii::app()->user->checkAccess("NyomasiArak.Delete") && $data->torolt != 1',
-							)
-						),
-                ),
 			)
 )); ?>
 

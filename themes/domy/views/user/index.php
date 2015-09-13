@@ -18,10 +18,6 @@ $this->menu=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'id',
-				'fullname',
-				'username',
-				'email',
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -49,6 +45,10 @@ $this->menu=array(
 							)
 						),
                 ),
+                'id',
+				'fullname',
+				'username',
+				'email',
 			)
 )); ?>
 

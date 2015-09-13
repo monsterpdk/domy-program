@@ -18,15 +18,6 @@ $this->menu=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'nev',
-				'suly',
-				'aktiv:boolean',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -54,6 +45,15 @@ $this->menu=array(
 							)
 						),
                 ),
+                'nev',
+				'suly',
+				'aktiv:boolean',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

@@ -23,20 +23,6 @@ $this->breadcrumbs=array(
 	'id'=>'nyomasi-arak-szazelek-gridview',
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-				'peldanyszam_tol',
-				'peldanyszam_ig',
-				'alap:number',
-				'kp:number',
-				'utal:number',
-				'kis_tetel:number',
-				'nagy_tetel:number',
-				'user.username',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -64,6 +50,20 @@ $this->breadcrumbs=array(
 							)
 						),
                 ),
+				'peldanyszam_tol',
+				'peldanyszam_ig',
+				'alap:number',
+				'kp:number',
+				'utal:number',
+				'kis_tetel:number',
+				'nagy_tetel:number',
+				'user.username',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

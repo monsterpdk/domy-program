@@ -43,20 +43,6 @@
 	'id'=>'arajanlatok-gridview',
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'sorszam',
-				array(
-					'name'=>'ugyfel.cegnev',
-					'htmlOptions'=>array('width'=>'500'),
-				 ),
-				'ajanlat_datum',
-				'van_megrendeles:boolean',
-				'egyedi_ar:boolean',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 220px; text-align: left;'),
@@ -113,6 +99,29 @@
 							),
 						),
                 ),
+                'sorszam',
+				array(
+					'name'=>'ugyfel.cegnev',
+					'htmlOptions'=>array('width'=>'500'),
+				 ),
+				'ajanlat_datum',
+				'van_megrendeles:boolean',
+				array(										
+					'name'=>'netto_ar',
+					'value'=>'number_format($data -> netto_ar, 0, ",", " ") . " Ft"',	
+					'htmlOptions'=>array('align'=>'right'),
+				),
+				array(										
+					'name'=>'brutto_ar',
+					'value'=>'number_format($data -> brutto_ar, 0, ",", " ") . " Ft"',	
+					'htmlOptions'=>array('align'=>'right'),
+				),
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

@@ -42,6 +42,11 @@ class Megrendelesek extends CActiveRecord
 	public $autocomplete_ugyfel_atlagos_fizetesi_keses;
 	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
+	
+	public $netto_ar;
+	public $brutto_ar;
+	public $arajanlat_sorszam;
+	
 
 	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
 	public $cegnev_search;
@@ -118,6 +123,7 @@ class Megrendelesek extends CActiveRecord
 		return array(
 			'id' => 'Megrendelés ID',
 			'sorszam' => 'Sorszám',
+			'arajanlat_sorszam' => 'Árajánlat sorszám',
 			'ugyfel_id' => 'Ügyfél',
 			'autocomplete_ugyfel_cim' => 'Cím',
 			'cimzett' => 'Címzett',
@@ -150,6 +156,9 @@ class Megrendelesek extends CActiveRecord
 			'sztornozva' => 'Sztornözva',
 			'torolt' => 'Törölt',
 			
+			'netto_ar' => 'Nettó összeg',
+			'brutto_ar' => 'Bruttó összeg',
+			
 			'cegnev_search' => 'Cégnév',
 		);
 	}
@@ -176,11 +185,21 @@ class Megrendelesek extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->select .= "t.id, sorszam, arajanlat.sorszam as arajanlat_sorszam, cimzett, rendeles_idopont, sztornozva, t.torolt, proforma_szamla_sorszam, proforma_szamla_fizetve, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
+		$criteria->together = true;
+		$criteria->with = array('ugyfel');
+		$criteria->join = "LEFT JOIN dom_arajanlatok as arajanlat ON (t.arajanlat_id = arajanlat.id)" ;
+		$criteria->join .= "LEFT JOIN dom_megrendeles_tetelek as tetelek ON (t.id = tetelek.megrendeles_id)" ;
+		$criteria->join .= "LEFT JOIN dom_afakulcsok as afakulcsok ON (t.afakulcs_id = afakulcsok.id)" ;
+		$criteria->group = "t.id" ;
+		
+		
 		$criteria->together = true;
 		$criteria->with = array('ugyfel');
 		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('sorszam',$this->sorszam,true);
+		$criteria->compare('arajanlat_sorszam',$this->arajanlat_sorszam,true);
 		$criteria->compare('ugyfel_id',$this->ugyfel_id,true);
 		$criteria->compare('cimzett',$this->cimzett,true);
 		$criteria->compare('arkategoria_id',$this->arkategoria_id,true);
@@ -206,13 +225,16 @@ class Megrendelesek extends CActiveRecord
 		$criteria->compare('sztornozva',$this->sztornozva);
 
 		$criteria->compare('ugyfel.cegnev', $this->cegnev_search, true );
-		
+				
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
 			$criteria->condition=" torolt = '0'";
 			
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+                        'defaultOrder'=>'rendeles_idopont DESC',
+                    ),			
 		));
 	}
 
@@ -221,6 +243,14 @@ class Megrendelesek extends CActiveRecord
 
 		if ($this -> rendeles_idopont != null)
 			$this -> rendeles_idopont = date('Y-m-d', strtotime(str_replace("-", "", $this->rendeles_idopont)));
+		
+		if (!is_numeric($this -> netto_ar)) {
+			$this -> netto_ar = 0;	
+		}
+
+		if (!is_numeric($this -> brutto_ar)) {
+			$this -> brutto_ar = 0;	
+		}
 		
 		// autocomplete mező esetén az ügyfél ID van csak meg, így a beszédes
 		// cégnevet, címet kézzel kell kitöltenünk

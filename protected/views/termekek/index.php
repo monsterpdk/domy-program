@@ -15,26 +15,6 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'nev',
-				'kodszam',
-				'meret.nev',
-				'suly:number',
-				'zaras.nev',
-				'ablakmeret.nev',
-				'ablakhely.nev',
-				'papirtipus.nev',
-				'afakulcs.afa_szazalek',
-				'redotalp',
-				'kategoria_tipus',
-				'gyarto.cegnev',
-				'megjelenes_mettol',
-				'megjelenes_meddig',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -62,6 +42,26 @@ $this->breadcrumbs=array(
 							)
 						),
                 ),
+                'nev',
+				'kodszam',
+				'meret.nev',
+				'suly:number',
+				'zaras.nev',
+				'ablakmeret.nev',
+				'ablakhely.nev',
+				'papirtipus.nev',
+				'afakulcs.afa_szazalek',
+				'redotalp',
+				'kategoria_tipus',
+				'gyarto.cegnev',
+				'megjelenes_mettol',
+				'megjelenes_meddig',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 

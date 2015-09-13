@@ -18,19 +18,6 @@ $this->menu=array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
-                'cegnev',
-				'kapcsolattarto',
-				'teljes_cim',
-				'telefon',
-				'fax',
-				'email',
-				'netto_ar:boolean',
-				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
@@ -58,6 +45,19 @@ $this->menu=array(
 							)
 						),
                 ),
+                'cegnev',
+				'kapcsolattarto',
+				'teljes_cim',
+				'telefon',
+				'fax',
+				'email',
+				'netto_ar:boolean',
+				array(
+						'header' => 'Törölt',
+						'type'=>'boolean',
+						'value' => '$data->torolt',
+						'visible' => Yii::app()->user->checkAccess('Admin'),
+				),
 			)
 )); ?>
 
