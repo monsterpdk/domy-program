@@ -396,7 +396,6 @@
 					'szinek_szama1',
 					'szinek_szama2',
 					'darabszam',
-					'hozott_boritek:boolean',
 					'egyedi_ar:boolean',
 					'netto_darabar',
 					array(

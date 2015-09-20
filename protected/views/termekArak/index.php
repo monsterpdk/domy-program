@@ -42,6 +42,7 @@ $this->breadcrumbs=array(
 						),
                 ),
                 'termek.nev',
+                'termek.belesnyomott',
 				'csomag_beszerzesi_ar:number',
 				'db_beszerzesi_ar:number',
 				'csomag_ar_nyomashoz:number',

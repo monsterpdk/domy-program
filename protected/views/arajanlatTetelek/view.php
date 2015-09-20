@@ -30,7 +30,6 @@ $this->menu=array(
 		'netto_darabar',
 		'megjegyzes',
 		'mutacio',
-		'hozott_boritek',
 		'torolt',
 	),
 )); ?>

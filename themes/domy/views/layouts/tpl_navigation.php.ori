@@ -19,11 +19,20 @@
                         array ('label'=>'Termékek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
                             array ('label'=>'Termékek listája', 'url'=> Yii::app()->createUrl('/termekek/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Admin')),
-                            array ('label'=>'Raktárkészletek', 'url'=> Yii::app()->createUrl('#'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+							array ('label'=>'Termék rendelése / beszállítása <span class="caret"></span>', 'url'=> Yii::app()->createUrl('#'), 'itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 'visible'=>Yii::app()->user->checkAccess('Admin'),
+								'items'=>array (
+										array ('label'=>'Termék megrendelés', 'url'=> Yii::app()->createUrl('/anyagrendelesek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+										array ('label'=>'Beszállítás', 'url'=> Yii::app()->createUrl('/anyagbeszallitasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+										array ('label'=>'Raktár eltéréslista', 'url'=> Yii::app()->createUrl('/raktareltereslista/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+									)
+							),
                             array ('label'=>'Termékek árazása', 'url'=> Yii::app()->createUrl('/termekarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
-														array ('label'=>'Termék rendelés', 'url'=> Yii::app()->createUrl('#'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+                            array ('label'=>'Nyomási árak', 'url'=> Yii::app()->createUrl('/nyomasiarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+							array ('label'=>'Nyomási termékárak %', 'url'=> Yii::app()->createUrl('/nyomasiarakszazalek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+                            array ('label'=>'Raktárkészletek', 'url'=> Yii::app()->createUrl('/raktartermekek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                             array ('label'=>'ZUH beállítások', 'url'=> Yii::app()->createUrl('#'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
-                            array ('label'=>'Gyártók', 'url'=> Yii::app()->createUrl('/gyartok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),                            
+							array ('label'=>'Áruházak', 'url'=> Yii::app()->createUrl('/aruhazak/index'),),
+                            array ('label'=>'Gyártók', 'url'=> Yii::app()->createUrl('/gyartok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 		                    		array ('label'=>'Termék beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
 	                            	array ('label'=>'Ablakhelyek', 'url'=> Yii::app()->createUrl('/termekablakhelyek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
@@ -34,9 +43,8 @@
 															))	                          
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Termekek.index')) ),
 
-//                        array ('label'=>'Csak ADMIN láthatja', 'url'=>'#', 'visible' => Yii::app()->user->checkAccess('Admin')),
-//                        array ('label'=>'Minden BELÉPETT felhasználó láthatja', 'url'=>'#', 'visible' => !Yii::app()->user->isGuest),
-//                        array ('label'=>'MINDENKI láthatja', 'url'=>'#'),
+						array ('label'=>'Árajánlatok', 'url'=> Yii::app()->createUrl('/arajanlatok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+						array ('label'=>'Megrendelések', 'url'=> Yii::app()->createUrl('/megrendelesek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
                             array ('label'=>'Ügyfelek kezelése', 'url'=> Yii::app()->createUrl('/ugyfelek/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Ugyfelek.index')),
@@ -44,6 +52,8 @@
 
                         array ('label'=>'Általános beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
+									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('AfaKulcsok.index')),
+									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('SztornozasOkok.index')),
 		                    		array ('label'=>'Ügyfelekkel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
 	                            	array ('label'=>'Országok kezelése', 'url'=> Yii::app()->createUrl('/orszagok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
@@ -52,6 +62,12 @@
 																array ('label'=>'Adatforrások kezelése', 'url'=> Yii::app()->createUrl('/adatforrasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Besorolások kezelése', 'url'=> Yii::app()->createUrl('/besorolasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Árkategóriák kezelése', 'url'=> Yii::app()->createUrl('/arkategoriak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Fizetési morálok kezelése', 'url'=> Yii::app()->createUrl('/fizetesiMoralok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Egyéb beállítások', 'url'=> Yii::app()->createUrl('/ugyfelekEgyebBeallitasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+															)),	                                                                          
+		                    		array ('label'=>'Raktárkezeléssel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
+		                        'items'=>array (
+	                            	array ('label'=>'Raktárak kezelése', 'url'=> Yii::app()->createUrl('/raktarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 															))	                                                                          
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Beallitasok.index')) ),
 

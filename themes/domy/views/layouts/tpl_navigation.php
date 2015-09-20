@@ -43,7 +43,14 @@
 															))	                          
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Termekek.index')) ),
 
-						array ('label'=>'Árajánlatok', 'url'=> Yii::app()->createUrl('/arajanlatok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+/*						array ('label'=>'Árajánlatok', 'url'=> Yii::app()->createUrl('/arajanlatok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),*/
+
+                        array ('label'=>'Árajánlatok <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                        'items'=>array (
+                            array ('label'=>'Árajánlatok kezelése', 'url'=> Yii::app()->createUrl('/arajanlatok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Arajanlatok.index')),
+                            array ('label'=>'Visszahívásaim', 'url'=> Yii::app()->createUrl('/arajanlatok/visszahivasok'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Arajanlatok.index')),
+                        ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Arajanlatok.index')) ),
+
 						array ('label'=>'Megrendelések', 'url'=> Yii::app()->createUrl('/megrendelesek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (

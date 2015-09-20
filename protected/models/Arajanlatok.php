@@ -24,6 +24,7 @@
  * @property string $egyeb_megjegyzes
  * @property integer $van_megrendeles
  * @property integer $torolt
+ * @property integer $admin_id
  */
 class Arajanlatok extends CActiveRecord
 {
@@ -77,7 +78,7 @@ class Arajanlatok extends CActiveRecord
 			array('ajanlat_datum, ervenyesseg_datum, kovetkezo_hivas_ideje', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, cegnev_search, torolt', 'safe', 'on'=>'search'),
+			array('id, admin_id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, cegnev_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -152,6 +153,27 @@ class Arajanlatok extends CActiveRecord
 		return array( 'LoggableBehavior'=> 'application.modules.auditTrail.behaviors.LoggableBehavior', );
 	}
 
+	public function visszahivasok_search() {
+		$belepett_admin = Yii::app()->user->getId();
+		$criteria=new CDbCriteria;
+
+		$criteria->select = "t.id, sorszam, cimzett, kovetkezo_hivas_ideje, ugyfel_tel, ajanlat_datum, t.torolt" ; 
+		$criteria->condition = "admin_id = '" . $belepett_admin . "' and kovetkezo_hivas_ideje >= CURDATE() and visszahivas_lezarva = 0";			
+		
+		$criteria->compare('admin_id',$this->admin_id);
+		
+		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
+		if (!Yii::app()->user->checkAccess('Admin'))
+			$criteria->condition .= " torolt = '0'";			
+			
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'sort'=>array(
+                        'defaultOrder'=>'kovetkezo_hivas_ideje DESC',
+                    ),						
+		));		
+	}
+	
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -170,7 +192,7 @@ class Arajanlatok extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->select .= "t.id, sorszam, cimzett, ajanlat_datum, hatarido, van_megrendeles, t.torolt, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
+		$criteria->select .= "t.id, sorszam, cimzett, kovetkezo_hivas_ideje, ugyfel_tel, ajanlat_datum, hatarido, van_megrendeles, t.torolt, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
 		$criteria->together = true;
 		$criteria->with = array('ugyfel');
 		$criteria->join = "LEFT JOIN dom_arajanlat_tetelek as tetelek ON (t.id = tetelek.arajanlat_id)" ;
@@ -252,6 +274,7 @@ class Arajanlatok extends CActiveRecord
 			$this->ajanlat_datum = new CDbExpression('NOW()');
 			$this->ervenyesseg_datum = new CDbExpression('NOW()');
 			$this->kovetkezo_hivas_ideje = new CDbExpression('NOW()');
+			$this->admin_id = Yii::app()->user->getId();
 		}
 	 
 		return parent::beforeSave();

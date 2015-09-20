@@ -124,11 +124,18 @@
 			<?php echo $form->error($model,'redotalp'); ?>
 		</div>
 
+		<div class="row active" style="width:214px;">
+			<?php echo $form->checkBox($model,'belesnyomott'); ?>
+			<?php echo $form->label($model,'belesnyomott'); ?>
+			<?php echo $form->error($model,'belesnyomott'); ?>
+		</div>
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'kategoria_tipus'); ?>
 			<?php echo $form->textField($model,'kategoria_tipus',array('size'=>1,'maxlength'=>1)); ?>
 			<?php echo $form->error($model,'kategoria_tipus'); ?>
 		</div>
+
 		
 	<?php $this->endWidget(); ?>
 

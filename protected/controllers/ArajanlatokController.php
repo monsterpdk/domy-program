@@ -134,6 +134,18 @@ class ArajanlatokController extends Controller
 			'model'=>$model,)
 		);
 	}
+	
+	/**
+	 * Árajánlatok, amelyek kapcsán vissza kell hívni az ügyfelelt a belépett adminnak
+	 */
+	public function actionVisszahivasok() {
+		$model=new Arajanlatok('search');
+		$model->unsetAttributes();
+				 
+		$this->render('visszahivasok', array(
+			'model'=>$model,)
+		);
+	}
 
 	public function actionPrintPDF()
 	{

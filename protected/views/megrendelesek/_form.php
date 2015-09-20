@@ -340,7 +340,6 @@
 					'szinek_szama2',
 					'munka_neve',
 					'darabszam',
-					'hozott_boritek:boolean',
 					'egyedi_ar:boolean',
 					'netto_darabar',
 					array(

@@ -54,8 +54,7 @@ $this->breadcrumbs=array(
 				'redotalp',
 				'kategoria_tipus',
 				'gyarto.cegnev',
-				'megjelenes_mettol',
-				'megjelenes_meddig',
+				'csom_egys',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',

@@ -12,4 +12,4 @@ $this->breadcrumbs=array(
 
 <h1>'<?php echo $model->id; ?>' termékár szerkesztése</h1>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'termek_adatok'=>$termek_adatok)); ?>
