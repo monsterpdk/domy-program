@@ -52,6 +52,7 @@
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Arajanlatok.index')) ),
 
 						array ('label'=>'Megrendelések', 'url'=> Yii::app()->createUrl('/megrendelesek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+						array ('label'=>'Nyomdakönyv', 'url'=> Yii::app()->createUrl('/nyomdakonyv/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
                             array ('label'=>'Ügyfelek kezelése', 'url'=> Yii::app()->createUrl('/ugyfelek/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Ugyfelek.index')),

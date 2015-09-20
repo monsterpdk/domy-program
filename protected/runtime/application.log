@@ -22360,3 +22360,147 @@ in C:\inetpub\wwwroot\domyweb\index.php (13)
 in C:\inetpub\wwwroot\domyweb\protected\controllers\ArajanlatokController.php (90)
 in C:\inetpub\wwwroot\domyweb\protected\modules\rights\components\RController.php (36)
 in C:\inetpub\wwwroot\domyweb\index.php (13)
+2015/09/13 13:19:52 [error] [exception.CException] exception 'CException' with message 'Az oszlopot az alábbi formában kell megadni "Name:Type:Label". A "Type" és a "Label" nem kötelező.' in D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php:412
+Stack trace:
+#0 D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php(383): CGridView->createDataColumn('')
+#1 D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php(359): CGridView->initColumns()
+#2 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(147): CGridView->init()
+#3 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(172): CBaseController->createWidget('zii.widgets.gri...', Array)
+#4 D:\web\htdocs\domy-program\protected\views\nyomdakonyv\index.php(62): CBaseController->widget('zii.widgets.gri...', Array)
+#5 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(126): require('D:\\web\\htdocs\\d...')
+#6 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(95): CBaseController->renderInternal('D:\\web\\htdocs\\d...', Array, true)
+#7 D:\web\htdocs\domy-program\yii\framework\web\CController.php(869): CBaseController->renderFile('D:\\web\\htdocs\\d...', Array, true)
+#8 D:\web\htdocs\domy-program\yii\framework\web\CController.php(782): CController->renderPartial('index', Array, true)
+#9 D:\web\htdocs\domy-program\protected\controllers\NyomdakonyvController.php(103): CController->render('index', Array)
+#10 D:\web\htdocs\domy-program\yii\framework\web\actions\CInlineAction.php(49): NyomdakonyvController->actionIndex()
+#11 D:\web\htdocs\domy-program\yii\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#12 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#13 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#14 D:\web\htdocs\domy-program\protected\modules\rights\components\RController.php(36): CFilter->filter(Object(CFilterChain))
+#15 D:\web\htdocs\domy-program\yii\framework\web\filters\CInlineFilter.php(58): RController->filterRights(Object(CFilterChain))
+#16 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#17 D:\web\htdocs\domy-program\yii\framework\web\CController.php(291): CFilterChain->run()
+#18 D:\web\htdocs\domy-program\yii\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('index')
+#20 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/ind...')
+#21 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#22 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/index.php/nyomdakonyv/index
+HTTP_REFERER=http://localhost/index.php/site/login
+---
+2015/09/13 13:20:12 [error] [exception.CException] exception 'CException' with message 'Az oszlopot az alábbi formában kell megadni "Name:Type:Label". A "Type" és a "Label" nem kötelező.' in D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php:412
+Stack trace:
+#0 D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php(383): CGridView->createDataColumn('')
+#1 D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php(359): CGridView->initColumns()
+#2 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(147): CGridView->init()
+#3 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(172): CBaseController->createWidget('zii.widgets.gri...', Array)
+#4 D:\web\htdocs\domy-program\protected\views\nyomdakonyv\index.php(61): CBaseController->widget('zii.widgets.gri...', Array)
+#5 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(126): require('D:\\web\\htdocs\\d...')
+#6 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(95): CBaseController->renderInternal('D:\\web\\htdocs\\d...', Array, true)
+#7 D:\web\htdocs\domy-program\yii\framework\web\CController.php(869): CBaseController->renderFile('D:\\web\\htdocs\\d...', Array, true)
+#8 D:\web\htdocs\domy-program\yii\framework\web\CController.php(782): CController->renderPartial('index', Array, true)
+#9 D:\web\htdocs\domy-program\protected\controllers\NyomdakonyvController.php(103): CController->render('index', Array)
+#10 D:\web\htdocs\domy-program\yii\framework\web\actions\CInlineAction.php(49): NyomdakonyvController->actionIndex()
+#11 D:\web\htdocs\domy-program\yii\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#12 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#13 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#14 D:\web\htdocs\domy-program\protected\modules\rights\components\RController.php(36): CFilter->filter(Object(CFilterChain))
+#15 D:\web\htdocs\domy-program\yii\framework\web\filters\CInlineFilter.php(58): RController->filterRights(Object(CFilterChain))
+#16 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#17 D:\web\htdocs\domy-program\yii\framework\web\CController.php(291): CFilterChain->run()
+#18 D:\web\htdocs\domy-program\yii\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('index')
+#20 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/ind...')
+#21 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#22 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/index.php/nyomdakonyv/index
+HTTP_REFERER=http://localhost/index.php/site/login
+---
+2015/09/13 13:22:33 [error] [exception.CException] exception 'CException' with message 'Az oszlopot az alábbi formában kell megadni "Name:Type:Label". A "Type" és a "Label" nem kötelező.' in D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php:412
+Stack trace:
+#0 D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php(383): CGridView->createDataColumn('')
+#1 D:\web\htdocs\domy-program\yii\framework\zii\widgets\grid\CGridView.php(359): CGridView->initColumns()
+#2 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(147): CGridView->init()
+#3 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(172): CBaseController->createWidget('zii.widgets.gri...', Array)
+#4 D:\web\htdocs\domy-program\protected\views\nyomdakonyv\index.php(62): CBaseController->widget('zii.widgets.gri...', Array)
+#5 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(126): require('D:\\web\\htdocs\\d...')
+#6 D:\web\htdocs\domy-program\yii\framework\web\CBaseController.php(95): CBaseController->renderInternal('D:\\web\\htdocs\\d...', Array, true)
+#7 D:\web\htdocs\domy-program\yii\framework\web\CController.php(869): CBaseController->renderFile('D:\\web\\htdocs\\d...', Array, true)
+#8 D:\web\htdocs\domy-program\yii\framework\web\CController.php(782): CController->renderPartial('index', Array, true)
+#9 D:\web\htdocs\domy-program\protected\controllers\NyomdakonyvController.php(103): CController->render('index', Array)
+#10 D:\web\htdocs\domy-program\yii\framework\web\actions\CInlineAction.php(49): NyomdakonyvController->actionIndex()
+#11 D:\web\htdocs\domy-program\yii\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#12 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#13 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#14 D:\web\htdocs\domy-program\protected\modules\rights\components\RController.php(36): CFilter->filter(Object(CFilterChain))
+#15 D:\web\htdocs\domy-program\yii\framework\web\filters\CInlineFilter.php(58): RController->filterRights(Object(CFilterChain))
+#16 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#17 D:\web\htdocs\domy-program\yii\framework\web\CController.php(291): CFilterChain->run()
+#18 D:\web\htdocs\domy-program\yii\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('index')
+#20 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/ind...')
+#21 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#22 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/index.php/nyomdakonyv/index
+---
+2015/09/13 13:59:38 [error] [exception.CHttpException.400] exception 'CHttpException' with message 'Your request is invalid.' in D:\web\htdocs\domy-program\yii\framework\web\CController.php:336
+Stack trace:
+#0 D:\web\htdocs\domy-program\yii\framework\web\CController.php(309): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#2 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#3 D:\web\htdocs\domy-program\protected\modules\rights\components\RController.php(36): CFilter->filter(Object(CFilterChain))
+#4 D:\web\htdocs\domy-program\yii\framework\web\filters\CInlineFilter.php(58): RController->filterRights(Object(CFilterChain))
+#5 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\web\htdocs\domy-program\yii\framework\web\CController.php(291): CFilterChain->run()
+#7 D:\web\htdocs\domy-program\yii\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#8 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('update')
+#9 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/upd...')
+#10 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#11 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#12 {main}
+REQUEST_URI=/index.php/nyomdakonyv/update
+---
+2015/09/13 13:59:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'A rendszer nem találja a "update.php" action-t.' in D:\web\htdocs\domy-program\yii\framework\web\CController.php:483
+Stack trace:
+#0 D:\web\htdocs\domy-program\yii\framework\web\CController.php(270): CController->missingAction('update.php')
+#1 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('update.php')
+#2 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/upd...')
+#3 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/nyomdakonyv/update.php
+---
+2015/09/13 14:18:46 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The requested page does not exist.' in D:\web\htdocs\domy-program\protected\controllers\NyomdakonyvController.php:132
+Stack trace:
+#0 D:\web\htdocs\domy-program\protected\controllers\NyomdakonyvController.php(57): NyomdakonyvController->loadModel('4')
+#1 [internal function]: NyomdakonyvController->actionUpdate('4')
+#2 D:\web\htdocs\domy-program\yii\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(NyomdakonyvController), Array)
+#3 D:\web\htdocs\domy-program\yii\framework\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(NyomdakonyvController), Object(ReflectionMethod), Array)
+#4 D:\web\htdocs\domy-program\yii\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#5 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#7 D:\web\htdocs\domy-program\protected\modules\rights\components\RController.php(36): CFilter->filter(Object(CFilterChain))
+#8 D:\web\htdocs\domy-program\yii\framework\web\filters\CInlineFilter.php(58): RController->filterRights(Object(CFilterChain))
+#9 D:\web\htdocs\domy-program\yii\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 D:\web\htdocs\domy-program\yii\framework\web\CController.php(291): CFilterChain->run()
+#11 D:\web\htdocs\domy-program\yii\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('update')
+#13 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/upd...')
+#14 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#15 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#16 {main}
+REQUEST_URI=/index.php/nyomdakonyv/update/4
+---
+2015/09/13 14:19:19 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'A rendszer nem találja a "crete" action-t.' in D:\web\htdocs\domy-program\yii\framework\web\CController.php:483
+Stack trace:
+#0 D:\web\htdocs\domy-program\yii\framework\web\CController.php(270): CController->missingAction('crete')
+#1 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(282): CController->run('crete')
+#2 D:\web\htdocs\domy-program\yii\framework\web\CWebApplication.php(141): CWebApplication->runController('nyomdakonyv/cre...')
+#3 D:\web\htdocs\domy-program\yii\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#4 D:\web\htdocs\domy-program\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/index.php/nyomdakonyv/crete
+---

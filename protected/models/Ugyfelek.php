@@ -120,7 +120,7 @@ class Ugyfelek extends DomyModel
 	{
 		if ($this->adoszam != "") {
 			$ugyfelek = Ugyfelek::model()->findAllByAttributes (array('adoszam' => $this->adoszam));
-			print_r($ugyfelek) ;
+
 			if (count($ugyfelek) > 0) {
 				$ugyfel = $ugyfelek[0];
 
