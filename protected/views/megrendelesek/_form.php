@@ -177,10 +177,14 @@
 			<?php echo $form->labelEx($model,'rendeles_idopont'); ?>
 				
 				<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
 						'model'=>$model,
 						'attribute'=>'rendeles_idopont',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
 					));
 				?>
 				
@@ -476,7 +480,7 @@
 						{
 							$.fn.yiiGridView.update(\"megrendelesTetelek-grid\",{ complete: function(jqXHR, status) {}})
 							
-							// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyens érték van, csak a UI-on kell az interaktivitás miatt változtatni)
+							// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyes érték van, csak a UI-on kell az interaktivitás miatt változtatni)
 							$('#egyedi_ar_dsp').prop('checked', (data.egyedi == '1' ? true : false));
 							$('#Megrendelesek_egyedi_ar').val (data.egyedi);
 							

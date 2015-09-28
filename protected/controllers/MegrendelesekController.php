@@ -48,7 +48,7 @@ class MegrendelesekController extends Controller
 				$model -> afakulcs_id = $afaKulcs -> id;
 			}
 			
-			$model->rendeles_idopont = date('Y-m-d');		
+			$model->rendeles_idopont = date('Y-m-d H:i:s');		
 			$model -> sorszam = $this->ujMegrendelesIdGeneralas();
 			
 			$model -> save(false);
@@ -191,7 +191,7 @@ class MegrendelesekController extends Controller
 					$model -> afakulcs_id = $afaKulcs -> id;
 				}
 				
-				$model->rendeles_idopont = date('Y-m-d', strtotime((string)$xml->orderhead_timestamp));		
+				$model->rendeles_idopont = date('Y-m-d H:i:s', strtotime((string)$xml->orderhead_timestamp));		
 	
 				$model->ugyfel_id = $tomb["ugyfel_id"] ;
 				$model->arkategoria_id = $tomb["ugyfel_arkategoria_id"] ;
@@ -396,7 +396,7 @@ class MegrendelesekController extends Controller
 
 			$megrendeles -> arajanlat_id = $arajanlat -> id;
 			$megrendeles -> rendelest_rogzito_user_id = Yii::app()->user->getId();
-			$megrendeles -> rendeles_idopont = date('Y-m-d');
+			$megrendeles -> rendeles_idopont = date('Y-m-d H:i:s');
 
 			// elmentjük a modelt, hogy legyen model id a kezünkben
 			$megrendeles -> save(false);

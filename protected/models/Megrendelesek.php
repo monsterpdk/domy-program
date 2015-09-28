@@ -242,7 +242,7 @@ class Megrendelesek extends CActiveRecord
 		parent::afterFind();
 
 		if ($this -> rendeles_idopont != null)
-			$this -> rendeles_idopont = date('Y-m-d', strtotime(str_replace("-", "", $this->rendeles_idopont)));
+			$this -> rendeles_idopont = date('Y-m-d H:i:s', strtotime(str_replace("-", "", $this->rendeles_idopont)));
 		
 		if (!is_numeric($this -> netto_ar)) {
 			$this -> netto_ar = 0;	

@@ -44,9 +44,12 @@ class Termekek extends CActiveRecord
 	public $gyarto_search;
 	public $papirtipus_search;
 	
-	// amikor valamelyik űrlapról terméket tallózunk, akkor kódszám+terméknév formában jelenítjük meg a termékeket
+	// LI amikor valamelyik űrlapról terméket tallózunk, akkor kódszám+terméknév formában jelenítjük meg a termékeket
 	private $displayTermeknev;
 	
+	// LI a termék összes adata 1 string-be: részletek lent a 'getDisplayTermekTeljesNev' metódusban
+	private $displayTermekTeljesNev;
+
 	private $activeTermekAr;
 	
 	/**
@@ -244,6 +247,18 @@ class Termekek extends CActiveRecord
 	public function getDisplayTermeknev()
 	{
 		return $this->kodszam . ' - ' . $this->nev;
+	}
+
+	// LI a termék összes adata 1 string-be: nev + zarasmod->nev + termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag + 
+	//										 ablakhely->hely + ablakhely->x_pozicio_honnan + ablakhely->x_pozicio_mm + ablakhely->y_pozicio_honnan + ablakhely->y_pozicio_mm
+	//										 ablakmeret->magassag + ablakmeret->szelesseg
+	//										 $papirtipus->nev + $papirtipus->suly
+	public function getDisplayTermekTeljesNev()
+	{
+		return $this->nev . ' ' . $this->zaras->nev . ' ' . $this->meret->magassag . 'x' . $this->meret->szelesseg . 'x' . $this->meret->vastagsag . ', ' . 
+			   $this->ablakhely->hely . ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm . ' ' .
+			   $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr'
+		;
 	}
 
 	public function getActiveTermekAr ()

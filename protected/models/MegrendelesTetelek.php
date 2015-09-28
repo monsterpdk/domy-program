@@ -27,6 +27,9 @@ class MegrendelesTetelek extends CActiveRecord
 	public $netto_ar;
 	public $darabszam_szallitora;
 	
+	// LI a termék színeinek számát írja ki 'szinek_szama1+szinek_szama2' formátumban
+	private $displayTermekSzinekSzama;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -67,6 +70,7 @@ class MegrendelesTetelek extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'megrendeles' => array(self::BELONGS_TO, 'Megrendelesek', 'megrendeles_id'),
 			'termek' => array(self::BELONGS_TO, 'Termekek', 'termek_id'),
 		);
 	}
@@ -86,6 +90,7 @@ class MegrendelesTetelek extends CActiveRecord
 			'termek_id' => 'Termék',
 			'szinek_szama1' => 'Színek (előold.) db',
 			'szinek_szama2' => 'Színek (hátold.) db',
+			'displayTermekSzinekSzama' => 'Színek száma',
 			'darabszam' => 'Darabszám',
 			'netto_darabar' => 'Nettó darabár',
 			'megjegyzes' => 'Megjegyzés',
@@ -161,6 +166,12 @@ class MegrendelesTetelek extends CActiveRecord
 	
 	public function getSzorzo_tetel_arhoz () {
 		return $szorzo_tetel_arhoz;
+	}
+
+	// LI a termék színeinek számát írja ki 'szinek_szama1+szinek_szama2' formátumban
+	public function getDisplayTermekSzinekSzama()
+	{
+		return $this->szinek_szama1 . (strlen($this->szinek_szama1) > 0 ? '+' : '') . $this->szinek_szama2;
 	}
 
 }

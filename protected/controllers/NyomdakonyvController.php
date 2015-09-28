@@ -63,7 +63,7 @@ class NyomdakonyvController extends Controller
 		{
 			$model->attributes=$_POST['Nyomdakonyv'];
 			if($model->save())
-				$this->redirect(array('index'));$this->redirect(array('index'));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('update',array(
