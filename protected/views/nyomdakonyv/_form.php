@@ -13,10 +13,12 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+	'htmlOptions' => array('enctype' => 'multipart/form-data',),
 )); ?>
 
 	<?php echo $form->errorSummary($model); ?>
 
+<div class = 'clear'>
 	<!-- --------------------- Táska adatai ----------------------------- -->
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
@@ -35,6 +37,16 @@
 		<div class="row">
 			<?php echo $form->labelEx($model,'megrendeles_tetel.munka_neve'); ?>
 			<?php echo Chtml::textField('munka_neve', $model->megrendeles_tetel->munka_neve, array('size'=>12, 'maxlength'=>127, 'readonly'=>true)); ?>
+		</div>
+
+		<div class="row checkbox_group_horizontal">
+			<?php echo $form->checkBox($model,'ctp'); ?>
+			<?php echo $form->labelEx($model,'ctp'); ?>
+			<?php echo $form->error($model,'ctp'); ?>
+
+			<?php echo $form->checkBox($model,'sos'); ?>
+			<?php echo $form->labelEx($model,'sos'); ?>
+			<?php echo $form->error($model,'sos'); ?>
 		</div>
 
 	<?php $this->endWidget();?>
@@ -77,8 +89,10 @@
 		</div>
 	
 	<?php $this->endWidget();?>
-	
-	
+</div>	
+
+
+<div class = 'clear'>
 	<!-- --------------------- Termék adatai ----------------------------- -->
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
@@ -97,30 +111,111 @@
 		</div>
 
 		<div class="row checkbox_group_horizontal">
-			<?php echo $form->checkBox($model,'szin_c'); ?>
-			<?php echo $form->labelEx($model,'szin_c'); ?>
-			<?php echo $form->error($model,'szin_c'); ?>
+			<strong>Előoldal:</strong>
 			
-			<?php echo $form->checkBox($model,'szin_m'); ?>
-			<?php echo $form->labelEx($model,'szin_m'); ?>
-			<?php echo $form->error($model,'szin_m'); ?>
-
-			<?php echo $form->checkBox($model,'szin_y'); ?>
-			<?php echo $form->labelEx($model,'szin_y'); ?>
-			<?php echo $form->error($model,'szin_y'); ?>
-
-			<?php echo $form->checkBox($model,'szin_k'); ?>
-			<?php echo $form->labelEx($model,'szin_k'); ?>
-			<?php echo $form->error($model,'szin_k'); ?>
+			<?php echo $form->checkBox($model,'szin_c_elo'); ?>
+			<?php echo $form->labelEx($model,'szin_c_elo'); ?>
+			<?php echo $form->error($model,'szin_c_elo'); ?>
 			
+			<?php echo $form->checkBox($model,'szin_m_elo'); ?>
+			<?php echo $form->labelEx($model,'szin_m_elo'); ?>
+			<?php echo $form->error($model,'szin_m_elo'); ?>
+
+			<?php echo $form->checkBox($model,'szin_y_elo'); ?>
+			<?php echo $form->labelEx($model,'szin_y_elo'); ?>
+			<?php echo $form->error($model,'szin_y_elo'); ?>
+
+			<?php echo $form->checkBox($model,'szin_k_elo'); ?>
+			<?php echo $form->labelEx($model,'szin_k_elo'); ?>
+			<?php echo $form->error($model,'szin_k_elo'); ?>
+		</div>
+
+		<div class="row checkbox_group_horizontal">
+			<strong>Hátoldal:</strong>
+		
+			<?php echo $form->checkBox($model,'szin_c_hat'); ?>
+			<?php echo $form->labelEx($model,'szin_c_hat'); ?>
+			<?php echo $form->error($model,'szin_c_hat'); ?>
+			
+			<?php echo $form->checkBox($model,'szin_m_hat'); ?>
+			<?php echo $form->labelEx($model,'szin_m_hat'); ?>
+			<?php echo $form->error($model,'szin_m_hat'); ?>
+
+			<?php echo $form->checkBox($model,'szin_y_hat'); ?>
+			<?php echo $form->labelEx($model,'szin_y_hat'); ?>
+			<?php echo $form->error($model,'szin_y_hat'); ?>
+
+			<?php echo $form->checkBox($model,'szin_k_hat'); ?>
+			<?php echo $form->labelEx($model,'szin_k_hat'); ?>
+			<?php echo $form->error($model,'szin_k_hat'); ?>
+		</div>
+
+		<div class="row checkbox">
 			<?php echo $form->checkBox($model,'szin_mutaciok'); ?>
 			<?php echo $form->labelEx($model,'szin_mutaciok'); ?>
 			<?php echo $form->error($model,'szin_mutaciok'); ?>
 		</div>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'pantone'); ?>
-			<?php echo $form->textField($model,'pantone',array('size'=>10, 'maxlength'=>255, 'readonly'=>true, 'style'=>'width:575px')); ?>
+			<?php echo $form->labelEx($model,'megrendeles_tetel.darabszam'); ?>
+			<?php echo Chtml::textField('darabszam', $model->megrendeles_tetel->darabszam, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'megrendeles_tetel.netto_darabar'); ?>
+			<?php echo Chtml::textField('netto_darabar', $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'Nettó ár'); ?>
+			<?php echo Chtml::textField('netto_ar', $model->megrendeles_tetel->darabszam * $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'megrendeles_tetel.termek.kategoria_tipus'); ?>
+			<?php echo Chtml::textField('kategoria_tipus', $model->megrendeles_tetel->termek->kategoria_tipus, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'megrendeles_tetel.termek.gyarto.cegnev'); ?>
+			<?php echo Chtml::textField('cegnev', $model->megrendeles_tetel->termek->gyarto->cegnev, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'megrendeles_tetel.termek.ksh_kod'); ?>
+			<?php echo Chtml::textField('ksh_kod', $model->megrendeles_tetel->termek->ksh_kod, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		</div>
+
+		<div class="row checkbox_group_horizontal">
+			<?php echo $form->checkBox($model,'forditott_levezetes'); ?>
+			<?php echo $form->labelEx($model,'forditott_levezetes'); ?>
+			<?php echo $form->error($model,'forditott_levezetes'); ?>
+			
+			<?php echo $form->checkBox($model,'hossziranyu_levezetes'); ?>
+			<?php echo $form->labelEx($model,'hossziranyu_levezetes'); ?>
+			<?php echo $form->error($model,'hossziranyu_levezetes'); ?>
+		</div>
+
+		<div class='row'>
+			<table>
+				<tr>
+					<td></td>
+					<td align = 'center'> <?php echo $form->checkBox($model,'kifuto_fent', array('onclick'=>'if (($("#Nyomdakonyv_kifuto_fent").is(":checked"))) $("#Nyomdakonyv_forditott_levezetes").prop("checked", true );')); ?> </td>
+					<td></td>
+				</tr>
+				<tr>
+					<td> <?php echo $form->checkBox($model,'kifuto_bal'); ?> </td>
+						<td>
+							<?php echo CHtml::image(Yii::app()->request->baseUrl . '/images/boritek_kifuto.jpg', "", array()); ?>
+						</td>
+					<td> <?php echo $form->checkBox($model,'kifuto_jobb'); ?> </td>
+				</tr>
+				<tr>
+					<td></td>
+					<td align = 'center'> <?php echo $form->checkBox($model,'kifuto_lent'); ?> </td>
+					<td></td>
+				</tr>
+			</table>
 		</div>
 		
 	<?php $this->endWidget();?>
@@ -158,8 +253,10 @@
 		</div>
 	
 	<?php $this->endWidget();?>
-	
-	
+</div>	
+
+
+<div class = 'clear'>
 	<!-- --------------------- Dátumok ----------------------------- -->
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
@@ -331,293 +428,258 @@
 		</div>
 	
 	<?php $this->endWidget();?>
+
+
+	<!-- --------------------- Egyéb nyomási adatok ----------------------------- -->
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Egyéb nyomási adatok</strong>",
+		));
+	?>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'erkezett'); ?>
+			<?php echo DHtml::enumDropDownList($model, 'erkezett'); ?>
+			<?php echo $form->error($model,'erkezett'); ?>
+		</div>
+	
+		<div class="row">
+			<?php echo $form->labelEx($model,'file_beerkezett'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'file_beerkezett',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'file_beerkezett'); ?>
+		</div>
+	
+		<div class="row active">
+			<?php echo $form->checkBox($model,'kifutos'); ?>
+			<?php echo $form->labelEx($model,'kifutos'); ?>
+			<?php echo $form->error($model,'kifutos'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'fekete_flekkben_szin_javitando'); ?>
+			<?php echo $form->labelEx($model,'fekete_flekkben_szin_javitando'); ?>
+			<?php echo $form->error($model,'fekete_flekkben_szin_javitando'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'magas_szinterheles_nagy_feluleten'); ?>
+			<?php echo $form->labelEx($model,'magas_szinterheles_nagy_feluleten'); ?>
+			<?php echo $form->error($model,'magas_szinterheles_nagy_feluleten'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'magas_szinterheles_szovegben'); ?>
+			<?php echo $form->labelEx($model,'magas_szinterheles_szovegben'); ?>
+			<?php echo $form->error($model,'magas_szinterheles_szovegben'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'ofszet_festek'); ?>
+			<?php echo $form->labelEx($model,'ofszet_festek'); ?>
+			<?php echo $form->error($model,'ofszet_festek'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'nyomas_minta_szerint'); ?>
+			<?php echo $form->labelEx($model,'nyomas_minta_szerint'); ?>
+			<?php echo $form->error($model,'nyomas_minta_szerint'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'nyomas_vagojel_szerint'); ?>
+			<?php echo $form->labelEx($model,'nyomas_vagojel_szerint'); ?>
+			<?php echo $form->error($model,'nyomas_vagojel_szerint'); ?>
+		</div>
+
+		<div class="row active">
+			<?php echo $form->checkBox($model,'nyomas_domy_szerint'); ?>
+			<?php echo $form->labelEx($model,'nyomas_domy_szerint'); ?>
+			<?php echo $form->error($model,'nyomas_domy_szerint'); ?>
+		</div>
+
+		<div class="row active">
+			<?php echo $form->checkBox($model,'gepindulasra_jon_ugyfel'); ?>
+			<?php echo $form->labelEx($model,'gepindulasra_jon_ugyfel'); ?>
+			<?php echo $form->error($model,'gepindulasra_jon_ugyfel'); ?>
+		</div>
+
+		<div class="row active">
+			<?php echo $form->labelEx($model,'nyomas_specialis'); ?>
+			<?php echo $form->textArea($model,'nyomas_specialis',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->error($model,'nyomas_specialis'); ?>
+		</div>
+		
+	<?php $this->endWidget();?>
+</div>
+
+	
+<div class = 'clear'>
+	<!-- --------------------- Vezérlőpult ----------------------------- -->
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Vezérlőpult</strong>",
+		));
+	?>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'kep_file_nev'); ?>
+			<?php echo CHtml::activeFileField($model, 'kep_file_nev'); ?>
+			<?php echo $form->error($model,'kep_file_nev'); ?>
+		</div>
+		
+		<?php if ($model -> isNewRecord != '1' && !empty($model -> kep_file_nev)) { ?>
+			<div class="row">
+				 <?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev, "Feltöltött kép", array("width" => 200)); ?>
+			</div>
+		<?php } ?>
+
+		<?php if ($model -> sztornozva == 1): ?>
+			<div class="row">
+				<?php echo $form->labelEx($model,'sztornozas_oka'); ?>
+				<?php echo $form->textArea($model,'sztornozas_oka',array('size'=>60,'maxlength'=>255, 'readonly'=>true)); ?>
+				<?php echo $form->error($model,'sztornozas_oka'); ?>
+			</div>
+		<?php endif; ?>
+		
+		<?php if (Yii::app()->user->checkAccess('Admin')): ?>
+			<div class="row active">
+				<?php echo $form->checkBox($model,'torolt'); ?>
+				<?php echo $form->label($model,'torolt'); ?>
+				<?php echo $form->error($model,'torolt'); ?>
+			</div>
+		<?php endif; ?>
+
+		<div class="row active">
+			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
+			<?php echo $form->label($model,'sztornozva'); ?>
+			<?php echo $form->error($model,'sztornozva'); ?>
+		</div>
+
+		<div class="row buttons">
+			<?php echo CHtml::submitButton('Mentés', array('title'=>'OK')); ?>
+			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
+		</div>
+
+	<?php $this->endWidget();?>
 	
 	
-	<div class="row">
-		<?php echo $form->labelEx($model,'hatarido'); ?>
-		<?php echo $form->textField($model,'hatarido'); ?>
-		<?php echo $form->error($model,'hatarido'); ?>
-	</div>
+	<!-- --------------------- CTP adatok ----------------------------- -->
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>CTP adatok</strong>",
+		));
+	?>
+	
+		<div class="row">
+			<?php echo $form->labelEx($model,'ctp_nek_atadas_datum'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'ctp_nek_atadas_datum',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'ctp_nek_atadas_datum'); ?>
+		</div>
+	
+		<div class="row">
+			<?php echo $form->labelEx($model,'ctp_kezdes_datum'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'ctp_kezdes_datum',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'ctp_kezdes_datum'); ?>
+		</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'pantone'); ?>
-		<?php echo $form->textField($model,'pantone',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'pantone'); ?>
-	</div>
+		<div class="row">
+			<?php echo $form->labelEx($model,'ctp_belenyulasok'); ?>
+			<?php echo $form->textArea($model,'ctp_belenyulasok',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->error($model,'ctp_belenyulasok'); ?>
+		</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'munka_beerkezes_datum'); ?>
-		<?php echo $form->textField($model,'munka_beerkezes_datum'); ?>
-		<?php echo $form->error($model,'munka_beerkezes_datum'); ?>
-	</div>
+		<div class="row">
+			<?php echo $form->labelEx($model,'ctp_hibalista'); ?>
+			<?php echo $form->textArea($model,'ctp_hibalista',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->error($model,'ctp_hibalista'); ?>
+		</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'taska_kiadasi_datum'); ?>
-		<?php echo $form->textField($model,'taska_kiadasi_datum'); ?>
-		<?php echo $form->error($model,'taska_kiadasi_datum'); ?>
-	</div>
+		<div class="row">
+			<?php echo $form->labelEx($model,'jovahagyas'); ?>
+			<?php echo DHtml::enumDropDownList($model, 'jovahagyas'); ?>
+			<?php echo $form->error($model,'jovahagyas'); ?>
+		</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'elkeszulesi_datum'); ?>
-		<?php echo $form->textField($model,'elkeszulesi_datum'); ?>
-		<?php echo $form->error($model,'elkeszulesi_datum'); ?>
-	</div>
+		<div class="row">
+			<?php echo $form->labelEx($model,'ctp_kesz_datum'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'ctp_kesz_datum',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'ctp_kesz_datum'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'nyomas_kezdes_datum'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'nyomas_kezdes_datum',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'nyomas_kezdes_datum'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'nyomhato'); ?>
+			<?php echo $form->labelEx($model,'nyomhato'); ?>
+			<?php echo $form->error($model,'nyomhato'); ?>
+		</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'ertesitesi_datum'); ?>
-		<?php echo $form->textField($model,'ertesitesi_datum'); ?>
-		<?php echo $form->error($model,'ertesitesi_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szallitolevel_sorszam'); ?>
-		<?php echo $form->textField($model,'szallitolevel_sorszam',array('size'=>12,'maxlength'=>12)); ?>
-		<?php echo $form->error($model,'szallitolevel_sorszam'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szallitolevel_datum'); ?>
-		<?php echo $form->textField($model,'szallitolevel_datum'); ?>
-		<?php echo $form->error($model,'szallitolevel_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szamla_sorszam'); ?>
-		<?php echo $form->textField($model,'szamla_sorszam',array('size'=>15,'maxlength'=>15)); ?>
-		<?php echo $form->error($model,'szamla_sorszam'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szamla_datum'); ?>
-		<?php echo $form->textField($model,'szamla_datum'); ?>
-		<?php echo $form->error($model,'szamla_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'sos'); ?>
-		<?php echo $form->textField($model,'sos'); ?>
-		<?php echo $form->error($model,'sos'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szin_c'); ?>
-		<?php echo $form->textField($model,'szin_c'); ?>
-		<?php echo $form->error($model,'szin_c'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szin_m'); ?>
-		<?php echo $form->textField($model,'szin_m'); ?>
-		<?php echo $form->error($model,'szin_m'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szin_y'); ?>
-		<?php echo $form->textField($model,'szin_y'); ?>
-		<?php echo $form->error($model,'szin_y'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szin_k'); ?>
-		<?php echo $form->textField($model,'szin_k'); ?>
-		<?php echo $form->error($model,'szin_k'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'szin_mutaciok'); ?>
-		<?php echo $form->textField($model,'szin_mutaciok'); ?>
-		<?php echo $form->error($model,'szin_mutaciok'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kifuto_bal'); ?>
-		<?php echo $form->textField($model,'kifuto_bal'); ?>
-		<?php echo $form->error($model,'kifuto_bal'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kifuto_fent'); ?>
-		<?php echo $form->textField($model,'kifuto_fent'); ?>
-		<?php echo $form->error($model,'kifuto_fent'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kifuto_jobb'); ?>
-		<?php echo $form->textField($model,'kifuto_jobb'); ?>
-		<?php echo $form->error($model,'kifuto_jobb'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kifuto_lent'); ?>
-		<?php echo $form->textField($model,'kifuto_lent'); ?>
-		<?php echo $form->error($model,'kifuto_lent'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'forditott_levezetes'); ?>
-		<?php echo $form->textField($model,'forditott_levezetes'); ?>
-		<?php echo $form->error($model,'forditott_levezetes'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'hossziranyu_levezetes'); ?>
-		<?php echo $form->textField($model,'hossziranyu_levezetes'); ?>
-		<?php echo $form->error($model,'hossziranyu_levezetes'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'nyomas_tipus'); ?>
-		<?php echo $form->textField($model,'nyomas_tipus',array('size'=>29,'maxlength'=>29)); ?>
-		<?php echo $form->error($model,'nyomas_tipus'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'utasitas_ctp_nek'); ?>
-		<?php echo $form->textField($model,'utasitas_ctp_nek',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'utasitas_ctp_nek'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'utasitas_gepmesternek'); ?>
-		<?php echo $form->textField($model,'utasitas_gepmesternek',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'utasitas_gepmesternek'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kiszallitasi_informaciok'); ?>
-		<?php echo $form->textField($model,'kiszallitasi_informaciok',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'kiszallitasi_informaciok'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'gep_id'); ?>
-		<?php echo $form->textField($model,'gep_id'); ?>
-		<?php echo $form->error($model,'gep_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kifutos'); ?>
-		<?php echo $form->textField($model,'kifutos'); ?>
-		<?php echo $form->error($model,'kifutos'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'fekete_flekkben_szin_javitando'); ?>
-		<?php echo $form->textField($model,'fekete_flekkben_szin_javitando'); ?>
-		<?php echo $form->error($model,'fekete_flekkben_szin_javitando'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'magas_szinterheles_nagy_feluleten'); ?>
-		<?php echo $form->textField($model,'magas_szinterheles_nagy_feluleten'); ?>
-		<?php echo $form->error($model,'magas_szinterheles_nagy_feluleten'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'magas_szinterheles_szovegben'); ?>
-		<?php echo $form->textField($model,'magas_szinterheles_szovegben'); ?>
-		<?php echo $form->error($model,'magas_szinterheles_szovegben'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ofszet_festek'); ?>
-		<?php echo $form->textField($model,'ofszet_festek'); ?>
-		<?php echo $form->error($model,'ofszet_festek'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'nyomas_minta_szerint'); ?>
-		<?php echo $form->textField($model,'nyomas_minta_szerint'); ?>
-		<?php echo $form->error($model,'nyomas_minta_szerint'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'nyomas_vagojel_szerint'); ?>
-		<?php echo $form->textField($model,'nyomas_vagojel_szerint'); ?>
-		<?php echo $form->error($model,'nyomas_vagojel_szerint'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'nyomas_specialis'); ?>
-		<?php echo $form->textField($model,'nyomas_specialis',array('size'=>60,'maxlength'=>200)); ?>
-		<?php echo $form->error($model,'nyomas_specialis'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'gepindulasra_jon_ugyfel'); ?>
-		<?php echo $form->textField($model,'gepindulasra_jon_ugyfel'); ?>
-		<?php echo $form->error($model,'gepindulasra_jon_ugyfel'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ctp_nek_atadas_datum'); ?>
-		<?php echo $form->textField($model,'ctp_nek_atadas_datum'); ?>
-		<?php echo $form->error($model,'ctp_nek_atadas_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ctp_kezdes_datum'); ?>
-		<?php echo $form->textField($model,'ctp_kezdes_datum'); ?>
-		<?php echo $form->error($model,'ctp_kezdes_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ctp_belenyulasok'); ?>
-		<?php echo $form->textField($model,'ctp_belenyulasok',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'ctp_belenyulasok'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ctp_hibalista'); ?>
-		<?php echo $form->textField($model,'ctp_hibalista',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'ctp_hibalista'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'jovahagyas'); ?>
-		<?php echo $form->textField($model,'jovahagyas',array('size'=>15,'maxlength'=>15)); ?>
-		<?php echo $form->error($model,'jovahagyas'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'ctp_kesz_datum'); ?>
-		<?php echo $form->textField($model,'ctp_kesz_datum'); ?>
-		<?php echo $form->error($model,'ctp_kesz_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'nyomas_kezdes_datum'); ?>
-		<?php echo $form->textField($model,'nyomas_kezdes_datum'); ?>
-		<?php echo $form->error($model,'nyomas_kezdes_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'raktarbol_kiadva_datum'); ?>
-		<?php echo $form->textField($model,'raktarbol_kiadva_datum'); ?>
-		<?php echo $form->error($model,'raktarbol_kiadva_datum'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'kep_file_nev'); ?>
-		<?php echo $form->textField($model,'kep_file_nev',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'kep_file_nev'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'sztornozva'); ?>
-		<?php echo $form->textField($model,'sztornozva'); ?>
-		<?php echo $form->error($model,'sztornozva'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'torolt'); ?>
-		<?php echo $form->textField($model,'torolt'); ?>
-		<?php echo $form->error($model,'torolt'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
+	<?php $this->endWidget();?>
+</div>
 
 <?php $this->endWidget(); ?>
 

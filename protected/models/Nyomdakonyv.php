@@ -18,10 +18,14 @@
  * @property string $szamla_sorszam
  * @property string $szamla_datum
  * @property integer $sos
- * @property integer $szin_c
- * @property integer $szin_m
- * @property integer $szin_y
- * @property integer $szin_k
+ * @property integer $szin_c_elo
+ * @property integer $szin_m_elo
+ * @property integer $szin_y_elo
+ * @property integer $szin_k_elo
+ * @property integer $szin_c_hat
+ * @property integer $szin_m_hat
+ * @property integer $szin_y_hat
+ * @property integer $szin_k_hat
  * @property integer $szin_mutaciok
  * @property integer $kifuto_bal
  * @property integer $kifuto_fent
@@ -34,6 +38,8 @@
  * @property string $utasitas_gepmesternek
  * @property string $kiszallitasi_informaciok
  * @property integer $gep_id
+ * @property string $erkezett
+ * @property string $file_beerkezett
  * @property integer $kifutos
  * @property integer $fekete_flekkben_szin_javitando
  * @property integer $magas_szinterheles_nagy_feluleten
@@ -41,6 +47,7 @@
  * @property integer $ofszet_festek
  * @property integer $nyomas_minta_szerint
  * @property integer $nyomas_vagojel_szerint
+ * @property integer $nyomas_domy_szerint
  * @property string $nyomas_specialis
  * @property integer $gepindulasra_jon_ugyfel
  * @property string $ctp_nek_atadas_datum
@@ -48,10 +55,12 @@
  * @property string $ctp_belenyulasok
  * @property string $ctp_hibalista
  * @property string $jovahagyas
+ * @property string $nyomhato
  * @property string $ctp_kesz_datum
  * @property string $nyomas_kezdes_datum
  * @property string $raktarbol_kiadva_datum
  * @property string $kep_file_nev
+ * @property string $sztornozas_oka 
  * @property integer $sztornozva
  * @property integer $torolt
  */
@@ -78,17 +87,20 @@ class Nyomdakonyv extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, kep_file_nev, sztornozva, torolt', 'required'),
-			array('sos, szin_c, szin_m, szin_y, szin_k, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, gepindulasra_jon_ugyfel, sztornozva, torolt', 'numerical', 'integerOnly'=>true),
+			array('megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, nyomas_tipus, file_beerkezett, ctp_nek_atadas_datum, ctp_kezdes_datum, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'required'),
+			array('ctp, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, torolt', 'numerical', 'integerOnly'=>true),
 			array('megrendeles_tetel_id', 'length', 'max'=>10),
 			array('taskaszam, szallitolevel_sorszam', 'length', 'max'=>12),
-			array('pantone, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista, kep_file_nev', 'length', 'max'=>255),
-			array('szamla_sorszam, jovahagyas', 'length', 'max'=>15),
+			array('kep_file_nev', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true, 'safe' => false),
+			array('kep_file_nev', 'length', 'max'=>255, 'on'=>'insert,update'),
+			array('pantone, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista', 'length', 'max'=>255),
+			array('szamla_sorszam, jovahagyas, erkezett', 'length', 'max'=>15),
 			array('nyomas_tipus', 'length', 'max'=>29),
 			array('nyomas_specialis', 'length', 'max'=>200),
+			array('sztornozas_oka', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, megrendeles_tetel_id, taskaszam, hatarido, pantone, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_c, szin_m, szin_y, szin_k, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, kep_file_nev, sztornozva, torolt', 'safe', 'on'=>'search'),
+			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -127,11 +139,16 @@ class Nyomdakonyv extends CActiveRecord
 			'szallitolevel_datum' => 'Szállitólevél dátum',
 			'szamla_sorszam' => 'Számla sorszám',
 			'szamla_datum' => 'Számla dátum',
+			'ctp' => 'CTP',
 			'sos' => 'SOS',
-			'szin_c' => 'C',
-			'szin_m' => 'M',
-			'szin_y' => 'Y',
-			'szin_k' => 'K (fekete)',
+			'szin_c_elo' => '(C)yan',
+			'szin_m_elo' => '(M)agenta',
+			'szin_y_elo' => '(Y)ellow',
+			'szin_k_elo' => 'Blac(K)',
+			'szin_c_hat' => '(C)yan',
+			'szin_m_hat' => '(M)agenta',
+			'szin_y_hat' => '(Y)ellow',
+			'szin_k_hat' => 'Blac(K)',
 			'szin_mutaciok' => 'Mutáció',
 			'kifuto_bal' => '',
 			'kifuto_fent' => '',
@@ -144,6 +161,8 @@ class Nyomdakonyv extends CActiveRecord
 			'utasitas_gepmesternek' => 'Utasítás gépmesternek',
 			'kiszallitasi_informaciok' => 'Kiszállítasi információk',
 			'gep_id' => 'Gép',
+			'erkezett' => 'Érkezett',
+			'file_beerkezett' => 'File beérkezett',
 			'kifutos' => 'Kifutós',
 			'fekete_flekkben_szin_javitando' => 'Fekete flekkben szín javítandó',
 			'magas_szinterheles_nagy_feluleten' => 'Magas színterhelés nagy felületen',
@@ -151,6 +170,7 @@ class Nyomdakonyv extends CActiveRecord
 			'ofszet_festek' => 'Ofszet festék',
 			'nyomas_minta_szerint' => 'Nyomás minta szerint',
 			'nyomas_vagojel_szerint' => 'Nyomás vágójel szerint',
+			'nyomas_domy_szerint' => 'Nyomás Domy szerint',
 			'nyomas_specialis' => 'Nyomás speciális',
 			'gepindulasra_jon_ugyfel' => 'Gépindulásra jön az ügyfél',
 			'ctp_nek_atadas_datum' => 'CTP-nek átadva',
@@ -158,10 +178,12 @@ class Nyomdakonyv extends CActiveRecord
 			'ctp_belenyulasok' => 'CTP-belenyúlások',
 			'ctp_hibalista' => 'CTP-hibalista',
 			'jovahagyas' => 'Jováhagyás jött',
+			'nyomhato' => 'Nyomható',
 			'ctp_kesz_datum' => 'CTP-kész',
 			'nyomas_kezdes_datum' => 'Nyomás elkezdve',
 			'raktarbol_kiadva_datum' => 'Raktárból kiadva',
-			'kep_file_nev' => '',
+			'kep_file_nev' => 'Kép csatolása',
+			'sztornozas_oka' => 'Sztornózás oka',
 			'sztornozva' => 'Sztornózva',
 			'torolt' => 'Törölt',
 		);
@@ -198,11 +220,16 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('szallitolevel_datum',$this->szallitolevel_datum,true);
 		$criteria->compare('szamla_sorszam',$this->szamla_sorszam,true);
 		$criteria->compare('szamla_datum',$this->szamla_datum,true);
+		$criteria->compare('ctp',$this->ctp);
 		$criteria->compare('sos',$this->sos);
-		$criteria->compare('szin_c',$this->szin_c);
-		$criteria->compare('szin_m',$this->szin_m);
-		$criteria->compare('szin_y',$this->szin_y);
-		$criteria->compare('szin_k',$this->szin_k);
+		$criteria->compare('szin_c_elo',$this->szin_c_elo);
+		$criteria->compare('szin_m_elo',$this->szin_m_elo);
+		$criteria->compare('szin_y_elo',$this->szin_y_elo);
+		$criteria->compare('szin_k_elo',$this->szin_k_elo);
+		$criteria->compare('szin_c_hat',$this->szin_c_hat);
+		$criteria->compare('szin_m_hat',$this->szin_m_hat);
+		$criteria->compare('szin_y_hat',$this->szin_y_hat);
+		$criteria->compare('szin_k_hat',$this->szin_k_hat);
 		$criteria->compare('szin_mutaciok',$this->szin_mutaciok);
 		$criteria->compare('kifuto_bal',$this->kifuto_bal);
 		$criteria->compare('kifuto_fent',$this->kifuto_fent);
@@ -215,6 +242,8 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('utasitas_gepmesternek',$this->utasitas_gepmesternek,true);
 		$criteria->compare('kiszallitasi_informaciok',$this->kiszallitasi_informaciok,true);
 		$criteria->compare('gep_id',$this->gep_id);
+		$criteria->compare('erkezett',$this->erkezett);
+		$criteria->compare('file_beerkezett',$this->file_beerkezett);
 		$criteria->compare('kifutos',$this->kifutos);
 		$criteria->compare('fekete_flekkben_szin_javitando',$this->fekete_flekkben_szin_javitando);
 		$criteria->compare('magas_szinterheles_nagy_feluleten',$this->magas_szinterheles_nagy_feluleten);
@@ -222,6 +251,7 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('ofszet_festek',$this->ofszet_festek);
 		$criteria->compare('nyomas_minta_szerint',$this->nyomas_minta_szerint);
 		$criteria->compare('nyomas_vagojel_szerint',$this->nyomas_vagojel_szerint);
+		$criteria->compare('nyomas_domy_szerint',$this->nyomas_domy_szerint);
 		$criteria->compare('nyomas_specialis',$this->nyomas_specialis,true);
 		$criteria->compare('gepindulasra_jon_ugyfel',$this->gepindulasra_jon_ugyfel);
 		$criteria->compare('ctp_nek_atadas_datum',$this->ctp_nek_atadas_datum,true);
@@ -230,9 +260,10 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('ctp_hibalista',$this->ctp_hibalista,true);
 		$criteria->compare('jovahagyas',$this->jovahagyas,true);
 		$criteria->compare('ctp_kesz_datum',$this->ctp_kesz_datum,true);
+		$criteria->compare('nyomhato',$this->nyomhato,true);
 		$criteria->compare('nyomas_kezdes_datum',$this->nyomas_kezdes_datum,true);
 		$criteria->compare('raktarbol_kiadva_datum',$this->raktarbol_kiadva_datum,true);
-		$criteria->compare('kep_file_nev',$this->kep_file_nev,true);
+		$criteria->compare('sztornozas_oka',$this->sztornozas_oka,true);
 		$criteria->compare('sztornozva',$this->sztornozva);
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'

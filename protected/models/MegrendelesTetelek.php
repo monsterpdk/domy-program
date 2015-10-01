@@ -102,6 +102,7 @@ class MegrendelesTetelek extends CActiveRecord
 			'egyedi_ar' => 'Egyedi ár',
 			
 			'netto_ar' => 'Nettó ár',
+			'displayTermekSzinekSzama' => 'Színek száma',
 		);
 	}
 

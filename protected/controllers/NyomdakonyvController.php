@@ -28,6 +28,7 @@ class NyomdakonyvController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
+	 /*
 	public function actionCreate()
 	{
 		$model=new Nyomdakonyv;
@@ -38,14 +39,24 @@ class NyomdakonyvController extends Controller
 		if(isset($_POST['Nyomdakonyv']))
 		{
 			$model->attributes=$_POST['Nyomdakonyv'];
-			if($model->save())
+ 
+            $uploadedFile=CUploadedFile::getInstance($model,'kep_file_nev');
+            $fileName = "{$uploadedFile}";
+            $model->kep_file_nev = $fileName;
+			
+			if($model->save()) {
+				// sikeres validáció/mentés esetén lementjük a betallózott fájlt is
+				$uploadedFile->saveAs(Yii::app()->basePath . '/../uploads/' . $model->id . '/' . $fileName);
+				
 				$this->redirect(array('index'));
+			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
 		));
 	}
+*/
 
 	/**
 	 * Updates a particular model.
@@ -54,7 +65,7 @@ class NyomdakonyvController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
+		$model = $this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -62,13 +73,54 @@ class NyomdakonyvController extends Controller
 		if(isset($_POST['Nyomdakonyv']))
 		{
 			$model->attributes=$_POST['Nyomdakonyv'];
-			if($model->save())
+            $uploadedFile = CUploadedFile::getInstance($model,'kep_file_nev');
+
+			if (!empty($uploadedFile)) {
+				$model->kep_file_nev = $uploadedFile->name;
+			}
+			
+			if($model->save()) {
+				// szükség esetén firssítjük az űrlapon a csatolt képet
+				if(!empty($uploadedFile))
+                {
+					// ha nem létezik még a nyomdakönyvhöz tartozó upload könyvtár, akkor létrehozzuk
+					$nyomdakonyv_upload_folder = Yii::app()->basePath . '/../uploads/nyomdakonyv/' . $model->id;
+					if(!is_dir($nyomdakonyv_upload_folder)) {
+						//echo $nyomdakonyv_upload_folder; die();
+						mkdir ($nyomdakonyv_upload_folder, 0777, true);
+					}
+					
+                    $uploadedFile->saveAs(Yii::app()->basePath . '/../uploads/nyomdakonyv/' . $model->id. '/' .$uploadedFile->name);
+                }
 				$this->redirect(array('index'));
+			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 		));
+	}
+
+	/**
+	 * Nyomdakönyv sztornózása.
+	 */
+	public function actionStorno ()
+	{
+		if ( isset($_POST['nyomdakonyv_id']) ) {
+			$model_id = $_POST['nyomdakonyv_id'];
+			$storno_ok = isset($_POST['selected_storno']) ? $_POST['selected_storno'] : '';
+			
+			$nyomdakonyv = Nyomdakonyv::model() -> findByPk ($model_id);
+
+			if ($nyomdakonyv != null) {
+				$nyomdakonyv -> sztornozas_oka = $storno_ok;
+				$nyomdakonyv -> sztornozva = 1;
+				
+				$nyomdakonyv -> save(false);
+			}
+		}
+		
+		$this->redirect(array('nyomdakonyv/index'));
 	}
 
 	/**
