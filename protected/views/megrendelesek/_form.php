@@ -403,6 +403,11 @@
 	?>		
 		<div class="row buttons">
 			<?php echo CHtml::submitButton('Mentés', array('id' => 'megrendelesek_form_submit')); ?>
+
+			<?php if ($model -> nyomdakonyv_munka_id == 0): ?>
+				<?php echo CHtml::button('Nyomdakönyvbe küldés', array('id' => 'nyomdakonyvbeKuldesButton', 'submit' => Yii::app()->createUrl("/megrendelesek/munkakGeneralasaMegrendelesbol/", array("id" => $model->id)), 'onclick' => 'js:disableNyomdakonyvButton()')); ?>
+			<?php endif; ?>
+
 			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
 		</div>
 
@@ -511,4 +516,8 @@
 			window.open (redirectUrl);
 		}
 	 
+		function disableNyomdakonyvButton () {
+			$("#nyomdakonyvbeKuldesButton").attr("disabled", true);
+		}
+		
 	</script>

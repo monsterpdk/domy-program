@@ -81,6 +81,7 @@ return array(
 		// LI
 		'user'=>array(
 			'class'=>'RWebUser',
+			'autoUpdateFlash' => false,
 			'allowAutoLogin'=>false,
 		),
 		// LI

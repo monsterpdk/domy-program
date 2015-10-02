@@ -70,7 +70,7 @@ class MegrendelesekController extends Controller
 		$model=$this->loadModel($id);
 
 		if ($model->nyomdakonyv_munka_id != 0 || $model->proforma_szamla_sorszam != "") {
-			throw new CHttpException(403, "Hozzáférés megtagadva!, nincs jogosultsága a kért lap megtekintéséhez.");
+			throw new CHttpException(403, "Hozzáférés megtagadva!, a megrendelés már a nyomdakönyvbe került.");
 		}
 		
 		/*
@@ -113,6 +113,44 @@ class MegrendelesekController extends Controller
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
 
+   /**
+	* Létrehozzuk a nyomdakönyvbe a munkákat a megrendelés tételeiből.
+	*/
+	public function actionMunkakGeneralasaMegrendelesbol($id) {
+		$megrendeles = $this->loadModel($id);
+		
+		// ha létezik a megrendelés és még nincsenek a tételei a nyomdakönyvbe rakva
+		if ($megrendeles != null && $megrendeles->nyomdakonyv_munka_id == 0) {
+			foreach ($megrendeles -> tetelek as $tetel) {
+				$nyomdakonyv = new Nyomdakonyv;
+				$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
+				$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
+				$nyomdakonyv -> save(false);	
+			}
+			
+			// most a nyomdakonyvt_munka_id mező 0 vagy 1 lehet, mert egyelőre nem látom
+			// más hasznát
+			$megrendeles->nyomdakonyv_munka_id = 1;
+			$megrendeles->save(false);
+		}
+		
+		Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
+		$this->redirect(array('index'));
+	}
+	
+	 /**
+	 * Új táskaszám generálása nyomdakönyvbe kerülő megrendelési tételhez
+	 */
+	 private function ujTaskaszamGeneralas() {
+		$criteria = new CDbCriteria;
+		$criteria->select = 'max(id) AS id';
+		$row = Nyomdakonyv::model() -> find ($criteria);
+		$utolsoMunka = $row['id'];
+		$sorszam = "MT" . date("Y") . str_pad( ($utolsoMunka != null) ? ($utolsoMunka + 1) : "000001", 6, '0', STR_PAD_LEFT );
+		
+	 	return $sorszam ;
+	 }
+	 
 	/**
 	 * Új megrendeléshez ID generálás
 	 */

@@ -24,6 +24,19 @@
 <h1>Megrendelések</h1>
 
 <?php
+    Yii::app()->clientScript->registerScript(
+       'myHideEffect',
+       '$(".flash-success").animate({opacity: 1.0}, 3000).fadeOut("slow");',
+       CClientScript::POS_READY
+    );
+?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+    <div class="flash-success">
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+    </div>
+<?php endif; ?>
+
+<?php
 	$this->widget('zii.widgets.jui.CJuiButton', array(
 		'name'=>'button_search_megrendeles',
 		'caption'=>'Keresés',
