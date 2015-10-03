@@ -9,3 +9,4 @@ protected/data/*.db
 themes/classic/views/
 *.db
 *.log
+protected/runtime/session-1.1.14.db
