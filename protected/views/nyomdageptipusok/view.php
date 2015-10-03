@@ -1,18 +1,22 @@
 <?php
-/* @var $this NyomdagepekController */
-/* @var $model Nyomdagepek */
+/* @var $this NyomdagepTipusokController */
+/* @var $model NyomdagepTipusok */
 ?>
 
-<h1>'<?php echo $model->gepnev; ?>' nyomdagép adatai</h1>
+<h1>'<?php echo $model->tipusnev; ?>' nyomdagép típus adatai</h1>
 
 <p>
 	<?php $this->widget('zii.widgets.CDetailView', array(
 		'data'=>$model,
 		'attributes'=>array(
 			'id',
-			'gepnev',
-			'max_fordulat',
-			'alapertelmezett:boolean',
+			'tipusnev',
+			'fordulat_kis_boritek',
+			'fordulat_nagy_boritek',
+			'fordulat_egyeb',
+			'szinszam_tol',
+			'szinszam_ig',
+			'aktiv:boolean',
 			array(
 				'name' => 'torolt',
 				'type'=>'boolean',
