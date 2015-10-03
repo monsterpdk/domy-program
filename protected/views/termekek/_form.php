@@ -30,6 +30,12 @@
 		</div>
 
 		<div class="row">
+			<?php echo $form->labelEx($model,'tipus'); ?>
+			<?php echo DHtml::enumDropDownList($model, 'tipus'); ?>
+			<?php echo $form->error($model,'tipus'); ?>
+		</div>
+		
+		<div class="row">
 			<?php echo $form->labelEx($model,'kodszam'); ?>
 			<?php echo $form->textField($model,'kodszam',array('size'=>15,'maxlength'=>15)); ?>
 			<?php echo $form->error($model,'kodszam'); ?>

@@ -354,29 +354,30 @@ class XUploadAction extends CAction {
 			}
 			
 			$termek -> nev = $this -> clean($cols[2]);
-			$termek -> kodszam = $this -> clean($cols[3]);
-			$termek -> meret_id = $this -> clean($cols[4]);
-			$termek -> suly = $this -> clean($cols[6]);
-			$termek -> zaras_id = $this -> clean($cols[7]);
-			$termek -> ablakmeret_id = $this -> clean($cols[9]);
-			$termek -> ablakhely_id = $this -> clean($cols[11]);
-			$termek -> papir_id = $this -> clean($cols[13]);
-			$termek -> afakulcs_id = $this -> clean($cols[15]);
-			$termek -> redotalp = $this -> clean($cols[17]);
-			$termek -> gyarto_id = $this -> clean($cols[18]);
-			$termek -> ksh_kod = $this -> clean($cols[20]);
-			$termek -> csom_egys = $this -> clean($cols[21]);
-			$termek -> minimum_raktarkeszlet = $this -> clean($cols[22]);
-			$termek -> maximum_raktarkeszlet = $this -> clean($cols[23]);
-			$termek -> doboz_suly = $this -> clean($cols[24]);
-			$termek -> raklap_db = $this -> clean($cols[25]);
-			$termek -> doboz_hossz = $this -> clean($cols[26]);
-			$termek -> doboz_szelesseg = $this -> clean($cols[27]);
-			$termek -> doboz_magassag = $this -> clean($cols[28]);
-			$termek -> megjegyzes = $this -> clean($cols[29]);
-			$termek -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace(".", "", str_replace("-", "", $this -> clean($cols[30])))));
-			$termek -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace(".", "", str_replace("-", "", $this -> clean($cols[31])))));
-			$termek -> torolt = $this -> clean($cols[33]);
+			$termek -> tipus = $this -> clean($cols[3]);
+			$termek -> kodszam = $this -> clean($cols[4]);
+			$termek -> meret_id = $this -> clean($cols[5]);
+			$termek -> suly = $this -> clean($cols[7]);
+			$termek -> zaras_id = $this -> clean($cols[8]);
+			$termek -> ablakmeret_id = $this -> clean($cols[10]);
+			$termek -> ablakhely_id = $this -> clean($cols[12]);
+			$termek -> papir_id = $this -> clean($cols[14]);
+			$termek -> afakulcs_id = $this -> clean($cols[16]);
+			$termek -> redotalp = $this -> clean($cols[18]);
+			$termek -> gyarto_id = $this -> clean($cols[19]);
+			$termek -> ksh_kod = $this -> clean($cols[21]);
+			$termek -> csom_egys = $this -> clean($cols[22]);
+			$termek -> minimum_raktarkeszlet = $this -> clean($cols[23]);
+			$termek -> maximum_raktarkeszlet = $this -> clean($cols[24]);
+			$termek -> doboz_suly = $this -> clean($cols[25]);
+			$termek -> raklap_db = $this -> clean($cols[26]);
+			$termek -> doboz_hossz = $this -> clean($cols[27]);
+			$termek -> doboz_szelesseg = $this -> clean($cols[28]);
+			$termek -> doboz_magassag = $this -> clean($cols[29]);
+			$termek -> megjegyzes = $this -> clean($cols[30]);
+			$termek -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace(".", "", str_replace("-", "", $this -> clean($cols[31])))));
+			$termek -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace(".", "", str_replace("-", "", $this -> clean($cols[32])))));
+			$termek -> torolt = $this -> clean($cols[34]);
 
 			if ($termek -> validate()) {
 				$this -> infoMessages .= ((strlen($this -> infoMessages) > 0) ? ", " : '') . $termek -> nev;
