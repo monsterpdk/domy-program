@@ -1,31 +1,28 @@
 <?php
 
 /**
- * This is the model class for table "dom_afakulcsok".
+ * This is the model class for table "dom_nyomdagepek".
  *
- * The followings are the available columns in table 'dom_afakulcsok':
- * @property integer $id
- * @property string $nev
- * @property integer $afa_szazalek
+ * The followings are the available columns in table 'dom_nyomdagepek':
+ * @property string $id
+ * @property string $gepnev
+ * @property string $max_fordulat
  * @property integer $alapertelmezett
  * @property integer $torolt
  */
-class AfaKulcsok extends DomyModel
+class Nyomdagepek extends CActiveRecord
 {
-	// lenyíló listákhoz a következő formátumban:  'áfakulcs neve - áfa százalék'
-	private $display_nev_szazalek;
-	
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dom_afakulcsok';
+		return 'dom_nyomdagepek';
 	}
 
 	public function getClassName ()
 	{
-		return "ÁFA kulcs";
+		return "Nyomdagép";
 	}
 	
 	/**
@@ -36,12 +33,14 @@ class AfaKulcsok extends DomyModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nev, afa_szazalek', 'required'),
-			array('afa_szazalek, alapertelmezett, torolt', 'numerical', 'integerOnly'=>true),
-			array('nev', 'length', 'max'=>30),
+			array('gepnev, max_fordulat', 'required'),
+			array('alapertelmezett, torolt', 'numerical', 'integerOnly'=>true),
+			array('gepnev', 'length', 'max'=>30),
+			array('max_fordulat', 'length', 'max'=>10),
+			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, afa_szazalek, alapertelmezett, torolt', 'safe', 'on'=>'search'),
+			array('id, gepnev, max_fordulat, alapertelmezett, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,9 +65,9 @@ class AfaKulcsok extends DomyModel
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ÁFA kulcs ID',
-			'nev' => 'ÁFA kulcs neve',
-			'afa_szazalek' => 'ÁFA százalék (%)',
+			'id' => 'Nyomdagép ID',
+			'gepnev' => 'Gépnév',
+			'max_fordulat' => 'Max. fordulat',
 			'alapertelmezett' => 'Alapértelmezett',
 			'torolt' => 'Törölt',
 		);
@@ -92,46 +91,42 @@ class AfaKulcsok extends DomyModel
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('nev',$this->nev,true);
-		$criteria->compare('afa_szazalek',$this->afa_szazalek);
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('gepnev',$this->gepnev,true);
+		$criteria->compare('max_fordulat',$this->max_fordulat,true);
 		$criteria->compare('alapertelmezett',$this->alapertelmezett);
-
-		// LI: logikailag törölt sorok ne jelenjenek meg
+		
+		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
 			$criteria->condition=" torolt = '0'";
-			
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
 
-	// LI : megnézzük, hogy az új ÁFA kulcson kívül van-e még ÁFA kulcs,
+	// LI : megnézzük, hogy az új nyomdagépen kívül van-e még nyomdagép,
 	//		ha nincs, akkor automatikusan alapértelmezetté tesszük
 	public function beforeSave() {
 		if ($this->isNewRecord) {
-			$afaKulcsok = AfaKulcsok::model()->findAll(array("condition"=>"torolt=0"));
+			$nyomdagepek = Nyomdagepek::model()->findAll(array("condition"=>"torolt=0"));
 			
-			if (count($afaKulcsok) == 0) {
+			if (count($nyomdagepek) == 0) {
 				$this -> alapertelmezett = 1;
 			}	
 		}
 	 
 		return parent::beforeSave();
-	}
+	}	
 
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return AfaKulcsok the static model class
+	 * @return Nyomdagepek the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
-	
-	public function getDisplay_nev_szazalek () {
-		return $this -> nev . ' - ' . $this -> afa_szazalek . '%';
 	}
 }

@@ -62,6 +62,11 @@
                         'items'=>array (
 									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('AfaKulcsok.index')),
 									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('SztornozasOkok.index')),
+									array ('label'=>'Nyomdai beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
+		                        'items'=>array (
+	                            	array ('label'=>'Nyomdagépek kezelése', 'url'=> Yii::app()->createUrl('/nyomdagepek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Nyomdagép típusok kezelése', 'url'=> Yii::app()->createUrl('/nyomdageptipusok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+															)),	                                                                          
 		                    		array ('label'=>'Ügyfelekkel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
 	                            	array ('label'=>'Országok kezelése', 'url'=> Yii::app()->createUrl('/orszagok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
