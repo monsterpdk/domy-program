@@ -102,6 +102,7 @@ class Arajanlatok extends CActiveRecord
 			'ugyintezo'    => array(self::BELONGS_TO, 'UgyfelUgyintezok', 'ugyintezo_id'),
 			
 			'tetelek' => array(self::HAS_MANY, 'ArajanlatTetelek', 'arajanlat_id'),
+			'visszahivasok' => array(self::HAS_MANY, 'ArajanlatVisszahivasok', 'arajanlat_id'),			
 		);
 	}
 

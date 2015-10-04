@@ -240,6 +240,109 @@
 	
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Visszahívások</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
+		));
+
+			if (Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Create')) {
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_create_arajanlatVisszahivas',
+					'caption'=>'Visszahívás hozzáadása',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {addUpdateArajanlatVisszahivas("create", $(this));}'),
+					'htmlOptions'=>array('class'=>'btn btn-success'),
+				));
+			}
+			
+			// a dialógus ablak inicializálása
+			$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+				'id'=>'dialogArajanlatVisszahivas',
+				'options'=>array(
+					'title'=>'Visszahívás hozzáadása',
+					'autoOpen'=>false,
+					'modal'=>true,
+					'width'=>400,
+					'height'=>400,
+				),
+			));
+			
+			echo "<div class='divForForm'></div>";
+			
+			$this->endWidget();
+			
+			
+		// GRIDVIEW BEGIN
+			$dataProvider=new CActiveDataProvider('ArajanlatVisszahivasok',
+				array( 'data' => $model->visszahivasok,
+						'sort'=>array(
+							'attributes'=>array(
+								'id' => array(
+									'asc' => 'id ASC',
+									'desc' => 'id DESC',
+								),
+							),
+						),
+				)
+			);
+
+			$this->widget('zii.widgets.grid.CGridView', array(
+				'id' => 'arajanlatVisszahivasok-grid',
+				'enablePagination' => false,
+				'dataProvider'=>$dataProvider,
+				'columns'=>array(
+					'user.fullname',
+					'idopont',
+					'jegyzet',
+					array(
+								'class' => 'bootstrap.widgets.TbButtonColumn',
+								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
+								'template' => '{update} {delete_item}',
+								
+								'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
+								
+								'buttons' => array(
+									'update' => array(
+										'label' => 'Szerkeszt',
+										'icon'=>'icon-white icon-pencil',
+										'url'=>'',
+										'click'=>'function() {addUpdateArajanlatVisszahivas("update", $(this));}',
+										'visible' => "Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Update')",
+									),
+									'delete_item' => array
+									(
+										'label'=>'Töröl',
+										'icon'=>'icon-white icon-remove-sign',
+										'options'=>array(
+											'class'=>'btn btn-danger btn-mini',
+											),
+										'url'=>'"#"',
+										'visible' => "Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Delete')",
+										'click'=>"function(){
+														$.fn.yiiGridView.update('arajanlatVisszahivasok-grid', {
+															type:'POST',
+															dataType:'json',
+															url:$(this).attr('href'),
+															success:function(data) {
+																$.fn.yiiGridView.update('arajanlatVisszahivasok-grid');
+															}
+														})
+														return false;
+												  }
+										 ",
+										 'url'=> 'Yii::app()->createUrl("arajanlatVisszahivasok/delete/" . $data->id)',
+									),
+								),
+						),
+				)
+			));
+		// GRIDVIEW END
+	$this->endWidget();
+	?>
+
+	
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Árajánlat adatai #3</strong>",
 			'htmlOptions'=>array('class'=>"portlet right-widget"),
 		));
@@ -286,12 +389,6 @@
 			?>
 			
 			<?php echo $form->error($model,'ugyfel_fax'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'visszahivas_jegyzet'); ?>
-			<?php echo $form->textArea($model,'visszahivas_jegyzet',array('size'=>60,'maxlength'=>127)); ?>
-			<?php echo $form->error($model,'visszahivas_jegyzet'); ?>
 		</div>
 
 		<div class="row">
@@ -509,5 +606,55 @@
 			
 			return false; 
 		}
+		
+		function addUpdateArajanlatVisszahivas (createOrUpdate, buttonObj)
+		{
+		
+			redirectUrl = "";
+			try {
+				redirectUrl = createOrUpdate.target.action;
+			} catch (e) {
+				redirectUrl = "";
+			}
+			
+			if (typeof buttonObj != 'undefined')
+				hrefString = buttonObj.parent().children().eq(1).attr('href');
+				
+			isUpdate = createOrUpdate == "update" || (typeof redirectUrl != 'undefined' && redirectUrl != '' && redirectUrl.indexOf("update") != -1);
+			op = (isUpdate) ? "update" : "create";
+			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Arajanlatok_id").val();
+			dialog_title = (isUpdate) ? "Visszahívás módosítása" : "Visszahívás hozzáadása";
+
+			<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/arajanlatVisszahivasok/' + op + '/id/' + id + '/grid_id/' + new Date().getTime()",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'post',
+					'id' => 'send-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.status == 'failure')
+						{
+							$('#dialogArajanlatVisszahivas div.divForForm').html(data.div);
+							$('#dialogArajanlatVisszahivas div.divForForm form').submit(addUpdateArajanlatVisszahivas);
+						}
+						else
+						{
+							$.fn.yiiGridView.update(\"arajanlatVisszahivasok-grid\",{ complete: function(jqXHR, status) {}})
+														
+							$('#dialogArajanlatVisszahivas div.divForForm').html(data.div);
+							$('#dialogArajanlatVisszahivas').dialog('close');
+						}
+		 
+					} ",
+			))?>;
+
+			
+			$("#dialogArajanlatVisszahivas").dialog("open");
+			$("#dialogArajanlatVisszahivas").dialog('option', 'title', dialog_title);
+			
+			return false; 
+		}		
 	 
 	</script>
