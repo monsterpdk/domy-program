@@ -64,7 +64,8 @@ class ArajanlatVisszahivasokController extends Controller
         if (Yii::app()->request->isAjaxRequest)
         {
 			// Stop jQuery from re-initialization
-			Yii::app()->clientScript->scriptMap['*.js'] = false;
+			Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+			Yii::app()->clientScript->scriptMap['jquery-ui.min.js'] = false;
 			Yii::app()->clientScript->scriptMap['*.css'] = false;
 		
             echo CJSON::encode(array(
