@@ -38,6 +38,7 @@
 							)
 						),
                 ),
+				'gep.gepnev',
                 'tipusnev',
 				'fordulat_kis_boritek',
 				'fordulat_nagy_boritek',

@@ -276,6 +276,11 @@ class Arajanlatok extends CActiveRecord
 			$this->ervenyesseg_datum = new CDbExpression('NOW()');
 			$this->kovetkezo_hivas_ideje = new CDbExpression('NOW()');
 			$this->admin_id = Yii::app()->user->getId();
+			
+			// default-ból a reklámbox-ban egy előre beállított szöveg szerepel, amit a felhasználó felülírhat
+			if ($this->isNewRecord) {
+				$this->reklamszoveg = "Kezében tartja a lehetőséget, csak élni kell vele!";
+			}
 		}
 	 
 		return parent::beforeSave();

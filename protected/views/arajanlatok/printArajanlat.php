@@ -280,7 +280,7 @@
 	</tr>
 	
 	<tr>
-		<td colspan='2' align='center' style='font-weight:bold;font-size:14pt'>Kezében tartja a lehetőséget, csak élni kell vele!</td>
+		<td colspan='2' align='center' style='font-weight:bold;font-size:14pt'> <?php echo $model->reklamszoveg; ?> </td>
 	</tr>
 	
 	<tr>
