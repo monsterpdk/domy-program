@@ -66,6 +66,7 @@
 		                        'items'=>array (
 	                            	array ('label'=>'Nyomdagépek kezelése', 'url'=> Yii::app()->createUrl('/nyomdagepek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Nyomdagép típusok kezelése', 'url'=> Yii::app()->createUrl('/nyomdageptipusok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Műveletek kezelése', 'url'=> Yii::app()->createUrl('/nyomdaMuveletek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 															)),	                                                                          
 		                    		array ('label'=>'Ügyfelekkel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
