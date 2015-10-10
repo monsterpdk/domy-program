@@ -51,6 +51,7 @@
 			'dataProvider'=>$dataProvider,
 			'columns'=>array(
 					'megrendeles_tetel.termek.nev',
+					'megrendeles_tetel.munka_neve',
 					'darabszam',
 					array(
 						'class' => 'bootstrap.widgets.TbButtonColumn',

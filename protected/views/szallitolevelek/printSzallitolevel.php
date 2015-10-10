@@ -135,6 +135,7 @@
 		<td><strong>Boríték mérete, ragasztási módja, ablak</strong></td>
 		<td align=center><strong>Színek száma</strong></td>
 		<td align=center><strong>Példányszám</strong></td>
+		<td align=center><strong>Munka neve</strong></td>
 	</tr>
 	
 	<tr>
@@ -178,6 +179,7 @@
 						<td> $termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm, $papirtipus->nev $papirtipus->suly gr </td>
 						<td align=right> $megrendelesTetel->szinek_szama1+$megrendelesTetel->szinek_szama2 </td>
 						<td align=right> $tetel->darabszam </td>
+						<td align=right> $megrendelesTetel->munka_neve </td>
 					</tr>
 				";
 				
