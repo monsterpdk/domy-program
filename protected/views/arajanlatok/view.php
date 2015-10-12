@@ -90,6 +90,31 @@
 		));
 	$this->endWidget();
 ?>
+	
+<?php
+	$this->beginWidget('zii.widgets.CPortlet', array(
+		'title'=>"<strong>Visszahívások</strong>",
+	));
+	
+		$config = array();
+		$dataProvider=new CActiveDataProvider('arajanlatVisszahivasok',
+			array( 'data' => $model->visszahivasok,
+				   'criteria'=>array('order' => ' idopont DESC',),
+			)
+		);
+
+		$this->widget('zii.widgets.grid.CGridView', array(
+			'id' => 'arajanlat-visszahivasok-grid',
+			'enablePagination' => false,
+			'dataProvider'=>$dataProvider,
+			'columns'=>array(
+					'user.fullname',
+					'idopont',
+					'jegyzet',
+			)
+		));
+	$this->endWidget();
+?>	
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'select-tetel-form',

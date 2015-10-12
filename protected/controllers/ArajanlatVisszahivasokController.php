@@ -60,6 +60,11 @@ class ArajanlatVisszahivasokController extends Controller
 				}
             }
         }
+        else
+        {
+        	$model->visszahivas_datum = date("Y-m-d") ;
+        	$model->visszahivas_idopont = date("H:i") ;
+        }
         
         if (Yii::app()->request->isAjaxRequest)
         {

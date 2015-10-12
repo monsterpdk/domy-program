@@ -122,7 +122,7 @@ class ArajanlatVisszahivasok extends CActiveRecord
 		}
 		else
 		{
-			$visszahivas_idopont = 	$this->visszahivas_idopont ;
+			$visszahivas_idopont = 	$vars["visszahivas_idopont"] ;
 		}
 		$this->idopont = $vars["visszahivas_datum"] . " " . $visszahivas_idopont ;
 		
@@ -139,6 +139,8 @@ class ArajanlatVisszahivasok extends CActiveRecord
 	
 	protected function afterFind(){
 		parent::afterFind();
+		$this->visszahivas_datum = substr($this->idopont, 0, 10) ;
+		$this->visszahivas_idopont = substr($this->idopont, 11, 5) ;
 	}	
 		
 	

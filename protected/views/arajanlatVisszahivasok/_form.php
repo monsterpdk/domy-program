@@ -13,6 +13,7 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+	'focus'=>array($model,'jegyzet')
 )); ?>
 
 	<?php echo $form->errorSummary($model); ?>
@@ -28,7 +29,7 @@
 						'model'=>$model,
 						'attribute'=>'visszahivas_datum',
 						'options'=>array('dateFormat'=>'yy-mm-dd',),
-						'htmlOptions'=>array('value'=>date("Y-m-d")),
+						'htmlOptions'=>array('value'=>$model->visszahivas_datum),
 					));
 			?>
 			
@@ -39,7 +40,7 @@
 			'model' => $model,
 			'attribute' => 'visszahivas_idopont',
 			'mask' => '99:99',
-			'htmlOptions' => array('size' => 15, 'value'=>date("H:i:s"))
+			'htmlOptions' => array('size' => 15, 'value'=>$model->visszahivas_idopont)
 			));
 		?>
 		<?php echo $form->error($model,'visszahivas_idopont'); ?>
