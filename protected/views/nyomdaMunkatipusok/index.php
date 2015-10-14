@@ -1,12 +1,12 @@
 <?php
-/* @var $this NyomdaMuveletekController */
+/* @var $this NyomdaMunkatipusokController */
 /* @var $dataProvider CActiveDataProvider */
 ?>
 
-<h1>Nyomdakönyvi műveletek</h1>
+<h1>Munkatípusok</h1>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id' => 'nyomdagep-tipusok-grid',
+	'id' => 'munkatipusok-grid',
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
@@ -23,27 +23,25 @@
 							'view' => array(
 								'label' => 'Megtekint',
 								'icon'=>'icon-white icon-eye-open',
-								'visible' => "Yii::app()->user->checkAccess('NyomdaMuveletek.View')",
+								'visible' => "Yii::app()->user->checkAccess('NyomdaMunkatipusok.View')",
 							),
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => "Yii::app()->user->checkAccess('NyomdaMuveletek.Update')",
+								'visible' => "Yii::app()->user->checkAccess('NyomdaMunkatipusok.Update')",
 							),
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => 'Yii::app()->user->checkAccess("NyomdaMuveletek.Delete") && $data->torolt != 1',
+								'visible' => 'Yii::app()->user->checkAccess("NyomdaMunkatipusok.Delete") && $data->torolt != 1',
 							)
 						),
                 ),
-				'gep.gepnev',
-                'muvelet_nev',
-				'elokeszites_ido',
-				'muvelet_ido',
+				'munkatipus_nev',
+				'darabszam_tol',
+				'darabszam_ig',
 				'szinszam_tol',
 				'szinszam_ig',
-				'megjegyzes',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',
@@ -54,10 +52,10 @@
 )); ?>
 
 <?php
-	if (Yii::app()->user->checkAccess('NyomdaMuveletek.Create')) {
+	if (Yii::app()->user->checkAccess('NyomdaMunkatipusok.Create')) {
 		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_nyomda_muvelet',
-			'caption'=>'Új nyomdakönyvi művelet hozzáadása',
+			'name'=>'button_create_nyomda_munkatipusok',
+			'caption'=>'Új munkatípus hozzáadása',
 			'buttonType'=>'link',
 			'htmlOptions'=>array('class'=>'btn btn-success'),
 			'url'=>array('create'),
