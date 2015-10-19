@@ -743,6 +743,15 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-right: 20px;
 }
+#nyomda-munkatipusok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#nyomda-munkatipusok-form .row {
+	float: left;
+	margin-right: 20px;
+}
 .search-form .portlet {
 	float: left;
 	width : 100%;
