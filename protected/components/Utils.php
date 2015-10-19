@@ -453,6 +453,77 @@
 
 			return -1;
 		}
+		
+		// Létrehozza az ACTUAL rendszerben a megrendeléshez a számlát
+		function szamla_letrehozasa($megrendeles_id) {
+			$megrendeles_tetelek = MegrendelesTetelek::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles_id)) ;
+			$megrendeles_adatok = Megrendelesek::model() -> findByAttributes(array('id' => $megrendeles_id)) ;
+//			print_r($megrendeles_adatok) ;
+			if (count($megrendeles_tetelek) > 0) {
+				$partner_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_orszag)) ;
+				$megrendeles = array() ;				
+				$megrendeles["TranzakcioID"] = "DOMY_" . $megrendeles_id ; 
+				$megrendeles["TranzakcioTipus"] = 0 ;
+				$megrendeles["PartnerModositas"] = 0 ;
+				$megrendeles["BFejlec"]["MozgasAlapID"] = 600 ;
+				$megrendeles["BFejlec"]["Kiallitas"] = date("Y.m.d") ;
+				$megrendeles["BFejlec"]["Teljesites"] = date("Y.m.d") ;
+				$megrendeles["BFejlec"]["FizModID"] = 1 ;		//Alapértelmezetten az átutalásos fizetési mód él
+				if ($megrendeles_adatok->megrendeles_forras_megrendeles_id != "") {
+					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_adatok->megrendeles_forras_megrendeles_id ;
+				}
+				else
+				{
+					$megrendeles["BFejlec"]["BSorszam2"] = "" ;					
+				}
+				$megrendeles["BFejlec"]["Devizanem"] = "HUF" ;
+				$megrendeles["BFejlec"]["BArfolyam"] = 1 ;
+				$megrendeles["BFejlec"]["Partner"]["PNev"] = $megrendeles_adatok->ugyfel->cegnev ;
+				$megrendeles["BFejlec"]["Partner"]["PIrszam"] = $megrendeles_adatok->ugyfel->szekhely_irsz ;
+				$megrendeles["BFejlec"]["Partner"]["PHelyseg"] = $megrendeles_adatok->ugyfel->szekhely_varos ;
+				$megrendeles["BFejlec"]["Partner"]["POrszag"] = $partner_orszag->nev ;
+				$megrendeles["BFejlec"]["Partner"]["PUtca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
+				$megrendeles["BFejlec"]["Partner"]["Adoszam"] = $megrendeles_adatok->ugyfel->adoszam ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["CimTipus"] = 1 ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["CimNev"] = $megrendeles_adatok->ugyfel->cegnev ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["IrSzam"] = $megrendeles_adatok->ugyfel->szekhely_irsz ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Helyseg"] = $megrendeles_adatok->ugyfel->szekhely_varos ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Orszag"] = $partner_orszag->nev ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Utca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
+				
+				$megrendeles["bsor"] = array() ;				
+				foreach ($megrendeles_tetelek as $tetel) {
+//					print_r($tetel) ;
+					if ($tetel->termek->cikkszam == "") {
+						$cikkszam = "nincs" ;	
+					}
+					else
+					{
+						$cikkszam = $tetel->termek->cikkszam ;						
+					}
+//					echo $tetel->termek->nev . ";" . $tetel->darabszam . "db;" . $tetel->netto_darabar . " Ft<br />" ;
+					$afakulcs = AfaKulcsok::model() -> findByAttributes(array('id'=>$tetel->termek->afakulcs_id)) ;
+					$sor = array() ;
+					$sor["CikkSzam"] = $cikkszam;
+					$sor["CikkNev"] = $tetel->termek->nev ;
+					$sor["MEgyseg"] = "db" ;
+					$sor["AfaKulcs"] = $afakulcs->afa_szazalek ;
+					if ($tetel->termek->tipus == "Szolgáltatás") {
+						$sor["CikkTipus"] = 6 ;	
+					}
+					$sor["Jegyzekszam"] = $tetel->termek->ksh_kod ;
+					$sor["Mennyiseg"] = $tetel->darabszam ;
+					$sor["EgysegAr"] = $tetel->netto_darabar ;	
+					$megrendeles["bsor"][] = $sor ;
+				}
+				
+//				print_r($megrendeles) ;
+				$xml = new SimpleXMLElement('<root/>');
+				array_walk_recursive($megrendeles, array ($xml, 'addChild'));
+				echo $xml->asXML();			
+				die() ;
+			}
+		}
 
 	}
 

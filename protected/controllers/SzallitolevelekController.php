@@ -23,7 +23,7 @@ class SzallitolevelekController extends Controller
 			'model'=>$this->loadModel($id),
 		));
 	}
-
+	
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -43,6 +43,17 @@ class SzallitolevelekController extends Controller
 		{
 			$model->attributes=$_POST['Szallitolevelek'];
 
+			$elso_szallitolevel = true ;
+			if (count($model->findByAttributes(array('megrendeles_id'=>$id))) > 0) {
+					$elso_szallitolevel = false ;
+			}
+			
+			//Létrehozzuk a számlát a szállítólevél létrejötte után, ha még nem volt szállítólevele korábban
+			if ($elso_szallitolevel) {
+				Utils::szamla_letrehozasa($id) ;
+				die() ;
+			}
+			
 			if ($model->save()) {
 				// LI : miután elmentettük az újonnan létrehozott szállítólevelet elmentjük a hozzá tartozó tételeket is
 				$tetelekAMegrendelon = Utils::getSzallitolevelTetelToMegrendeles($id);
@@ -59,7 +70,11 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> save();
 					}
 				}
-				
+				//Létrehozzuk a számlát a szállítólevél létrejötte után, ha még nem volt szállítólevele korábban
+/*				if ($elso_szallitolevel) {
+					szamla_letrehozasa($id) ;
+				}
+*/				
 				$this->redirect(array('szallitolevelek/index','id'=>$model->megrendeles_id,));
 			}
 		} else {

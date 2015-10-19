@@ -82,7 +82,8 @@
 		                    		array ('label'=>'Raktárkezeléssel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
 	                            	array ('label'=>'Raktárak kezelése', 'url'=> Yii::app()->createUrl('/raktarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
-															))	                                                                          
+															)),	                                                                          
+						array ('label'=>'Számlázó program kapcsolat beállítások', 'url'=> Yii::app()->createUrl('/szamlazoBeallitasok/index'), 'visible' => Yii::app()->user->checkAccess('Admin')),	                            	
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Beallitasok.index')) ),
 
 

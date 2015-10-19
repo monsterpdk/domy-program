@@ -243,7 +243,7 @@ class MegrendelesekController extends Controller
 				for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
 					$termek = $xml->orderitems->orderitem[$i] ;
 					$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model)) ;
-					print_r($termek_adatok) ;
+//					print_r($termek_adatok) ;
 					if ($termek_adatok != null) {
 						$szinekszama1 = $szinekszama2 = 0 ;
 						if (preg_match('/(\d)\+(\d)/', (string)$termek->orderitem_name, $matches)) {
@@ -265,6 +265,24 @@ class MegrendelesekController extends Controller
 					}
 					
 				}
+				for ($i = 0; $i < count($xml->services->service); $i++) {
+					$szolgaltatas = $xml->services->service[$i] ;
+					$szolgaltatas_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$szolgaltatas->service_model)) ;
+//					print_r($termek_adatok) ;
+					if ($szolgaltatas_adatok != null) {
+						$megrendeles_tetel = new MegrendelesTetelek;
+						$megrendeles_tetel -> megrendeles_id = $megrendeles_id;
+						$megrendeles_tetel -> termek_id = $szolgaltatas_adatok->id;
+						$megrendeles_tetel -> darabszam = (int)$szolgaltatas -> service_qty;
+						$megrendeles_tetel -> netto_darabar = (string)$szolgaltatas -> service_price;				
+						$megrendeles_tetel ->save (false);
+					}
+					else
+					{
+						/* Ha nincs az adott cikkszámmal termék a domy programban, akkor mit csináljunk a termékkel? */						
+					}
+					
+				}				
 			}
 		}
 	}
