@@ -454,13 +454,29 @@
 			return -1;
 		}
 		
+		function array_to_xml( $data, &$xml_data ) {
+			foreach( $data as $key => $value ) {
+				if( is_array($value) ) {
+					if( is_numeric($key) ){
+						$key = 'item'.$key; //dealing with <0/>..<n/> issues
+					}
+					$subnode = $xml_data->addChild($key);
+					Utils::array_to_xml($value, $subnode);
+				} else {
+					$xml_data->addChild("$key",htmlspecialchars("$value"));
+				}
+			 }
+		}		
+		
 		// Létrehozza az ACTUAL rendszerben a megrendeléshez a számlát
 		function szamla_letrehozasa($megrendeles_id) {
 			$megrendeles_tetelek = MegrendelesTetelek::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles_id)) ;
 			$megrendeles_adatok = Megrendelesek::model() -> findByAttributes(array('id' => $megrendeles_id)) ;
 //			print_r($megrendeles_adatok) ;
 			if (count($megrendeles_tetelek) > 0) {
+//				echo $megrendeles_adatok->ugyfel->szekhely_varos ;
 				$partner_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_orszag)) ;
+//				$partner_varos = Varosok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_varos)) ;
 				$megrendeles = array() ;				
 				$megrendeles["TranzakcioID"] = "DOMY_" . $megrendeles_id ; 
 				$megrendeles["TranzakcioTipus"] = 0 ;
@@ -469,13 +485,14 @@
 				$megrendeles["BFejlec"]["Kiallitas"] = date("Y.m.d") ;
 				$megrendeles["BFejlec"]["Teljesites"] = date("Y.m.d") ;
 				$megrendeles["BFejlec"]["FizModID"] = 1 ;		//Alapértelmezetten az átutalásos fizetési mód él
-				if ($megrendeles_adatok->megrendeles_forras_megrendeles_id != "") {
-					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_adatok->megrendeles_forras_megrendeles_id ;
-				}
+//				if ($megrendeles_adatok->megrendeles_forras_megrendeles_id != "") {
+//					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_adatok->megrendeles_forras_megrendeles_id ;
+					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_id ;
+/*				}
 				else
 				{
 					$megrendeles["BFejlec"]["BSorszam2"] = "" ;					
-				}
+				}*/
 				$megrendeles["BFejlec"]["Devizanem"] = "HUF" ;
 				$megrendeles["BFejlec"]["BArfolyam"] = 1 ;
 				$megrendeles["BFejlec"]["Partner"]["PNev"] = $megrendeles_adatok->ugyfel->cegnev ;
@@ -516,12 +533,17 @@
 					$sor["EgysegAr"] = $tetel->netto_darabar ;	
 					$megrendeles["bsor"][] = $sor ;
 				}
+				$megrendeles_kesz["Tranzakcio"] = $megrendeles ; 
 				
 //				print_r($megrendeles) ;
-				$xml = new SimpleXMLElement('<root/>');
-				array_walk_recursive($megrendeles, array ($xml, 'addChild'));
-				echo $xml->asXML();			
-				die() ;
+//				$xml = new SimpleXMLElement('<root/>');
+				$xml_megrendeles = new SimpleXMLElement('<root/>');
+				Utils::array_to_xml($megrendeles_kesz, $xml_megrendeles) ;
+				$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
+//				array_walk_recursive($megrendeles, array ($xml_megrendeles, 'addChild'));
+				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
+//				echo $xml_megrendeles->asXML();
+//				die();
 			}
 		}
 

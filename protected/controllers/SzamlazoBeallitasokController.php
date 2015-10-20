@@ -34,8 +34,10 @@ class SzamlazoBeallitasokController extends Controller
 		// collect user input data
 		if (isset($_POST['SzamlazoBeallitasokForm']))
 		{
-			$model -> attributes=$_POST['SzamlazoBeallitasokForm'];
-			
+//			$model -> attributes=$_POST['SzamlazoBeallitasokForm'];
+			$model -> SzamlaImportPath = $_POST['SzamlazoBeallitasokForm']["SzamlaImportPath"] ;
+			$model -> SzamlaImportVisszaigazolasPath = $_POST['SzamlazoBeallitasokForm']["SzamlaImportVisszaigazolasPath"] ;
+						
 			// validate user input and redirect to the previous page if valid
 			if ($model->validate())
 				if ($model->save())

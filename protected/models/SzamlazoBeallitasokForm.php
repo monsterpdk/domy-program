@@ -33,8 +33,6 @@ class SzamlazoBeallitasokForm extends CFormModel
                 );
         }
         public function save() {
-        		print_r($this) ;
-        		die() ;
                 Yii::app()->config->set('SzamlaImportPath', $this->SzamlaImportPath);
                 Yii::app()->config->set('SzamlaImportVisszaigazolasPath', $this->SzamlaImportVisszaigazolasPath);
 
