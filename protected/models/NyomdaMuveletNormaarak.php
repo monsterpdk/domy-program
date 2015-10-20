@@ -1,32 +1,30 @@
 <?php
 
 /**
- * This is the model class for table "dom_nyomda_muveletek".
+ * This is the model class for table "dom_nyomda_muvelet_normaarak".
  *
- * The followings are the available columns in table 'dom_nyomda_muveletek':
+ * The followings are the available columns in table 'dom_nyomda_muvelet_normaarak':
  * @property string $id
+ * @property string $muvelet_id
  * @property string $gep_id
- * @property string $muvelet_nev
- * @property double $elokeszites_ido
- * @property double $muvelet_ido
- * @property integer $szinszam_tol
- * @property integer $szinszam_ig
- * @property string $megjegyzes
+ * @property string $oradij
+ * @property integer $szazalek_tol
+ * @property integer $szazalek_ig
  * @property integer $torolt
  */
-class NyomdaMuveletek extends CActiveRecord
+class NyomdaMuveletNormaarak extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dom_nyomda_muveletek';
+		return 'dom_nyomda_muvelet_normaarak';
 	}
 
 	public function getClassName ()
 	{
-		return "Nyomdakönyvi művelet";
+		return "Nyomdakönyvi művelet ár";
 	}
 	
 	/**
@@ -37,28 +35,25 @@ class NyomdaMuveletek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('gep_id, muvelet_nev, elokeszites_ido, muvelet_ido, szinszam_tol, szinszam_ig, torolt', 'required'),
-			array('szinszam_tol, szinszam_ig, torolt', 'numerical', 'integerOnly'=>true),
-			array('elokeszites_ido, muvelet_ido', 'numerical'),
-			array('gep_id', 'length', 'max'=>10),
-			array('muvelet_nev', 'length', 'max'=>50),
-			array('megjegyzes', 'length', 'max'=>127),
+			array('muvelet_id, gep_id, oradij, szazalek_tol, szazalek_ig', 'required'),
+			array('szazalek_tol, szazalek_ig, torolt', 'numerical', 'integerOnly'=>true),
+			array('muvelet_id, gep_id, oradij', 'length', 'max'=>10),
 			
-			array('szinszam_tol', 'isIntervalCorrect'),
+			array('szazalek_tol', 'isIntervalCorrect'),
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, gep_id, muvelet_nev, elokeszites_ido, muvelet_ido, szinszam_tol, szinszam_ig, megjegyzes, torolt', 'safe', 'on'=>'search'),
+			array('id, muvelet_id, gep_id, oradij, szazalek_tol, szazalek_ig, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
 	/**
-	* Színszám-tól nem lehet nagyobb, mint a színszám-ig mező.
+	* Százalék-tól nem lehet nagyobb, mint a százalék-ig mező.
 	*/
 	public function isIntervalCorrect ()
 	{
-		if ($this->szinszam_tol > $this->szinszam_ig)
-			$this -> addError('szinszam_tol', 'A színszám-tól nem lehet nagyobb, mint a színszám-ig mező!');
+		if ($this->szazalek_tol > $this->szazalek_ig)
+			$this -> addError('szazalek_tol', 'A százalék-tól nem lehet nagyobb, mint a százalék-ig mező!');
 	}
 	
 	/**
@@ -69,7 +64,8 @@ class NyomdaMuveletek extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'gep' => array(self::BELONGS_TO, 'Nyomdagepek', 'gep_id'),
+			'muvelet'    => array(self::BELONGS_TO, 'NyomdaMuveletek', 'muvelet_id'),
+			'gep'    => array(self::BELONGS_TO, 'Nyomdagepek', 'gep_id'),
 		);
 	}
 
@@ -83,14 +79,12 @@ class NyomdaMuveletek extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Nyomdakönyvi művelet ID',
-			'gep_id' => 'Gép',
-			'muvelet_nev' => 'Művelet neve',
-			'elokeszites_ido' => 'Előkészítés idő',
-			'muvelet_ido' => 'Művelet idő',
-			'szinszam_tol' => 'Színszám -tól',
-			'szinszam_ig' => 'Színszám -ig',
-			'megjegyzes' => 'Megjegyzés',
+			'id' => 'Művelet ár ID',
+			'muvelet_id' => 'Művelet ID',
+			'gep_id' => 'Gép ID',
+			'oradij' => 'Óradíj',
+			'szazalek_tol' => 'Százalék -tól',
+			'szazalek_ig' => 'Százalék -ig',
 			'torolt' => 'Törölt',
 		);
 	}
@@ -114,14 +108,12 @@ class NyomdaMuveletek extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
+		$criteria->compare('muvelet_id',$this->muvelet_id,true);
 		$criteria->compare('gep_id',$this->gep_id,true);
-		$criteria->compare('muvelet_nev',$this->muvelet_nev,true);
-		$criteria->compare('elokeszites_ido',$this->elokeszites_ido);
-		$criteria->compare('muvelet_ido',$this->muvelet_ido);
-		$criteria->compare('szinszam_tol',$this->szinszam_tol);
-		$criteria->compare('szinszam_ig',$this->szinszam_ig);
-		$criteria->compare('megjegyzes',$this->megjegyzes,true);
-
+		$criteria->compare('oradij',$this->oradij,true);
+		$criteria->compare('szazalek_tol',$this->szazalek_tol);
+		$criteria->compare('szazalek_ig',$this->szazalek_ig);
+		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
 			$criteria->condition=" torolt = '0'";
@@ -135,7 +127,7 @@ class NyomdaMuveletek extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return NyomdaMuveletek the static model class
+	 * @return NyomdaMuveletNormaarak the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
