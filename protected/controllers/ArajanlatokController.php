@@ -187,6 +187,70 @@ class ArajanlatokController extends Controller
 		}
 	}
 	
+	public function actionArajanlatTetelElozmenyek($ugyfel_id, $grid_id) {
+		if (is_numeric($ugyfel_id) && $ugyfel_id > 0) {
+						
+			$termek_ajanlatok = Yii::app()->db->createCommand()
+												->select('arajanlat_tetelek.id as tetel_id, arajanlat_tetelek.termek_id, arajanlat_tetelek.netto_darabar, arajanlat_tetelek.darabszam, termekek.nev as termeknev, arajanlatok.sorszam as ajanlat_sorszam, arajanlatok.ajanlat_datum, megrendeles_tetelek.arajanlatbol_letrehozva')
+												->from('dom_arajanlatok arajanlatok')
+												->join('dom_arajanlat_tetelek as arajanlat_tetelek','arajanlatok.id = arajanlat_tetelek.arajanlat_id')
+												->leftJoin('dom_termekek termekek','arajanlat_tetelek.termek_id = termekek.id')
+												->leftJoin('dom_megrendeles_tetelek megrendeles_tetelek', 'megrendeles_tetelek.arajanlat_tetel_id = arajanlat_tetelek.id')
+												->where('arajanlatok.ugyfel_id=:ugyfel_id', array(':ugyfel_id'=>$ugyfel_id))
+												->queryAll();
+
+			$count=Yii::app()->db->createCommand()
+												->select('count(*)')
+												->from('dom_arajanlatok arajanlatok')
+												->join('dom_arajanlat_tetelek as arajanlat_tetelek','arajanlatok.id = arajanlat_tetelek.arajanlat_id')
+												->where('arajanlatok.ugyfel_id=:ugyfel_id', array(':ugyfel_id'=>$ugyfel_id))			
+												->queryScalar();		
+/*			$dataProvider=new CSqlDataProvider($termek_ajanlatok, array(
+				'totalItemCount'=>$count,
+				'keyField' => 'tetel_id',
+				'sort'=>array(
+					'attributes'=>array(
+						 'ajanlat_datum desc',
+					),
+				),
+				'pagination'=>array(
+					'pageSize'=>30,
+				),
+			));*/
+			
+			$dataProvider=new CArrayDataProvider($termek_ajanlatok, array(
+				'keyField' => 'tetel_id',
+				'sort'=>array(
+					'attributes'=>array(
+						 'ajanlat_datum',
+					),
+				),
+				'pagination'=>array(
+					'pageSize'=>10,
+				),
+			));			
+			
+						
+			if (Yii::app()->request->isAjaxRequest)
+			{
+				// Stop jQuery from re-initialization
+				Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+				Yii::app()->clientScript->scriptMap['jquery-ui.min.js'] = false;
+				Yii::app()->clientScript->scriptMap['*.css'] = false;
+			
+				echo CJSON::encode(array(
+					'status'=>'failure', 
+					'div'=>$this->renderPartial('tetel_elozmenyek_view', array('dataProvider'=>$dataProvider, 'grid_id'=>$grid_id, 'ugyfel_id'=>$ugyfel_id), true, true)));
+				exit;               
+			}
+			else {
+				$this->render('tetel_elozmenyek_view', array('dataProvider'=>$dataProvider));
+			}
+		
+		}
+	}
+	
+	
 	/**
 	 * Manages all models.
 	 */

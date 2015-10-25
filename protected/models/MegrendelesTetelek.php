@@ -18,6 +18,8 @@
  * @property integer $torolt
  * @property integer $anyag_foglalva
  * @property integer $egyedi_ar 
+ * @property integer arajanlatbol_letrehozva
+ * @property integer arajanlat_tetel_id
  */
 class MegrendelesTetelek extends CActiveRecord
 {
@@ -72,6 +74,7 @@ class MegrendelesTetelek extends CActiveRecord
 		return array(
 			'megrendeles' => array(self::BELONGS_TO, 'Megrendelesek', 'megrendeles_id'),
 			'termek' => array(self::BELONGS_TO, 'Termekek', 'termek_id'),
+			'arajanlat_tetelek' => array(self::HAS_ONE, 'arajanlat_tetelek', 'arajanlat_tetel_id'),
 		);
 	}
 
@@ -137,6 +140,7 @@ class MegrendelesTetelek extends CActiveRecord
 		$criteria->compare('hozott_boritek',$this->hozott_boritek);
 		$criteria->compare('torolt',$this->torolt);
 		$criteria->compare('egyedi_ar',$this->egyedi_ar);
+		$criteria->compare('arajanlat_tetel_id',$this->arajanlat_tetel_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

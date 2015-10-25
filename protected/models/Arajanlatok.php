@@ -300,5 +300,26 @@ class Arajanlatok extends CActiveRecord
 	public function getAutocomplete_ugyfel_name () {
 		return $this -> autocomplete_ugyfel_name;
 	}
-	
+/*	
+	public function arajanlat_tetel_elozmenyek($ugyfel_id) {
+		if (is_numeric($ugyfel_id) && $ugyfel_id > 0) {
+			
+			$termek_ajanlatok = Yii::app()->db->createCommand()
+												->select('arajanlat_tetelek.termek_id, termekek.nev as termeknev, arajanlatok.sorszam as ajanlat_sorszam, arajanlatok.ajanlat_datum, megrendeles_tetelek.arajanlatbol_letrehozva')
+												->from('dom_arajanlatok arajanlatok')
+												->join('dom_arajanlat_tetelek as arajanlat_tetelek','arajanlatok.id = arajanlat_tetelek.arajanlat_id')
+												->leftJoin('dom_termekek termekek','arajanlat_tetelek.termek_id = termekek.id')
+												->leftJoin('dom_megrendeles_tetelek megrendeles_tetelek', 'megrendeles_tetelek.arajanlat_tetel_id = arajanlat_tetelek.id')
+												->where('arajanlatok.ugyfel_id=:ugyfel_id', array(':ugyfel_id'=>$ugyfel_id))
+												->queryAll();
+			return new CActiveDataProvider($termek_ajanlatok, array(
+				'criteria'=>$criteria,
+				'sort'=>array(
+							'defaultOrder'=>'ajanlat_datum DESC',
+						),						
+			));
+		
+		}		
+	}
+*/	
 }

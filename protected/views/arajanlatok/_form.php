@@ -451,6 +451,15 @@
 					'onclick'=>new CJavaScriptExpression('function() {addUpdateArajanlatTetel("create", $(this));}'),
 					'htmlOptions'=>array('class'=>'btn btn-success'),
 				));
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_arajanlatTetel_elozmenyek',
+					'caption'=>'Előzmények',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {ArajanlatTetelElozmenyek($(this));}'),
+					'htmlOptions'=>array('class'=>'btn btn-info'),
+				));
+				
 			}
 			
 			// a dialógus ablak inicializálása
@@ -550,8 +559,71 @@
 
 </div><!-- form -->
 
+<!-- View Popup  -->
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'arajanlatElozmenyekModal')); ?>
+<!-- Popup Header -->
+<div class="modal-header">
+<h4>View Employee Details</h4>
+</div>
+<!-- Popup Content -->
+<div class="modal-body">
+<p>Employee Details</p>
+</div>
+<!-- Popup Footer -->
+<div class="modal-footer">
+
+<!-- close button -->
+<?php $this->widget('bootstrap.widgets.TbButton', array(
+    'label'=>'Close',
+    'url'=>'#',
+    'htmlOptions'=>array('data-dismiss'=>'modal'),
+)); ?>
+<!-- close button ends-->
+</div>
+<?php $this->endWidget(); ?>
+<!-- View Popup ends -->
+
 <script type="text/javascript">
+		function ArajanlatTetelElozmenyek (buttonObj)
+		{
+			var ugyfel_id = $("#Arajanlatok_ugyfel_id").val() ;
+			var id = $("#Arajanlatok_id").val();
+			if (ugyfel_id != "0") {
+				dialog_title = $("#Arajanlatok_autocomplete_ugyfel_name").val() + " részére eddig adott ajánlati tételek a múltban";
 	
+				<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/arajanlatok/ArajanlatTetelElozmenyek/ugyfel_id/' + ugyfel_id + '/grid_id/' + new Date().getTime()",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'post',
+					'id' => 'send-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.status == 'failure')
+						{
+							$('#dialogArajanlatTetel div.divForForm').html(data.div);
+//							$('#dialogArajanlatTetel div.divForForm form').submit(ArajanlatTetelElozmenyek);
+						}
+						else
+						{
+							$.fn.yiiGridView.update(\"arajanlatTetelek-grid\",{ complete: function(jqXHR, status) {}})
+														
+							$('#dialogArajanlatTetel div.divForForm').html(data.div);
+							$('#dialogArajanlatTetel').dialog('close');
+						}
+		 
+					} ",
+				))?>;
+				
+				$("#dialogArajanlatTetel").dialog("open");
+				$("#dialogArajanlatTetel").dialog('option', 'title', dialog_title);
+				
+				return false; 
+			}
+		}
+
+
 		function addUpdateArajanlatTetel (createOrUpdate, buttonObj)
 		{
 		

@@ -342,5 +342,5 @@ private function calculateNettoAr ($model)
 	public function actionCalculateNettoDarabAr ($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2) {
 			if (isset($termek_id)) return Utils::getActiveTermekarJSON($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2);
 	}
-	
+		
 }

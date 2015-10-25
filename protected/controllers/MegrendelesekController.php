@@ -480,6 +480,7 @@ class MegrendelesekController extends Controller
 
 					// az árajánlatból létrehozott tételeket külön jelezzük, mert azoknak az adatai nem szerkeszthettők többé
 					$megrendeles_tetel -> arajanlatbol_letrehozva = 1;
+					$megrendeles_tetel -> arajanlat_tetel_id = $termek -> id ;
 	
 					
 					$megrendeles_tetel ->save (false);
