@@ -621,6 +621,10 @@
 				
 				return false; 
 			}
+			else
+			{
+				alert("Nincs kiválasztott ügyfél!") ;	
+			}
 		}
 
 
