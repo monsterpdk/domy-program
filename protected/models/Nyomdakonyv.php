@@ -38,6 +38,8 @@
  * @property string $utasitas_gepmesternek
  * @property string $kiszallitasi_informaciok
  * @property integer $gep_id
+ * @property integer $munkatipus_id
+ * @property integer $max_fordulat
  * @property string $erkezett
  * @property string $file_beerkezett
  * @property integer $kifutos
@@ -88,7 +90,7 @@ class Nyomdakonyv extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, nyomas_tipus, file_beerkezett, ctp_nek_atadas_datum, ctp_kezdes_datum, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'required'),
-			array('ctp, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, torolt', 'numerical', 'integerOnly'=>true),
+			array('ctp, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, torolt', 'numerical', 'integerOnly'=>true),
 			array('megrendeles_tetel_id', 'length', 'max'=>10),
 			array('taskaszam, szallitolevel_sorszam', 'length', 'max'=>12),
 			array('kep_file_nev', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true, 'safe' => false),
@@ -100,7 +102,7 @@ class Nyomdakonyv extends CActiveRecord
 			array('sztornozas_oka', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'safe', 'on'=>'search'),
+			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -113,6 +115,8 @@ class Nyomdakonyv extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'megrendeles_tetel' => array(self::BELONGS_TO, 'MegrendelesTetelek', 'megrendeles_tetel_id'),
+			'gep' => array(self::BELONGS_TO, 'Nyomdagepek', 'gep_id'),
+			'munkatipus' => array(self::BELONGS_TO, 'NyomdaMunkatipusok', 'munkatipus_id'),
 		);
 	}
 
@@ -161,6 +165,8 @@ class Nyomdakonyv extends CActiveRecord
 			'utasitas_gepmesternek' => 'Utasítás gépmesternek',
 			'kiszallitasi_informaciok' => 'Kiszállítasi információk',
 			'gep_id' => 'Gép',
+			'munkatipus_id' => 'Munkatípus',
+			'max_fordulat' => 'Maximális fordulatszám',
 			'erkezett' => 'Érkezett',
 			'file_beerkezett' => 'File beérkezett',
 			'kifutos' => 'Kifutós',
@@ -242,6 +248,8 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('utasitas_gepmesternek',$this->utasitas_gepmesternek,true);
 		$criteria->compare('kiszallitasi_informaciok',$this->kiszallitasi_informaciok,true);
 		$criteria->compare('gep_id',$this->gep_id);
+		$criteria->compare('munkatipus_id',$this->munkatipus_id);
+		$criteria->compare('max_fordulat',$this->max_fordulat);
 		$criteria->compare('erkezett',$this->erkezett);
 		$criteria->compare('file_beerkezett',$this->file_beerkezett);
 		$criteria->compare('kifutos',$this->kifutos);

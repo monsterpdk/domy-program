@@ -229,24 +229,74 @@
 	?>
 	
 		<div class="row">
-			<?php echo $form->labelEx($model,'nyomas_tipus'); ?>
-			<?php echo DHtml::enumDropDownList($model, 'nyomas_tipus'); ?>
-			<?php echo $form->error($model,'nyomas_tipus'); ?>
+			<?php echo $form->labelEx($model,'gep_id'); ?>
+			
+				<?php echo CHtml::activeDropDownList($model, 'gep_id',
+					CHtml::listData(Nyomdagepek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'gepnev')
+				); ?>
+				
+			<?php echo $form->error($model,'gep_id'); ?>
 		</div>
 	
 		<div class="row">
-			<?php echo $form->labelEx($model,'utasitas_ctp_nek'); ?>
-			<?php echo $form->textArea($model,'utasitas_ctp_nek',array('size'=>60,'maxlength'=>255)); ?>
-			<?php echo $form->error($model,'utasitas_ctp_nek'); ?>
+			<?php echo $form->labelEx($model,'max_fordulat'); ?>
+			<?php echo $form->textField($model, 'max_fordulat'); ?>
+			<?php echo $form->error($model,'max_fordulat'); ?>
 		</div>
-	
-		<div class="row">
-			<?php echo $form->labelEx($model,'utasitas_gepmesternek'); ?>
-			<?php echo $form->textArea($model,'utasitas_gepmesternek',array('size'=>60,'maxlength'=>255)); ?>
-			<?php echo $form->error($model,'utasitas_gepmesternek'); ?>
+
+		<div class='clear'>
+			<div class="row">
+				<?php echo $form->labelEx($model,'nyomas_tipus'); ?>
+				<?php echo DHtml::enumDropDownList($model, 'nyomas_tipus'); ?>
+				<?php echo $form->error($model,'nyomas_tipus'); ?>
+			</div>
+		
+			<div class="row">
+				<?php echo $form->labelEx($model,'munkatipus_id'); ?>
+				<?php
+					$darabszam = $model->megrendeles_tetel->darabszam;
+					$szinek_szama1 = $model->megrendeles_tetel->szinek_szama1;
+					$szinek_szama2 = $model->megrendeles_tetel->szinek_szama2;		
+					$termek_id = $model->megrendeles_tetel->termek_id;
+
+					$munkatipusok = Utils::getAllMunkatipusToNyomdakonyv ($darabszam, $szinek_szama1, $szinek_szama2, $termek_id );
+
+					echo $form->dropDownList($model, 'munkatipus_id', CHtml::listData($munkatipusok ,'id','munkatipus_nev'));
+				?>
+				<?php echo $form->error($model,'munkatipus_id'); ?>
+				
+				<br />
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_norma_szamitasa',
+						'caption'=>'Normaszámítás',
+						//'buttonType'=>'link',
+						'htmlOptions'=>array('class'=>'bt btn-primary search-button', 'style'=>'margin-bottom:10px', 'target' => '_blank',),
+						'url'=>array('ugyfelek/create'),
+						//'onclick' => 'js:function(){normaSzamitasa(); false;}',
+					));
+				?>
+
+			</div>
 		</div>
-	
-		<div class="row">
+		
+		<div class='clear'>
+		
+			<div class="row">
+				<?php echo $form->labelEx($model,'utasitas_ctp_nek'); ?>
+				<?php echo $form->textArea($model,'utasitas_ctp_nek',array('size'=>60,'maxlength'=>255)); ?>
+				<?php echo $form->error($model,'utasitas_ctp_nek'); ?>
+			</div>
+		
+			<div class="row">
+				<?php echo $form->labelEx($model,'utasitas_gepmesternek'); ?>
+				<?php echo $form->textArea($model,'utasitas_gepmesternek',array('size'=>60,'maxlength'=>255)); ?>
+				<?php echo $form->error($model,'utasitas_gepmesternek'); ?>
+			</div>
+		</div>
+		
+		<div class = "row">
 			<?php echo $form->labelEx($model,'kiszallitasi_informaciok'); ?>
 			<?php echo $form->textArea($model,'kiszallitasi_informaciok',array('size'=>60,'maxlength'=>255)); ?>
 			<?php echo $form->error($model,'kiszallitasi_informaciok'); ?>
@@ -684,3 +734,33 @@
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+
+<script>
+
+$( document ).ready(function() {
+
+	$("#button_norma_szamitasa").attr('disabled', 'disabled');
+	
+	$('#Nyomdakonyv_gep_id').on('change', function() {
+		checkNormaszamitasState ();
+	});
+
+	// egyelőre ugyanaz, mint a fenti
+	$('#Nyomdakonyv_munkatipus_id').on('change', function() {
+		checkNormaszamitasState ();
+	});
+	
+	function checkNormaszamitasState () {
+		var bState = ( $('#Nyomdakonyv_gep_id').val() == null || $('#Nyomdakonyv_munkatipus_id').val() == null);
+
+		if (bState) {
+			$("#button_norma_szamitasa").attr('disabled', 'disabled');
+		} else {
+			$('#button_norma_szamitasa').removeAttr('disabled');
+		}
+	}
+	
+	checkNormaszamitasState ();
+});
+
+</script>

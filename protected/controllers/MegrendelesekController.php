@@ -125,6 +125,25 @@ class MegrendelesekController extends Controller
 				$nyomdakonyv = new Nyomdakonyv;
 				$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
 				$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
+				
+				// beállítjuk az alapértelmezett gépet a munkához, ha van
+				$gep = Nyomdagepek::model()->findByAttributes(array('alapertelmezett'=> 1));
+				if ($gep != null) {
+					$nyomdakonyv -> gep_id = $gep -> id;
+				}
+
+				// beállítjuk az alapértelmezett munkatípust a munkához, ha van
+				$darabszam = $tetel->darabszam;
+				$szinek_szama1 = $tetel->szinek_szama1;
+				$szinek_szama2 = $tetel->szinek_szama2;		
+				$termek_id = $tetel->termek_id;
+				
+				$defaultMunkatipus = Utils::getDefaultMunkatipusToNyomdakonyv ($darabszam, $szinek_szama1, $szinek_szama2, $termek_id );
+
+				if ($defaultMunkatipus != null) {
+					$nyomdakonyv -> munkatipus_id = $defaultMunkatipus;
+				}
+				
 				$nyomdakonyv -> save(false);	
 			}
 			

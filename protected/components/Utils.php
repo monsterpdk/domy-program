@@ -547,6 +547,96 @@
 			}
 		}
 
+		/** Egy selectből a munka típusát is ki kell választania az adminnak egy nyomdakönyvhöz.
+		 *  A selectbe a munkához már meglévő termék_id, darabszám és színszám paraméterekkel megszűrt típusokat ajánljuk fel.
+		 *  Az alapértelmezett munkatípus az, amelyikhez a legkevesebb művelet tartozik, ezek közül pedig az, amely a legkevesebb normaórát adja (a műveletek összideje a legkisebb).
+		 *
+		 *  Ez a függvény az alapértelmezett munkatípust adja vissza egy nyomdakönyvhöz.
+		 */
+		function getDefaultMunkatipusToNyomdakonyv ($darabszam, $szinszam_elo, $szinszam_hat, $termek_id ) {
+			$sql = "
+				SELECT munkatipusok.id, munkatipus_nev, COUNT(muveletek.id) AS muveletek_szama, SUM(muveletek.elokeszites_ido)+SUM(muveletek.muvelet_ido) AS muveleti_idok
+
+				FROM dom_nyomda_munkatipusok AS munkatipusok
+
+				INNER JOIN dom_nyomda_munkatipus_termekek AS munkatipus_termekek
+				ON munkatipusok.id = munkatipus_termekek.munkatipus_id
+				
+				INNER JOIN dom_nyomda_munkatipus_muveletek AS munkatipus_muveletek
+				ON munkatipusok.id = munkatipus_muveletek.munkatipus_id
+
+				INNER JOIN dom_nyomda_muveletek AS muveletek
+				ON munkatipus_muveletek.muvelet_id = muveletek.id
+				
+				WHERE
+				
+				(:darabszam >= darabszam_tol AND :darabszam <= darabszam_ig) AND
+				(:szinszam_elo >= szinszam_tol_elo AND :szinszam_elo <= szinszam_ig_elo) AND
+				(:szinszam_hat >= szinszam_tol_hat AND :szinszam_hat <= szinszam_ig_hat) AND
+				munkatipus_termekek.termek_id = :termek_id
+				
+				GROUP BY munkatipusok.munkatipus_nev
+				ORDER BY muveletek_szama, muveleti_idok
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':darabszam', $darabszam);
+			$command->bindParam(':szinszam_elo', $szinszam_elo);
+			$command->bindParam(':szinszam_hat', $szinszam_hat);
+			$command->bindParam(':termek_id', $termek_id);
+			
+			$defaultMunkatipus = $command->queryRow();
+			
+			if (is_array ($defaultMunkatipus) ) {
+					return $defaultMunkatipus['id'];
+			} else {
+				return null;
+			}				
+		}
+		
+		/**
+		 *  Ez a függvény visszaadja az összes munkatípust, ami egy adott nyomdcakönyvhöz elérhető.
+		 */
+		function getAllMunkatipusToNyomdakonyv ($darabszam, $szinszam_elo, $szinszam_hat, $termek_id ) {
+			$sql = "
+				SELECT munkatipusok.id, munkatipus_nev
+
+				FROM dom_nyomda_munkatipusok AS munkatipusok
+
+				INNER JOIN dom_nyomda_munkatipus_termekek AS munkatipus_termekek
+				ON munkatipusok.id = munkatipus_termekek.munkatipus_id
+				
+				INNER JOIN dom_nyomda_munkatipus_muveletek AS munkatipus_muveletek
+				ON munkatipusok.id = munkatipus_muveletek.munkatipus_id
+
+				INNER JOIN dom_nyomda_muveletek AS muveletek
+				ON munkatipus_muveletek.muvelet_id = muveletek.id
+				
+				WHERE
+				
+				(:darabszam >= darabszam_tol AND :darabszam <= darabszam_ig) AND
+				(:szinszam_elo >= szinszam_tol_elo AND :szinszam_elo <= szinszam_ig_elo) AND
+				(:szinszam_hat >= szinszam_tol_hat AND :szinszam_hat <= szinszam_ig_hat) AND
+				munkatipus_termekek.termek_id = :termek_id
+				
+				GROUP BY munkatipusok.munkatipus_nev
+				ORDER BY munkatipusok.munkatipus_nev
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':darabszam', $darabszam);
+			$command->bindParam(':szinszam_elo', $szinszam_elo);
+			$command->bindParam(':szinszam_hat', $szinszam_hat);
+			$command->bindParam(':termek_id', $termek_id);
+			
+			$munkatipusok = $command->queryAll();
+			
+			if (is_array ($munkatipusok) ) {
+				return $munkatipusok;
+			} else {
+				return null;
+			}				
+		}
 	}
 
 ?>

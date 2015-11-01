@@ -55,10 +55,10 @@ class NyomdaMunkatipusMuveletekController extends Controller
 	}
 
 	public function actionAssignMuveletToMunkatipus ($id, $muvelet_id) {
-		if ($id != null & $muvelet_id != null) {
+		if ($id != null && $muvelet_id != null) {
 			$munkatipus = NyomdaMunkatipusok::model() -> findByPk($id);
-			$nyomdaMuvelet = NyomdaMuveletek::model() -> findByPk($id);
-			
+			$nyomdaMuvelet = NyomdaMuveletek::model() -> findByPk($muvelet_id);
+
 			if ($munkatipus != null && $nyomdaMuvelet != null) {
 				$munkatipusMuvelet = new NyomdaMunkatipusMuveletek ();
 				$munkatipusMuvelet->munkatipus_id = $id;

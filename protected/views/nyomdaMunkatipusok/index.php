@@ -40,8 +40,10 @@
 				'munkatipus_nev',
 				'darabszam_tol',
 				'darabszam_ig',
-				'szinszam_tol',
-				'szinszam_ig',
+				'szinszam_tol_elo',
+				'szinszam_ig_elo',
+				'szinszam_tol_hat',
+				'szinszam_ig_hat',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',

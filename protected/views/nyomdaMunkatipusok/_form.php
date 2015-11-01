@@ -25,7 +25,7 @@
 
 	<?php echo $form->hiddenField($model, 'id'); ?>
 	
-	<div class="row">
+	<div>
 		<?php echo $form->labelEx($model,'munkatipus_nev'); ?>
 		<?php echo $form->textField($model,'munkatipus_nev',array('size'=>50,'maxlength'=>50)); ?>
 		<?php echo $form->error($model,'munkatipus_nev'); ?>
@@ -44,17 +44,29 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'szinszam_tol'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinszam_tol', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
-		<?php echo $form->error($model,'szinszam_tol'); ?>
+		<?php echo $form->labelEx($model,'szinszam_tol_elo'); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinszam_tol_elo', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
+		<?php echo $form->error($model,'szinszam_tol_elo'); ?>
 	</div>
 	
 	<div class="row">
-		<?php echo $form->labelEx($model,'szinszam_ig'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinszam_ig', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
-		<?php echo $form->error($model,'szinszam_ig'); ?>
+		<?php echo $form->labelEx($model,'szinszam_ig_elo'); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinszam_ig_elo', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
+		<?php echo $form->error($model,'szinszam_ig_elo'); ?>
 	</div>
 
+	<div class="row">
+		<?php echo $form->labelEx($model,'szinszam_tol_hat'); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinszam_tol_hat', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
+		<?php echo $form->error($model,'szinszam_tol_hat'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'szinszam_ig_hat'); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinszam_ig_hat', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
+		<?php echo $form->error($model,'szinszam_ig_hat'); ?>
+	</div>
+	
 	<?php if (Yii::app()->user->checkAccess('Admin')): ?>
 		<div class="row active">
 			<?php echo $form->checkBox($model,'torolt'); ?>

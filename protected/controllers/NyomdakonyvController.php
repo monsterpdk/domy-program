@@ -66,7 +66,7 @@ class NyomdakonyvController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
-
+		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -134,7 +134,7 @@ class NyomdakonyvController extends Controller
 		$model=$this->loadModel($id);
 		
 		$model->torolt = 1;
-		$model->save();
+		$model->save(false);
 		
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -145,7 +145,7 @@ class NyomdakonyvController extends Controller
 	 * Lists all models.
 	 */
 	public function actionIndex()
-	{
+	{	
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

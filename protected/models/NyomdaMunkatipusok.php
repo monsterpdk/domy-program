@@ -8,8 +8,10 @@
  * @property string $munkatipus_nev
  * @property string $darabszam_tol
  * @property string $darabszam_ig
- * @property string $szinszam_tol
- * @property string $szinszam_ig
+ * @property string $szinszam_tol_elo
+ * @property string $szinszam_ig_elo
+ * @property string $szinszam_tol_hat
+ * @property string $szinszam_ig_hat
  * @property integer $torolt
  */
 class NyomdaMunkatipusok extends CActiveRecord
@@ -35,12 +37,13 @@ class NyomdaMunkatipusok extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('munkatipus_nev, darabszam_tol, darabszam_ig, szinszam_tol, szinszam_ig', 'required'),
+			array('munkatipus_nev, darabszam_tol, darabszam_ig, szinszam_tol_elo, szinszam_ig_elo, szinszam_tol_hat, szinszam_ig_hat', 'required'),
 			array('torolt', 'numerical', 'integerOnly'=>true),
 			array('munkatipus_nev', 'length', 'max'=>50),
-			array('darabszam_tol, darabszam_ig, szinszam_tol, szinszam_ig', 'length', 'max'=>10),
+			array('darabszam_tol, darabszam_ig, szinszam_tol_elo, szinszam_ig_elo, szinszam_tol_elo, szinszam_ig_elo', 'length', 'max'=>10),
 			
-			array('szinszam_tol', 'isIntervalCorrect'),
+			array('szinszam_tol_elo', 'isIntervalCorrectElo'),
+			array('szinszam_tol_hat', 'isIntervalCorrectHat'),
 			array('darabszam_tol', 'isDarabszamIntervalCorrect'),
 			
 			// The following rule is used by search().
@@ -50,12 +53,21 @@ class NyomdaMunkatipusok extends CActiveRecord
 	}
 
 	/**
-	* Színszám-tól nem lehet nagyobb, mint a színszám-ig mező.
+	* Színszám-tól (előoldal) nem lehet nagyobb, mint a színszám-ig (előoldal) mező.
 	*/
-	public function isIntervalCorrect ()
+	public function isIntervalCorrectElo ()
 	{
-		if ($this->szinszam_tol > $this->szinszam_ig)
-			$this -> addError('szinszam_tol', 'A színszám-tól nem lehet nagyobb, mint a színszám-ig mező!');
+		if ($this->szinszam_tol_elo > $this->szinszam_ig_elo)
+			$this -> addError('szinszam_tol_elo', 'A színszám-tól (előoldal) nem lehet nagyobb, mint a színszám-ig (előoldal) mező!');
+	}
+
+	/**
+	* Színszám-tól (hátoldal) nem lehet nagyobb, mint a színszám-ig (hátoldal) mező.
+	*/
+	public function isIntervalCorrectHat ()
+	{
+		if ($this->szinszam_tol_hat > $this->szinszam_ig_hat)
+			$this -> addError('szinszam_tol_hat', 'A színszám-tól (hátoldal) nem lehet nagyobb, mint a színszám-ig (hátoldal) mező!');
 	}
 	
 	/**
@@ -94,8 +106,10 @@ class NyomdaMunkatipusok extends CActiveRecord
 			'munkatipus_nev' => 'Munkatípus neve',
 			'darabszam_tol' => 'Darabszám -tól',
 			'darabszam_ig' => 'Darabszám -ig',
-			'szinszam_tol' => 'Színszám -tól',
-			'szinszam_ig' => 'Színszám -ig',
+			'szinszam_tol_elo' => 'Színszám -tól (előoldal)',
+			'szinszam_ig_elo' => 'Színszám -ig (előoldal)',
+			'szinszam_tol_hat' => 'Színszám -tól (hátoldal)',
+			'szinszam_ig_hat' => 'Színszám -ig (hátoldal)',
 			'torolt' => 'Törölt',
 		);
 	}
@@ -122,8 +136,10 @@ class NyomdaMunkatipusok extends CActiveRecord
 		$criteria->compare('munkatipus_nev',$this->munkatipus_nev,true);
 		$criteria->compare('darabszam_tol',$this->darabszam_tol,true);
 		$criteria->compare('darabszam_ig',$this->darabszam_ig,true);
-		$criteria->compare('szinszam_tol',$this->szinszam_tol,true);
-		$criteria->compare('szinszam_ig',$this->szinszam_ig,true);
+		$criteria->compare('szinszam_tol_elo',$this->szinszam_tol_elo,true);
+		$criteria->compare('szinszam_ig_elo',$this->szinszam_ig_elo,true);
+		$criteria->compare('szinszam_tol_hat',$this->szinszam_tol_hat,true);
+		$criteria->compare('szinszam_ig_hat',$this->szinszam_ig_hat,true);
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))

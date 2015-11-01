@@ -35,11 +35,14 @@ class NyomdaMunkatipusokController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['NyomdaMunkatipusok']))
+		if (isset($_POST['NyomdaMunkatipusok']))
 		{
 			$model->attributes=$_POST['NyomdaMunkatipusok'];
 			if($model->save())
 				$this->redirect(array('index'));
+		} else {			
+			$model -> save(false);
+			$this -> redirect(array('update', 'id'=>$model -> id,));
 		}
 
 		$this->render('create',array(
