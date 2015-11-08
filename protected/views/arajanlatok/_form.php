@@ -469,7 +469,7 @@
 					'title'=>'Termék hozzáadása',
 					'autoOpen'=>false,
 					'modal'=>true,
-					'width'=>750,
+					'width'=>950,
 					'height'=>650,
 				),
 			));

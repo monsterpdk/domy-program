@@ -173,8 +173,7 @@ class Termekek extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->together = true;
-		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus');
-		
+		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus');				
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('t.nev',$this->nev,true);
 		$criteria->compare('tipus',$this->tipus,true);

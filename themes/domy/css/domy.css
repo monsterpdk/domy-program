@@ -789,18 +789,28 @@ div.form .checkbox_group_horizontal  label
 }
 
 /* radiobutton-ok vízszintesen jelenjenek meg egymás mellett*/
-DIV.boritekMeretRadioGroup {
-	margin-bottom: 20px;
+DIV.boritekMeretRadioGroup, DIV.boritekZarodasRadioGroup, DIV.boritekAblakhelyRadioGroup {
+	margin-bottom: 0px;
     padding-left: 0px;
 }
  
+DIV.boritekAblakhelyRadioGroup LABEL,
+DIV.boritekAblakhelyRadioGroup INPUT,
+DIV.boritekZarodasRadioGroup LABEL,
+DIV.boritekZarodasRadioGroup INPUT,
 DIV.boritekMeretRadioGroup LABEL,
 DIV.boritekMeretRadioGroup INPUT {
     display: inline!important;
 }
 
+DIV.boritekAblakhelyRadioGroup INPUT,
+DIV.boritekZarodasRadioGroup INPUT,
 DIV.boritekMeretRadioGroup INPUT {
 	margin-right : 15px!important;
+}
+
+DIV.boritekMeretRadioGroup INPUT#termek_kereso {
+	margin-top : 10px ;
 }
 
 div.flash-error
@@ -844,4 +854,18 @@ div.flash-error, div.flash-notice, div.flash-success
 	padding:.8em;
 	margin-bottom:1em;
 	border:2px solid #ddd;
+}
+
+div.search-options fieldset {
+	border: 1px solid #e5e5e5;
+	padding: 10px ;
+}
+
+div.search-options fieldset legend {
+	margin-bottom: 0px ;
+	font-size: 0.9em;
+	line-height: 15px;
+	width: auto;
+	border-style: none ;
+	padding: 0px 4px 2px 4px ;
 }

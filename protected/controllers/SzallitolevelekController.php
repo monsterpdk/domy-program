@@ -51,7 +51,7 @@ class SzallitolevelekController extends Controller
 			//Létrehozzuk a számlát a szállítólevél létrejötte után, ha még nem volt szállítólevele korábban
 			if ($elso_szallitolevel) {
 				Utils::szamla_letrehozasa($id) ;
-				die() ;
+				$szamla_sorszam = Utils::szamla_sorszam_beolvas($id) ;
 			}
 			
 			if ($model->save()) {

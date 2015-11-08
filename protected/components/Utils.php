@@ -145,7 +145,8 @@
 		// LI: egy paraméterben kapott termék aktuálisan aktív termékárát adja vissza JSON-ben
 		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
 		// TÁ: Bővítettem az ugyfel_id paraméterrel is, mert a szorzót is itt kell alkalmazni, már kész árat adunk vissza, nem számolgatunk javascriptben
-		function getActiveTermekarJSON ($ugyfel_id, $termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {
+		// TÁ: Bővítettem a hozott boríték paraméterrel, ha annak értéke 1, akkor nem számoljuk a boríték árát, csak a nyomási munkadíjat
+		function getActiveTermekarJSON ($ugyfel_id, $termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0, $hozott_boritek = 0) {
 			$result = 0;
 
 			$ugyfel_reszletek = Ugyfelek::model()->findByPk($ugyfel_id) ;
@@ -157,10 +158,12 @@
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
 														") -> queryRow();
 						$db_ar = $termekAr["db_eladasi_ar"] ;
-			}
-
+			}			
 			$selejt = $selejt1 = $selejt2 = 0 ;
 			$szinszam = max($szinszam1,$szinszam2) ;
+			if ($hozott_boritek == 1) {
+				$termekAr["db_ar_nyomashoz"] = 0 ;
+			}
 			if ($termekAr != false && $darabszam > 0 && ($szinszam > 0)) {
 				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
 				$db_ar = $termekAr["db_ar_nyomashoz"] ;
@@ -458,12 +461,16 @@
 			foreach( $data as $key => $value ) {
 				if( is_array($value) ) {
 					if( is_numeric($key) ){
-						$key = 'item'.$key; //dealing with <0/>..<n/> issues
+//						$key = 'item'.$key; //dealing with <0/>..<n/> issues
+						$key = 'BSor'; //dealing with <0/>..<n/> issues
 					}
-					$subnode = $xml_data->addChild($key);
+					if ($key != 'bsorok') {
+						$subnode = $xml_data->addChild($key);
+					}
 					Utils::array_to_xml($value, $subnode);
 				} else {
-					$xml_data->addChild("$key",htmlspecialchars("$value"));
+//					$xml_data->addChild("$key",htmlspecialchars("$value"));
+					$xml_data->addChild("$key","$value");
 				}
 			 }
 		}		
@@ -472,18 +479,17 @@
 		function szamla_letrehozasa($megrendeles_id) {
 			$megrendeles_tetelek = MegrendelesTetelek::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles_id)) ;
 			$megrendeles_adatok = Megrendelesek::model() -> findByAttributes(array('id' => $megrendeles_id)) ;
-//			print_r($megrendeles_adatok) ;
 			if (count($megrendeles_tetelek) > 0) {
-//				echo $megrendeles_adatok->ugyfel->szekhely_varos ;
 				$partner_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_orszag)) ;
-//				$partner_varos = Varosok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_varos)) ;
 				$megrendeles = array() ;				
-				$megrendeles["TranzakcioID"] = "DOMY_" . $megrendeles_id ; 
+				$megrendeles["TranzakcioID"] = $megrendeles_id ; 
 				$megrendeles["TranzakcioTipus"] = 0 ;
 				$megrendeles["PartnerModositas"] = 0 ;
 				$megrendeles["BFejlec"]["MozgasAlapID"] = 600 ;
 				$megrendeles["BFejlec"]["Kiallitas"] = date("Y.m.d") ;
 				$megrendeles["BFejlec"]["Teljesites"] = date("Y.m.d") ;
+				$megrendeles["BFejlec"]["Esedekes"] = date("Y.m.d", mktime(0, 0, 0, date("m")  , date("d")+8, date("Y"))) ;
+				$megrendeles["BFejlec"]["Lejarat"] = date("Y.m.d", mktime(0, 0, 0, date("m")  , date("d")+8, date("Y"))) ;
 				$megrendeles["BFejlec"]["FizModID"] = 1 ;		//Alapértelmezetten az átutalásos fizetési mód él
 //				if ($megrendeles_adatok->megrendeles_forras_megrendeles_id != "") {
 //					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_adatok->megrendeles_forras_megrendeles_id ;
@@ -508,9 +514,8 @@
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Orszag"] = $partner_orszag->nev ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Utca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
 				
-				$megrendeles["bsor"] = array() ;				
+				$megrendeles["bsorok"] = array() ;				
 				foreach ($megrendeles_tetelek as $tetel) {
-//					print_r($tetel) ;
 					if ($tetel->termek->cikkszam == "") {
 						$cikkszam = "nincs" ;	
 					}
@@ -518,10 +523,9 @@
 					{
 						$cikkszam = $tetel->termek->cikkszam ;						
 					}
-//					echo $tetel->termek->nev . ";" . $tetel->darabszam . "db;" . $tetel->netto_darabar . " Ft<br />" ;
 					$afakulcs = AfaKulcsok::model() -> findByAttributes(array('id'=>$tetel->termek->afakulcs_id)) ;
 					$sor = array() ;
-					$sor["CikkSzam"] = $cikkszam;
+					$sor["Cikkszam"] = $cikkszam;
 					$sor["CikkNev"] = $tetel->termek->nev ;
 					$sor["MEgyseg"] = "db" ;
 					$sor["AfaKulcs"] = $afakulcs->afa_szazalek ;
@@ -531,20 +535,34 @@
 					$sor["Jegyzekszam"] = $tetel->termek->ksh_kod ;
 					$sor["Mennyiseg"] = $tetel->darabszam ;
 					$sor["EgysegAr"] = $tetel->netto_darabar ;	
-					$megrendeles["bsor"][] = $sor ;
+					$megrendeles["bsorok"][] = $sor ;
 				}
 				$megrendeles_kesz["Tranzakcio"] = $megrendeles ; 
 				
-//				print_r($megrendeles) ;
-//				$xml = new SimpleXMLElement('<root/>');
-				$xml_megrendeles = new SimpleXMLElement('<root/>');
+				$xml_megrendeles = new SimpleXMLElement('<?xml version="1.0" encoding="ISO-8859-2"?><root/>');
 				Utils::array_to_xml($megrendeles_kesz, $xml_megrendeles) ;
 				$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
-//				array_walk_recursive($megrendeles, array ($xml_megrendeles, 'addChild'));
 				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
-//				echo $xml_megrendeles->asXML();
-//				die();
 			}
+		}
+		
+		function szamla_sorszam_beolvas($megrendeles_id) {
+			$return = 0 ;
+			$SzamlaImportVisszaigazolasPath = Yii::app()->config->get('SzamlaImportVisszaigazolasPath') ;
+			$filename = $SzamlaImportVisszaigazolasPath."\domy_".$megrendeles_id.".xml" ;
+			$actual_partner_id = 0 ;
+			if (file_exists($filename)) {
+				$handle = fopen($filename, "r");
+				$xml_content = fread($handle, filesize($filename));
+				fclose($handle);
+				if (preg_match("/<partner_id><\!\[CDATA\[(.*?)\]\]><\/partner_id>/", $xml_content, $matches)) {
+					$actual_partner_id = $matches[1] ;
+				}
+				if ($actual_partner_id != 0) {
+				//	
+				}
+			}
+			return $return ;
 		}
 
 		/** Egy selectből a munka típusát is ki kell választania az adminnak egy nyomdakönyvhöz.

@@ -20,13 +20,35 @@
 	<?php echo $form->hiddenField($model, 'arajanlat_id'); ?>
 	<?php echo $form->hiddenField($model, 'termek_id'); ?>
 	<?php echo $form->hiddenField($model, 'szorzo_tetel_arhoz'); ?>
+	<?php
+		$ablakhelyek = CHtml::listData(TermekAblakHelyek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+//		$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+		$meretek = array('LC/6'=>'LC/6', 'LA/4'=>'LA/4', 'C6/C5' => 'C6/C5', 'LC/5' => 'LC/5', 'TC/5' => 'TC/5', 'TB/5' => 'TB/5', 'LC/4' => 'LC/4', 'TC/4' => 'TC/4', 'TB/4' => 'TB/4') ;
+		$zarodasok =  CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+	?>
 	
-	<div class="row">
-	
-		<div class="boritekMeretRadioGroup">
-			<?php echo CHtml::radioButtonList('boritek_meret', '' ,array('LC/6'=>'LC/6', 'LA/4'=>'LA/4', 'C6/C5' => 'C6/C5', 'LC/5' => 'LC/5', 'TC/5' => 'TC/5', 'TB/5' => 'TB/5', 'LC/4' => 'LC/4', 'TC/4' => 'TC/4', 'TB/4' => 'TB/4'), array( 'separator' => "  ", 'template' => '{label} {input}', 'onclick' => '$("#termek_kereso").val ( $("input:radio[name=boritek_meret]:checked").val () )')); ?>
-		</div>
+	<div class="row search-options">
+		<fieldset>
+			<legend>Méret</legend>
+			<div class="boritekMeretRadioGroup">
+				<?php echo CHtml::radioButtonList('boritek_meret', '' ,$meretek, array( 'separator' => "  ", 'template' => '{label} {input}')); ?>
+			</div>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Záródás</legend>
+			<div class="boritekZarodasRadioGroup">
+				<?php echo CHtml::radioButtonList('boritek_zarodas', '' ,$zarodasok, array( 'separator' => "  ", 'template' => '{label} {input}')); ?>			
+			</div>
+		</fieldset>
 
+		<fieldset>
+			<legend>Ablakhely</legend>
+			<div class="boritekAblakhelyRadioGroup">
+				<?php echo CHtml::radioButtonList('boritek_ablakhely', '' ,$ablakhelyek, array( 'separator' => "  ", 'template' => '{label} {input}')); ?>			
+			</div>
+		</fieldset>
+		
 	</div>
 	
 	<div class="row boritekMeretRadioGroup">
@@ -34,8 +56,11 @@
 		 <?php echo CHtml::textField('termek_kereso', '', array('maxlength' => 128)); ?>
 		 <?php echo CHtml::Button('Termék', array('name' => 'search_termek', 'id' => 'search_termek', 'onclick' =>
 											'
-											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[nev]", $("#termek_kereso").val()); 
-
+											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[nev]", $("#termek_kereso").val());
+											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[meret_search]", $("input:radio[name=boritek_meret]:checked").val()) ;
+											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[zaras_search]", $("input:radio[name=boritek_zarodas]:checked").val()) ;
+											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[ablakhely_search]", $("input:radio[name=boritek_ablakhely]:checked").val()) ;
+											
 											$("#termek_dialog' . $grid_id . '").dialog("open");
 											$("#termek_dialog' . $grid_id . '").dialog("moveToTop"); return false;
 											'
@@ -93,8 +118,10 @@
 			
 			$( "#ArajanlatTetelek_netto_ar" ).val (Math.round(darabszam * netto_darabar));
 		}
-		
+			
 		function keyPressEvent() {
+			$( "#ArajanlatTetelek_netto_darabar" ).val("0") ;
+			nettoar_kalkulal() ;
 			osszegSzamol() ;
 		}
 		
@@ -108,8 +135,12 @@
 			var szinszam1 = $.isNumeric ($( "#ArajanlatTetelek_szinek_szama1" ).val()) ? $( "#ArajanlatTetelek_szinek_szama1" ).val() : 0;
 			var szinszam2 = $.isNumeric ($( "#ArajanlatTetelek_szinek_szama2" ).val()) ? $( "#ArajanlatTetelek_szinek_szama2" ).val() : 0;
 			var ugyfel_id = $('#Arajanlatok_ugyfel_id').val ();
+			var hozott_boritek = 0 ;
+			if ($("#ArajanlatTetelek_hozott_boritek").prop('checked')) {
+				hozott_boritek = 1 ;	
+			}
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/arajanlatTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2",
+					'url'=> "js:'/index.php/arajanlatTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2 + '/hozott_boritek/' + hozott_boritek",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -129,7 +160,7 @@
 					} ",
 			)); ?>;
 		}
-		
+			
 	</script>
 	
 	<div class="row">
@@ -138,14 +169,14 @@
 		<?php echo $form->error($model,'megjegyzes'); ?>
 	</div>
 
-	<div class="row active">
+	<div class="row">
 		<?php echo $form->checkBox($model,'mutacio'); ?>
 		<?php echo $form->label($model,'mutacio'); ?>
 		<?php echo $form->error($model,'mutacio'); ?>
 	</div>
 
-	<div class="row active">
-		<?php echo $form->checkBox($model,'hozott_boritek'); ?>
+	<div class="row">
+		<?php echo $form->checkBox($model,'hozott_boritek',array('onclick'=>'javascript:keyPressEvent();')); ?>
 		<?php echo $form->label($model,'hozott_boritek'); ?>
 		<?php echo $form->error($model,'hozott_boritek'); ?>
 	</div>
