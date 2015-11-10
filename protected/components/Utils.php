@@ -655,6 +655,167 @@
 				return null;
 			}				
 		}
+		
+		/**
+		 *  Ez a függvény visszaadja egy megrendelt termékhez és géphez kalkulált normaadatokat.
+		 */
+		function getNormaadat($megrendeltTermekId, $gepId, $munkatipusId, $maxFordulatszam) {
+			$megrendelesTetel = MegrendelesTetelek::model()->findByPk($megrendeltTermekId);
+			$gep = Nyomdagepek::model()->findByPk($gepId);
+			$munkatipus = NyomdaMunkatipusok::model()->findByPk($munkatipusId);
+			
+			if ($megrendelesTetel != null && $gep != null && $munkatipus != null) {
+				$termek = Termekek::model()->findByPk($megrendelesTetel->termek_id);
+				
+				if ($termek != null) {
+					$sql = "
+						SELECT gepek.max_fordulat, gep_tipusok.fordulat_kis_boritek, gep_tipusok.fordulat_nagy_boritek, gep_tipusok.fordulat_egyeb FROM dom_nyomdagepek AS gepek
+						INNER JOIN dom_nyomdagep_tipusok AS gep_tipusok ON
+						gepek.id = gep_tipusok.gep_id
+
+						WHERE (:szinszam >= szinszam_tol AND :szinszam <= szinszam_ig) AND (gep_tipusok.gep_id = :gep_id)
+					";
+
+					$osszSzin = $megrendelesTetel->szinek_szama1 + $megrendelesTetel->szinek_szama2;
+					$command = Yii::app()->db->createCommand($sql);
+					$command->bindParam(':szinszam', $osszSzin);
+					$command->bindParam(':gep_id', $gepId);
+					
+					$result = $command->queryRow();
+					
+					if ($result) {
+						// érvényes maximális fordulat kiszámítása
+						$tipus = $termek->tipus;
+						$geptipusFordulatszam = 0;
+						if ($tipus == 'Kis boríték') {
+							$geptipusFordulatszam = $result['fordulat_kis_boritek'];
+						} else if ($tipus == 'Nagy boríték') {
+							$geptipusFordulatszam = $result['fordulat_nagy_boritek'];
+						} else if ($tipus == 'Egyéb') {
+							$geptipusFordulatszam = $result['fordulat_egyeb'];
+						}
+						$ervenyesMaxFordulatszam = (!empty($maxFordulatszam) && ($maxFordulatszam > 0)) ? $maxFordulatszam : ($geptipusFordulatszam > $result['max_fordulat'] ? $result['max_fordulat'] : $geptipusFordulatszam);
+						
+						// műveleti idők összege
+						$muveletiIdokOsszege = 0;
+						$muveletiArakÖsszege = 0;
+						foreach ($munkatipus->muveletek as $muvelet) {
+							$muveletiIdokOsszege += $muvelet->muvelet_ido;
+							$muveletiArakÖsszege += $muvelet->muvelet_ido * oradij / 60;
+						}
+						
+						
+						return $ervenyesMaxFordulatszam;
+					} else return null;
+				} else return null;
+			} else return null;
+		}
+		
+		/**
+		 *  Ez a függvény visszaadja egy megadott ügyfél összes árajánlatának értékét.
+		 */
+		function getUgyfelOsszesArajanlatErteke ($ugyfel_id ) {
+			$sql = "
+				SELECT ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) AS arajanlat_netto_osszeg FROM dom_arajanlatok AS arajanlatok
+				INNER JOIN dom_arajanlat_tetelek AS tetelek ON
+				tetelek.arajanlat_id = arajanlatok.id
+
+				WHERE arajanlatok.torolt = 0 AND
+						tetelek.torolt = 0 AND
+						ugyfel_id = :ugyfel_id
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':ugyfel_id', $ugyfel_id);
+			
+			$arajanlatokErteke = $command->queryRow();
+			
+			if (is_array ($arajanlatokErteke) ) {
+				return $arajanlatokErteke['arajanlat_netto_osszeg'];
+			} else {
+				return 0;
+			}				
+		}
+		
+		/**
+		 *  Ez a függvény visszaadja egy megadott ügyfél összes megrendelésének értékét.
+		 */
+		function getUgyfelOsszesMegrendelesErteke ($ugyfel_id ) {
+			$sql = "
+				SELECT ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) AS megrendeles_netto_osszeg  FROM dom_megrendelesek AS megrendelesek
+				INNER JOIN dom_megrendeles_tetelek AS tetelek ON
+				tetelek.megrendeles_id = megrendelesek.id
+
+				WHERE megrendelesek.torolt = 0 AND
+						megrendelesek.sztornozva = 0 AND
+						tetelek.torolt = 0 AND
+						ugyfel_id = :ugyfel_id
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':ugyfel_id', $ugyfel_id);
+			
+			$megrendelesekErteke = $command->queryRow();
+			
+			if (is_array ($megrendelesekErteke) ) {
+				return $megrendelesekErteke['megrendeles_netto_osszeg'];
+			} else {
+				return 0;
+			}				
+		}
+		
+		/**
+		 *  Ez a függvény visszaadja egy megadott ügyfél összes árajánlatának számát.
+		 */
+		function getUgyfelOsszesArajanlatDarab ($ugyfel_id ) {
+			$sql = "
+				SELECT COUNT(*) AS darab FROM dom_arajanlatok AS arajanlatok
+				INNER JOIN dom_arajanlat_tetelek AS tetelek ON
+				tetelek.arajanlat_id = arajanlatok.id
+
+				WHERE arajanlatok.torolt = 0 AND
+						tetelek.torolt = 0 AND
+						ugyfel_id = :ugyfel_id
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':ugyfel_id', $ugyfel_id);
+			
+			$arajanlatokSzam = $command->queryRow();
+			
+			if (is_array ($arajanlatokSzam) ) {
+				return $arajanlatokSzam['darab'];
+			} else {
+				return 0;
+			}				
+		}
+		
+		/**
+		 *  Ez a függvény visszaadja egy megadott ügyfél összes megrendelésének számát.
+		 */
+		function getUgyfelOsszesMegrendelesDarab ($ugyfel_id ) {
+			$sql = "
+				SELECT COUNT(*) AS darab FROM dom_megrendelesek AS megrendeles
+				INNER JOIN dom_megrendeles_tetelek AS tetelek ON
+				tetelek.megrendeles_id = megrendeles.id
+
+				WHERE megrendeles.torolt = 0 AND
+						tetelek.torolt = 0 AND
+						ugyfel_id = :ugyfel_id
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':ugyfel_id', $ugyfel_id);
+			
+			$megrendelesekSzam = $command->queryRow();
+			
+			if (is_array ($megrendelesekSzam) ) {
+				return $megrendelesekSzam['darab'];
+			} else {
+				return 0;
+			}				
+		}
+		
 	}
 
 ?>

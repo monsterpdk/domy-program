@@ -59,13 +59,13 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'szinszam_tol'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinszam_tol', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinszam_tol', array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9'), array()); ?>
 		<?php echo $form->error($model,'szinszam_tol'); ?>
 	</div>
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'szinszam_ig'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinszam_ig', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'), array()); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinszam_ig', array('1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9'), array()); ?>
 		<?php echo $form->error($model,'szinszam_ig'); ?>
 	</div>
 

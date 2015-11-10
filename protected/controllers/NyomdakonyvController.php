@@ -169,7 +169,29 @@ class NyomdakonyvController extends Controller
 			'model'=>$model,
 		));
 	}
-
+	
+	/**
+	 * Visszaadja egy megrendelt termékhez és géphez kalkulált normaadatokat.
+	 */
+	public function actionNormaSzamitas($termekId, $gepId, $munkatipusId, $maxFordulat) {
+		$status = 'failure';
+		$normaido = 0;
+		$normaar = 0;
+		
+		$normaAdatok = Utils::getNormaadat($termekId, $gepId, $munkatipusId, $maxFordulat);
+		if ($normaAdatok != null) {
+			$status = 'success';
+			$normaido = $normaAdatok;
+			$normaar = $normaAdatok;
+		}
+		
+		echo CJSON::encode(array(
+			'status' => $status,
+			'normaido' => $normaido,
+			'normaar'=> $normaar
+		));
+	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

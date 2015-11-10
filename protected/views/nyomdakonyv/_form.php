@@ -266,15 +266,14 @@
 				<?php echo $form->error($model,'munkatipus_id'); ?>
 				
 				<br />
-				
+
 				<?php
 					$this->widget('zii.widgets.jui.CJuiButton', array(
 						'name'=>'button_norma_szamitasa',
 						'caption'=>'Normaszámítás',
-						//'buttonType'=>'link',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {normaSzamitas();}'),
 						'htmlOptions'=>array('class'=>'bt btn-primary search-button', 'style'=>'margin-bottom:10px', 'target' => '_blank',),
-						'url'=>array('ugyfelek/create'),
-						//'onclick' => 'js:function(){normaSzamitasa(); false;}',
 					));
 				?>
 
@@ -735,10 +734,36 @@
 
 </div><!-- form -->
 
+<script type="text/javascript">
+	function normaSzamitas () {
+		var termek_id = $('#Nyomdakonyv_megrendeles_tetel_id').val();
+		var gep_id = $('#Nyomdakonyv_gep_id').val();
+		var munkatipus_id = $('#Nyomdakonyv_munkatipus_id').val();
+		var max_fordulatszam = $('#Nyomdakonyv_max_fordulat').val();
+
+		<?php echo CHtml::ajax(array(
+			'url'=> "js:'/index.php/nyomdakonyv/normaSzamitas/termekId/' + termek_id + '/gepId/' + gep_id + '/munkatipusId/' + munkatipus_id + '/maxFordulat/' + max_fordulatszam",
+			'data'=> "js:$(this).serialize()",
+			'type'=>'post',
+			'id' => 'norma-szamitas-'.uniqid(),
+			'dataType'=>'json',
+			'success'=>"function(data)
+			{
+				if (data.status == 'failure')
+				{}
+				else
+				{
+					alert(data.normaido + ' - ' + data.normaar);
+				}
+
+			} ",
+		))?>;
+	}
+</script>
+
 <script>
 
 $( document ).ready(function() {
-
 	$("#button_norma_szamitasa").attr('disabled', 'disabled');
 	
 	$('#Nyomdakonyv_gep_id').on('change', function() {
