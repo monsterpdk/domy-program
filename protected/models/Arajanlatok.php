@@ -37,6 +37,14 @@ class Arajanlatok extends CActiveRecord
 	public $autocomplete_ugyfel_atlagos_fizetesi_keses;
 	public $autocomplete_ugyfel_rendelesi_tartozas_limit;
 	public $autocomplete_ugyfel_fontos_megjegyzes;
+
+	public $autocomplete_arajanlat_osszes_darabszam;
+	public $autocomplete_arajanlat_osszes_ertek;
+	public $autocomplete_arajanlat_osszes_tetel;
+	public $autocomplete_megrendeles_osszes_darabszam;
+	public $autocomplete_megrendeles_osszes_ertek;
+	public $autocomplete_megrendeles_osszes_tetel;
+	public $autocomplete_arajanlat_megrendeles_elfogadas;
 	
 	public $netto_ar;
 	public $brutto_ar;
@@ -142,6 +150,14 @@ class Arajanlatok extends CActiveRecord
 			'autocomplete_ugyfel_atlagos_fizetesi_keses' => 'Átlagos fizetési késés',
 			'autocomplete_ugyfel_rendelesi_tartozas_limit' => 'Rendelési tartozási limit (Ft)',
 			'autocomplete_ugyfel_fontos_megjegyzes' => 'Fontos megjegyzés',
+
+			'autocomplete_arajanlat_osszes_darabszam' => 'Összes árajánlat szána (db)',
+			'autocomplete_arajanlat_osszes_ertek' => 'Összes árajánlat értéke',
+			'autocomplete_arajanlat_osszes_tetel' => 'Összes árajánlat tétel (db)',
+			'autocomplete_megrendeles_osszes_darabszam' => 'Összes megrendelés szána (db)',
+			'autocomplete_megrendeles_osszes_ertek' => 'Összes megrendelés értéke',
+			'autocomplete_megrendeles_osszes_tetel' => 'Összes megrendelés tétel (db)',
+			'autocomplete_arajanlat_megrendeles_elfogadas' => 'Elfogadási arány (%)',
 			
 			'netto_ar' => 'Nettó összeg',
 			'brutto_ar' => 'Bruttó összeg',
@@ -266,6 +282,22 @@ class Arajanlatok extends CActiveRecord
 			$this -> autocomplete_ugyfel_atlagos_fizetesi_keses = $this -> ugyfel -> atlagos_fizetesi_keses;
 			$this -> autocomplete_ugyfel_rendelesi_tartozas_limit = $this -> ugyfel -> rendelesi_tartozasi_limit;
 			$this -> autocomplete_ugyfel_fontos_megjegyzes = $this -> ugyfel -> fontos_megjegyzes;
+			
+			// árajánlat és megrendelés statisztikák kiszámolása
+			$osszesArajanlat = Utils::getUgyfelOsszesArajanlatErteke($this -> ugyfel -> id);
+			$this -> autocomplete_arajanlat_osszes_darabszam = $osszesArajanlat != null ? count($this->tetelek) : 0;
+			$this -> autocomplete_arajanlat_osszes_ertek = $osszesArajanlat != null ? $osszesArajanlat['arajanlat_netto_osszeg'] : 0;
+			$this -> autocomplete_arajanlat_osszes_tetel = $osszesArajanlat != null ? $osszesArajanlat['tetel_darabszam'] : 0;
+
+			$osszesMegrendeles = Utils::getUgyfelOsszesMegrendelesErteke($this -> ugyfel -> id);
+			$osszesMegrendelesDarab = Utils::getUgyfelOsszesMegrendelesDarab($this -> ugyfel -> id);
+			$this -> autocomplete_megrendeles_osszes_darabszam = $osszesMegrendeles != null ? $osszesMegrendelesDarab : 0;
+			$this -> autocomplete_megrendeles_osszes_ertek = $osszesMegrendeles != null ? $osszesMegrendeles['megrendeles_netto_osszeg'] : 0;
+			$this -> autocomplete_megrendeles_osszes_tetel = $osszesMegrendeles != null ? $osszesMegrendeles['tetel_darabszam'] : 0;
+			
+			$this -> autocomplete_arajanlat_megrendeles_elfogadas = ($this -> autocomplete_megrendeles_osszes_tetel != 0 && $this -> autocomplete_arajanlat_osszes_tetel != 0) ?
+																	(number_format((float)$this -> autocomplete_megrendeles_osszes_tetel / $this -> autocomplete_arajanlat_osszes_tetel * 100, 2, '.', '')) : 0;
+																	
 		}
 	}
 

@@ -7,7 +7,8 @@ class SzamlazoBeallitasokForm extends CFormModel
 {
         public $SzamlaImportPath;
         public $SzamlaImportVisszaigazolasPath;
-
+		public $AlapertelmezettFizetesiMod;
+		
         /**
          * Declares the validation rules.
          */
@@ -28,11 +29,14 @@ class SzamlazoBeallitasokForm extends CFormModel
         public function attributeLabels()
         {
                 return array(
+					'AlapertelmezettFizetesiMod' => 'Alapértelmezett fizetési mód',
 					'SzamlaImportPath' => 'Számla létrehozás kérő XML-ek könyvtárának elérési útja',
 					'SzamlaImportVisszaigazolasPath' => 'Számla létrehozás visszaigazolás XML-ek könyvtárának elérési útja',
                 );
         }
         public function save() {
+				Yii::app()->config->set('AlapertelmezettFizetesiMod', $this->AlapertelmezettFizetesiMod);
+				
                 Yii::app()->config->set('SzamlaImportPath', $this->SzamlaImportPath);
                 Yii::app()->config->set('SzamlaImportVisszaigazolasPath', $this->SzamlaImportVisszaigazolasPath);
 

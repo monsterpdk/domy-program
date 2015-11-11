@@ -26,13 +26,19 @@
 <?php
     Yii::app()->clientScript->registerScript(
        'myHideEffect',
-       '$(".flash-success").animate({opacity: 1.0}, 3000).fadeOut("slow");',
+       '$(".flash-success, .flash-error").animate({opacity: 1.0}, 3000).fadeOut("slow");',
        CClientScript::POS_READY
     );
 ?>
 <?php if(Yii::app()->user->hasFlash('success')):?>
     <div class="flash-success">
         <?php echo Yii::app()->user->getFlash('success'); ?>
+    </div>
+<?php endif; ?>
+
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="flash-error">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
     </div>
 <?php endif; ?>
 
@@ -83,7 +89,7 @@
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => '(Yii::app()->user->checkAccess("Megrendelesek.Update") || Yii::app()->user->checkAccess("Admin")) && ($data->nyomdakonyv_munka_id == 0 && $data->proforma_szamla_sorszam == "") && $data->sztornozva != 1',
+								'visible' => '(Yii::app()->user->checkAccess("Megrendelesek.Update") || Yii::app()->user->checkAccess("Admin")) && $data->sztornozva != 1',
 							),
 							'deliveryNote' => array(
 								'label' => 'Szállítólevél felvétele',
@@ -156,14 +162,13 @@
             'id'=>'dialogMegrendelesPrint',
             
             'options'=>array(
-                'title'=>'Proforma számla',
-				'width'=> '400px',
+                'title'=>'Nyomtatás',
+				'width'=> '450px',
                 'modal' => true,
-                //'buttons' => array('Előnézet' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "printPDF?id=" + model_id)}'),
-				'buttons' => array('Proforma készítése' => 'js:function() { alert ("Ide jön majd a proforma nyomtatási lehetőség."); }'),
+				'buttons' => array('Visszaigazolás készítése' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "printVisszaigazolas?id=" + model_id)}', 'Proforma készítése' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "printProforma?id=" + model_id)}'),
                 'autoOpen'=>false,
         )));
-
+		echo 'Proforma számla vagy visszaigazolás nyomtatási előnézete.';
 		$this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
 

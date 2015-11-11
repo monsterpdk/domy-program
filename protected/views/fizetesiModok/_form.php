@@ -1,19 +1,19 @@
 <?php
-/* @var $this SztornozasOkokController */
-/* @var $model SztornozasOkok */
+/* @var $this FizetesiModokController */
+/* @var $model FizetesiModok */
 /* @var $form CActiveForm */
 ?>
 
 <?php
 	$this->beginWidget('zii.widgets.CPortlet', array(
-		'title'=>"<strong>Sztornózási ok adatai</strong>",
+		'title'=>"<strong>Fizetési mód adatai</strong>",
 	));
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'sztornozas-okok-form',
+	'id'=>'fizetesi-modok-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -24,9 +24,21 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'ok'); ?>
-		<?php echo $form->textField($model,'ok',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'ok'); ?>
+		<?php echo $form->labelEx($model,'nev'); ?>
+		<?php echo $form->textField($model,'nev',array('size'=>30,'maxlength'=>30)); ?>
+		<?php echo $form->error($model,'nev'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'szamlazo_azonosito'); ?>
+		<?php echo $form->textField($model,'szamlazo_azonosito',array('size'=>2,'maxlength'=>2)); ?>
+		<?php echo $form->error($model,'szamlazo_azonosito'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'fizetesi_hatarido'); ?>
+		<?php echo $form->textField($model,'fizetesi_hatarido'); ?>
+		<?php echo $form->error($model,'fizetesi_hatarido'); ?>
 	</div>
 
 	<?php if (Yii::app()->user->checkAccess('Admin')): ?>
@@ -41,7 +53,7 @@
 		<?php echo CHtml::submitButton('Mentés'); ?>
 		<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
 	</div>
-
+	
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->

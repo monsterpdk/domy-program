@@ -17,6 +17,10 @@
  * @property string $arajanlat_id
  * @property string $proforma_szamla_sorszam
  * @property integer $proforma_szamla_fizetve
+ * @property string $proforma_kiallitas_datum
+ * @property string $proforma_teljesites_datum
+ * @property string $proforma_fizetesi_hatarido
+ * @property integer $proforma_fizetesi_mod
  * @property string $szamla_sorszam
  * @property string $ugyfel_tel
  * @property string $ugyfel_fax
@@ -72,7 +76,7 @@ class Megrendelesek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('sorszam, ugyfel_id, arkategoria_id, rendeles_idopont, sztornozva, torolt', 'required'),
+			array('sorszam, ugyfel_id, arkategoria_id, rendeles_idopont, proforma_kiallitas_datum, proforma_teljesites_datum, proforma_fizetesi_hatarido, proforma_fizetesi_mod, sztornozva, torolt', 'required'),
 			array('egyedi_ar, afakulcs_id, proforma_szamla_fizetve, sztornozva, torolt', 'numerical', 'integerOnly'=>true),
 			array('sorszam, ugyfel_id, arkategoria_id, rendelest_rogzito_user_id, rendelest_lezaro_user_id, arajanlat_id, megrendeles_forras_id, megrendeles_forras_megrendeles_id, nyomdakonyv_munka_id', 'length', 'max'=>12),
 			array('cimzett, jegyzet', 'length', 'max'=>255),
@@ -85,10 +89,10 @@ class Megrendelesek extends CActiveRecord
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, megrendeles_forras_megrendeles_id, nyomdakonyv_munka_id, sztornozva, cegnev_search, torolt', 'safe', 'on'=>'search'),
+			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, megrendeles_forras_megrendeles_id, nyomdakonyv_munka_id, sztornozva, cegnev_search, proforma_kiallitas_datum, proforma_teljesites_datum, proforma_fizetesi_hatarido, proforma_fizetesi_mod, torolt', 'safe', 'on'=>'search'),
 		);
 	}
-	
+
 	public function isUgyfelEmpty ($attribute)
 	{
 		if ($this -> ugyfel_id == null || $this -> ugyfel_id == 0)
@@ -108,8 +112,9 @@ class Megrendelesek extends CActiveRecord
 			'afakulcs'    => array(self::BELONGS_TO, 'AfaKulcsok', 'afakulcs_id'),
 			'ajanlat'    => array(self::BELONGS_TO, 'Ajanlatok', 'ajanlat_id'),
 			'rendelest_rogzito_user'    => array(self::BELONGS_TO, 'User', 'rendelest_rogzito_user_id'),
-			'rendelest_lezaro_user'    => array(self::BELONGS_TO, 'User', 'rendelest_lezaro_user_id'),
-			'megrendeles_forras'    => array(self::BELONGS_TO, 'Aruhazak', 'megrendeles_forras_id'),
+			'rendelest_lezaro_user'    	=> array(self::BELONGS_TO, 'User', 'rendelest_lezaro_user_id'),
+			'megrendeles_forras'    	=> array(self::BELONGS_TO, 'Aruhazak', 'megrendeles_forras_id'),
+			'fizetesi_mod'				=> array(self::BELONGS_TO, 'FizetesiModok', 'proforma_fizetesi_mod'),
 			
 			'tetelek' => array(self::HAS_MANY, 'MegrendelesTetelek', 'megrendeles_id'),
 		);
@@ -142,6 +147,10 @@ class Megrendelesek extends CActiveRecord
 			'arajanlat_id' => 'Árajánlat',
 			'proforma_szamla_sorszam' => 'Proforma számla sorszáma',
 			'proforma_szamla_fizetve' => 'Proforma számla fizetve',
+			'proforma_kiallitas_datum' => 'Proforma kiállítás dátuma',
+			'proforma_teljesites_datum' => 'Proforma teljesítés dátuma',
+			'proforma_fizetesi_hatarido' => 'Proforma fizetési határidő',
+			'proforma_fizetesi_mod' => 'Proforma fizetési mód',
 			'szamla_sorszam' => 'Számla sorszáma',
 			'ugyfel_tel' => 'Ügyfél telefon',
 			'ugyfel_fax' => 'Ügyfél fax',
@@ -211,6 +220,10 @@ class Megrendelesek extends CActiveRecord
 		$criteria->compare('arajanlat_id',$this->arajanlat_id,true);
 		$criteria->compare('proforma_szamla_sorszam',$this->proforma_szamla_sorszam,true);
 		$criteria->compare('proforma_szamla_fizetve',$this->proforma_szamla_fizetve);
+		$criteria->compare('proforma_kiallitas_datum',$this->proforma_kiallitas_datum);
+		$criteria->compare('proforma_teljesites_datum',$this->proforma_teljesites_datum);
+		$criteria->compare('proforma_fizetesi_hatarido',$this->proforma_fizetesi_hatarido);
+		$criteria->compare('proforma_fizetesi_mod',$this->proforma_fizetesi_mod);
 		$criteria->compare('szamla_sorszam',$this->szamla_sorszam,true);
 		$criteria->compare('ugyfel_tel',$this->ugyfel_tel,true);
 		$criteria->compare('ugyfel_fax',$this->ugyfel_fax,true);

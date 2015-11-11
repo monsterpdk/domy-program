@@ -94,6 +94,17 @@
 																.remove()
 																.end()
 																.append(ui.item.ugyintezok);
+																
+															$('#Arajanlatok_autocomplete_arajanlat_osszes_darabszam').val ('');
+															$('#Arajanlatok_autocomplete_arajanlat_osszes_ertek').val ('');
+															$('#Arajanlatok_autocomplete_arajanlat_osszes_tetel').val ('');
+															$('#Arajanlatok_autocomplete_megrendeles_osszes_darabszam').val ('');
+															$('#Arajanlatok_autocomplete_megrendeles_osszes_ertek').val ('');
+															$('#Arajanlatok_autocomplete_megrendeles_osszes_tetel').val ('');
+															$('#Arajanlatok_autocomplete_arajanlat_megrendeles_elfogadas').val ('');
+							
+															// frissítjük az ügyfél statisztikáit
+															getUgyfelStat(ui.item.id);
 														}",
 						'change'=>"js:function(event, ui) {
 															if (!ui.item) {
@@ -109,6 +120,9 @@
 																$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val('');
 																$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').val('');
 																$('#Arajanlatok_cimzett').val('');
+																
+																// frissítjük az ügyfél statisztikáit
+																getUgyfelStat(ui.item.id);
 															}
 														   }",
 														
@@ -181,6 +195,56 @@
 	
 	<?php $this->endWidget(); ?>
 
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Ügyfél statisztika</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
+		));
+	?>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_arajanlat_osszes_darabszam'); ?>
+			<?php echo $form->textField($model,'autocomplete_arajanlat_osszes_darabszam',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_arajanlat_osszes_darabszam'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_megrendeles_osszes_darabszam'); ?>
+			<?php echo $form->textField($model,'autocomplete_megrendeles_osszes_darabszam',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_megrendeles_osszes_darabszam'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_arajanlat_osszes_ertek'); ?>
+			<?php echo $form->textField($model,'autocomplete_arajanlat_osszes_ertek',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_arajanlat_osszes_ertek'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_megrendeles_osszes_ertek'); ?>
+			<?php echo $form->textField($model,'autocomplete_megrendeles_osszes_ertek',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_megrendeles_osszes_ertek'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_arajanlat_osszes_tetel'); ?>
+			<?php echo $form->textField($model,'autocomplete_arajanlat_osszes_tetel',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_arajanlat_osszes_tetel'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_megrendeles_osszes_tetel'); ?>
+			<?php echo $form->textField($model,'autocomplete_megrendeles_osszes_tetel',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'autocomplete_megrendeles_osszes_tetel'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'autocomplete_arajanlat_megrendeles_elfogadas', array('style' => 'font-weight:bold')); ?>
+			<?php echo $form->textField($model,'autocomplete_arajanlat_megrendeles_elfogadas',array('size'=>10, 'maxlength'=>10, 'readonly'=>true, 'style' => 'font-weight:bold')); ?>
+			<?php echo $form->error($model,'autocomplete_arajanlat_megrendeles_elfogadas'); ?>
+		</div>
+	<?php $this->endWidget(); ?>	
+	
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Árajánlat adatai #2</strong>",
@@ -665,7 +729,7 @@
 						{
 							$.fn.yiiGridView.update(\"arajanlatTetelek-grid\",{ complete: function(jqXHR, status) {}})
 							
-							// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyens érték van, csak a UI-on kell az interaktivits miatt változtatni)
+							// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyes érték van, csak a UI-on kell az interaktivits miatt változtatni)
 							$('#egyedi_ar_dsp').prop('checked', (data.egyedi == '1' ? true : false));
 							$('#Arajanlatok_egyedi_ar').val (data.egyedi);
 							
@@ -729,6 +793,37 @@
 			
 			$("#dialogArajanlatVisszahivas").dialog("open");
 			$("#dialogArajanlatVisszahivas").dialog('option', 'title', dialog_title);
+			
+			return false; 
+		}
+
+		function getUgyfelStat (ugyfelId)
+		{
+
+			<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/arajanlatok/getUgyfelStat/ugyfelId/' + ugyfelId",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'post',
+					'id' => 'get-ugyfel-stat-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.status == 'failure')
+						{}
+						else
+						{
+							$('#Arajanlatok_autocomplete_arajanlat_osszes_darabszam').val (data.autocomplete_arajanlat_osszes_darabszam);
+							$('#Arajanlatok_autocomplete_arajanlat_osszes_ertek').val (data.autocomplete_arajanlat_osszes_ertek);
+							$('#Arajanlatok_autocomplete_arajanlat_osszes_tetel').val (data.autocomplete_arajanlat_osszes_tetel);
+							$('#Arajanlatok_autocomplete_megrendeles_osszes_darabszam').val (data.autocomplete_megrendeles_osszes_darabszam);
+							$('#Arajanlatok_autocomplete_megrendeles_osszes_ertek').val (data.autocomplete_megrendeles_osszes_ertek);
+							$('#Arajanlatok_autocomplete_megrendeles_osszes_tetel').val (data.autocomplete_megrendeles_osszes_tetel);
+							$('#Arajanlatok_autocomplete_arajanlat_megrendeles_elfogadas').val (data.autocomplete_arajanlat_megrendeles_elfogadas);
+						}
+		 
+					} ",
+			))?>;
 			
 			return false; 
 		}		

@@ -199,6 +199,79 @@
 			'htmlOptions'=>array('class'=>"portlet right-widget"),
 		));
 	?>
+	
+		<div class="row">
+			<?php echo $form->labelEx($model,'proforma_kiallitas_datum'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'proforma_kiallitas_datum',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'proforma_kiallitas_datum'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'proforma_teljesites_datum'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'proforma_teljesites_datum',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'proforma_teljesites_datum'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'proforma_fizetesi_hatarido'); ?>
+				
+				<?php
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+						'model'=>$model,
+						'attribute'=>'proforma_fizetesi_hatarido',
+						'language' => 'hu',
+						'options'=>array(
+							'timeFormat' => 'hh:mm:ss',
+							'dateFormat'=>'yy-mm-dd',
+						)
+					));
+				?>
+				
+			<?php echo $form->error($model,'proforma_fizetesi_hatarido'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'proforma_fizetesi_mod'); ?>
+			
+				<?php echo CHtml::activeDropDownList($model, 'proforma_fizetesi_mod',
+					CHtml::listData(FizetesiModok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev')
+				); ?>
+				
+			<?php echo $form->error($model,'proforma_fizetesi_mod'); ?>
+		</div>
+
+	<?php $this->endWidget(); ?>
+
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Megrendelés adatai #3</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
+		));
+	?>
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'ugyfel_tel'); ?>

@@ -23,6 +23,16 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'AlapertelmezettFizetesiMod'); ?>
+		
+			<?php echo CHtml::activeDropDownList($model, 'AlapertelmezettFizetesiMod',
+				CHtml::listData(FizetesiModok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev')
+			); ?>
+			
+		<?php echo $form->error($model,'AlapertelmezettFizetesiMod'); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->labelEx($model,'SzamlaImportPath'); ?>
 		<?php echo $form->textField($model,'SzamlaImportPath', array('size'=>100,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'SzamlaImportPath'); ?>

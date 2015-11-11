@@ -310,6 +310,51 @@ class ArajanlatokController extends Controller
 		
 		echo CJSON::encode($arr);
 	}
+
+	/**
+	 * Az előregépelős ügyfélkiválasztóban a kiválasztást követően frissíteni kell az ügyfél statisztikáit.
+	 */
+	public function actionGetUgyfelStat ($ugyfelId)
+	{
+		$autocomplete_arajanlat_osszes_darabszam = 0;
+		$autocomplete_arajanlat_osszes_ertek = 0;
+		$autocomplete_arajanlat_osszes_tetel = 0;
+		$autocomplete_megrendeles_osszes_darabszam = 0;
+		$autocomplete_megrendeles_osszes_ertek = 0;
+		$autocomplete_megrendeles_osszes_tetel = 0;
+		$autocomplete_arajanlat_megrendeles_elfogadas = 0;
+		
+		if (isset($ugyfelId)) {
+			// árajánlat és megrendelés statisztikák kiszámolása
+			$osszesArajanlat = Utils::getUgyfelOsszesArajanlatErteke($ugyfelId);
+			$osszesArajanlatDarab = Utils::getUgyfelOsszesArajanlatDarab($ugyfelId);
+			$autocomplete_arajanlat_osszes_darabszam = $osszesArajanlatDarab;
+			$autocomplete_arajanlat_osszes_ertek = $osszesArajanlat != null ? $osszesArajanlat['arajanlat_netto_osszeg'] : 0;
+			$autocomplete_arajanlat_osszes_tetel = $osszesArajanlat != null ? $osszesArajanlat['tetel_darabszam'] : 0;
+
+			$osszesMegrendeles = Utils::getUgyfelOsszesMegrendelesErteke($ugyfelId);
+			$osszesMegrendelesDarab = Utils::getUgyfelOsszesMegrendelesDarab($ugyfelId);
+			$autocomplete_megrendeles_osszes_darabszam = $osszesMegrendelesDarab;
+			$autocomplete_megrendeles_osszes_ertek = $osszesMegrendeles != null ? $osszesMegrendeles['megrendeles_netto_osszeg'] : 0;
+			$autocomplete_megrendeles_osszes_tetel = $osszesMegrendeles != null ? $osszesMegrendeles['tetel_darabszam'] : 0;
+			
+			$autocomplete_arajanlat_megrendeles_elfogadas = ($autocomplete_megrendeles_osszes_tetel != 0 && $autocomplete_arajanlat_osszes_tetel != 0) ?
+																	(number_format((float)$autocomplete_megrendeles_osszes_tetel / $autocomplete_arajanlat_osszes_tetel * 100, 2, '.', '')) : 0;
+		}
+		
+		echo CJSON::encode(array(
+			'status'=>isset($ugyfelId) ? 'success' : 'failed',
+
+			'autocomplete_arajanlat_osszes_darabszam' => $autocomplete_arajanlat_osszes_darabszam,
+			'autocomplete_arajanlat_osszes_ertek' => $autocomplete_arajanlat_osszes_ertek,
+			'autocomplete_arajanlat_osszes_tetel' => $autocomplete_arajanlat_osszes_tetel,
+			'autocomplete_megrendeles_osszes_darabszam' => $autocomplete_megrendeles_osszes_darabszam,
+			'autocomplete_megrendeles_osszes_ertek' => $autocomplete_megrendeles_osszes_ertek,
+			'autocomplete_megrendeles_osszes_tetel' => $autocomplete_megrendeles_osszes_tetel,
+			'autocomplete_arajanlat_megrendeles_elfogadas' => $autocomplete_arajanlat_megrendeles_elfogadas,
+			));
+		exit;
+	}
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

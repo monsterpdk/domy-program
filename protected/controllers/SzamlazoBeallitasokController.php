@@ -17,8 +17,12 @@ class SzamlazoBeallitasokController extends Controller
 	{
 		$model = new SzamlazoBeallitasokForm;
 		
+		$AlapertelmezettFizetesiMod = Yii::app()->config->get('AlapertelmezettFizetesiMod');
 		$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
 		$SzamlaImportVisszaigazolasPath = Yii::app()->config->get('SzamlaImportVisszaigazolasPath');
+		
+		if ($AlapertelmezettFizetesiMod != null)
+			$model -> AlapertelmezettFizetesiMod = $AlapertelmezettFizetesiMod;
 		if ($SzamlaImportPath != null)
 			$model -> SzamlaImportPath = $SzamlaImportPath;
 		if ($SzamlaImportVisszaigazolasPath != null)
@@ -35,6 +39,7 @@ class SzamlazoBeallitasokController extends Controller
 		if (isset($_POST['SzamlazoBeallitasokForm']))
 		{
 //			$model -> attributes=$_POST['SzamlazoBeallitasokForm'];
+			$model -> AlapertelmezettFizetesiMod = $_POST['SzamlazoBeallitasokForm']["AlapertelmezettFizetesiMod"] ;
 			$model -> SzamlaImportPath = $_POST['SzamlazoBeallitasokForm']["SzamlaImportPath"] ;
 			$model -> SzamlaImportVisszaigazolasPath = $_POST['SzamlazoBeallitasokForm']["SzamlaImportVisszaigazolasPath"] ;
 						
