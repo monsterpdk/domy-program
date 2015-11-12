@@ -546,21 +546,13 @@
 			}
 		}
 		
+		/* Az ACTUAL adatbázisából beolvassa a $megrendeles_id azonosítójú megrendeléshez tartozó számla sorszámot és visszaadja */
 		function szamla_sorszam_beolvas($megrendeles_id) {
 			$return = 0 ;
-			$SzamlaImportVisszaigazolasPath = Yii::app()->config->get('SzamlaImportVisszaigazolasPath') ;
-			$filename = $SzamlaImportVisszaigazolasPath."\domy_".$megrendeles_id.".xml" ;
-			$actual_partner_id = 0 ;
-			if (file_exists($filename)) {
-				$handle = fopen($filename, "r");
-				$xml_content = fread($handle, filesize($filename));
-				fclose($handle);
-				if (preg_match("/<partner_id><\!\[CDATA\[(.*?)\]\]><\/partner_id>/", $xml_content, $matches)) {
-					$actual_partner_id = $matches[1] ;
-				}
-				if ($actual_partner_id != 0) {
-				//	
-				}
+			$sql = "select BSorszam from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
+			$szamla_fej = Yii::app()->db_actual->createCommand($sql)->queryRow();
+			if (is_array($szamla_fej)) {
+				$return = $szamla_fej["BSorszam"] ;	
 			}
 			return $return ;
 		}
@@ -712,11 +704,11 @@
 		}
 		
 		/**
-		 *  Ez a függvény visszaadja egy megadott ügyfél összes árajánlatának értékét.
+		 *  Ez a függvény visszaadja egy megadott ügyfél összes árajánlatának értékét és rajtuk lévő tételek darabszámát.
 		 */
 		function getUgyfelOsszesArajanlatErteke ($ugyfel_id ) {
 			$sql = "
-				SELECT ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) AS arajanlat_netto_osszeg FROM dom_arajanlatok AS arajanlatok
+				SELECT ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) AS arajanlat_netto_osszeg, COUNT(tetelek.id) AS tetel_darabszam FROM dom_arajanlatok AS arajanlatok
 				INNER JOIN dom_arajanlat_tetelek AS tetelek ON
 				tetelek.arajanlat_id = arajanlatok.id
 
@@ -731,18 +723,22 @@
 			$arajanlatokErteke = $command->queryRow();
 			
 			if (is_array ($arajanlatokErteke) ) {
-				return $arajanlatokErteke['arajanlat_netto_osszeg'];
+				if ($arajanlatokErteke['arajanlat_netto_osszeg'] == '') {
+					$arajanlatokErteke['arajanlat_netto_osszeg'] = 0;
+				}
+				
+				return $arajanlatokErteke;
 			} else {
-				return 0;
+				return null;
 			}				
 		}
 		
 		/**
-		 *  Ez a függvény visszaadja egy megadott ügyfél összes megrendelésének értékét.
+		 *  Ez a függvény visszaadja egy megadott ügyfél összes megrendelésének értékét és rajtuk lévő tételek darabszámát.
 		 */
 		function getUgyfelOsszesMegrendelesErteke ($ugyfel_id ) {
 			$sql = "
-				SELECT ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) AS megrendeles_netto_osszeg  FROM dom_megrendelesek AS megrendelesek
+				SELECT ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) AS megrendeles_netto_osszeg, COUNT(tetelek.id) AS tetel_darabszam FROM dom_megrendelesek AS megrendelesek
 				INNER JOIN dom_megrendeles_tetelek AS tetelek ON
 				tetelek.megrendeles_id = megrendelesek.id
 
@@ -758,9 +754,13 @@
 			$megrendelesekErteke = $command->queryRow();
 			
 			if (is_array ($megrendelesekErteke) ) {
-				return $megrendelesekErteke['megrendeles_netto_osszeg'];
+				if ($megrendelesekErteke['megrendeles_netto_osszeg'] == '') {
+					$megrendelesekErteke['megrendeles_netto_osszeg'] = 0;
+				}
+
+				return $megrendelesekErteke;
 			} else {
-				return 0;
+				return null;
 			}				
 		}
 		

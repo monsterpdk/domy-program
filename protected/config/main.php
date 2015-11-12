@@ -115,6 +115,15 @@ return array(
 			//'enableProfiling' => true,
 			//'enableParamLogging' => true,
 		),
+		// MSSQL kapcsolat az ACTUAL könyvelőprogram adatbázisához
+		'db_actual'=>array(
+			'class'=>'CDbConnection',
+			'connectionString' => 'sqlsrv:Server=DOMYSRV\ACTUAL;Database=Kronos0001',
+//			'emulatePrepare' => false,
+			'username' => 'sa',
+			'password' => 'SQL2005Express',
+			'charset' => 'utf8',
+		),		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',

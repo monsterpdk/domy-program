@@ -94,7 +94,7 @@ class Megrendelesek extends CActiveRecord
 		if ($this -> ugyfel_id == null || $this -> ugyfel_id == 0)
 			$this->addError($attribute, 'Az ügyél megadása kötelező!');
 	}
-
+	
 	/**
 	 * @return array relational rules.
 	 */

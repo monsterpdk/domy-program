@@ -19,6 +19,7 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$this->checkSzamlaSorszam($id) ;
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
@@ -67,11 +68,14 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		$this->checkSzamlaSorszam($id) ;		
 		$model=$this->loadModel($id);
 
+		/*
 		if ($model->nyomdakonyv_munka_id != 0 || $model->proforma_szamla_sorszam != "") {
 			throw new CHttpException(403, "Hozzáférés megtagadva!, a megrendelés már a nyomdakönyvbe került.");
 		}
+		*/
 		
 		/*
 		if ($model -> van_megrendeles == 1 && !Yii::app()->user->checkAccess("Admin"))
@@ -147,9 +151,7 @@ class MegrendelesekController extends Controller
 				$nyomdakonyv -> save(false);	
 			}
 			
-			// most a nyomdakonyvt_munka_id mező 0 vagy 1 lehet, mert egyelőre nem látom
-			// más hasznát
-			$megrendeles->nyomdakonyv_munka_id = 1;
+			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
 			$megrendeles->save(false);
 		}
 		
@@ -181,7 +183,14 @@ class MegrendelesekController extends Controller
 		$sorszam = "MR" . date("Y") . str_pad( ($utolsoMegrendeles != null) ? ($utolsoMegrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
 	 	return $sorszam ;
 	 }
-	
+
+	/**
+	 * Új proforma sorszám generálás
+	 */
+	 private function ujProformaSorszamGeneralas($model) {
+		return "PF" . date("Y") . str_pad($model -> id, 6, '0', STR_PAD_LEFT );
+	 }
+	 
 	/**
 	 * Rögzítünk egy xml-ben megkapott megrendelést.
 	 * @param SimpleXMLElement $xml a megrendelés adatait tartalmazó objektum
@@ -350,26 +359,83 @@ class MegrendelesekController extends Controller
 
 	}
 
-	public function actionPrintPDF()
+	public function actionPrintProforma()
 	{
-		/*
 		if (isset($_GET['id'])) {
 			$model = $this -> loadModel($_GET['id']);
 		}
 		
 		if ($model != null) {
+			// még nincs nyomdakönyvben, így nem engedjük a visszaigazolás nyomtatását
+			if ($model->nyomdakonyv_munka_id == 0) {
+				Yii::app()->user->setFlash('error', "A megrendelés nincs a nyomdakönyvbe felvéve!");
+				$this->redirect(Yii::app()->request->urlReferrer);
+			}
+			
+			//ha nincs még proforma számla sorszám generálva a megrendeléshez, msot megtesszük
+			// ha első nyomtatás, akkor beállítjuk a proforma számlára vonatkozó default értékeket
+			if ($model -> proforma_szamla_sorszam == '') {
+				$model -> proforma_szamla_sorszam = $this -> ujProformaSorszamGeneralas($model );
+				
+				// lekérdezzük az alapértelmezett fizetési módot és a hozzá tartozó fizetési határidőt (napokban)
+				$fizetesiHatarido = 0;
+
+				$alapertelmezettFizetesiModId = Yii::app()->config->get('AlapertelmezettFizetesiMod');
+				$alapertelmezettFizetesiMod = FizetesiModok::model()->findByPk ($alapertelmezettFizetesiModId);
+				
+				if ($alapertelmezettFizetesiMod != null) {
+					$fizetesiHatarido = $alapertelmezettFizetesiMod->fizetesi_hatarido;
+				}
+				
+				$model -> proforma_kiallitas_datum = new CDbExpression('NOW()');
+				$model -> proforma_teljesites_datum = new CDbExpression('NOW()');
+				$model -> proforma_fizetesi_hatarido = new CDbExpression('NOW() + INTERVAL ' . $fizetesiHatarido . ' DAY');
+				if ($alapertelmezettFizetesiMod != null) {
+					$model -> proforma_fizetesi_mod = $alapertelmezettFizetesiMod->id;
+				}
+				
+				$model -> save(false);
+			}
+			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
-			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
+			$mPDF1->SetHtmlHeader("Megrendelés #" . $model->sorszam);
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printArajanlat", array('model' => $model), true));
+			$mPDF1->WriteHTML($this->renderPartial("printProforma", array('model' => $model), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
 		}
-		*/
+		
+	}
+	
+	public function actionPrintVisszaigazolas()
+	{
+		if (isset($_GET['id'])) {
+			$model = $this -> loadModel($_GET['id']);
+		}
+		
+		if ($model != null) {
+			// még nincs nyomdakönyvben, így nem engedjük a visszaigazolás nyomtatását
+			if ($model->nyomdakonyv_munka_id == 0) {
+				Yii::app()->user->setFlash('error', "A megrendelés nincs a nyomdakönyvbe felvéve!");
+				$this->redirect(Yii::app()->request->urlReferrer);
+			}
+			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Visszaigazolás #" . $model->sorszam);
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printVisszaigazolas", array('model' => $model), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+		
 	}	
 	
 	/**
@@ -562,4 +628,20 @@ class MegrendelesekController extends Controller
 			Yii::app()->end();
 		}
 	}
+	
+	/**
+	 * Ellenőrizzük, hogy a paraméterben kapott azonosítójú megrendeléshez van-e letárolva számla sorszám, 
+	 * ha nincs, megnézzük, hogy az ACTUAL adatbázisban van-e, ha ott van, akkor beírjuk a számla sorszámot a saját adatbázisunkba a megrendeléshez.
+	 */
+	public function checkSzamlaSorszam($id) {
+		$megrendeles = $this->loadModel($id);
+		if ($megrendeles != null && (empty($megrendeles->szamla_sorszam) || $megrendeles->szamla_sorszam == 0)) {			
+			$szamla_sorszam = Utils::szamla_sorszam_beolvas($id) ;
+			if (!is_numeric($szamla_sorszam) || $szamla_sorszam > 0) {
+				$megrendeles->setAttribute("szamla_sorszam", $szamla_sorszam) ;
+				$megrendeles->save() ;
+			}
+		}
+	}
+	
 }
