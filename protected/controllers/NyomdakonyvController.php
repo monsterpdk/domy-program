@@ -181,8 +181,8 @@ class NyomdakonyvController extends Controller
 		$normaAdatok = Utils::getNormaadat($termekId, $gepId, $munkatipusId, $maxFordulat);
 		if ($normaAdatok != null) {
 			$status = 'success';
-			$normaido = $normaAdatok;
-			$normaar = $normaAdatok;
+			$normaido = $normaAdatok['normaido'];
+			$normaar = $normaAdatok['normaar'];
 		}
 		
 		echo CJSON::encode(array(

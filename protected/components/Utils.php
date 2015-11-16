@@ -649,7 +649,7 @@
 		}
 		
 		/**
-		 *  Ez a függvény visszaadja egy megrendelt termékhez és géphez kalkulált normaadatokat.
+		 *  Ez a függvény visszaadja egy megrendelt termékhez és géphez kalkulált normaidőt és normaárat.
 		 */
 		function getNormaadat($megrendeltTermekId, $gepId, $munkatipusId, $maxFordulatszam) {
 			$megrendelesTetel = MegrendelesTetelek::model()->findByPk($megrendeltTermekId);
@@ -690,14 +690,37 @@
 						
 						// műveleti idők összege
 						$muveletiIdokOsszege = 0;
-						$muveletiArakÖsszege = 0;
-						foreach ($munkatipus->muveletek as $muvelet) {
-							$muveletiIdokOsszege += $muvelet->muvelet_ido;
-							$muveletiArakÖsszege += $muvelet->muvelet_ido * oradij / 60;
+						$muveletiArakOsszege = 0;
+						
+						foreach ($munkatipus->muveletek as $munkatipus_muvelet) {
+							$muvelet = NyomdaMuveletek::model()->findByPk($munkatipus_muvelet->muvelet_id);
+							
+							if ($muvelet != null) {
+								// műveleti idő
+								$muveletiIdo = $muvelet->elokeszites_ido + ($muvelet->muvelet_ido * $osszSzin);
+								
+								// műveleti idők összege
+								$muveletiIdokOsszege += $muveletiIdo;
+								
+								// műveleti ár
+								$muveletiAr = 0;
+								
+								$muveletiNormaAr = NyomdaMuveletNormaarak::model()->findByAttributes(array('muvelet_id' => $muvelet->id, 'gep_id' => $gep->id));
+								if ($muveletiNormaAr != null) {
+									$muveletiAr = $muvelet->muvelet_ido * $muveletiNormaAr->oradij / 60;
+								}
+								
+								// műveleti árak összege
+								$muveletiArakOsszege += $muveletiAr;
+							}
 						}
 						
+						$result['normaido'] = round ($muveletiIdokOsszege + ($megrendelesTetel->darabszam / $ervenyesMaxFordulatszam));
 						
-						return $ervenyesMaxFordulatszam;
+						// TODO: ide valami óradíj kellene jöjjön, de az csak műveletenként van. Mi kéne akkor ide jöjjön ?
+						$result['normaar']  = round ($muveletiArakOsszege + ($megrendelesTetel->darabszam / $ervenyesMaxFordulatszam));
+						
+						return $result;
 					} else return null;
 				} else return null;
 			} else return null;

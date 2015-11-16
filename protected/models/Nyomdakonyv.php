@@ -192,6 +192,9 @@ class Nyomdakonyv extends CActiveRecord
 			'sztornozas_oka' => 'Sztornózás oka',
 			'sztornozva' => 'Sztornózva',
 			'torolt' => 'Törölt',
+			
+			'display_normaido' => 'Normaidő',
+			'display_normaar' => 'Normaár',
 		);
 	}
 

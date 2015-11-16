@@ -280,6 +280,16 @@
 			</div>
 		</div>
 		
+		<div class="row">
+			<?php echo $form->labelEx($model,'display_normaido'); ?>
+			<?php echo Chtml::textField('normaido', '', array('size'=>12, 'maxlength'=>127, 'readonly'=>true)); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'display_normaar'); ?>
+			<?php echo Chtml::textField('normaar', '', array('size'=>12, 'maxlength'=>127, 'readonly'=>true)); ?>
+		</div>
+		
 		<div class='clear'>
 		
 			<div class="row">
@@ -741,23 +751,31 @@
 		var munkatipus_id = $('#Nyomdakonyv_munkatipus_id').val();
 		var max_fordulatszam = $('#Nyomdakonyv_max_fordulat').val();
 
-		<?php echo CHtml::ajax(array(
-			'url'=> "js:'/index.php/nyomdakonyv/normaSzamitas/termekId/' + termek_id + '/gepId/' + gep_id + '/munkatipusId/' + munkatipus_id + '/maxFordulat/' + max_fordulatszam",
-			'data'=> "js:$(this).serialize()",
-			'type'=>'post',
-			'id' => 'norma-szamitas-'.uniqid(),
-			'dataType'=>'json',
-			'success'=>"function(data)
-			{
-				if (data.status == 'failure')
-				{}
-				else
+		if (gep_id != null && munkatipus_id != null) {
+			<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/nyomdakonyv/normaSzamitas/termekId/' + termek_id + '/gepId/' + gep_id + '/munkatipusId/' + munkatipus_id + '/maxFordulat/' + max_fordulatszam",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'norma-szamitas-'.uniqid(),
+				'dataType'=>'json',
+				'success'=>"function(data)
 				{
-					alert(data.normaido + ' - ' + data.normaar);
-				}
+					if (data.status == 'failure')
+					{
+						$('#normaar').val('0');
+						$('#normaido').val('0');
+					}
+					else
+					{
+						$('#normaar').val(data.normaar);
+						$('#normaido').val(data.normaido);
+					}
 
-			} ",
-		))?>;
+				} ",
+			))?>;
+		} else {
+			alert ("A gép és munkatípus kiválasztása kötelező!");
+		}
 	}
 </script>
 
