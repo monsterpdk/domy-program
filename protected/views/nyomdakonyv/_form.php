@@ -36,7 +36,7 @@
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'megrendeles_tetel.munka_neve'); ?>
-			<?php echo Chtml::textField('munka_neve', $model->megrendeles_tetel->munka_neve, array('size'=>12, 'maxlength'=>127, 'readonly'=>true)); ?>
+			<?php echo Chtml::textField('munka_neve', mb_strtoupper($model->megrendeles_tetel->munka_neve, "UTF-8"), array('size'=>12, 'maxlength'=>127, 'readonly'=>true)); ?>
 		</div>
 
 		<div class="row checkbox_group_horizontal">

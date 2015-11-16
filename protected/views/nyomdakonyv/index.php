@@ -51,17 +51,20 @@ $this->menu=array(
                 'megrendeles_tetel.megrendeles.sorszam',
 				'taskaszam',
 				'hatarido',
-				'megrendeles_tetel.munka_neve',
+				array(
+					'header' => 'Munka neve',
+					'value' => 'mb_strtoupper($data->megrendeles_tetel->munka_neve, "UTF-8")',
+				),
 				'megrendeles_tetel.megrendeles.ugyfel.id',
 				'megrendeles_tetel.megrendeles.ugyfel.cegnev_teljes',
 				'megrendeles_tetel.termek.displayTermekTeljesNev',
 				'megrendeles_tetel.displayTermekSzinekSzama',
 				'megrendeles_tetel.darabszam',
 				array(
-						'header' => 'Törölt',
-						'type'=>'boolean',
-						'value' => '$data->torolt',
-						'visible' => Yii::app()->user->checkAccess('Admin'),
+					'header' => 'Törölt',
+					'type'=>'boolean',
+					'value' => '$data->torolt',
+					'visible' => Yii::app()->user->checkAccess('Admin'),
 				),
 			)
 )); ?>
