@@ -9,6 +9,7 @@
  * @property string $taskaszam
  * @property string $hatarido
  * @property string $pantone
+ * @property string $szin_pantone
  * @property string $munka_beerkezes_datum
  * @property string $taska_kiadasi_datum
  * @property string $elkeszulesi_datum
@@ -27,6 +28,7 @@
  * @property integer $szin_y_hat
  * @property integer $szin_k_hat
  * @property integer $szin_mutaciok
+ * @property integer $szin_mutaciok_szam
  * @property integer $kifuto_bal
  * @property integer $kifuto_fent
  * @property integer $kifuto_jobb
@@ -90,13 +92,14 @@ class Nyomdakonyv extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, nyomas_tipus, file_beerkezett, ctp_nek_atadas_datum, ctp_kezdes_datum, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'required'),
-			array('ctp, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, torolt', 'numerical', 'integerOnly'=>true),
+			array('ctp, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, szin_mutaciok_szam, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, torolt', 'numerical', 'integerOnly'=>true),
 			array('megrendeles_tetel_id', 'length', 'max'=>10),
 			array('taskaszam, szallitolevel_sorszam', 'length', 'max'=>12),
 			array('kep_file_nev', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true, 'safe' => false),
 			array('kep_file_nev', 'length', 'max'=>255, 'on'=>'insert,update'),
-			array('pantone, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista', 'length', 'max'=>255),
+			array('pantone, szin_pantone, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista', 'length', 'max'=>255),
 			array('szamla_sorszam, jovahagyas, erkezett', 'length', 'max'=>15),
+			array('szin_mutaciok_szam', 'length', 'max'=>3),
 			array('nyomas_tipus', 'length', 'max'=>29),
 			array('nyomas_specialis', 'length', 'max'=>200),
 			array('sztornozas_oka', 'length', 'max'=>255),
@@ -135,6 +138,7 @@ class Nyomdakonyv extends CActiveRecord
 			'taskaszam' => 'Táskaszám',
 			'hatarido' => 'Határidő',
 			'pantone' => 'Színek megnevezése (Pantone), vesszőkkel elválasztva',
+			'szin_pantone' => 'Pantone',
 			'munka_beerkezes_datum' => 'Munka beerkezés dátum',
 			'taska_kiadasi_datum' => 'Táska kiadási dátum',
 			'elkeszulesi_datum' => 'Elkészülési dátum',
@@ -154,7 +158,8 @@ class Nyomdakonyv extends CActiveRecord
 			'szin_y_hat' => '(Y)ellow',
 			'szin_k_hat' => 'Blac(K)',
 			'szin_mutaciok' => 'Mutáció',
-			'kifuto_bal' => '',
+			'szin_mutaciok_szam' => 'Színszám',
+			'kifuto_bal'  => '',
 			'kifuto_fent' => '',
 			'kifuto_jobb' => '',
 			'kifuto_lent' => '',
@@ -221,6 +226,7 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('taskaszam',$this->taskaszam,true);
 		$criteria->compare('hatarido',$this->hatarido,true);
 		$criteria->compare('pantone',$this->pantone,true);
+		$criteria->compare('szin_pantone',$this->szin_pantone,true);
 		$criteria->compare('munka_beerkezes_datum',$this->munka_beerkezes_datum,true);
 		$criteria->compare('taska_kiadasi_datum',$this->taska_kiadasi_datum,true);
 		$criteria->compare('elkeszulesi_datum',$this->elkeszulesi_datum,true);
@@ -240,6 +246,7 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('szin_y_hat',$this->szin_y_hat);
 		$criteria->compare('szin_k_hat',$this->szin_k_hat);
 		$criteria->compare('szin_mutaciok',$this->szin_mutaciok);
+		$criteria->compare('szin_mutaciok_szam',$this->szin_mutaciok_szam);
 		$criteria->compare('kifuto_bal',$this->kifuto_bal);
 		$criteria->compare('kifuto_fent',$this->kifuto_fent);
 		$criteria->compare('kifuto_jobb',$this->kifuto_jobb);

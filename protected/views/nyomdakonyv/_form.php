@@ -151,24 +151,40 @@
 		</div>
 
 		<div class="row checkbox">
-			<?php echo $form->checkBox($model,'szin_mutaciok'); ?>
+			<?php echo $form->checkBox($model,'szin_mutaciok', array('onclick'=>'$("#Nyomdakonyv_szin_mutaciok_szam").prop("disabled", !$("#Nyomdakonyv_szin_mutaciok").is(":checked") );')); ?>
 			<?php echo $form->labelEx($model,'szin_mutaciok'); ?>
 			<?php echo $form->error($model,'szin_mutaciok'); ?>
 		</div>
 
-		<div class="row">
-			<?php echo $form->labelEx($model,'megrendeles_tetel.darabszam'); ?>
-			<?php echo Chtml::textField('darabszam', $model->megrendeles_tetel->darabszam, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+		<div class='row'>
+			<?php echo $form->labelEx($model,'szin_mutaciok_szam'); ?>
+			<?php echo $form->textField($model,'szin_mutaciok_szam', array('style'=>'width:45px')); ?>
+			<?php echo $form->error($model,'szin_mutaciok_szam'); ?>
 		</div>
-		
-		<div class="row">
-			<?php echo $form->labelEx($model,'megrendeles_tetel.netto_darabar'); ?>
-			<?php echo Chtml::textField('netto_darabar', $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+
+		<div class = 'clear'>
+			<div class='row'>
+				<?php echo $form->labelEx($model,'szin_pantone'); ?>
+				<?php echo $form->textField($model,'szin_pantone', array('style'=>'width:575px')); ?>
+				<?php echo $form->error($model,'szin_pantone'); ?>
+			</div>
 		</div>
-		
-		<div class="row">
-			<?php echo $form->labelEx($model,'Nettó ár'); ?>
-			<?php echo Chtml::textField('netto_ar', $model->megrendeles_tetel->darabszam * $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+			
+		<div class = 'clear'>
+			<div class="row">
+				<?php echo $form->labelEx($model,'megrendeles_tetel.darabszam'); ?>
+				<?php echo Chtml::textField('darabszam', $model->megrendeles_tetel->darabszam, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+			</div>
+			
+			<div class="row">
+				<?php echo $form->labelEx($model,'megrendeles_tetel.netto_darabar'); ?>
+				<?php echo Chtml::textField('netto_darabar', $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+			</div>
+			
+			<div class="row">
+				<?php echo $form->labelEx($model,'Nettó ár'); ?>
+				<?php echo Chtml::textField('netto_ar', $model->megrendeles_tetel->darabszam * $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
+			</div>
 		</div>
 		
 		<div class="row">
@@ -783,6 +799,9 @@
 
 $( document ).ready(function() {
 	$("#button_norma_szamitasa").attr('disabled', 'disabled');
+	
+	// ha a mutáció nincs bepipálva, akkor le kell tiltani a 'mutáció színszám' mezőt
+	$("#Nyomdakonyv_szin_mutaciok_szam").prop("disabled", !$("#Nyomdakonyv_szin_mutaciok").is(":checked") );
 	
 	$('#Nyomdakonyv_gep_id').on('change', function() {
 		checkNormaszamitasState ();
