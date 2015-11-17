@@ -117,7 +117,6 @@
 					'htmlOptions'=>array('width'=>'500'),
 				 ),
 				'ajanlat_datum',
-				'van_megrendeles:boolean',
 				array(										
 					'name'=>'netto_ar',
 					'value'=>'number_format($data -> netto_ar, 0, ",", " ") . " Ft"',	
@@ -128,6 +127,16 @@
 					'value'=>'number_format($data -> brutto_ar, 0, ",", " ") . " Ft"',	
 					'htmlOptions'=>array('align'=>'right'),
 				),
+				array(										
+					'name'=>'van_megrendeles',
+					'type'=>'raw',
+					'value'=>function ($model, $index, $widget) {
+						return CHtml::checkbox('van_megrendeles[]', $model->van_megrendeles, ['value' => $index, 'disabled' => true]);
+					},
+					'htmlOptions'=>array('align'=>'center',),
+					'cssClassExpression' => '$data["van_megrendeles"] == 1 ? "yellow" : ""',
+				),
+				'van_megrendeles:boolean',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',
