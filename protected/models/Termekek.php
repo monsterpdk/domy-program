@@ -75,7 +75,7 @@ class Termekek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, ksh_kod megjelenes_mettol, megjelenes_meddig', 'required'),
+			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, csom_egys, doboz_suly, megjelenes_mettol, megjelenes_meddig', 'required'),
 			array('meret_id, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, torolt, belesnyomott', 'numerical', 'integerOnly'=>true),
 			array('doboz_suly, suly, doboz_hossz, doboz_szelesseg, doboz_magassag', 'numerical'),
 			array('nev', 'length', 'max'=>127),
