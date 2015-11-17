@@ -62,7 +62,7 @@ class TermekArakController extends Controller
 		$termek = Termekek::model()->findAllByAttributes(array("id" => $model -> termek_id));
 
 //		echo "aaa:" . $termek[0]["attributes"]["belesnyomott"] ;
-		$termek_adatok = $termek[0]["attributes"] ;
+		$termek_adatok = $termek[0]["attributes"];
 //		print_r($termek_adatok) ;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);

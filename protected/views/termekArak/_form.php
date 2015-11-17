@@ -76,10 +76,12 @@
 			<?php echo $form->error($model,'db_beszerzesi_ar'); ?>
 		</div>
 
-		<div class="row active">
-			<input id = "termek_belesnyomott" type="checkbox" value="<?php echo $termek_adatok["belesnyomott"]; ?>" <?php if ($termek_adatok["belesnyomott"] == 1) echo " checked "; ?> name="belesnyomott" disabled >
-			Bélésnyomott
-		</div>
+		<?php if (isset($termek_adatok)) : ?>
+			<div class="row active">
+				<input id = "termek_belesnyomott" type="checkbox" value="<?php echo $termek_adatok["belesnyomott"]; ?>" <?php if ($termek_adatok["belesnyomott"] == 1) echo " checked "; ?> name="belesnyomott" disabled >
+				Bélésnyomott
+			</div>
+		<?php endif; ?>
 			
 	<?php $this->endWidget(); ?>
 
