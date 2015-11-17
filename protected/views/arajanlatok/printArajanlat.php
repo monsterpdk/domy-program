@@ -161,7 +161,7 @@
 				echo "
 					<tr>
 						<td> <strong> $termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm, $papirtipus->nev $papirtipus->suly gr</strong> </td>
-						<td align=right> $tetel->darabszam </td>
+						<td align=right> $tetel->darabszam db</td>
 						<td align=right> $tetel->szinek_szama1+$tetel->szinek_szama2 </td>
 						<td align=right>" . number_format( (float)$tetel -> netto_darabar, 2) . "</td>
 						<td align=right>" .  number_format( (float)$tetel->netto_darabar * $tetel->darabszam, 0, '.', ' ') . "</td>
