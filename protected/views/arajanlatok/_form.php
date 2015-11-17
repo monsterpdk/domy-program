@@ -304,111 +304,8 @@
 	
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Visszahívások</strong>",
-			'htmlOptions'=>array('class'=>"portlet right-widget"),
-		));
-
-			if (Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Create')) {
-				
-				$this->widget('zii.widgets.jui.CJuiButton', array(
-					'name'=>'button_create_arajanlatVisszahivas',
-					'caption'=>'Visszahívás hozzáadása',
-					'buttonType'=>'link',
-					'onclick'=>new CJavaScriptExpression('function() {addUpdateArajanlatVisszahivas("create", $(this));}'),
-					'htmlOptions'=>array('class'=>'btn btn-success'),
-				));
-			}
-			
-			// a dialógus ablak inicializálása
-			$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
-				'id'=>'dialogArajanlatVisszahivas',
-				'options'=>array(
-					'title'=>'Visszahívás hozzáadása',
-					'autoOpen'=>false,
-					'modal'=>true,
-					'width'=>400,
-					'height'=>400,
-				),
-			));
-			
-			echo "<div class='divForForm'></div>";
-			
-			$this->endWidget();
-			
-			
-		// GRIDVIEW BEGIN
-			$dataProvider=new CActiveDataProvider('ArajanlatVisszahivasok',
-				array( 'data' => $model->visszahivasok,
-						'sort'=>array(
-							'attributes'=>array(
-								'id' => array(
-									'asc' => 'id ASC',
-									'desc' => 'id DESC',
-								),
-							),
-						),
-				)
-			);
-
-			$this->widget('zii.widgets.grid.CGridView', array(
-				'id' => 'arajanlatVisszahivasok-grid',
-				'enablePagination' => false,
-				'dataProvider'=>$dataProvider,
-				'columns'=>array(
-					'user.fullname',
-					'idopont',
-					'jegyzet',
-					array(
-								'class' => 'bootstrap.widgets.TbButtonColumn',
-								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
-								'template' => '{update} {delete_item}',
-								
-								'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
-								
-								'buttons' => array(
-									'update' => array(
-										'label' => 'Szerkeszt',
-										'icon'=>'icon-white icon-pencil',
-										'url'=>'',
-										'click'=>'function() {addUpdateArajanlatVisszahivas("update", $(this));}',
-										'visible' => "Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Update')",
-									),
-									'delete_item' => array
-									(
-										'label'=>'Töröl',
-										'icon'=>'icon-white icon-remove-sign',
-										'options'=>array(
-											'class'=>'btn btn-danger btn-mini',
-											),
-										'url'=>'"#"',
-										'visible' => "Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Delete')",
-										'click'=>"function(){
-														$.fn.yiiGridView.update('arajanlatVisszahivasok-grid', {
-															type:'POST',
-															dataType:'json',
-															url:$(this).attr('href'),
-															success:function(data) {
-																$.fn.yiiGridView.update('arajanlatVisszahivasok-grid');
-															}
-														})
-														return false;
-												  }
-										 ",
-										 'url'=> 'Yii::app()->createUrl("arajanlatVisszahivasok/delete/" . $data->id)',
-									),
-								),
-						),
-				)
-			));
-		// GRIDVIEW END
-	$this->endWidget();
-	?>
-
-	
-	<?php
-		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Árajánlat adatai #3</strong>",
-			'htmlOptions'=>array('class'=>"portlet right-widget"),
+			'htmlOptions'=>array('class'=>"portlet"),
 		));
 	?>
 	
@@ -513,7 +410,112 @@
 	
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Visszahívások</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
+		));
+
+			if (Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Create')) {
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_create_arajanlatVisszahivas',
+					'caption'=>'Visszahívás hozzáadása',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {addUpdateArajanlatVisszahivas("create", $(this));}'),
+					'htmlOptions'=>array('class'=>'btn btn-success'),
+				));
+			}
+			
+			// a dialógus ablak inicializálása
+			$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+				'id'=>'dialogArajanlatVisszahivas',
+				'options'=>array(
+					'title'=>'Visszahívás hozzáadása',
+					'autoOpen'=>false,
+					'modal'=>true,
+					'width'=>400,
+					'height'=>400,
+				),
+			));
+			
+			echo "<div class='divForForm'></div>";
+			
+			$this->endWidget();
+			
+			
+		// GRIDVIEW BEGIN
+			$dataProvider=new CActiveDataProvider('ArajanlatVisszahivasok',
+				array( 'data' => $model->visszahivasok,
+						'sort'=>array(
+							'attributes'=>array(
+								'id' => array(
+									'asc' => 'id ASC',
+									'desc' => 'id DESC',
+								),
+							),
+						),
+				)
+			);
+
+			$this->widget('zii.widgets.grid.CGridView', array(
+				'id' => 'arajanlatVisszahivasok-grid',
+				'enablePagination' => false,
+				'dataProvider'=>$dataProvider,
+				'columns'=>array(
+					'user.fullname',
+					'idopont',
+					'jegyzet',
+					array(
+								'class' => 'bootstrap.widgets.TbButtonColumn',
+								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
+								'template' => '{update} {delete_item}',
+								
+								'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
+								
+								'buttons' => array(
+									'update' => array(
+										'label' => 'Szerkeszt',
+										'icon'=>'icon-white icon-pencil',
+										'url'=>'',
+										'click'=>'function() {addUpdateArajanlatVisszahivas("update", $(this));}',
+										'visible' => "Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Update')",
+									),
+									'delete_item' => array
+									(
+										'label'=>'Töröl',
+										'icon'=>'icon-white icon-remove-sign',
+										'options'=>array(
+											'class'=>'btn btn-danger btn-mini',
+											),
+										'url'=>'"#"',
+										'visible' => "Yii::app()->user->checkAccess('ArajanlatVisszahivasok.Delete')",
+										'click'=>"function(){
+														$.fn.yiiGridView.update('arajanlatVisszahivasok-grid', {
+															type:'POST',
+															dataType:'json',
+															url:$(this).attr('href'),
+															success:function(data) {
+																$.fn.yiiGridView.update('arajanlatVisszahivasok-grid');
+															}
+														})
+														return false;
+												  }
+										 ",
+										 'url'=> 'Yii::app()->createUrl("arajanlatVisszahivasok/delete/" . $data->id)',
+									),
+								),
+						),
+				)
+			));
+		// GRIDVIEW END
+	$this->endWidget();
+	?>
+	
+	
+	
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Ajánlati lista</strong>",
+			'htmlOptions'=>array('class'=>"portlet right-widget"),
 		));
 
 			if (Yii::app()->user->checkAccess('ArajanlatTetelek.Create')) {
