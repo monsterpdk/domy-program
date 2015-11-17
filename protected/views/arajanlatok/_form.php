@@ -216,13 +216,13 @@
 		
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_arajanlat_osszes_ertek'); ?>
-			<?php echo $form->textField($model,'autocomplete_arajanlat_osszes_ertek',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->textField($model,'autocomplete_arajanlat_osszes_ertek',array('size'=>10, 'maxlength'=>10, 'readonly'=>true, 'style' => 'width: 189px')); ?> Ft
 			<?php echo $form->error($model,'autocomplete_arajanlat_osszes_ertek'); ?>
 		</div>
 		
 		<div class="row">
 			<?php echo $form->labelEx($model,'autocomplete_megrendeles_osszes_ertek'); ?>
-			<?php echo $form->textField($model,'autocomplete_megrendeles_osszes_ertek',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->textField($model,'autocomplete_megrendeles_osszes_ertek',array('size'=>10, 'maxlength'=>10, 'readonly'=>true, 'style' => 'width: 189px')); ?> Ft
 			<?php echo $form->error($model,'autocomplete_megrendeles_osszes_ertek'); ?>
 		</div>
 		

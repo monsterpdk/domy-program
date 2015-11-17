@@ -151,11 +151,11 @@ class Arajanlatok extends CActiveRecord
 			'autocomplete_ugyfel_rendelesi_tartozas_limit' => 'Rendelési tartozási limit (Ft)',
 			'autocomplete_ugyfel_fontos_megjegyzes' => 'Fontos megjegyzés',
 
-			'autocomplete_arajanlat_osszes_darabszam' => 'Összes árajánlat szána (db)',
-			'autocomplete_arajanlat_osszes_ertek' => 'Összes árajánlat értéke',
+			'autocomplete_arajanlat_osszes_darabszam' => 'Összes árajánlat száma (db)',
+			'autocomplete_arajanlat_osszes_ertek' => 'Összes árajánlat értéke (nettó)',
 			'autocomplete_arajanlat_osszes_tetel' => 'Összes árajánlat tétel (db)',
-			'autocomplete_megrendeles_osszes_darabszam' => 'Összes megrendelés szána (db)',
-			'autocomplete_megrendeles_osszes_ertek' => 'Összes megrendelés értéke',
+			'autocomplete_megrendeles_osszes_darabszam' => 'Összes megrendelés száma (db)',
+			'autocomplete_megrendeles_osszes_ertek' => 'Összes megrendelés értéke (nettó)',
 			'autocomplete_megrendeles_osszes_tetel' => 'Összes megrendelés tétel (db)',
 			'autocomplete_arajanlat_megrendeles_elfogadas' => 'Elfogadási arány (%)',
 			
