@@ -475,13 +475,27 @@
 		));
 	?>		
 		<div class="row buttons">
-			<?php echo CHtml::submitButton('Mentés', array('id' => 'megrendelesek_form_submit')); ?>
-
-			<?php if ($model -> nyomdakonyv_munka_id == 0): ?>
-				<?php echo CHtml::button('Nyomdakönyvbe küldés', array('id' => 'nyomdakonyvbeKuldesButton', 'submit' => Yii::app()->createUrl("/megrendelesek/munkakGeneralasaMegrendelesbol/", array("id" => $model->id)), 'onclick' => 'js:disableNyomdakonyvButton()')); ?>
-			<?php endif; ?>
-
-			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'megrendelesek_form_submit',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+					 )); ?>
+			<?php if ($model -> nyomdakonyv_munka_id == 0) {
+					$this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'nyomdakonyvbeKuldesButton',
+						'caption'=>'Nyomdakönybe küldés',
+						'htmlOptions' => array ('class' => 'btn btn-success btn-lg', 'submit' => Yii::app()->createUrl("/megrendelesek/munkakGeneralasaMegrendelesbol/", array("id" => $model->id)), 'onclick' => 'js:disableNyomdakonyvButton()'),
+					 ));
+					}
+			?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					 )); ?>
 		</div>
 
 		<div class="row buttons">		

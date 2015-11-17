@@ -14,6 +14,18 @@ $this->menu=array(
 
 <h1>Ügyfélügyintézők</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('UgyfelUgyintezok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_ugyfelugyintezo',
+			'caption'=>'Új ügyfélügyintéző hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -57,15 +69,3 @@ $this->menu=array(
                 ),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('UgyfelUgyintezok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_ugyfelugyintezo',
-			'caption'=>'Új ügyfélügyintéző hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

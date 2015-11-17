@@ -5,6 +5,18 @@
 
 <h1>Művelet árak</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('NyomdaMuveletNormaarak.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_nyomda_muvelet_ar',
+			'caption'=>'Új művelet ár hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id' => 'muvelet-ar-grid',
 	'dataProvider'=>$dataProvider,
@@ -50,15 +62,3 @@
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('NyomdaMuveletNormaarak.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_nyomda_muvelet_ar',
-			'caption'=>'Új művelet ár hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>		

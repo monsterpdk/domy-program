@@ -5,6 +5,18 @@
 
 <h1>Fizetési módok</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('FizetesiModok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_fizetesi_mod',
+			'caption'=>'Új fizetési mód hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -47,15 +59,3 @@
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('FizetesiModok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_fizetesi_mod',
-			'caption'=>'Új fizetési mód hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

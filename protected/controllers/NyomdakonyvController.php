@@ -146,12 +146,13 @@ class NyomdakonyvController extends Controller
 	 */
 	public function actionIndex()
 	{	
-		$dataProvider=new CActiveDataProvider('Nyomdakonyv',
-			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
-		);
+		$model=new Nyomdakonyv('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Nyomdakonyv']))
+			$model->attributes=$_GET['Nyomdakonyv'];
 		
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'model'=>$model,
 		));
 	}
 

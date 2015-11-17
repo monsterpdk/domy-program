@@ -27,8 +27,20 @@
 		'name'=>'button_search_ugyfel',
 		'caption'=>'Keresés',
 		'buttonType'=>'link',
-		'htmlOptions'=>array('class'=>'bt btn-primary search-button'),
+		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
 	));
+?>
+
+<?php
+	if (Yii::app()->user->checkAccess('Ugyfelek.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_ugyfel',
+			'caption'=>'Új ügyfél hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
 ?>
 
 <div class="search-form" style="display:none">
@@ -100,16 +112,6 @@
 )); ?>
 
 <?php
-	if (Yii::app()->user->checkAccess('Ugyfelek.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_ugyfel',
-			'caption'=>'Új ügyfél hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-
 	// export gomb megjelenítése
 	$this->renderExportGridButton($gridWidget,'Exportálás', array('class'=>'btn btn-info ui-button ui-widget ui-button-text-only pull-right'));
 ?>

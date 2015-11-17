@@ -92,7 +92,12 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton('Mentés'); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'submitForm',
+					'caption'=>'Mentés',
+					'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+				 )); ?>
 	</div>
 	
 <?php $this->endWidget(); ?>

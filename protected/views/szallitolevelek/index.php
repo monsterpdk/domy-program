@@ -10,6 +10,18 @@ $this->breadcrumbs=array(
 
 <h1><?php echo $megrendeles->sorszam; ?> megrendelés szállítólevelei</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('Szallitolevelek.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_szallitolevlek',
+			'caption'=>'Új szállítólevél létrehozása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create', 'id'=>$megrendeles->id),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -90,18 +102,6 @@ $this->breadcrumbs=array(
 		echo '<p> A kiválaszott szállítólevél és a hozzá kapcsolódó tételek nyomtatása. </p>';
 		
 		$this->endWidget('zii.widgets.jui.CJuiDialog');
-?>
-
-<?php
-	if (Yii::app()->user->checkAccess('Szallitolevelek.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_szallitolevlek',
-			'caption'=>'Új szállítólevél létrehozása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create', 'id'=>$megrendeles->id),
-		));
-	}
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(

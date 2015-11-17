@@ -14,6 +14,18 @@ $this->menu=array(
 
 <h1>Sztornózási okok</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('SztornozasOkok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_sztornozasi_ok',
+			'caption'=>'Új sztornózási ok hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -54,15 +66,3 @@ $this->menu=array(
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('SztornozasOkok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_sztornozasi_ok',
-			'caption'=>'Új sztornózási ok hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

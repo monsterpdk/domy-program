@@ -11,6 +11,18 @@ $this->breadcrumbs=array(
 
 <h1>ÁFA kulcsok</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('AfaKulcsok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_afakulcs',
+			'caption'=>'Új ÁFA kulcs hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id' => 'afakulcsok-grid',
 	'dataProvider'=>$dataProvider,
@@ -82,15 +94,3 @@ $this->breadcrumbs=array(
 	?>
 	
 </p>
-
-<?php
-	if (Yii::app()->user->checkAccess('AfaKulcsok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_afakulcs',
-			'caption'=>'Új ÁFA kulcs hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

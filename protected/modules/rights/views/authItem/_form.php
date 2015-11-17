@@ -6,7 +6,7 @@
 
 <?php endif; ?>
 	
-<?php $form=$this->beginWidget('CActiveForm'); ?>
+<?php $form=$this->beginWidget('CActiveForm', array('id'=>'authItem-form',)); ?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model, 'name'); ?>
@@ -45,7 +45,20 @@
 	<?php endif; ?>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton(Rights::t('core', 'Save')); ?> | <?php echo CHtml::link(Rights::t('core', 'Cancel'), Yii::app()->user->rightsReturnUrl); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'submitForm',
+					'buttonType'=>'button',
+					'caption'=>'Mentés',
+					'htmlOptions' => array ('class' => 'btn btn-primary btn-lg', 'onclick'=>'js: $("#authItem-form").submit()'),
+				 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'back',
+					'buttonType'=>'button',
+					'caption'=>'Mégse',
+					'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->user->rightsReturnUrl),
+				 )); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

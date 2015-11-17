@@ -5,6 +5,17 @@
 
 <h1>Nyomdagép típusok</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('NyomdagepTipusok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_nyomdagep_tipus',
+			'caption'=>'Új nyomdagép típus hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id' => 'nyomdagep-tipusok-grid',
@@ -54,15 +65,3 @@
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('NyomdagepTipusok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_nyomdagep_tipus',
-			'caption'=>'Új nyomdagép típus hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

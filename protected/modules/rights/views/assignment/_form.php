@@ -1,6 +1,6 @@
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm'); ?>
+<?php $form=$this->beginWidget('CActiveForm', array ('id'=>'assignment-form')); ?>
 	
 	<div class="row">
 		<?php echo $form->dropDownList($model, 'itemname', $itemnameSelectOptions); ?>
@@ -8,8 +8,21 @@
 	</div>
 	
 	<div class="row buttons">
-		<?php echo CHtml::submitButton(Rights::t('core', 'Assign')); ?>
-		<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'submitForm',
+					'buttonType'=>'button',
+					'caption'=>'Hozzárendel',
+					'htmlOptions' => array ('class' => 'btn btn-primary btn-lg', 'onclick'=>'js: $("#assignment-form").submit()'),
+				 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'back',
+					'buttonType'=>'button',
+					'caption'=>'Mégse',
+					'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+				 )); ?>
+
 	</div>
 
 <?php $this->endWidget(); ?>

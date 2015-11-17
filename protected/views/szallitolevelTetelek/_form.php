@@ -158,8 +158,18 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton('Mentés'); ?>
-		<?php echo CHtml::button('Mégse', array('title'=>'Mégse', 'onclick'=>'js: $("#dialogMegrendelesTetel").dialog("close"); return false;')); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'submitForm',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'onclick'=>'js: $("#dialogMegrendelesTetel").dialog("close"); return false;'),
+					 )); ?>
 	</div>
 
 	<!-- CJUIDIALOG BEGIN -->

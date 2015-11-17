@@ -5,6 +5,18 @@
 
 <h1>Munkatípusok</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('NyomdaMunkatipusok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_nyomda_munkatipusok',
+			'caption'=>'Új munkatípus hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id' => 'munkatipusok-grid',
 	'dataProvider'=>$dataProvider,
@@ -52,15 +64,3 @@
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('NyomdaMunkatipusok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_nyomda_munkatipusok',
-			'caption'=>'Új munkatípus hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

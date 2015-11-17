@@ -28,8 +28,20 @@
 		'name'=>'button_search_arajanlat',
 		'caption'=>'Keresés',
 		'buttonType'=>'link',
-		'htmlOptions'=>array('class'=>'bt btn-primary search-button'),
+		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
 	));
+?>
+
+<?php
+	if (Yii::app()->user->checkAccess('Arajanlatok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_arajanlatok',
+			'caption'=>'Új árajánlat létrehozása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
 ?>
 
 <div class="search-form" style="display:none">
@@ -124,18 +136,6 @@
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('Arajanlatok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_arajanlatok',
-			'caption'=>'Új árajánlat létrehozása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>
 
 <?php	
 	// LI: print dialog inicializálása

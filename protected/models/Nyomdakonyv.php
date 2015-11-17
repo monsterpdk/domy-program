@@ -70,6 +70,16 @@
  */
 class Nyomdakonyv extends CActiveRecord
 {
+	// keresésekhez, ahol nem a nyomdakönyv egy mezőjét, hanem valami kapcsolódó model mezőjét keressük
+	public $munkanev_search;
+	public $megrendelonev_search;
+	public $boritek_tipus_search;
+	public $darabszam_tol_search;
+	public $darabszam_ig_search;
+	public $szinszam1_tol_search;
+	public $szinszam1_ig_search;
+	public $szinszam2_tol_search;
+	public $szinszam2_ig_search;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -105,7 +115,7 @@ class Nyomdakonyv extends CActiveRecord
 			array('sztornozas_oka', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, torolt', 'safe', 'on'=>'search'),
+			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, munkanev_search, megrendelonev_search, boritek_tipus_search, darabszam_tol_search, darabszam_ig_search, szinszam1_tol_search, szinszam1_ig_search, szinszam2_tol_search, szinszam2_ig_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -200,6 +210,10 @@ class Nyomdakonyv extends CActiveRecord
 			
 			'display_normaido' => 'Normaidő',
 			'display_normaar' => 'Normaár',
+			'darabszam_tol_search' =>'Daradbszám -tól',
+			'darabszam_search' =>'Daradbszám tól-ig',
+			'szinszam1_search' => 'Előoldal színszám tól-ig',
+			'szinszam2_search' => 'Hátoldal színszám tól-ig',
 		);
 	}
 
@@ -221,9 +235,29 @@ class Nyomdakonyv extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->together = true;
+		$criteria->with = array('megrendeles_tetel', 'megrendeles_tetel.termek.zaras', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel');
+
+		$criteria->compare('taskaszam',$this->taskaszam,true);
+		$criteria->compare('megrendeles_tetel.munka_neve', $this->munkanev_search, true );
+		$criteria->compare('cegnev', $this->megrendelonev_search, true );
+		$criteria->compare('zaras.nev', $this->boritek_tipus_search, true );
+		
+		$darabszam_tol = ($this->darabszam_tol_search != '') ? $this->darabszam_tol_search : 0;
+		$darabszam_ig = ($this->darabszam_ig_search != '') ? $this->darabszam_ig_search : 9;
+		$criteria->addCondition('megrendeles_tetel.darabszam >= ' . $darabszam_tol . ' AND megrendeles_tetel.darabszam <= ' . $darabszam_ig);
+		
+		$szinszam1_tol = ($this->szinszam1_tol_search != '') ? $this->szinszam1_tol_search : 0;
+		$szinszam1_ig = ($this->szinszam1_ig_search != '') ? $this->szinszam1_ig_search : 9;
+		$criteria->addCondition('megrendeles_tetel.szinek_szama1 >= ' . $szinszam1_tol . ' AND megrendeles_tetel.szinek_szama1 <= ' . $szinszam1_ig);
+		
+		$szinszam2_tol = ($this->szinszam2_tol_search != '') ? $this->szinszam2_tol_search : 0;
+		$szinszam2_ig = ($this->szinszam2_ig_search != '') ? $this->szinszam2_ig_search : 9;
+		$criteria->addCondition('megrendeles_tetel.szinek_szama2 >= ' . $szinszam2_tol . ' AND megrendeles_tetel.szinek_szama2 <= ' . $szinszam2_ig);
+		
+		/*
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('megrendeles_tetel_id',$this->megrendeles_tetel_id,true);
-		$criteria->compare('taskaszam',$this->taskaszam,true);
 		$criteria->compare('hatarido',$this->hatarido,true);
 		$criteria->compare('pantone',$this->pantone,true);
 		$criteria->compare('szin_pantone',$this->szin_pantone,true);
@@ -283,11 +317,15 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('raktarbol_kiadva_datum',$this->raktarbol_kiadva_datum,true);
 		$criteria->compare('sztornozas_oka',$this->sztornozas_oka,true);
 		$criteria->compare('sztornozva',$this->sztornozva);
-
+		*/
+		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
 			$criteria->condition=" torolt = '0'";
 	
+		// id szerint csökkenő sorrendben kérdezzük le az adatokat, így biztos, hogy a legújabb lesz legfelül
+		$criteria->order = 't.id DESC';
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

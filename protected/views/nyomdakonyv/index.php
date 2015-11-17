@@ -1,6 +1,5 @@
 <?php
 /* @var $this NyomdakonyvController */
-/* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
 	'Nyomdakönyv',
@@ -13,8 +12,14 @@ $this->menu=array(
 
 <h1>Nyomdakönyv</h1>
 
+<div class="search-form">
+	<?php  $this->renderPartial('_search',array(
+		'model'=>$model,
+	)); ?>
+</div>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$dataProvider,
+	'dataProvider'=>$model -> search(),
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
 				array(
@@ -56,7 +61,7 @@ $this->menu=array(
 					'value' => 'mb_strtoupper($data->megrendeles_tetel->munka_neve, "UTF-8")',
 				),
 				'megrendeles_tetel.megrendeles.ugyfel.id',
-				'megrendeles_tetel.megrendeles.ugyfel.cegnev_teljes',
+				'megrendeles_tetel.megrendeles.ugyfel.cegnev',
 				'megrendeles_tetel.termek.displayTermekTeljesNev',
 				'megrendeles_tetel.displayTermekSzinekSzama',
 				'megrendeles_tetel.darabszam',

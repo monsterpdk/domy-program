@@ -24,6 +24,20 @@ $this->breadcrumbs=array(
 <h1>Nyomási árak</h1>
 
 <?php
+
+	if (Yii::app()->user->checkAccess('NyomasiArak.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_nyomasi_ar',
+			'caption'=>'Új nyomási ár hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+	
+?>
+
+<?php
 	$this->widget('zii.widgets.jui.CJuiButton', array(
 		'name'=>'button_search_nyomasi_ar',
 		'caption'=>'Keresés',
@@ -108,17 +122,3 @@ $this->breadcrumbs=array(
 				),
 			)
 )); ?>
-
-<?php
-
-	if (Yii::app()->user->checkAccess('NyomasiArak.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_nyomasi_ar',
-			'caption'=>'Új nyomási ár hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-	
-?>

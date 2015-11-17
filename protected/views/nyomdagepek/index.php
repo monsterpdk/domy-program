@@ -5,6 +5,18 @@
 
 <h1>Nyomdagépek</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('Nyomdagepek.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_nyomdagep',
+			'caption'=>'Új nyomdagép hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id' => 'nyomdagepek-grid',
 	'dataProvider'=>$dataProvider,
@@ -76,15 +88,3 @@
 	?>
 	
 </p>
-
-<?php
-	if (Yii::app()->user->checkAccess('Nyomdagepek.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_nyomdagep',
-			'caption'=>'Új nyomdagép hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

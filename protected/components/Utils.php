@@ -550,7 +550,7 @@
 		function szamla_sorszam_beolvas($megrendeles_id) {
 			$return = 0 ;
 			$sql = "select BSorszam from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
-			$szamla_fej = Yii::app()->db_actual->createCommand($sql)->queryRow();
+			$szamla_fej = null; //Yii::app()->db_actual->createCommand($sql)->queryRow();
 			if (is_array($szamla_fej)) {
 				$return = $szamla_fej["BSorszam"] ;	
 			}

@@ -566,8 +566,18 @@
 	<?php endif; ?>
 
 	<div class="row buttons">
-			<?php echo CHtml::submitButton('Mentés', array('title'=>'OK', 'onclick'=>'js: return checkFlags();')); ?>
-			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'submitForm',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg', 'onclick'=>'js: return checkFlags();'),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					 )); ?>
 	</div>
 	
 	<?php $this->endWidget(); ?>
@@ -607,13 +617,23 @@
 		),
 	));?>
 	
-	<div class="divForForm">
+	<div class="divForForm buttons">
 		<?php echo CHtml::label('Archiválás oka:', 'editTextArchiveReason'); ?>
 		<?php echo CHtml::textArea('editTextArchiveReason', '', array('style' => "width: 405px; height: 103px;")); ?>
 		
 		<div align = 'right'>
-			<?php echo CHtml::button('Ok', array('title'=>'Ok', 'onclick'=>'js: return saveArchiveReason();')); ?>
-			<?php echo CHtml::button('Mégse', array('title'=>'Mégse', 'onclick'=>'js: $("#dialogArchiveReason").dialog("close"); return false;')); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'submitDialog',
+						'caption'=>'Ok',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg', 'onclick'=>'js: saveArchiveReason();',),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'cancelDialog',
+						'caption'=>'Mégse',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'onclick'=>'js: $("#dialogArchiveReason").dialog("close"); return false;',),
+					 )); ?>
 		</div>
 	</div>
 	 
@@ -642,12 +662,12 @@
 	}
 	
 	function saveArchiveReason() {
-		$('#dialogArchiveReason').dialog('close');
-		
+		$("#dialogArchiveReason").dialog("close");
+
 		// hozzáfűzzük a 'fontos megjegyzés' mezőhöz az archiválás okát
 		var sFontosMegjegyzes = $("#Ugyfelek_fontos_megjegyzes").val();
 		var sArchivReason = $("#editTextArchiveReason").val();
-		
+
 		$("#Ugyfelek_fontos_megjegyzes").val( (( sFontosMegjegyzes.length > 0) ? sFontosMegjegyzes + ' ' :  '') + 'Archiválás oka: ' + sArchivReason );
 
 		$("#ugyfelek-form").submit();

@@ -28,7 +28,12 @@
 		</div>
 
 		<div class="row buttons">
-			<?php echo CHtml::submitButton('Keresés'); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'submit',
+					'caption'=>'Keresés',
+					'htmlOptions' => array ('class' => 'btn btn-info btn-lg',),
+				 )); ?>
 		</div>
 		
 		<div class="clear"></div>

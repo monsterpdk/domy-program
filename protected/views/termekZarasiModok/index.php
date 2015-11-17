@@ -10,6 +10,18 @@ $this->breadcrumbs=array(
 
 <h1>Zárásmódok</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('TermekZarasiModok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_zarasmod',
+			'caption'=>'Új zárásmód hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -51,15 +63,3 @@ $this->breadcrumbs=array(
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('TermekZarasiModok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_zarasmod',
-			'caption'=>'Új zárásmód hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>

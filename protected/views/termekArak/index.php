@@ -10,6 +10,30 @@ $this->breadcrumbs=array(
 
 <h1>Termékárak</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('TermekArak.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_termekar',
+			'caption'=>'Új termékár hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+	
+		// import gomb megjelenítése
+	$this->widget('xupload.XUpload', array(
+			'url' => Yii::app()->createUrl("termekArak/upload"),
+			'model' => $model,
+			'attribute' => 'file',
+			'htmlOptions'=>array('class'=>'pull-right'),
+			'multiple' => false,
+			      'options'=>array(
+                              'acceptFileTypes'=>'js:/(\.|\/)(csv)$/i',
+							  ),
+	));
+?>
+
 <?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -65,28 +89,6 @@ $this->breadcrumbs=array(
 )); ?>
 
 <?php
-	if (Yii::app()->user->checkAccess('TermekArak.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_termekar',
-			'caption'=>'Új termékár hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-	
-		// import gomb megjelenítése
-	$this->widget('xupload.XUpload', array(
-			'url' => Yii::app()->createUrl("termekArak/upload"),
-			'model' => $model,
-			'attribute' => 'file',
-			'htmlOptions'=>array('class'=>'pull-right'),
-			'multiple' => false,
-			      'options'=>array(
-                              'acceptFileTypes'=>'js:/(\.|\/)(csv)$/i',
-							  ),
-	));
-	
 	// export gomb megjelenítése
 	$this->renderExportGridButton($gridWidget,'Exportálás', array('class'=>'btn btn-info ui-button ui-widget ui-button-text-only pull-right'));
 ?>

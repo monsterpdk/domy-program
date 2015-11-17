@@ -10,6 +10,18 @@ $this->breadcrumbs=array(
 
 <h1>Anyagbeszállítások</h1>
 
+<?php
+	if (Yii::app()->user->checkAccess('Anyagbeszallitasok.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_anyagbeszállítás',
+			'caption'=>'Új anyagbeszállítás hozzáadása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
@@ -72,18 +84,6 @@ $this->breadcrumbs=array(
 				'lezarva:boolean',
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('Anyagbeszallitasok.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_anyagbeszállítás',
-			'caption'=>'Új anyagbeszállítás hozzáadása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>
 
 <?php	
 	// LI: print dialog inicializálása

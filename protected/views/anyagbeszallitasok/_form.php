@@ -113,9 +113,19 @@
 		<?php endif; ?>	
 		
 		<div class="row buttons">
-			<?php echo CHtml::submitButton('Mentés', array('id' => 'anyagbeszallitasok_form_submit')); ?>
-			<?php echo CHtml::button('Vissza', array('submit' => Yii::app()->request->urlReferrer)); ?>
-		
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'anyagbeszallitasok_form_submit',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					 )); ?>
+			
 			<?php
 				if (Yii::app()->user->checkAccess("Anyagbeszallitasok.CreateAnyagrendeles") && $model->anyagrendeles_id != null && $model->anyagrendeles_id == 0) {
 					$this->widget('zii.widgets.jui.CJuiButton', array(

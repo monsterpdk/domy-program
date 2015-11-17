@@ -869,3 +869,8 @@ div.search-options fieldset legend {
 	border-style: none ;
 	padding: 0px 4px 2px 4px ;
 }
+.btn-lg {
+	padding : 10px!important;
+	padding-left : 15px!important;
+	padding-right : 15px!important;
+}

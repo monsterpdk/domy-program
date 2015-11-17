@@ -24,6 +24,18 @@
 <h1>Megrendelések</h1>
 
 <?php
+	if (Yii::app()->user->checkAccess('Megrendelesek.Create')) {
+		$this->widget('zii.widgets.jui.CJuiButton', array(
+			'name'=>'button_create_megrendelesek',
+			'caption'=>'Új megrendelés létrehozása',
+			'buttonType'=>'link',
+			'htmlOptions'=>array('class'=>'btn btn-success'),
+			'url'=>array('create'),
+		));
+	}
+?>
+
+<?php
     Yii::app()->clientScript->registerScript(
        'myHideEffect',
        '$(".flash-success, .flash-error").animate({opacity: 1.0}, 3000).fadeOut("slow");',
@@ -142,18 +154,6 @@
 				),
 			)
 )); ?>
-
-<?php
-	if (Yii::app()->user->checkAccess('Megrendelesek.Create')) {
-		$this->widget('zii.widgets.jui.CJuiButton', array(
-			'name'=>'button_create_megrendelesek',
-			'caption'=>'Új megrendelés létrehozása',
-			'buttonType'=>'link',
-			'htmlOptions'=>array('class'=>'btn btn-success'),
-			'url'=>array('create'),
-		));
-	}
-?>
 
 <?php	
 	// LI: print dialog inicializálása
