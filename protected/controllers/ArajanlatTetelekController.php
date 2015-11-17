@@ -28,7 +28,7 @@ class ArajanlatTetelekController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate ($id, $arkategoria_id, $grid_id)
+	public function actionCreate ($id, $arkategoria_id, $afakulcs_id, $grid_id)
 	{
 		$model = new ArajanlatTetelek;
 
@@ -122,7 +122,7 @@ class ArajanlatTetelekController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id, $arkategoria_id, $grid_id)
+	public function actionUpdate($id, $arkategoria_id, $afakulcs_id, $grid_id)
 	{
 		$model = $this->loadModel($id);
 
@@ -338,8 +338,8 @@ private function calculateNettoAr ($model)
 		return $model;
 	}
 
-	public function actionCalculateNettoDarabAr ($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2, $hozott_boritek) {
-			if (isset($termek_id)) return Utils::getActiveTermekarJSON($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2, $hozott_boritek);
+	public function actionCalculateNettoDarabAr ($ugyfel_id, $afakulcs_id, $termek_id, $db, $szinszam1, $szinszam2, $hozott_boritek) {
+			if (isset($termek_id)) return Utils::getActiveTermekarJSON($ugyfel_id, $termek_id, $db, $szinszam1, $szinszam2, $hozott_boritek, $afakulcs_id);
 	}
 
 	

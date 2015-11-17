@@ -1,6 +1,6 @@
 <?php
-/* @var $this ArajanlatokController */
-/* @var $model Arajanlatok */
+/* @var $this MegrendelesekController */
+/* @var $model Megrendelesek */
 /* @var $form CActiveForm */
 
 	Yii::app() -> clientScript->registerScript('updateGridView', '
@@ -552,10 +552,11 @@
 			op = (isUpdate) ? "update" : "create";
 			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Megrendelesek_id").val();
 			arkategoria_id = $("#Megrendelesek_arkategoria_id").val();
+			afakulcs_id = $("#Megrendelesek_afakulcs_id").val();
 			dialog_title = (isUpdate) ? "Tétel módosítása" : "Tétel hozzáadása";
 
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/megrendelesTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/grid_id/' + new Date().getTime()",
+					'url'=> "js:'/index.php/megrendelesTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/afakulcs_id/' + afakulcs_id + '/grid_id/' + new Date().getTime()",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),

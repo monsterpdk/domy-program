@@ -146,12 +146,25 @@
 		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
 		// TÁ: Bővítettem az ugyfel_id paraméterrel is, mert a szorzót is itt kell alkalmazni, már kész árat adunk vissza, nem számolgatunk javascriptben
 		// TÁ: Bővítettem a hozott boríték paraméterrel, ha annak értéke 1, akkor nem számoljuk a boríték árát, csak a nyomási munkadíjat
-		function getActiveTermekarJSON ($ugyfel_id, $termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0, $hozott_boritek = 0) {
+		function getActiveTermekarJSON ($ugyfel_id, $termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0, $hozott_boritek = 0, $afakulcs_id = 0) {
 			$result = 0;
 
 			$ugyfel_reszletek = Ugyfelek::model()->findByPk($ugyfel_id) ;
-			$arkategoria_reszletek = Arkategoriak::model()->findByPk($ugyfel_reszletek["arkategoria"]) ;
-			$szorzo = $arkategoria_reszletek["szorzo"] ;
+			$arkategoria_reszletek = Arkategoriak::model()->findByPk($ugyfel_reszletek["arkategoria"]);
+			$szorzo = $arkategoria_reszletek["szorzo"];
+			$termekAr["db_ar_nyomashoz"] = 0;
+			$netto_osszeg = 0;
+			$ar = 0;
+			$db_ar = 0;
+			
+			$afakulcsSzazalek = 0;
+			if ($afakulcs_id != null && $afakulcs_id != 0) {
+				$afaKulcs = AfaKulcsok::model()->findByPk($afakulcs_id);
+				
+				if ($afaKulcs != null){
+					$afakulcsSzazalek = $afaKulcs->afa_szazalek;
+				}
+			}
 			
 			if ($termek_id != null && $termek_id != 0) {
 						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
@@ -162,11 +175,13 @@
 			$selejt = $selejt1 = $selejt2 = 0 ;
 			$szinszam = max($szinszam1,$szinszam2) ;
 			if ($hozott_boritek == 1) {
-				$termekAr["db_ar_nyomashoz"] = 0 ;
+				$termekAr["db_ar_nyomashoz"] = 0;
 			}
+			
 			if ($termekAr != false && $darabszam > 0 && ($szinszam > 0)) {
 				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
 				$db_ar = $termekAr["db_ar_nyomashoz"] ;
+				
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
 				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
 				$nyomasi_ar_kategoria_tipus = "" ;
@@ -272,20 +287,23 @@
 				}				
 			}
 						
-							
+
 			$ar = ($db_ar == 0) ? 0 : $db_ar;
 			if ($szinszam == 0)
 				$netto_osszeg = round($darabszam * $ar) ;			
-			else
-				$ar = round($netto_osszeg / $darabszam, 2) ;	
+			else if ($darabszam > 0)
+				$ar = round($netto_osszeg / $darabszam, 2);
 			
 			$netto_osszeg = round($netto_osszeg * $szorzo) ;
 			$ar = round($ar * $szorzo, 2) ;
-			
+
+			// bruttó ár
+			$brutto_osszeg = round($netto_osszeg * ((100 + $afakulcsSzazalek) / 100));
 			$arr[] = array(
 				'status'=>'success',
 				'ar'=>$ar,
 				'netto_osszeg'=>$netto_osszeg,
+				'brutto_osszeg'=>$brutto_osszeg,
 			);						
 
 			echo CJSON::encode($arr);

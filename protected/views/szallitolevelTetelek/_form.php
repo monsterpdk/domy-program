@@ -110,7 +110,7 @@
 			var szinszam2 = $.isNumeric ($( "#MegrendelesTetelek_szinek_szama2" ).val()) ? $( "#MegrendelesTetelek_szinek_szama2" ).val() : 0;
 			var ugyfel_id = $('#Megrendelesek_ugyfel_id').val ();			
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/megrendelesTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2",
+					'url'=> "js:'/index.php/megrendelesTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/afakulcs_id/0/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),

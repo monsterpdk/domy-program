@@ -719,10 +719,11 @@
 			op = (isUpdate) ? "update" : "create";
 			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Arajanlatok_id").val();
 			arkategoria_id = $("#Arajanlatok_arkategoria_id").val();
+			afakulcs_id = $("#Arajanlatok_afakulcs_id").val();
 			dialog_title = (isUpdate) ? "Tétel módosítása" : "Tétel hozzáadása";
 
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/arajanlatTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/grid_id/' + new Date().getTime()",
+					'url'=> "js:'/index.php/arajanlatTetelek/' + op + '/id/' + id + '/arkategoria_id/' + arkategoria_id + '/afakulcs_id/' + afakulcs_id + '/grid_id/' + new Date().getTime()",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),

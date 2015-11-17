@@ -105,11 +105,17 @@
 		
 		<?php echo $form->labelEx($model,'netto_ar'); ?>
 		<?php echo $form->textField($model,'netto_ar',  array('disabled'=>'true', 'maxlength' => 128)); ?>
+
+		<?php echo $form->labelEx($model,'brutto_ar'); ?>
+		<?php echo $form->textField($model,'brutto_ar',  array('disabled'=>'true', 'maxlength' => 128)); ?>
 	</div>
 
 	<script>
 		$( "#MegrendelesTetelek_darabszam" ).on("keyup", keyPressEvent);
 		$( "#MegrendelesTetelek_netto_darabar" ).on("keyup", keyPressEvent);
+		
+		// mikor megnyitjuk a tétel űrlapot (akár újat veszünk fel, akár szerkesztünk) meghívjuk a nettó és bruttó árat frissítő metódust
+		nettoar_kalkulal();
 		
 		//2000 db alatt fix árat kapunk a nyomási árnál, ezeknél a db ár egyenlő lesz az összeggel, tehát nem kell darabszámmal szorozni, ekkor fix_ar = true
 		function osszegSzamol() {
@@ -134,13 +140,15 @@
 			var darabszam = $.isNumeric ($( "#MegrendelesTetelek_darabszam" ).val()) ? $( "#MegrendelesTetelek_darabszam" ).val() : 0;
 			var szinszam1 = $.isNumeric ($( "#MegrendelesTetelek_szinek_szama1" ).val()) ? $( "#MegrendelesTetelek_szinek_szama1" ).val() : 0;
 			var szinszam2 = $.isNumeric ($( "#MegrendelesTetelek_szinek_szama2" ).val()) ? $( "#MegrendelesTetelek_szinek_szama2" ).val() : 0;
-			var ugyfel_id = $('#Megrendelesek_ugyfel_id').val ();		
+			var ugyfel_id = $('#Megrendelesek_ugyfel_id').val ();
+			var afakulcs_id = $('#Megrendelesek_afakulcs_id').val ();
+			
 			var hozott_boritek = 0 ;
 			if ($("#MegrendelesTetelek_hozott_boritek").prop('checked')) {
 				hozott_boritek = 1 ;	
 			}			
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/megrendelesTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2 + '/hozott_boritek/' + hozott_boritek",
+					'url'=> "js:'/index.php/megrendelesTetelek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/afakulcs_id/' + afakulcs_id + '/termek_id/' + termekId + '/db/' + darabszam + '/szinszam1/' + szinszam1 + '/szinszam2/' + szinszam2 + '/hozott_boritek/' + hozott_boritek",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -155,6 +163,7 @@
 						{
 							$('#MegrendelesTetelek_netto_darabar').val (data[0].ar);
 							$('#MegrendelesTetelek_netto_ar' ).val (data[0].netto_osszeg);
+							$('#MegrendelesTetelek_brutto_ar' ).val (data[0].brutto_osszeg);
 						}
 		 
 					} ",

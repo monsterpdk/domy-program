@@ -23,6 +23,7 @@ class ArajanlatTetelek extends CActiveRecord
 	public $autocomplete_termek_name;
 	public $szorzo_tetel_arhoz;
 	public $netto_ar;
+	public $brutto_ar;
 
 	/**
 	 * @return string the associated database table name
@@ -92,6 +93,7 @@ class ArajanlatTetelek extends CActiveRecord
 			'egyedi_ar' => 'Egyedi ár',
 			
 			'netto_ar' => 'Nettó ár',
+			'brutto_ar' => 'Bruttó ár',
 		);
 	}
 

@@ -27,6 +27,7 @@ class MegrendelesTetelek extends CActiveRecord
 	public $autocomplete_termek_name;
 	public $szorzo_tetel_arhoz;
 	public $netto_ar;
+	public $brutto_ar;
 	public $darabszam_szallitora;
 	
 	// LI a termék színeinek számát írja ki 'szinek_szama1+szinek_szama2' formátumban
@@ -105,6 +106,7 @@ class MegrendelesTetelek extends CActiveRecord
 			'egyedi_ar' => 'Egyedi ár',
 			
 			'netto_ar' => 'Nettó ár',
+			'brutto_ar' => 'Bruttó ár',
 			'displayTermekSzinekSzama' => 'Színek száma',
 		);
 	}
