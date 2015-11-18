@@ -305,7 +305,7 @@ class Arajanlatok extends CActiveRecord
 	public function beforeSave() {
 		if ($this->isNewRecord) {
 			$this->ajanlat_datum = new CDbExpression('NOW()');
-			$this->ervenyesseg_datum = new CDbExpression('NOW()');
+			$this->ervenyesseg_datum = new CDbExpression('NOW()+ INTERVAL 8 DAY');
 			$this->kovetkezo_hivas_ideje = new CDbExpression('NOW()');
 			$this->admin_id = Yii::app()->user->getId();
 			

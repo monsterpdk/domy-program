@@ -372,7 +372,7 @@ class MegrendelesekController extends Controller
 				$this->redirect(Yii::app()->request->urlReferrer);
 			}
 			
-			//ha nincs még proforma számla sorszám generálva a megrendeléshez, msot megtesszük
+			//ha nincs még proforma számla sorszám generálva a megrendeléshez, most megtesszük
 			// ha első nyomtatás, akkor beállítjuk a proforma számlára vonatkozó default értékeket
 			if ($model -> proforma_szamla_sorszam == '') {
 				$model -> proforma_szamla_sorszam = $this -> ujProformaSorszamGeneralas($model );
@@ -638,8 +638,15 @@ class MegrendelesekController extends Controller
 		if ($megrendeles != null && (empty($megrendeles->szamla_sorszam) || $megrendeles->szamla_sorszam == 0)) {			
 			$szamla_sorszam = Utils::szamla_sorszam_beolvas($id) ;
 			if (!is_numeric($szamla_sorszam) || $szamla_sorszam > 0) {
-				$megrendeles->setAttribute("szamla_sorszam", $szamla_sorszam) ;
-				$megrendeles->save() ;
+				$megrendeles->setAttribute("szamla_sorszam", $szamla_sorszam);
+				$megrendeles->save();
+				
+				// átbillentjük a megrendeléshez tartozó ügyfél típusát 'vasarlo'-ra
+				$ugyfel = Ugyfelek::model()->findByPk ($megrendeles->ugyfel_id);
+				if ($ugyfel != null) {
+					$ugyfel->ugyfel_tipus = 'vasarlo';
+					$ugyfel->save();
+				}
 			}
 		}
 	}

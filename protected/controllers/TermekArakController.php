@@ -127,6 +127,24 @@ class TermekArakController extends Controller
 		));
 	}
 
+	// LI: visszaadja, hogy egy megadott termék bélésnyomott-e (1 - igen, 0 - nem)
+	public function actionUpdateBelesnyomottCheckbox ($termek_id)
+	{
+		$status =  'failure';
+		$belesnyomott = 0;
+		
+		$termek = Termekek::model()->findByPk ($termek_id);
+		if ($termek != null) {
+			$belesnyomott = $termek->belesnyomott == 1 ? 1 : 0;
+			$status = 'success';
+		}
+		
+		echo CJSON::encode(array(
+			'status'=>$status,
+			'belesnyomott'=> $belesnyomott
+		));
+	}
+	
 	/**
 	 * Manages all models.
 	 */

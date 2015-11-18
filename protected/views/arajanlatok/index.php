@@ -136,7 +136,6 @@
 					'htmlOptions'=>array('align'=>'center',),
 					'cssClassExpression' => '$data["van_megrendeles"] == 1 ? "yellow" : ""',
 				),
-				'van_megrendeles:boolean',
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',

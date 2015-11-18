@@ -23,12 +23,14 @@
 
 	<?php echo CHtml::hiddenField('Hidden_ugyel_archiv' , $model->archiv, array('id' => 'Hidden_ugyel_archiv')); ?>
 	
+	<!--
 	<div class="row">
-		<?php echo $form->labelEx($model,'ugyfel_tipus'); ?>
-		<?php echo DHtml::enumDropDownList($model, 'ugyfel_tipus'); ?>
-		<?php echo $form->error($model,'ugyfel_tipus'); ?>
+		<?php //echo $form->labelEx($model,'ugyfel_tipus'); ?>
+		<?php //echo DHtml::enumDropDownList($model, 'ugyfel_tipus'); ?>
+		<?php //echo $form->error($model,'ugyfel_tipus'); ?>
 	</div>
-
+	-->
+	
 	<div class="row">
 		<?php echo $form->labelEx($model,'cegnev'); ?>
 		<?php echo $form->textField($model,'cegnev',array('size'=>60,'maxlength'=>127)); ?>
@@ -532,7 +534,7 @@
 		<?php //echo $form->dropDownList($model, 'fizetesi_moral',array("0"=>"0","1"=>"1","2"=>"2","3"=>"3","4"=>"4","5"=>"5"), array());
 		?>
 		
-		<?php echo $form->textField($model,'fizetesi_moral',array('size'=>10,'maxlength'=>10, 'readonly'=>true)); ?>
+		<?php echo $form->textField($model,'fizetesi_moral',array('size'=>10,'maxlength'=>10, 'readonly'=>false)); ?>
 		
 		<?php echo $form->error($model,'fizetesi_moral'); ?>
 	</div>

@@ -66,7 +66,15 @@ $this->breadcrumbs=array(
 						),
                 ),
                 'termek.nev',
-                'termek.belesnyomott',
+				array(										
+					'name'=>'termek.belesnyomott',
+					'type'=>'raw',
+					'value'=>function ($model, $index, $widget) {
+						return CHtml::checkbox('termek.belesnyomott[]', $model->termek->belesnyomott, ['value' => $index, 'disabled' => true]);
+					},
+					'htmlOptions'=>array('align'=>'center',),
+					'cssClassExpression' => '$data->termek->belesnyomott == 1 ? "yellow" : ""',
+				),
 				'csomag_beszerzesi_ar:number',
 				'db_beszerzesi_ar:number',
 				'csomag_ar_nyomashoz:number',

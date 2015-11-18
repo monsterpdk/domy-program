@@ -2,6 +2,11 @@
 /* @var $this TermekArakController */
 /* @var $model TermekArak */
 /* @var $form CActiveForm */
+
+if (!isset($termek_adatok)) {
+	$termek_adatok["belesnyomott"] = 0;
+}
+
 ?>
 
 <div class="form">
@@ -76,12 +81,10 @@
 			<?php echo $form->error($model,'db_beszerzesi_ar'); ?>
 		</div>
 
-		<?php if (isset($termek_adatok)) : ?>
-			<div class="row active">
-				<input id = "termek_belesnyomott" type="checkbox" value="<?php echo $termek_adatok["belesnyomott"]; ?>" <?php if ($termek_adatok["belesnyomott"] == 1) echo " checked "; ?> name="belesnyomott" disabled >
-				Bélésnyomott
-			</div>
-		<?php endif; ?>
+		<div class="row active">
+			<input id = "termek_belesnyomott" type="checkbox" value="<?php echo $termek_adatok["belesnyomott"]; ?>" <?php if ($termek_adatok["belesnyomott"] == 1) echo " checked "; ?> name="belesnyomott" disabled >
+			Bélésnyomott
+		</div>
 			
 	<?php $this->endWidget(); ?>
 
@@ -172,3 +175,41 @@
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		updateBelesnyomottCheckbox ();
+	});
+	
+	$('#TermekArak_termek_id').on('change', function() {
+		updateBelesnyomottCheckbox ();
+	});
+	
+	function updateBelesnyomottCheckbox ()
+	{
+		var termek_id = $('#TermekArak_termek_id').val();
+
+		<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/termekarak/updateBelesnyomottCheckbox/termek_id/' + termek_id",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'update-belesnyomott-link-'.uniqid(),
+				'replace' => '',
+				'dataType'=>'json',
+				'success'=>"function(data)
+				{
+					if (data.status == 'failure')
+					{
+						$( '#termek_belesnyomott' ).prop( 'checked', false );
+					}
+					else
+					{
+						$( '#termek_belesnyomott' ).prop( 'checked', data.belesnyomott == 1 ? true : false );
+					}
+	 
+				} ",
+		))?>;
+
+		return false; 
+	}
+</script>
