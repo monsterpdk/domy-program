@@ -59,7 +59,7 @@
 		'name'=>'button_search_megrendeles',
 		'caption'=>'Keresés',
 		'buttonType'=>'link',
-		'htmlOptions'=>array('class'=>'bt btn-primary search-button'),
+		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
 	));
 ?>
 
@@ -168,7 +168,9 @@
 				'buttons' => array('Visszaigazolás készítése' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "printVisszaigazolas?id=" + model_id)}', 'Proforma készítése' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "printProforma?id=" + model_id)}'),
                 'autoOpen'=>false,
         )));
-		echo 'Proforma számla vagy visszaigazolás nyomtatási előnézete.';
+		
+			echo 'Proforma számla vagy visszaigazolás nyomtatási előnézete.';
+			
 		$this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
 
