@@ -752,6 +752,15 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-right: 20px;
 }
+#zuh-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#zuh-form .row {
+	float: left;
+	margin-right: 20px;
+}
 .search-form .portlet {
 	float: left;
 	width : 100%;
@@ -876,4 +885,8 @@ div.search-options fieldset legend {
 }
 table tr td.yellow {
     background:#FFF6BF;
+}
+.table-zuh td
+{
+	padding: 5px;
 }

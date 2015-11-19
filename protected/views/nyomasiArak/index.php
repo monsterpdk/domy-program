@@ -42,7 +42,7 @@ $this->breadcrumbs=array(
 		'name'=>'button_search_nyomasi_ar',
 		'caption'=>'Keresés',
 		'buttonType'=>'link',
-		'htmlOptions'=>array('class'=>'bt btn-primary search-button'),
+		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
 	));
 ?>
 

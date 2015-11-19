@@ -139,7 +139,7 @@
 					'name'=>'button_create_ugyfel',
 					'caption'=>'Ügyfél létrehozása',
 					'buttonType'=>'link',
-					'htmlOptions'=>array('class'=>'bt btn-primary search-button', 'style'=>'margin-bottom:10px', 'target' => '_blank'),
+					'htmlOptions'=>array('class'=>'btn btn-primary search-button', 'style'=>'margin-bottom:10px', 'target' => '_blank'),
 					'url'=>array('ugyfelek/create'),
 				));
 			?>

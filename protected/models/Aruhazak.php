@@ -15,6 +15,7 @@
 class Aruhazak extends CActiveRecord
 {
 	private $display_aruhaz_arkategoria;
+	private $display_aruhazkod_nev;
 
 	/**
 	 * @return string the associated database table name
@@ -76,6 +77,7 @@ class Aruhazak extends CActiveRecord
 			'aruhaz_megrendeles_order_prefix' => 'Megrendelés azonosító prefix',
 			'arkategoria_id' => 'Árkategória',
 			'ingyen_szallitas' => 'Ingyen szállítás',
+			'display_aruhazkod_nev' => 'Áruház',
 			'torolt' => 'Törölt',
 		);
 	}
@@ -134,4 +136,9 @@ class Aruhazak extends CActiveRecord
 	public function getDisplay_aruhaz_arkategoria () {
 		return $this -> aruhaz_nev . ' - ' . $this -> arkategoria -> szorzo . ' szorzó';
 	}
+	
+	public function getDisplay_aruhazkod_nev () {
+		return $this -> kod . ' - ' . $this -> aruhaz_nev;
+	}
+	
 }
