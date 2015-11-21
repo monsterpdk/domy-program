@@ -205,6 +205,31 @@ class NyomdakonyvController extends Controller
 			'normaar'=> $normaar
 		));
 	}
+
+	// Táska/CTP-s táska PDF-et előállító action.
+	public function actionPrintTaska()
+	{
+		if (isset($_GET['id'])) {
+			$model = $this -> loadModel($_GET['id']);
+		}
+		
+		// ha nem CTP-s a munkatáska, akkor 'simát' nyomtatunk
+		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
+		
+		if ($model != null) {
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Munkatáska #" . $model->taskaszam);
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial($pdfTemplateName, array('model' => $model), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+		
+	}
 	
 	// Meghívja a géptermi program adatbázisát, megnézi, hogy ehhez a munkához van-e már benne bejegyzés, ha nincs, akkor létrehozza, ha van, akkor pedig visszaadja az ott rögzített két olyan mezőt, ami kell nekünk: keszido (elkészülés dátum), keszsec (elkészülés idő - óra, perc)
 	public function actionGepteremHivas($munka_id) {
