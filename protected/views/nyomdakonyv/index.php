@@ -24,13 +24,22 @@ $this->menu=array(
 	'columns'=>array(
 				array(
 					'class' => 'bootstrap.widgets.TbButtonColumn',
-					'htmlOptions'=>array('style'=>'width: 130px; text-align: left;'),
-					'template' => '{update} {delete} {storno}',
+					'htmlOptions'=>array('style'=>'width: 140px; text-align: left;'),
+					'template' => '{print} {update} {delete} {storno}',
 					
 					'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
 					'deleteButtonOptions'=>array('class'=>'btn btn-danger btn-mini'),
 
 					'buttons' => array(
+						'print' => array(
+							'label' => 'Nyomtatás',
+							'icon'=>'icon-white icon-print',
+							'options'=>array(
+										'class'=>'btn btn-info btn-mini',
+										'onclick' => 'js: openPrintDialog($(this))',
+										),
+							'visible' => "Yii::app()->user->checkAccess('Megrendelesek.Print')",
+						),
 						'update' => array(
 							'label' => 'Szerkeszt',
 							'icon'=>'icon-white icon-pencil',
@@ -75,6 +84,32 @@ $this->menu=array(
 )); ?>
 
 <?php	
+	// LI: print dialog inicializálása
+    $this->beginWidget('zii.widgets.jui.CJuiDialog',
+        array(
+            'id'=>'dialogMunkataskaPrint',
+            
+            'options'=>array(
+                'title'=>'Nyomtatás',
+				'width'=> '450px',
+                'modal' => true,
+				'buttons' => array('Táska nyomtatása' => 'js:function()
+				{
+					model_id = $(this).data("model_id"), $(location).attr("href", "printTaska?id=" + model_id + "&isCtp=0")
+				}',
+				'CTP-s táska nyomtatása' => 'js:function()
+				{
+					model_id = $(this).data("model_id"), $(location).attr("href", "printTaska?id=" + model_id + "&isCtp=1")
+				}'),
+                'autoOpen'=>false,
+        )));
+		
+			echo 'Táska vagy  CTP-s táska nyomtatási előnézete.';
+			
+		$this->endWidget('zii.widgets.jui.CJuiDialog');
+?>
+
+<?php	
 	// LI: sztornózás oka dialog inicializálása
     $this->beginWidget('zii.widgets.jui.CJuiDialog',
         array(
@@ -106,6 +141,15 @@ $this->menu=array(
 	echo CHtml::hiddenField('nyomdakonyv_id' , '', array('id' => 'nyomdakonyv_id'));
 	
 $this->endWidget(); ?>
+
+<script type="text/javascript">
+		function openPrintDialog (button_obj) {
+			hrefString = button_obj.parent().children().eq(1).attr("href");
+			row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);
+			
+			$("#dialogMunkataskaPrint").data('model_id', row_id).dialog("open");
+		}
+</script>
 
 <script type="text/javascript">
 

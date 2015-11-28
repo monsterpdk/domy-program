@@ -307,18 +307,23 @@
 		</div>
 		
 		<div class='clear'>
+			<div class="row">
+				<?php echo $form->labelEx($model,'utannyomas_valtoztatassal'); ?>
+				<?php echo $form->textArea($model,'utannyomas_valtoztatassal',array('size'=>60,'maxlength'=>255)); ?>
+				<?php echo $form->error($model,'utannyomas_valtoztatassal'); ?>
+			</div>
 		
 			<div class="row">
 				<?php echo $form->labelEx($model,'utasitas_ctp_nek'); ?>
 				<?php echo $form->textArea($model,'utasitas_ctp_nek',array('size'=>60,'maxlength'=>255)); ?>
 				<?php echo $form->error($model,'utasitas_ctp_nek'); ?>
 			</div>
-		
-			<div class="row">
-				<?php echo $form->labelEx($model,'utasitas_gepmesternek'); ?>
-				<?php echo $form->textArea($model,'utasitas_gepmesternek',array('size'=>60,'maxlength'=>255)); ?>
-				<?php echo $form->error($model,'utasitas_gepmesternek'); ?>
-			</div>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'utasitas_gepmesternek'); ?>
+			<?php echo $form->textArea($model,'utasitas_gepmesternek',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->error($model,'utasitas_gepmesternek'); ?>
 		</div>
 		
 		<div class = "row">

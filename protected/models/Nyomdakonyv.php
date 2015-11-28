@@ -36,6 +36,7 @@
  * @property integer $forditott_levezetes
  * @property integer $hossziranyu_levezetes
  * @property string $nyomas_tipus
+ * @property string $utannyomas_valtoztatassal
  * @property string $utasitas_ctp_nek
  * @property string $utasitas_gepmesternek
  * @property string $kiszallitasi_informaciok
@@ -107,7 +108,7 @@ class Nyomdakonyv extends CActiveRecord
 			array('taskaszam, szallitolevel_sorszam', 'length', 'max'=>12),
 			array('kep_file_nev', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true, 'safe' => false),
 			array('kep_file_nev', 'length', 'max'=>255, 'on'=>'insert,update'),
-			array('pantone, szin_pantone, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista', 'length', 'max'=>255),
+			array('pantone, szin_pantone, utannyomas_valtoztatassal, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista', 'length', 'max'=>255),
 			array('szamla_sorszam, jovahagyas, erkezett', 'length', 'max'=>15),
 			array('szin_mutaciok_szam', 'length', 'max'=>3),
 			array('nyomas_tipus', 'length', 'max'=>29),
@@ -115,7 +116,7 @@ class Nyomdakonyv extends CActiveRecord
 			array('sztornozas_oka', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, munkanev_search, megrendelonev_search, boritek_tipus_search, darabszam_tol_search, darabszam_ig_search, szinszam1_tol_search, szinszam1_ig_search, szinszam2_tol_search, szinszam2_ig_search, torolt', 'safe', 'on'=>'search'),
+			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utannyomas_valtoztatassal, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, munkanev_search, megrendelonev_search, boritek_tipus_search, darabszam_tol_search, darabszam_ig_search, szinszam1_tol_search, szinszam1_ig_search, szinszam2_tol_search, szinszam2_ig_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -176,6 +177,7 @@ class Nyomdakonyv extends CActiveRecord
 			'forditott_levezetes' => 'Fordított levezetés',
 			'hossziranyu_levezetes' => 'Hosszirányú levezetés',
 			'nyomas_tipus' => 'Nyomás típusa',
+			'utannyomas_valtoztatassal' => 'Utánnyomás változtatással',
 			'utasitas_ctp_nek' => 'Utasítás CTP-nek',
 			'utasitas_gepmesternek' => 'Utasítás gépmesternek',
 			'kiszallitasi_informaciok' => 'Kiszállítasi információk',
