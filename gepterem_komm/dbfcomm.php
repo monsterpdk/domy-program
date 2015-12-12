@@ -6,9 +6,10 @@
 	require_once "class.compare.php" ;
 	
 
-//  define("ROOT_PATH", "C:\\inetpub\\wwwroot\\domyweb\\gepterem_komm/") ;
-  define("ROOT_PATH", "C:\\wamp\\www\\domypress\\gepterem_komm/") ;
-  define("NYOMDAKONYV", "gepterem/NYOM") ;
+  define("ROOT_PATH", "C:\\inetpub\\wwwroot\\domyweb\\gepterem_komm/") ;
+//  define("ROOT_PATH", "C:\\inetpub\\wwwroot\\domyweb\\gepterem_komm\\gepterem/") ;
+//  define("ROOT_PATH", "C:\\wamp\\www\\domypress\\gepterem_komm/") ;
+  define("NYOMDAKONYV", "NYOM.dbf") ;
   define("WORKFLOW", "gepterem/workflow") ;
 
 /**
@@ -39,7 +40,8 @@
   function dbf_lekerdez($dbf_file, $filters) {
   	  	$return = array() ;
 		/* create a table object and open it */
-		$table = new XBaseTable(ROOT_PATH . $dbf_file);
+//		$table = new XBaseTable(ROOT_PATH . $dbf_file);
+		$table = new XBaseTable($dbf_file);
 		$table->open();
 		/* print some header info */
 /*		echo "version: ".$table->version."<br />";
@@ -79,7 +81,7 @@
 				}
 				$return[] = $row ;	
 			}			
-		}
+		}		
 		$table->close();
 		return $return ;  	    	  
   }
@@ -103,11 +105,11 @@
  * A $filters mező egy tömb, amelyben a rekord mezői: field=>"szűrendő mező"; value=>"szűréshez megadott érték";
  **/  
   function dbf_add_record($dbf_file, $fields) {
-	$table = new XBaseTable(ROOT_PATH . $dbf_file);
+	$table = new XBaseTable($dbf_file);
 	$table->open();
 	$record = array() ;
 	foreach ($table->getColumns() as $i=>$c) {
-		$record[$c->getName()] = $fields[$c->getName()] ;
+		$record[$c->getName()] = iconv("utf-8", "windows-1250", $fields[$c->getName()]) ;
 	}	
 	$XBaseId = xbase_open($dbf_file,$flags=1) ;
 	xbase_add_record($XBaseId, $record) ;
@@ -121,7 +123,7 @@
  **/
   function dbf_update_record($dbf_file, $fields, $filters) {
   	  	$return = array() ;
-		$table = new XBaseTable(ROOT_PATH . $dbf_file);
+		$table = new XBaseTable($dbf_file);
 		$table->open();
 		$columns = array() ;
 		$columns_indexes = array() ;
@@ -154,7 +156,7 @@
 				$new_record = array() ;
 				foreach ($table->getColumns() as $i=>$c) {
 					if (isset($fields[$c->getName()])) {
-						$record->setObjectByName($c->getName(), $fields[$c->getName()]) ;
+						$record->setObjectByName($c->getName(), iconv("utf-8", "windows-1250", $fields[$c->getName()])) ;
 					}
 					$new_record[$c->getName()] = $record->choppedData[$columns_indexes[$c->getName()]] ;
 				}
@@ -170,10 +172,12 @@
   if ($mode != "select" && $mode != "insert" && $mode != "update") {
   	 die("Please set the query mode!") ;  
   }
-  $dbf_file = $_GET["dbf"] ;
-  if (!file_exists(ROOT_PATH . $dbf_file)) {
+  $dbf_file = rawurldecode($_GET["dbf"]) ;
+//  $dbf_file = NYOMDAKONYV ;
+  if (!file_exists($dbf_file)) {
   	die("The dbf file is unreachable!") ;  
   }
+  
   
   switch ($mode) {
   	case "select": 

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * ----------------------------------------------------------------
 *			XBase
@@ -341,3 +341,4 @@ class XBaseTable {
 	    return $this->writeShort($t["year"]) + $this->writeChar($t["mon"]) + $this->writeChar($t["mday"]);
     }
 }
+?>

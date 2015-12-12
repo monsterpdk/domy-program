@@ -81,6 +81,9 @@ class Nyomdakonyv extends CActiveRecord
 	public $szinszam1_ig_search;
 	public $szinszam2_tol_search;
 	public $szinszam2_ig_search;
+	public $folyamatban_levo_muvelet;
+	public $varhato_befejezes;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -216,6 +219,8 @@ class Nyomdakonyv extends CActiveRecord
 			'darabszam_search' =>'Daradbszám tól-ig',
 			'szinszam1_search' => 'Előoldal színszám tól-ig',
 			'szinszam2_search' => 'Hátoldal színszám tól-ig',
+			'folyamatban_levo_muvelet' => 'Folyamatban lévő művelet',
+			'varhato_befejezes' => 'Várható befejezés',
 		);
 	}
 
@@ -246,7 +251,7 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('zaras.nev', $this->boritek_tipus_search, true );
 		
 		$darabszam_tol = ($this->darabszam_tol_search != '') ? $this->darabszam_tol_search : 0;
-		$darabszam_ig = ($this->darabszam_ig_search != '') ? $this->darabszam_ig_search : 9;
+		$darabszam_ig = ($this->darabszam_ig_search != '') ? $this->darabszam_ig_search : 9999999;
 		$criteria->addCondition('megrendeles_tetel.darabszam >= ' . $darabszam_tol . ' AND megrendeles_tetel.darabszam <= ' . $darabszam_ig);
 		
 		$szinszam1_tol = ($this->szinszam1_tol_search != '') ? $this->szinszam1_tol_search : 0;

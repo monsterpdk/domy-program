@@ -131,7 +131,7 @@
 					'name'=>'van_megrendeles',
 					'type'=>'raw',
 					'value'=>function ($model, $index, $widget) {
-						return CHtml::checkbox('van_megrendeles[]', $model->van_megrendeles, ['value' => $index, 'disabled' => true]);
+						return CHtml::checkbox("van_megrendeles[]", $model->van_megrendeles, array("value" => $index, "disabled" => true));
 					},
 					'htmlOptions'=>array('align'=>'center',),
 					'cssClassExpression' => '$data["van_megrendeles"] == 1 ? "yellow" : ""',

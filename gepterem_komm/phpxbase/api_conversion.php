@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * ----------------------------------------------------------------
 *			XBase
@@ -31,9 +31,9 @@ function xbase_add_record($xbase_identifier=false,$record) { // - Add a record (
 		if (is_object($i))
 			$r->setString($i,$v);
 		else if (is_numeric($i)) 
-			$r->setStringByIndex($i,$v);
+			$r->setObjectByIndex($i,$v);
 		else 
-			$r->setStringByName($i,$v);
+			$r->setObjectByName($i,$v);
 	}
 	$xbase->writeRecord();
 }

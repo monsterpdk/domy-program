@@ -285,6 +285,7 @@ class Ugyfelek extends DomyModel
 
 		$criteria->compare('ugyfel_tipus', $this->ugyfel_tipus, true);
 		$criteria->compare('archiv', $this->archiv);
+		$criteria->compare('cegnev', $this->cegnev, true);
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
@@ -500,6 +501,7 @@ class Ugyfelek extends DomyModel
 			{
 				$model->cegnev = $ugyfel_adatok["cegnev"] ;				
 			}
+			$model->cegnev_teljes = $model->cegnev ;
 		}
 		
 		$model->ugyfel_tipus = "vasarlo" ;

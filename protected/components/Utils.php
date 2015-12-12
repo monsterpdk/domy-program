@@ -857,6 +857,108 @@
 			}				
 		}
 		
+		/**
+		 *  Egy táskaszám alatti munkához kiszámítja, hogy milyen nyomási kategóriába esik, és azt adja vissza
+		 */
+		 function NyomasiKategoriaSzamol($szinek_szama, $darabszam, $termektipus, $kifuto) {
+		 	$return = "" ;
+		 	$szinszam_elo = substr($szinek_szama, 0, 1) ;
+		 	$szinszam_hat = substr($szinek_szama, 2, 1) ;
+		 	
+		 	if ($szinszam_elo <= 1 && $szinszam_hat <= 1 && $termektipus == "Kis boríték" && $kifuto == 0) {
+		 		$return = "A/1" ;
+		 	}
+		 	else if ($szinszam_elo <= 1 && $szinszam_hat <= 1 && ($termektipus == "Nagy boríték" || $termektipus == "Egyéb") && $kifuto == 0) {
+		 		$return = "B/1" ;
+		 	}
+		 	else if ($szinszam_elo <= 2 && $szinszam_hat <= 2 && $termektipus == "Kis boríték" && $kifuto == 0) {
+		 		$return = "A/2" ;
+		 	}
+		 	else if ($szinszam_elo <= 2 && $szinszam_hat <= 2 && ($termektipus == "Nagy boríték" || $termektipus == "Egyéb") && $kifuto == 0) {
+		 		$return = "B/2" ;
+		 	}
+		 	else if ($szinszam_elo <= 4 && $szinszam_hat <= 4 && $termektipus == "Kis boríték" && $kifuto == 0) {
+		 		$return = "C" ;
+		 	}
+		 	else if ($szinszam_elo <= 4 && $szinszam_hat <= 4 && ($termektipus == "Nagy boríték" || $termektipus == "Egyéb") && $kifuto == 0) {
+		 		$return = "D" ;
+		 	}
+		 	else if (($szinszam_elo > 4 || $szinszam_hat > 4 || $kifuto == 1) && $termektipus == "Kis boríték") {
+		 		$return = "E" ;
+		 	}
+		 	else if (($szinszam_elo > 4 || $szinszam_hat > 4 || $kifuto == 1) && ($termektipus == "Nagy boríték" || $termektipus == "Egyéb")) {
+		 		$return = "F" ;
+		 	}		 	
+		 	return $return ;
+		 }
+		
+		/**
+		 *  HTTP url hívás CURL-lal, a visszakapott adatokat adja vissza
+		 */
+		 function httpGet($url)
+		{
+			$ch = curl_init();  
+		
+			curl_setopt($ch,CURLOPT_URL,$url);
+			curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		//	curl_setopt($ch,CURLOPT_HEADER, false); 
+		
+			$output=curl_exec($ch);
+		
+			curl_close($ch);
+			return $output;
+		}
+		
+		/**
+		 *  Windows-1250-es kódolású szöveget UTF-8-asra alakít
+		 */
+		function w1250_to_utf8($text) {
+			$map = array(
+				chr(0x8A) => chr(0xA9),
+				chr(0x8C) => chr(0xA6),
+				chr(0x8D) => chr(0xAB),
+				chr(0x8E) => chr(0xAE),
+				chr(0x8F) => chr(0xAC),
+				chr(0x9C) => chr(0xB6),
+				chr(0x9D) => chr(0xBB),
+				chr(0xA1) => chr(0xB7),
+				chr(0xA5) => chr(0xA1),
+				chr(0xBC) => chr(0xA5),
+				chr(0x9F) => chr(0xBC),
+				chr(0xB9) => chr(0xB1),
+				chr(0x9A) => chr(0xB9),
+				chr(0xBE) => chr(0xB5),
+				chr(0x9E) => chr(0xBE),
+				chr(0x80) => '&euro;',
+				chr(0x82) => '&sbquo;',
+				chr(0x84) => '&bdquo;',
+				chr(0x85) => '&hellip;',
+				chr(0x86) => '&dagger;',
+				chr(0x87) => '&Dagger;',
+				chr(0x89) => '&permil;',
+				chr(0x8B) => '&lsaquo;',
+				chr(0x91) => '&lsquo;',
+				chr(0x92) => '&rsquo;',
+				chr(0x93) => '&ldquo;',
+				chr(0x94) => '&rdquo;',
+				chr(0x95) => '&bull;',
+				chr(0x96) => '&ndash;',
+				chr(0x97) => '&mdash;',
+				chr(0x99) => '&trade;',
+				chr(0x9B) => '&rsquo;',
+				chr(0xA6) => '&brvbar;',
+				chr(0xA9) => '&copy;',
+				chr(0xAB) => '&laquo;',
+				chr(0xAE) => '&reg;',
+				chr(0xB1) => '&plusmn;',
+				chr(0xB5) => '&micro;',
+				chr(0xB6) => '&para;',
+				chr(0xB7) => '&middot;',
+				chr(0xBB) => '&raquo;',
+			);
+			return html_entity_decode(mb_convert_encoding(strtr($text, $map), 'UTF-8', 'ISO-8859-2'), ENT_QUOTES, 'UTF-8');
+		}		 
+		
 	}
 
 ?>

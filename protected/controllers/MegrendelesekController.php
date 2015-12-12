@@ -126,37 +126,42 @@ class MegrendelesekController extends Controller
 		// ha létezik a megrendelés és még nincsenek a tételei a nyomdakönyvbe rakva
 		if ($megrendeles != null && $megrendeles->nyomdakonyv_munka_id == 0) {
 			foreach ($megrendeles -> tetelek as $tetel) {
-				$nyomdakonyv = new Nyomdakonyv;
-				$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
-				$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
-				
-				// beállítjuk az alapértelmezett gépet a munkához, ha van
-				$gep = Nyomdagepek::model()->findByAttributes(array('alapertelmezett'=> 1));
-				if ($gep != null) {
-					$nyomdakonyv -> gep_id = $gep -> id;
+				if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {					
+					$nyomdakonyv = new Nyomdakonyv;
+					$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
+					$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
+					
+					// beállítjuk az alapértelmezett gépet a munkához, ha van
+					$gep = Nyomdagepek::model()->findByAttributes(array('alapertelmezett'=> 1));
+					if ($gep != null) {
+						$nyomdakonyv -> gep_id = $gep -> id;
+					}
+	
+					// beállítjuk az alapértelmezett munkatípust a munkához, ha van
+					$darabszam = $tetel->darabszam;
+					$szinek_szama1 = $tetel->szinek_szama1;
+					$szinek_szama2 = $tetel->szinek_szama2;		
+					$termek_id = $tetel->termek_id;
+					
+					$defaultMunkatipus = Utils::getDefaultMunkatipusToNyomdakonyv ($darabszam, $szinek_szama1, $szinek_szama2, $termek_id );
+	
+					if ($defaultMunkatipus != null) {
+						$nyomdakonyv -> munkatipus_id = $defaultMunkatipus;
+					}
+					
+					print_r($nyomdakonyv) ;
+					
+					$nyomdakonyv -> save(false);
 				}
-
-				// beállítjuk az alapértelmezett munkatípust a munkához, ha van
-				$darabszam = $tetel->darabszam;
-				$szinek_szama1 = $tetel->szinek_szama1;
-				$szinek_szama2 = $tetel->szinek_szama2;		
-				$termek_id = $tetel->termek_id;
-				
-				$defaultMunkatipus = Utils::getDefaultMunkatipusToNyomdakonyv ($darabszam, $szinek_szama1, $szinek_szama2, $termek_id );
-
-				if ($defaultMunkatipus != null) {
-					$nyomdakonyv -> munkatipus_id = $defaultMunkatipus;
-				}
-				
-				$nyomdakonyv -> save(false);	
 			}
 			
-			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
-			$megrendeles->save(false);
+//			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
+			$megrendeles->nyomdakonyv_munka_id = 1;	//Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
+//			$megrendeles->save(false);
 		}
 		
 		Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
-		$this->redirect(array('index'));
+//		$this->redirect(array('index'));
 	}
 	
 	 /**

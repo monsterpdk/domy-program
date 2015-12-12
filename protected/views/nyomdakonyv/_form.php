@@ -182,7 +182,7 @@
 			</div>
 			
 			<div class="row">
-				<?php echo $form->labelEx($model,'Nettó ár'); ?>
+				<?php echo $form->labelEx($model,'megrendeles_tetel.netto_ar'); ?>
 				<?php echo Chtml::textField('netto_ar', $model->megrendeles_tetel->darabszam * $model->megrendeles_tetel->netto_darabar, array('size'=>12, 'maxlength'=>12, 'readonly'=>true, 'style'=>'width:170px')); ?>
 			</div>
 		</div>
@@ -506,7 +506,7 @@
 				
 			<?php echo $form->error($model,'raktarbol_kiadva_datum'); ?>
 		</div>
-	
+			
 	<?php $this->endWidget();?>
 
 
@@ -604,62 +604,40 @@
 	<?php $this->endWidget();?>
 </div>
 
-	
 <div class = 'clear'>
-	<!-- --------------------- Vezérlőpult ----------------------------- -->
+	<!-- --------------------- Gépterem ----------------------------- -->
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Vezérlőpult</strong>",
+			'title'=>"<strong>Gépterem</strong>",
 		));
 	?>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'kep_file_nev'); ?>
-			<?php echo CHtml::activeFileField($model, 'kep_file_nev'); ?>
-			<?php echo $form->error($model,'kep_file_nev'); ?>
-		</div>
-		
-		<?php if ($model -> isNewRecord != '1' && !empty($model -> kep_file_nev)) { ?>
-			<div class="row">
-				 <?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev, "Feltöltött kép", array("width" => 200)); ?>
-			</div>
-		<?php } ?>
-
-		<?php if ($model -> sztornozva == 1): ?>
-			<div class="row">
-				<?php echo $form->labelEx($model,'sztornozas_oka'); ?>
-				<?php echo $form->textArea($model,'sztornozas_oka',array('size'=>60,'maxlength'=>255, 'readonly'=>true)); ?>
-				<?php echo $form->error($model,'sztornozas_oka'); ?>
-			</div>
-		<?php endif; ?>
-		
-		<?php if (Yii::app()->user->checkAccess('Admin')): ?>
-			<div class="row active">
-				<?php echo $form->checkBox($model,'torolt'); ?>
-				<?php echo $form->label($model,'torolt'); ?>
-				<?php echo $form->error($model,'torolt'); ?>
-			</div>
-		<?php endif; ?>
-
-		<div class="row active">
-			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
-			<?php echo $form->label($model,'sztornozva'); ?>
-			<?php echo $form->error($model,'sztornozva'); ?>
+			<?php echo $form->labelEx($model,'folyamatban_levo_muvelet'); ?>
+			<?php echo $form->textField($model,'folyamatban_levo_muvelet',array('size'=>30,'maxlength'=>30,'readonly'=>true)); ?>
+			<?php echo $form->error($model,'folyamatban_levo_muvelet'); ?>
 		</div>
 
-		<div class="row buttons">
-			<?php $this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'submitForm',
-						'caption'=>'Mentés',
-						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
-					 )); ?>
-			<?php $this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'back',
-						'caption'=>'Vissza',
-						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
-					 )); ?>
+		<div class="row">
+			<?php echo $form->labelEx($model,'varhato_befejezes'); ?>
+			<?php echo $form->textField($model,'varhato_befejezes',array('size'=>10,'maxlength'=>10)); ?>
+			<?php echo $form->error($model,'varhato_befejezes'); ?>
+		</div>		
+		
+		<div class="row" style="width:90%;" id="gepterem_message">
+		
+		</div>
+
+		<div class="row">
+			<?php
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_gepterem',
+					'caption'=>'Gépterem',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {gepteremAdatkuld();}'),
+					'htmlOptions'=>array('class'=>'btn btn-primary search-button', 'style'=>'margin-bottom:10px', 'target' => '_blank',),
+				));
+			?>		
 		</div>
 
 	<?php $this->endWidget();?>
@@ -769,6 +747,65 @@
 		</div>
 
 	<?php $this->endWidget();?>
+	
+<div class = 'clear'>
+	<!-- --------------------- Vezérlőpult ----------------------------- -->
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Vezérlőpult</strong>",
+		));
+	?>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'kep_file_nev'); ?>
+			<?php echo CHtml::activeFileField($model, 'kep_file_nev'); ?>
+			<?php echo $form->error($model,'kep_file_nev'); ?>
+		</div>
+		
+		<?php if ($model -> isNewRecord != '1' && !empty($model -> kep_file_nev)) { ?>
+			<div class="row">
+				 <?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev, "Feltöltött kép", array("width" => 200)); ?>
+			</div>
+		<?php } ?>
+
+		<?php if ($model -> sztornozva == 1): ?>
+			<div class="row">
+				<?php echo $form->labelEx($model,'sztornozas_oka'); ?>
+				<?php echo $form->textArea($model,'sztornozas_oka',array('size'=>60,'maxlength'=>255, 'readonly'=>true)); ?>
+				<?php echo $form->error($model,'sztornozas_oka'); ?>
+			</div>
+		<?php endif; ?>
+		
+		<?php if (Yii::app()->user->checkAccess('Admin')): ?>
+			<div class="row active">
+				<?php echo $form->checkBox($model,'torolt'); ?>
+				<?php echo $form->label($model,'torolt'); ?>
+				<?php echo $form->error($model,'torolt'); ?>
+			</div>
+		<?php endif; ?>
+
+		<div class="row active">
+			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
+			<?php echo $form->label($model,'sztornozva'); ?>
+			<?php echo $form->error($model,'sztornozva'); ?>
+		</div>
+
+		<div class="row buttons">
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'submitForm',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					 )); ?>
+		</div>
+
+	<?php $this->endWidget();?>	
 </div>
 
 <?php $this->endWidget(); ?>
@@ -807,6 +844,42 @@
 		} else {
 			alert ("A gép és munkatípus kiválasztása kötelező!");
 		}
+	}
+	
+	function gepteremAdatkuld() {
+		<?php echo CHtml::ajax(array(
+			'url'=> "js:'/index.php/nyomdakonyv/gepteremHivas/munka_id/" . $model->id . "'",
+			'data'=> "js:$(this).serialize()",
+			'type'=>'post',
+			'id' => 'gepterem-hivas-'.uniqid(),
+			'dataType'=>'json',
+			'success'=>"function(data)
+			{
+				if (data.status == 'ok')
+				{
+					$('#Nyomdakonyv_folyamatban_levo_muvelet').val(data.muvelet);
+//						$('#Nyomdakonyv_nyomas_kezdes_datum').val(data.nyomas_kezdes);
+					if (data.nyomas_kesz == '') {
+						$('#Nyomdakonyv_varhato_befejezes').val(data.muvelet_vege);
+					}
+					else {
+						$('#Nyomdakonyv_varhato_befejezes').val(data.nyomas_kesz);
+					}
+				}
+				else if (data.status = 'inserted') {
+					$('#gepterem_message').removeClass('alert').removeClass('alert-danger').addClass('alert').addClass('alert-success').html(data.message) ;
+				}
+				else if (data.status = 'failed') {
+					$('#gepterem_message').removeClass('alert').removeClass('alert-success').addClass('alert').addClass('alert-danger').html(data.message) ;
+				}
+				else
+				{
+//						$('#normaar').val(data.normaar);
+//						$('#normaido').val(data.normaido);
+				}
+
+			} ",
+		))?>;
 	}
 </script>
 

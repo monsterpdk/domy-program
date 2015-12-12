@@ -22,6 +22,11 @@
 			<?php echo DHtml::enumDropDownList($model, 'ugyfel_tipus'); ?>
 		</div>
 
+		<div class="row">
+			<?php echo $form->label($model,'cegnev'); ?>
+			<?php echo $form->textField($model,'cegnev',array('size'=>10,'maxlength'=>10)); ?>
+		</div>
+		
 		<div class="row active">
 			<?php echo $form->label($model,'archiv'); ?>
 			<?php echo $form->checkBox($model,'archiv'); ?>

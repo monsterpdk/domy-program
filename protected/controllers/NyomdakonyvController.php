@@ -192,6 +192,153 @@ class NyomdakonyvController extends Controller
 			'normaar'=> $normaar
 		));
 	}
+	
+	// Meghívja a géptermi program adatbázisát, megnézi, hogy ehhez a munkához van-e már benne bejegyzés, ha nincs, akkor létrehozza, ha van, akkor pedig visszaadja az ott rögzített két olyan mezőt, ami kell nekünk: keszido (elkészülés dátum), keszsec (elkészülés idő - óra, perc)
+	public function actionGepteremHivas($munka_id) {
+		$nyom_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/NYOM.dbf") ;
+		$workflow_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/workflow.dbf") ;
+		$model = $this -> loadModel($munka_id) ;		
+		$megrendeles_tetel = MegrendelesTetelek::model()->with('termek')->findByPk($model->megrendeles_tetel_id);
+//		print_r($megrendeles_tetel) ;
+			
+		$parameters = array() ;
+		$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;
+		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $nyom_dbf_url . "&filter=" . json_encode($parameters) ;
+		$result = unserialize(Utils::httpGet($query_url)) ;
+		if (count($result) == 0) {
+			//Hozzáadjuk a nyom.dbf-hez az új rekordot
+			$criteria=new CDBCriteria;
+			$criteria->select= 'cegnev, cegnev_teljes';
+			$criteria->join= 'join dom_megrendelesek on (t.id = dom_megrendelesek.ugyfel_id) join dom_megrendeles_tetelek on (dom_megrendelesek.id = dom_megrendeles_tetelek.megrendeles_id)' ;
+			$criteria->addCondition("dom_megrendeles_tetelek.id = :megrendeles_tetel_id") ;
+			$criteria->params = array(':megrendeles_tetel_id' => $model->megrendeles_tetel_id) ;
+			$ugyfel_adatok = Ugyfelek::model()->find($criteria) ;
+			$ugyfel_nev = $ugyfel_adatok->cegnev ;
+			if ($ugyfel_adatok->cegnev_teljes != "") {
+				$ugyfel_nev = $ugyfel_adatok->cegnev_teljes ;
+			}
+			$szin_c = $model->szin_c_elo + $model->szin_c_hat ;
+			if ($szin_c > 0) {
+				$szin_c = "TRUE" ;  
+			}
+			else
+			{
+				$szin_c = "0" ;  
+			}
+			$szin_m = $model->szin_m_elo + $model->szin_m_hat ;
+			if ($szin_m > 0) {
+				$szin_m = "TRUE" ;  
+			}
+			else
+			{
+				$szin_m = "0" ;  
+			}
+			$szin_y = $model->szin_y_elo + $model->szin_y_hat ;
+			if ($szin_y > 0) {
+				$szin_y = "TRUE" ;  
+			}
+			else
+			{
+				$szin_y = "0" ;  
+			}
+			$szin_k = $model->szin_k_elo + $model->szin_k_hat ;
+			if ($szin_k > 0) {
+				$szin_k = "TRUE" ;  
+			}
+			else
+			{
+				$szin_k = "0" ;  
+			}
+			$mutacio = "0" ;
+			if ($model->szin_mutaciok > 0) {
+				$mutacio = "TRUE" ;	
+			}
+			$forditott_levezetes = "0" ;
+			if ($model->forditott_levezetes > 0) {
+				$forditott_levezetes = "TRUE" ;	
+			}
+			$ctp = "0" ;
+			if ($model->ctp > 0) {
+				$ctp = "TRUE" ;	
+			}	
+			$kifutos = "0" ;
+			if ($model->kifutos > 0) {
+				$kifutos = "TRUE" ;	
+			}				
+			
+			$parameters = array() ;
+			$nyomasi_kategoria = Utils::NyomasiKategoriaSzamol($model->megrendeles_tetel->displayTermekSzinekSzama, $model->megrendeles_tetel->darabszam, $megrendeles_tetel->termek->tipus,$model->kifutos) ; 
+			$parameters[] = array("TSZAM"=>rawurlencode($model->taskaszam),
+								  "CEGNEV"=>rawurlencode($ugyfel_nev),
+								  "MUNEV"=>rawurlencode(mb_strtoupper($model->megrendeles_tetel->munka_neve, "UTF-8")),
+								  "NEV"=>rawurlencode($model->megrendeles_tetel->termek->displayTermekTeljesNev),
+								  "DARAB"=>$model->megrendeles_tetel->darabszam,
+								  "SZIN"=>rawurlencode($model->megrendeles_tetel->displayTermekSzinekSzama),
+								  "PANTON"=>rawurlencode($model->pantone),
+								  "TASKKI"=>date("Y-m-d", strtotime($model->taska_kiadasi_datum)),
+								  "TASKKISE"=>rawurlencode(date("H,i", strtotime($model->taska_kiadasi_datum))),
+								  "GEP"=>$model->gep_id,
+								  "LEMEZ"=>$model->szin_c_elo + $model->szin_m_elo + $model->szin_y_elo + $model->szin_k_elo + $model->szin_c_hat + $model->szin_m_hat + $model->szin_y_hat + $model->szin_k_hat,
+								  "DOMYFILM"=>"0",
+								  "NYOMKAT"=>$nyomasi_kategoria,
+								  "NYOMKATU"=>$nyomasi_kategoria,
+								  "C"=>$szin_c,
+								  "M"=>$szin_m,
+								  "Y"=>$szin_y,
+								  "K"=>$szin_k,
+								  "MUTACIO"=>$mutacio,
+								  "MUTSZIN"=>$model->szin_mutaciok_szam,
+								  "FORDLEV"=>$forditott_levezetes,
+								  "CTP"=>$ctp,
+								  "KIFUT"=>$kifutos) ;
+			$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=insert&dbf=" . $nyom_dbf_url . "&fields=" . json_encode($parameters) ;
+			$result = unserialize(Utils::httpGet($query_url)) ;
+			if (is_numeric($result)) {
+				$return["status"] = "inserted" ;
+				$return["message"] = "Géptermi adatbázisba mentve!" ;
+			}
+			else
+			{
+				$return["status"] = "failed" ;
+				$return["message"] = "Géptermi adatbázis mentése sikertelen!" ;	
+			}
+			echo json_encode($return) ;
+		}
+		else
+		{
+			//Visszaadjuk a keszido és keszsec mezők tartalmát, illetve a workflow dbf-ből az esetleges műveletet és műveletre vonatkozó időpontot
+			$parameters = array() ;
+			$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;
+			$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $workflow_dbf_url . "&filter=" . json_encode($parameters) ;
+			$result = unserialize(Utils::httpGet($query_url)) ;
+			$return["nyomas_kezdes"] = Utils::w1250_to_utf8($result[0]["KEZD"]);
+			$return["muvelet"] = Utils::w1250_to_utf8($result[0]["MEGJ"]);			
+			$return["muvelet_vege"] = "0000-00-00 00:00:00" ;
+			if ($result[0]["VEGEDATE"] != "") {
+				$return["muvelet_vege"] = mb_convert_encoding(str_replace(".", "-", $result[0]["VEGEDATE"]) . " " . str_replace(",", ":", $result[0]["VEGEIDO"]) . ":00",'UTF-8','UTF-8');
+			}
+			
+			$parameters = array() ;
+			$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;
+			$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $nyom_dbf_url . "&filter=" . json_encode($parameters) ;
+			$result = unserialize(Utils::httpGet($query_url)) ;
+			$return["nyomas_kesz"] = "0000-00-00 00:00:00" ;
+			if ($result[0]["KESZIDO"] != "") {
+				$kesz_ev = substr($result[0]["KESZIDO"], 0,4) ;
+				$kesz_honap = substr($result[0]["KESZIDO"], 4,2) ;
+				$kesz_nap = substr($result[0]["KESZIDO"], 6,2) ;
+				$return["nyomas_kesz"] = mb_convert_encoding("$kesz_ev-$kesz_honap-$kesz_nap " . str_replace(",", ":", $result[0]["KESZSEC"]) . ":00",'UTF-8','UTF-8');
+			}
+			if ($return["nyomas_kesz"] !=  "0000-00-00 00:00:00") {
+				$model->elkeszulesi_datum = $return["nyomas_kesz"] ;
+				$return["muvelet"] = "Nyomás kész!" ;				
+				$model->save() ;
+			}
+			$return["status"] = "ok" ;
+//			print_r($return) ;
+			echo json_encode($return) ;
+		}
+	}
 
 	// Táska/CTP-s táska PDF-et előállító action.
 	public function actionPrintTaska()

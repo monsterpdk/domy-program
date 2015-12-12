@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * ----------------------------------------------------------------
 *			XBase
@@ -317,3 +317,4 @@ class XBaseRecord {
 	     return ($this->deleted?"*":" ").implode("",$this->choppedData);
      }
 }
+?>

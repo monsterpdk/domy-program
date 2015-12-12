@@ -29,12 +29,19 @@ body {
   border-radius:5px;
 }
 
+.form {
+	max-width: 1400px;	
+}
+
+.right-widget {
+	float: right !important;	
+}
+
 #yw0 {
 	margin-right:0px;
 }
 
 #yw1 {
-	margin-top: 10px;
 	margin-right: 0px;
 }
 
@@ -607,13 +614,21 @@ footer {
 	text-align : center;
 	width : 80px;
 }
-div.form .active label
+div.form .active  label
 {
 	display: inline;
+}
+div.form .checkbox_group_horizontal  label
+{
+	display: inline;
+	padding-right: 15px;
 }
 .active {
 	clear: both;
 	padding: 6px 6px 10px 0px;
+}
+.checkbox_group_horizontal {
+	padding: 27px 6px 10px 0px;
 }
 .buttons {
 	clear: both;
@@ -651,6 +666,7 @@ div.form .active label
 	margin-right: 20px;
 	width : 45%;
 }
+
 #arajanlatok-form .row {
 	float: left;
 	margin-left: 20px;
@@ -709,6 +725,42 @@ div.form .active label
 	float: left;
 	margin-left: 20px;
 }
+#szallitolevelek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#szallitolevelek-form .row {
+	float: left;
+	margin-right: 20px;
+}
+#nyomdakonyv-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#nyomdakonyv-form .row {
+	float: left;
+	margin-right: 20px;
+}
+#nyomda-munkatipusok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#nyomda-munkatipusok-form .row {
+	float: left;
+	margin-right: 20px;
+}
+#zuh-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#zuh-form .row {
+	float: left;
+	margin-right: 20px;
+}
 .search-form .portlet {
 	float: left;
 	width : 100%;
@@ -746,16 +798,95 @@ div.form .active label
 }
 
 /* radiobutton-ok vízszintesen jelenjenek meg egymás mellett*/
-DIV.boritekMeretRadioGroup {
-	margin-bottom: 20px;
+DIV.boritekMeretRadioGroup, DIV.boritekZarodasRadioGroup, DIV.boritekAblakhelyRadioGroup {
+	margin-bottom: 0px;
     padding-left: 0px;
 }
  
+DIV.boritekAblakhelyRadioGroup LABEL,
+DIV.boritekAblakhelyRadioGroup INPUT,
+DIV.boritekZarodasRadioGroup LABEL,
+DIV.boritekZarodasRadioGroup INPUT,
 DIV.boritekMeretRadioGroup LABEL,
 DIV.boritekMeretRadioGroup INPUT {
     display: inline!important;
 }
 
+DIV.boritekAblakhelyRadioGroup INPUT,
+DIV.boritekZarodasRadioGroup INPUT,
 DIV.boritekMeretRadioGroup INPUT {
 	margin-right : 15px!important;
+}
+
+DIV.boritekMeretRadioGroup INPUT#termek_kereso {
+	margin-top : 10px ;
+}
+
+div.flash-error
+{
+	background:#FBE3E4;
+	color:#8a1f11;
+	border-color:#FBC2C4;
+}
+
+div.flash-notice
+{
+	background:#FFF6BF;
+	color:#514721;
+	border-color:#FFD324;
+}
+
+div.flash-success
+{
+	background:#E6EFC2;
+	color:#264409;
+	border-color:#C6D880;
+}
+
+div.flash-error a
+{
+	color:#8a1f11;
+}
+
+div.flash-notice a
+{
+	color:#514721;
+}
+
+div.flash-success a
+{
+	color:#264409;
+}
+
+div.flash-error, div.flash-notice, div.flash-success
+{
+	padding:.8em;
+	margin-bottom:1em;
+	border:2px solid #ddd;
+}
+
+div.search-options fieldset {
+	border: 1px solid #e5e5e5;
+	padding: 10px ;
+}
+
+div.search-options fieldset legend {
+	margin-bottom: 0px ;
+	font-size: 0.9em;
+	line-height: 15px;
+	width: auto;
+	border-style: none ;
+	padding: 0px 4px 2px 4px ;
+}
+.btn-lg {
+	padding : 10px!important;
+	padding-left : 15px!important;
+	padding-right : 15px!important;
+}
+table tr td.yellow {
+    background:#FFF6BF;
+}
+.table-zuh td
+{
+	padding: 5px;
 }
