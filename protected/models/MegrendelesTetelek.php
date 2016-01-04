@@ -43,7 +43,7 @@ class MegrendelesTetelek extends CActiveRecord
 
 	public function getClassName ()
 	{
-		return "Árajánlat tétel";
+		return "Megrendelés tétel";
 	}
 	
 	/**

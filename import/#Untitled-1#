@@ -1,0 +1,1 @@
+update dom_ugyfelek set  SELECT * FROM `dom_ugyfelek` WHERE length(`kapcsolattarto_nev`) > 5 ORDER BY `kapcsolattarto_nev` ASC  

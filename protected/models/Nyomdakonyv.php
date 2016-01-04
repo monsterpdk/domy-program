@@ -134,6 +134,7 @@ class Nyomdakonyv extends CActiveRecord
 			'megrendeles_tetel' => array(self::BELONGS_TO, 'MegrendelesTetelek', 'megrendeles_tetel_id'),
 			'gep' => array(self::BELONGS_TO, 'Nyomdagepek', 'gep_id'),
 			'munkatipus' => array(self::BELONGS_TO, 'NyomdaMunkatipusok', 'munkatipus_id'),
+			'lejelentes_sorok' => array(self::HAS_MANY, 'NyomdakonyvLejelentes', 'nyomdakonyv_id'),
 		);
 	}
 
@@ -221,6 +222,9 @@ class Nyomdakonyv extends CActiveRecord
 			'szinszam2_search' => 'Hátoldal színszám tól-ig',
 			'folyamatban_levo_muvelet' => 'Folyamatban lévő művelet',
 			'varhato_befejezes' => 'Várható befejezés',
+			'kesz_jo' => 'Jó termék',
+			'kesz_selejt' => 'Selejt',
+			'kesz_visszazu' => 'VisszaZu',			
 		);
 	}
 

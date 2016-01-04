@@ -167,6 +167,7 @@
 			}
 			
 			if ($termek_id != null && $termek_id != 0) {
+						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
 						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
 														") -> queryRow();
@@ -185,9 +186,17 @@
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
 				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
 				$nyomasi_ar_kategoria_tipus = "" ;
+				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
+				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
+				if ($termek_kategoria_tipus == "") {
+					$kifuto = 0 ;	//Ajánlatnál lehet ezt megadni, vagy csak a nyomdakönyvben?					
+					$nyomasi_ar_kategoria_tipus = Utils::NyomasiKategoriaSzamol($szinszam1 . "+" . $szinszam2, $darabszam, $termek_reszletek->tipus, $kifuto);
+				}
+				$nyomasi_ar_kategoria_tipus = str_replace("/","",$nyomasi_ar_kategoria_tipus) ;
+//				echo "tipus: " . $nyomasi_ar_kategoria_tipus ;
 				//Itt kérdés, hogy a $szinszam1 + $szinszam2 összege adja ki a színek számát, vagy a nagyobbik érték a kettő közül
 				//Alapból most a nagyobbik értéket veszem, aztán meglátjuk
-				if ($termek_kategoria_tipus == "A") {
+/*				if ($termek_kategoria_tipus == "A") {
 					if ($szinszam > 2) {
 						$nyomasi_ar_kategoria_tipus = "C" ;
 					}
@@ -204,11 +213,12 @@
 					else {
 						$nyomasi_ar_kategoria_tipus = "B" . $szinszam ;	
 					}							
-				}
+				}*/
 				
 				$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0)" ;
 				$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
 				$nyomasi_ar = 0 ;
+//				print_r($nyomasiAr) ;
 				if ($nyomasiAr != false) {					
 					switch ($szinszam1) {
 						case 1: $elooldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
@@ -276,8 +286,7 @@
 				$selejt = $selejt1 + $selejt2 ;	
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
-				
-				
+								
 				if ($darabszam >= 2000) {
 					$netto_osszeg = ($darabszam * $db_ar) + ($nyomasi_ar * $darabszam) ;
 				}
@@ -497,8 +506,17 @@
 		function szamla_letrehozasa($megrendeles_id) {
 			$megrendeles_tetelek = MegrendelesTetelek::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles_id)) ;
 			$megrendeles_adatok = Megrendelesek::model() -> findByAttributes(array('id' => $megrendeles_id)) ;
+			$megrendeles_fizmod = FizetesiModok::model() -> findByAttributes(array('id' => $megrendeles_adatok->proforma_fizetesi_mod)) ;
 			if (count($megrendeles_tetelek) > 0) {
 				$partner_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_orszag)) ;
+				$partner_kozterulet_nev = $megrendeles_adatok->ugyfel->szekhely_cim	;
+				$partner_kozterulet_jellege = " " ;
+				$partner_kozterulet_hsz = " " ;
+				if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|) (.*?)$/", $megrendeles_adatok->ugyfel->szekhely_cim, $matches)) {
+					$partner_kozterulet_nev = trim($matches[1]) ;
+					$partner_kozterulet_jellege = trim($matches[2]) ;
+					$partner_kozterulet_hsz = trim($matches[3]) ;
+				}
 				$megrendeles = array() ;				
 				$megrendeles["TranzakcioID"] = $megrendeles_id ; 
 				$megrendeles["TranzakcioTipus"] = 0 ;
@@ -506,9 +524,10 @@
 				$megrendeles["BFejlec"]["MozgasAlapID"] = 600 ;
 				$megrendeles["BFejlec"]["Kiallitas"] = date("Y.m.d") ;
 				$megrendeles["BFejlec"]["Teljesites"] = date("Y.m.d") ;
-				$megrendeles["BFejlec"]["Esedekes"] = date("Y.m.d", mktime(0, 0, 0, date("m")  , date("d")+8, date("Y"))) ;
-				$megrendeles["BFejlec"]["Lejarat"] = date("Y.m.d", mktime(0, 0, 0, date("m")  , date("d")+8, date("Y"))) ;
-				$megrendeles["BFejlec"]["FizModID"] = 1 ;		//Alapértelmezetten az átutalásos fizetési mód él
+				$megrendeles["BFejlec"]["Esedekes"] = date("Y.m.d", mktime(0, 0, 0, date("m")  , date("d")+$megrendeles_fizmod->fizetesi_hatarido, date("Y"))) ;
+				$megrendeles["BFejlec"]["Lejarat"] = date("Y.m.d", mktime(0, 0, 0, date("m")  , date("d")+$megrendeles_fizmod->fizetesi_hatarido, date("Y"))) ;
+//				$megrendeles["BFejlec"]["FizModID"] = 1 ;		//Alapértelmezetten az átutalásos fizetési mód él
+				$megrendeles["BFejlec"]["FizModID"] = $megrendeles_fizmod->szamlazo_azonosito ;		
 //				if ($megrendeles_adatok->megrendeles_forras_megrendeles_id != "") {
 //					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_adatok->megrendeles_forras_megrendeles_id ;
 					$megrendeles["BFejlec"]["BSorszam2"] = "WEB-" . $megrendeles_id ;
@@ -523,14 +542,20 @@
 				$megrendeles["BFejlec"]["Partner"]["PIrszam"] = $megrendeles_adatok->ugyfel->szekhely_irsz ;
 				$megrendeles["BFejlec"]["Partner"]["PHelyseg"] = $megrendeles_adatok->ugyfel->szekhely_varos ;
 				$megrendeles["BFejlec"]["Partner"]["POrszag"] = $partner_orszag->nev ;
-				$megrendeles["BFejlec"]["Partner"]["PUtca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
+//				$megrendeles["BFejlec"]["Partner"]["PUtca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
+				$megrendeles["BFejlec"]["Partner"]["KozteruletNev"] = $partner_kozterulet_nev ;
+				$megrendeles["BFejlec"]["Partner"]["KozteruletJelleg"] = $partner_kozterulet_jellege ;
+				$megrendeles["BFejlec"]["Partner"]["Hazszam"] = $partner_kozterulet_hsz ;
 				$megrendeles["BFejlec"]["Partner"]["Adoszam"] = $megrendeles_adatok->ugyfel->adoszam ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["CimTipus"] = 1 ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["CimNev"] = $megrendeles_adatok->ugyfel->cegnev ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["IrSzam"] = $megrendeles_adatok->ugyfel->szekhely_irsz ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Helyseg"] = $megrendeles_adatok->ugyfel->szekhely_varos ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Orszag"] = $partner_orszag->nev ;
-				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Utca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
+//				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Utca"] = $megrendeles_adatok->ugyfel->szekhely_cim ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["KozteruletNev"] = $partner_kozterulet_nev ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["KozteruletJelleg"] = $partner_kozterulet_jellege ;
+				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Hazszam"] = $partner_kozterulet_hsz ;
 				
 				$megrendeles["bsorok"] = array() ;				
 				foreach ($megrendeles_tetelek as $tetel) {

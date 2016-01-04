@@ -9,6 +9,7 @@
  * @property string $nev
  * @property string $telefon
  * @property string $email
+ * @property integer $alapertelmezett_kapcsolattarto
  * @property integer $torolt
  */
 class UgyfelUgyintezok extends CActiveRecord
@@ -35,13 +36,13 @@ class UgyfelUgyintezok extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('ugyfel_id, nev, telefon, email', 'required'),
-			array('torolt', 'numerical', 'integerOnly'=>true),
+			array('torolt, alapertelmezett_kapcsolattarto', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_id', 'length', 'max'=>10),
 			array('nev, email', 'length', 'max'=>127),
 			array('telefon', 'length', 'max'=>30),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ugyfel_id, nev, telefon, email, torolt', 'safe', 'on'=>'search'),
+			array('id, ugyfel_id, nev, telefon, email, alapertelmezett_kapcsolattarto, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -72,6 +73,7 @@ class UgyfelUgyintezok extends CActiveRecord
 			'nev' => 'Név',
 			'telefon' => 'Telefon',
 			'email' => 'Email',
+			'alapertelmezett_kapcsolattarto' => 'Alapértelmezett kapcsolattartó',
 			'torolt' => 'Törölt',
 		);
 	}
@@ -99,6 +101,7 @@ class UgyfelUgyintezok extends CActiveRecord
 		$criteria->compare('nev',$this->nev,true);
 		$criteria->compare('telefon',$this->telefon,true);
 		$criteria->compare('email',$this->email,true);
+		$criteria->compare('alapertelmezett_kapcsolattarto', $this->alapertelmezett_kapcsolattarto,true) ;
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg
 		if (!Yii::app()->user->checkAccess('Admin'))

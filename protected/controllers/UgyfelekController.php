@@ -107,6 +107,17 @@ class UgyfelekController extends Controller
             if (isset($_POST['UgyfelUgyintezok']))
             {
                 $model->ugyfelUgyintezo = $_POST['UgyfelUgyintezok'];
+                $kapcsolattarto = "" ;
+                for ($i = 0; $i < count($_POST['UgyfelUgyintezok']); $i++) {
+                	if ($_POST['UgyfelUgyintezok'][$i]["alapertelmezett_kapcsolattarto"] == 1) {
+                		$kapcsolattarto = $i ;
+                	}
+                }
+                if ($kapcsolattarto != "") {
+                	$model->kapcsolattarto_nev = $_POST['UgyfelUgyintezok'][$kapcsolattarto]["nev"] ;
+                	$model->kapcsolattarto_telefon = $_POST['UgyfelUgyintezok'][$kapcsolattarto]["telefon"] ;
+                	$model->kapcsolattarto_email = $_POST['UgyfelUgyintezok'][$kapcsolattarto]["email"] ;
+                }
             }
             if ($model->saveWithRelated('ugyfelUgyintezo'))
 				$this->redirect(array('index'));

@@ -60,8 +60,14 @@ class UgyfelUgyintezokController extends Controller
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['UgyfelUgyintezok']))
-		{
+		{			
 			$model->attributes=$_POST['UgyfelUgyintezok'];
+			if ($model->alapertelmezett_kapcsolattarto == 1) {
+				Yii::app()->db
+					->createCommand("UPDATE dom_ugyfel_ugyintezok SET alapertelmezett_kapcsolattarto = '0' WHERE ugyfel_id=:ugyfel_id")
+					->bindValues(array(':ugyfel_id' => $model->ugyfel_id))
+					->execute();
+			}
 			if($model->save())
 				$this->redirect(array('index'));$this->redirect(array('index'));
 		}

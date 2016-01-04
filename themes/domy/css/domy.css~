@@ -47,6 +47,7 @@ body {
 
 #yw2 {
 	margin-right:0px;
+	margin-bottom: 25px;
 }
 
 /*
@@ -889,4 +890,18 @@ table tr td.yellow {
 .table-zuh td
 {
 	padding: 5px;
+}
+
+.nyomdakonyv-lejelentes-form-bal {
+	width: 45% ;
+	float: left ;	
+}
+
+.nyomdakonyv-lejelentes-form-jobb {
+	width: 55% ;
+	float: right ;		
+}
+
+.nyomdakonyv-lejelentes-form-bal .row {
+	margin-left: 0px ;	
 }

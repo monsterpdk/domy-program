@@ -58,6 +58,19 @@ class NyomdakonyvController extends Controller
 	}
 */
 
+	public function actionKezi_jelentes_ment($id) {
+		$model = $this->loadModel($id);
+		if (isset($_POST["Nyomdakonyv"])) {
+			$eredmenyek = $_POST["Nyomdakonyv"] ;
+			$model->kesz_jo = $eredmenyek["kesz_jo"] ;
+			$model->kesz_selejt = $eredmenyek["kesz_selejt"] ;
+			$model->kesz_visszazu = $eredmenyek["kesz_visszazu"] ;
+			if($model->save()) {
+				$this->redirect(array('nyomdakonyv/update/' . $id));				
+			}
+		}
+	}
+
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -195,8 +208,11 @@ class NyomdakonyvController extends Controller
 	
 	// Meghívja a géptermi program adatbázisát, megnézi, hogy ehhez a munkához van-e már benne bejegyzés, ha nincs, akkor létrehozza, ha van, akkor pedig visszaadja az ott rögzített két olyan mezőt, ami kell nekünk: keszido (elkészülés dátum), keszsec (elkészülés idő - óra, perc)
 	public function actionGepteremHivas($munka_id) {
-		$nyom_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/NYOM.dbf") ;
-		$workflow_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/workflow.dbf") ;
+//		$nyom_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/NYOM.dbf") ;
+//		$workflow_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/workflow.dbf") ;
+		$nyom_dbf_url = rawurlencode(Yii::app()->config->get('NyomDbfPath'));
+		$workflow_dbf_url = rawurlencode(Yii::app()->config->get('WorkflowDbfPath'));
+		
 		$model = $this -> loadModel($munka_id) ;		
 		$megrendeles_tetel = MegrendelesTetelek::model()->with('termek')->findByPk($model->megrendeles_tetel_id);
 //		print_r($megrendeles_tetel) ;

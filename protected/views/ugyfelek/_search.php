@@ -24,7 +24,7 @@
 
 		<div class="row">
 			<?php echo $form->label($model,'cegnev'); ?>
-			<?php echo $form->textField($model,'cegnev',array('size'=>10,'maxlength'=>10)); ?>
+			<?php echo $form->textField($model,'cegnev',array('size'=>10,'maxlength'=>30)); ?>
 		</div>
 		
 		<div class="row active">

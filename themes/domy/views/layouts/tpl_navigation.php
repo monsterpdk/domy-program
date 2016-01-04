@@ -69,6 +69,7 @@
 																array ('label'=>'Műveletek kezelése', 'url'=> Yii::app()->createUrl('/nyomdaMuveletek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Munkatípusok kezelése', 'url'=> Yii::app()->createUrl('/nyomdaMunkatipusok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 																array ('label'=>'Művelet árak kezelése', 'url'=> Yii::app()->createUrl('/nyomdaMuveletNormaarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
+																array ('label'=>'Nyomdakönyvi beállítások', 'url'=> Yii::app()->createUrl('/nyomdakonyvBeallitasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin')),
 															)),	                                                                          
 		                    		array ('label'=>'Ügyfelekkel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (

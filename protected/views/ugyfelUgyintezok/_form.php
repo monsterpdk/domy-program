@@ -53,6 +53,13 @@
 		<?php echo $form->textField($model,'email',array('size'=>60,'maxlength'=>127)); ?>
 		<?php echo $form->error($model,'email'); ?>
 	</div>
+	
+	<div class="row">
+		<input id = "alapertelmezett_kapcsolattarto" type="checkbox" value="<?php echo $model->alapertelmezett_kapcsolattarto; ?>" <?php if ($model->alapertelmezett_kapcsolattarto == 1) echo " checked "; ?> name="alapertelmezett_kapcsolattarto">
+		<?php echo $form->label($model,'alapertelmezett_kapcsolattarto'); ?>
+		<?php echo $form->error($model,'alapertelmezett_kapcsolattarto'); ?>
+	</div>
+	
 
 	<?php if (Yii::app()->user->checkAccess('Admin')): ?>
 		<div class="row active">

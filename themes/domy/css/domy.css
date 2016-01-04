@@ -306,6 +306,25 @@ and (max-width : 480px) {
 }
 }
 
+@media only screen 
+and (max-width : 980px) {
+	.dropdown-menu ul {
+    left: 0;
+    position: absolute;
+	margin-top:0px;
+	margin-left:0px;
+    visibility: visible;
+}
+	.dropdown-menu ul li{
+	margin-left:10px;
+}
+
+	.nav-collapse .nav > li > a, .nav-collapse .dropdown-menu a {
+		padding-top: 0px ;
+		padding-bottom: 0px ;
+	}
+}
+
 li.almenu-jobbra > ul {
 	left: 100%!important;
 	float: left;
@@ -890,4 +909,18 @@ table tr td.yellow {
 .table-zuh td
 {
 	padding: 5px;
+}
+
+.nyomdakonyv-lejelentes-form-bal {
+	width: 45% ;
+	float: left ;	
+}
+
+.nyomdakonyv-lejelentes-form-jobb {
+	width: 55% ;
+	float: right ;		
+}
+
+.nyomdakonyv-lejelentes-form-bal .row {
+	margin-left: 0px ;	
 }

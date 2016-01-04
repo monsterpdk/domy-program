@@ -9,6 +9,7 @@
  * @property string $fullname
  * @property string $password
  * @property string $email
+ * @property string $email
  */
 class User extends CActiveRecord
 {
@@ -37,7 +38,8 @@ class User extends CActiveRecord
 			array('username, fullname, new_password, new_password_repeat, email', 'required', 'on' => 'create'),
 			array('fullname', 'length', 'max'=>256),
 			array('username, email', 'length', 'max'=>128),
-			array('id, username, fullname, email', 'safe', 'on'=>'search'),
+			array('gepterem_dolgkod', 'length', 'max'=>10),
+			array('id, username, fullname, email, gepterem_dolgkod', 'safe', 'on'=>'search'),
 			array('new_password, new_password_repeat', 'length', 'min'=>1, 'max'=>40),
 			
 			// új user létrehozása esetén mindenképpen ki kell tölteni a jelszó / jelszó újra mezőket
@@ -96,6 +98,7 @@ class User extends CActiveRecord
 			'new_password' => 'Jelszó',
 			'new_password_repeat' => 'Jelszó újra',
 			'email' => 'E-mail',
+			'gepterem_dolgkod' => 'Géptermi programban dolgozó kód (ha van)',
 		);
 	}
 
@@ -121,6 +124,7 @@ class User extends CActiveRecord
 		$criteria->compare('username',$this->username,true);
 		$criteria->compare('fullname',$this->fullname,true);
 		$criteria->compare('email',$this->email,true);
+		$criteria->compare('gepterem_dolgkod',$this->gepterem_dolgkod,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

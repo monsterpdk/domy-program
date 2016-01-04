@@ -53,6 +53,12 @@
 			<?php echo $form->error($model,'email'); ?>
 		</div>
 
+		<div class="row">
+			<?php echo $form->labelEx($model,'gepterem_dolgkod'); ?>
+			<?php echo $form->textField($model,'gepterem_dolgkod',array('size'=>10,'maxlength'=>10)); ?>
+			<?php echo $form->error($model,'gepterem_dolgkod'); ?>
+		</div>
+
 		<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 
 					 array(

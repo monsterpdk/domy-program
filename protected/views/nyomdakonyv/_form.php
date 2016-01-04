@@ -640,6 +640,35 @@
 			?>		
 		</div>
 
+		<?php		
+			if (Yii::app()->user->checkAccess('NyomdakonyvLejelentes.Create')) {
+				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_create_nyomdakonyvLejelentes',
+					'caption'=>'Kézi lejelentés',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {addUpdateNyomdakonyvLejelentes("create", $(this));}'),
+					'htmlOptions'=>array('class'=>'btn btn-success'),
+				));
+			}
+			
+			// a dialógus ablak inicializálása
+			$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+				'id'=>'dialogNyomdakonyvLejelentes',
+				'options'=>array(
+					'title'=>'Kézi lejelentés',
+					'autoOpen'=>false,
+					'modal'=>true,
+					'width'=>950,
+					'height'=>650,
+				),
+			));
+			
+			echo "<div class='divForForm'></div>";
+			
+			$this->endWidget();
+		?>		
+
 	<?php $this->endWidget();?>
 	
 	
@@ -881,6 +910,67 @@
 			} ",
 		))?>;
 	}
+	
+	var lejelentes_dialog ;
+	function addUpdateNyomdakonyvLejelentes (createOrUpdate, buttonObj)
+	{
+	
+		redirectUrl = "";
+		try {
+			redirectUrl = createOrUpdate.target.action;
+		} catch (e) {
+			redirectUrl = "";
+		}
+		
+		if (typeof buttonObj != 'undefined')
+			hrefString = buttonObj.parent().children().eq(1).attr('href');
+			
+		isUpdate = createOrUpdate == "update" || (typeof redirectUrl != 'undefined' && redirectUrl != '' && redirectUrl.indexOf("update") != -1);
+		op = (isUpdate) ? "update" : "create";
+
+		<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/nyomdakonyvLejelentes/' + op + '/id/" . $model->id . "'",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'send-link-'.uniqid(),
+				'replace' => '',
+				'dataType'=>'json',
+				'success'=>"function(data)
+				{
+					if (data.status == 'failure')
+					{
+						$('#dialogNyomdakonyvLejelentes div.divForForm').html(data.div);
+						$('#dialogNyomdakonyvLejelentes div.divForForm form').submit(addUpdateNyomdakonyvLejelentes);
+					}
+					else
+					{
+/*						$.fn.yiiGridView.update(\"megrendelesTetelek-grid\",{ complete: function(jqXHR, status) {}})
+						
+						// az egyedi ár checkbox-ot kézzel átbillentjük a megfelelő értékre (a db-ben már a helyes érték van, csak a UI-on kell az interaktivitás miatt változtatni)
+						$('#egyedi_ar_dsp').prop('checked', (data.egyedi == '1' ? true : false));
+						$('#Megrendelesek_egyedi_ar').val (data.egyedi);
+						
+						$('#dialogMegrendelesTetel div.divForForm').html(data.div);
+						$('#dialogMegrendelesTetel').dialog('close');*/
+					}
+	 
+				} ",
+		))?>;
+
+		
+	lejelentes_dialog = $("#dialogNyomdakonyvLejelentes").dialog({
+		title: 'Kézi lejelentés',
+		autoOpen:false,
+		modal:true,
+		width:950,
+		height:650,
+		
+	});
+		lejelentes_dialog.dialog("open");
+//		$("#dialogNyomdakonyvLejelentes").dialog('option', 'title', 'Kézi lejelentés');
+		
+		return false; 
+	}	
 </script>
 
 <script>

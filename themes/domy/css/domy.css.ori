@@ -1,6 +1,5 @@
 body {
 	
-	font-size:12px;
 	padding-bottom: 40px;
 	
 }
@@ -30,16 +29,25 @@ body {
   border-radius:5px;
 }
 
+.form {
+	max-width: 1400px;	
+}
+
+.right-widget {
+	float: right !important;	
+}
+
 #yw0 {
 	margin-right:0px;
 }
 
 #yw1 {
-	margin-right:0px;
+	margin-right: 0px;
 }
 
 #yw2 {
 	margin-right:0px;
+	margin-bottom: 25px;
 }
 
 /*
@@ -236,7 +244,8 @@ text-align: center !important;
   top:0;
   left:0;
 }
- 
+
+
 .dropdown-menu li > a:hover,
 .dropdown-menu li > a:focus,
 .dropdown-submenu:hover > a {
@@ -268,6 +277,49 @@ text-align: center !important;
   outline: 0;
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#848282', endColorstr='#9e9090', GradientType=0);
 }
+
+/* ALMENÜ..............................*/
+.dropdown-menu ul {
+    left: 100%;
+    position: absolute;
+	margin-top:-35px;
+	margin-left:18px;
+    visibility: hidden;
+}
+
+.dropdown-menu li:hover ul  {
+    visibility: visible;
+    display: block;
+}
+
+@media only screen 
+and (max-width : 480px) {
+	.dropdown-menu ul {
+    left: 0;
+    position: absolute;
+	margin-top:0px;
+	margin-left:0px;
+    visibility: visible;
+}
+	.dropdown-menu ul li{
+	margin-left:10px;
+}
+}
+
+li.almenu-jobbra > ul {
+	left: 100%!important;
+	float: left;
+}
+
+li.almenu-balra > ul {
+	right: 100%!important;
+	float: right;
+}
+
+li.almenu-balra span.caret, li.almenu-jobbra span.caret {
+	border-top-color:#000000 !important;
+}
+
 /*Side Nav*/
 .sidebar-nav {
   padding:0!important;
@@ -562,4 +614,294 @@ footer {
 .actions-column {
 	text-align : center;
 	width : 80px;
+}
+div.form .active  label
+{
+	display: inline;
+}
+div.form .checkbox_group_horizontal  label
+{
+	display: inline;
+	padding-right: 15px;
+}
+.active {
+	clear: both;
+	padding: 6px 6px 10px 0px;
+}
+.checkbox_group_horizontal {
+	padding: 27px 6px 10px 0px;
+}
+.buttons {
+	clear: both;
+	margin-bottom: 10px;
+}
+#termek-arak-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 40%;
+}
+#termek-arak-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#termekek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 40%;
+}
+#termekek-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#ugyfelek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 30%;
+}
+#ugyfelek-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#arajanlatok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+
+#arajanlatok-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#arajanlat-tetelek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#arajanlat-tetelek-form .row {
+	float: left;
+	margin-left: 20px;
+}
+ #megrendelesek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#megrendelesek-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#megrendeles-tetelek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#megrendeles-tetelek-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#anyagrendelesek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#anyagrendelesek-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#anyagbeszallitasok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#anyagbeszallitasok-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#nyomasi-arak-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#nyomasi-arak-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#szallitolevelek-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#szallitolevelek-form .row {
+	float: left;
+	margin-right: 20px;
+}
+#nyomdakonyv-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#nyomdakonyv-form .row {
+	float: left;
+	margin-right: 20px;
+}
+#nyomda-munkatipusok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#nyomda-munkatipusok-form .row {
+	float: left;
+	margin-right: 20px;
+}
+#zuh-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 48%;
+}
+#zuh-form .row {
+	float: left;
+	margin-right: 20px;
+}
+.search-form .portlet {
+	float: left;
+	width : 100%;
+}
+.search-form .portlet-content {
+	margin: 0px;
+	padding: 0px;
+}
+.search-form .row {
+	float: left;
+	padding: 5px;
+}
+.clear {
+	clear: both;
+}
+.difference {
+	background-color: #FFAEAE;
+}
+.btn-storno {
+    background-color: #da4f49;
+    background-image: -moz-linear-gradient(center top , #ee5f5b, #bd362f);
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.btn-storno:hover,
+.btn-storno:focus,
+.btn-storno:active,
+.btn-storno.active,
+.open .dropdown-toggle.btn-storno {
+  color: #fff;
+  background-color: #d2322d;
+  border-color: #ac2925;
+}
+
+/* radiobutton-ok vízszintesen jelenjenek meg egymás mellett*/
+DIV.boritekMeretRadioGroup, DIV.boritekZarodasRadioGroup, DIV.boritekAblakhelyRadioGroup {
+	margin-bottom: 0px;
+    padding-left: 0px;
+}
+ 
+DIV.boritekAblakhelyRadioGroup LABEL,
+DIV.boritekAblakhelyRadioGroup INPUT,
+DIV.boritekZarodasRadioGroup LABEL,
+DIV.boritekZarodasRadioGroup INPUT,
+DIV.boritekMeretRadioGroup LABEL,
+DIV.boritekMeretRadioGroup INPUT {
+    display: inline!important;
+}
+
+DIV.boritekAblakhelyRadioGroup INPUT,
+DIV.boritekZarodasRadioGroup INPUT,
+DIV.boritekMeretRadioGroup INPUT {
+	margin-right : 15px!important;
+}
+
+DIV.boritekMeretRadioGroup INPUT#termek_kereso {
+	margin-top : 10px ;
+}
+
+div.flash-error
+{
+	background:#FBE3E4;
+	color:#8a1f11;
+	border-color:#FBC2C4;
+}
+
+div.flash-notice
+{
+	background:#FFF6BF;
+	color:#514721;
+	border-color:#FFD324;
+}
+
+div.flash-success
+{
+	background:#E6EFC2;
+	color:#264409;
+	border-color:#C6D880;
+}
+
+div.flash-error a
+{
+	color:#8a1f11;
+}
+
+div.flash-notice a
+{
+	color:#514721;
+}
+
+div.flash-success a
+{
+	color:#264409;
+}
+
+div.flash-error, div.flash-notice, div.flash-success
+{
+	padding:.8em;
+	margin-bottom:1em;
+	border:2px solid #ddd;
+}
+
+div.search-options fieldset {
+	border: 1px solid #e5e5e5;
+	padding: 10px ;
+}
+
+div.search-options fieldset legend {
+	margin-bottom: 0px ;
+	font-size: 0.9em;
+	line-height: 15px;
+	width: auto;
+	border-style: none ;
+	padding: 0px 4px 2px 4px ;
+}
+.btn-lg {
+	padding : 10px!important;
+	padding-left : 15px!important;
+	padding-right : 15px!important;
+}
+table tr td.yellow {
+    background:#FFF6BF;
+}
+.table-zuh td
+{
+	padding: 5px;
+}
+
+.nyomdakonyv-lejelentes-form-bal {
+	width: 45% ;
+	float: left ;	
+}
+
+.nyomdakonyv-lejelentes-form-jobb {
+	width: 55% ;
+	float: right ;		
+}
+
+.nyomdakonyv-lejelentes-form-bal .row {
+	margin-left: 0px ;	
 }

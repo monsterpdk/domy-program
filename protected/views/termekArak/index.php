@@ -70,21 +70,61 @@ $this->breadcrumbs=array(
 					'name'=>'termek.belesnyomott',
 					'type'=>'raw',
 					'value'=>function ($model, $index, $widget) {
-						return CHtml::checkbox('termek.belesnyomott[]', $model->termek->belesnyomott, ['value' => $index, 'disabled' => true]);
-					},
+						return CHtml::checkbox('termek.belesnyomott[]', $model->termek->belesnyomott, array('value' => $index, 'disabled' => true));
+					},					
 					'htmlOptions'=>array('align'=>'center',),
 					'cssClassExpression' => '$data->termek->belesnyomott == 1 ? "yellow" : ""',
 				),
-				'csomag_beszerzesi_ar:number',
-				'db_beszerzesi_ar:number',
-				'csomag_ar_nyomashoz:number',
-				'db_ar_nyomashoz:number',
-				'csomag_eladasi_ar:number',
-				'db_eladasi_ar:number',
-				'csomag_ar2:number',
-				'db_ar2:number',
-				'csomag_ar3:number',
-				'db_ar3:number',
+				array(
+					'name'=>'csomag_beszerzesi_ar',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_beszerzesi_ar, "Ft")',
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),				
+				array(
+					'name'=>'db_beszerzesi_ar',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_beszerzesi_ar, "Ft")',
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'csomag_ar_nyomashoz',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_ar_nyomashoz, "Ft")',
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'db_ar_nyomashoz',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_ar_nyomashoz, "Ft")',					
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'csomag_eladasi_ar',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_eladasi_ar, "Ft")',
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'db_eladasi_ar',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_eladasi_ar, "Ft")',					
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'csomag_ar2',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_ar2, "Ft")',
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'db_ar2',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_ar2, "Ft")',					
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'csomag_ar3',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_ar3, "Ft")',
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
+				array(
+					'name'=>'db_ar3',
+					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_ar3, "Ft")',					
+					'htmlOptions'=>array('style' => 'text-align: right;'),					
+				),
 				'datum_mettol',
 				'datum_meddig',
 				array(

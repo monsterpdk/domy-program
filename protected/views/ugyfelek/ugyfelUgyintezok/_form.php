@@ -35,6 +35,12 @@
         <?php echo CHtml::activeTextField($model, '[' . $index . ']email', array('size'=>60,'maxlength'=>127)); ?>
         <?php echo CHtml::error($model, '[' . $index . ']email'); ?>
     </div>
+    
+	<div class="row" style="width:200px; margin-right:20px; float: left;">
+        <?php echo CHtml::activeLabelEx($model, '[' . $index . ']alapertelmezett_kapcsolattarto'); ?>
+		<?php echo CHtml::activeCheckBox($model, '[' . $index . ']alapertelmezett_kapcsolattarto', array('value' => "1")); ?>
+		<?php echo CHtml::error($model,'[' . $index . ']alapertelmezett_kapcsolattarto'); ?>
+	</div>    
 
 	<div class="row" style="width:100px;float: left;">
         <br />

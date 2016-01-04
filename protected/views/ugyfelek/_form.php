@@ -284,18 +284,20 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'kapcsolattarto_nev'); ?>
-		<?php echo $form->textField($model,'kapcsolattarto_nev',array('size'=>60,'maxlength'=>127)); ?>
+		<?php echo $form->textField($model,'kapcsolattarto_nev',array('size'=>60,'maxlength'=>127, 'readonly'=>true)); ?>
 		<?php echo $form->error($model,'kapcsolattarto_nev'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'kapcsolattarto_telefon'); ?>
+		<?php echo $form->textField($model,'kapcsolattarto_telefon',array('size'=>60,'maxlength'=>127, 'readonly'=>true)); ?>
 		
-		<?php $this->widget("ext.maskedInput.MaskedInput", array(
+		<?php 
+/*			$this->widget("ext.maskedInput.MaskedInput", array(
                 "model" => $model,
                 "attribute" => "kapcsolattarto_telefon",
-                "mask" => '(99) 99-999-9999'                
-            ));
+                "mask" => '(99) 99-999-9999',
+            ));*/
 		?>
 
 		<?php echo $form->error($model,'kapcsolattarto_telefon'); ?>
@@ -303,7 +305,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'kapcsolattarto_email'); ?>
-		<?php echo $form->textField($model,'kapcsolattarto_email',array('size'=>60,'maxlength'=>127)); ?>
+		<?php echo $form->textField($model,'kapcsolattarto_email',array('size'=>60,'maxlength'=>127, 'readonly'=>true)); ?>
 		<?php echo $form->error($model,'kapcsolattarto_email'); ?>
 	</div>
 	
