@@ -380,31 +380,6 @@ class NyomdakonyvController extends Controller
 			echo json_encode($return) ;
 		}
 	}
-
-	// Táska/CTP-s táska PDF-et előállító action.
-	public function actionPrintTaska()
-	{
-		if (isset($_GET['id'])) {
-			$model = $this -> loadModel($_GET['id']);
-		}
-		
-		// ha nem CTP-s a munkatáska, akkor 'simát' nyomtatunk
-		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
-		
-		if ($model != null) {
-			# mPDF
-			$mPDF1 = Yii::app()->ePdf->mpdf();
-
-			$mPDF1->SetHtmlHeader("Munkatáska #" . $model->taskaszam);
-			
-			# render
-			$mPDF1->WriteHTML($this->renderPartial($pdfTemplateName, array('model' => $model), true));
-	 
-			# Outputs ready PDF
-			$mPDF1->Output();
-		}
-		
-	}
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
