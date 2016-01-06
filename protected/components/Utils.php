@@ -506,7 +506,18 @@
 		function szamla_letrehozasa($megrendeles_id) {
 			$megrendeles_tetelek = MegrendelesTetelek::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles_id)) ;
 			$megrendeles_adatok = Megrendelesek::model() -> findByAttributes(array('id' => $megrendeles_id)) ;
-			$megrendeles_fizmod = FizetesiModok::model() -> findByAttributes(array('id' => $megrendeles_adatok->proforma_fizetesi_mod)) ;
+			switch ($megrendeles_adatok->proforma_fizetesi_mod) {
+					case '1': $fizmod_domy_kod = "készpénz" ;
+						break ;
+					case '2': $fizmod_domy_kod = "átutalás" ;
+						break ;
+					case '3': $fizmod_domy_kod = "utánvét" ;
+						break ;
+					case '4': $fizmod_domy_kod = "bankkártya" ;
+						break ;
+					default: "átutalás" ;
+			}
+			$megrendeles_fizmod = FizetesiModok::model() -> findByAttributes(array('nev' => $fizmod_domy_kod)) ;
 			if (count($megrendeles_tetelek) > 0) {
 				$partner_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_orszag)) ;
 				$partner_kozterulet_nev = $megrendeles_adatok->ugyfel->szekhely_cim	;
