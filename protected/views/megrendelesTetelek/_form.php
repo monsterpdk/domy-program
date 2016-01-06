@@ -115,7 +115,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'netto_darabar'); ?>
-		<?php echo $form->textField($model,'netto_darabar', ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true') : array())); ?>
+		<?php echo $form->textField($model,'netto_darabar', ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true') : array('onChange'=>'javascript:nettoar_kalkulal();'))); ?>
 		<?php echo $form->error($model,'netto_darabar'); ?>
 		
 		<?php echo $form->labelEx($model,'netto_ar'); ?>
@@ -141,14 +141,25 @@
 		}
 		
 		function keyPressEvent() {
-			$( "#MegrendelesTetelek_netto_darabar" ).val("0") ;
-			nettoar_kalkulal() ;
-			osszegSzamol() ;
+			$( "#MegrendelesTetelek_netto_darabar" ).val($( "#MegrendelesTetelek_netto_darabar" ).val().replace(",",".")) ;
+			if (!$("#MegrendelesTetelek_egyedi_ar").prop('checked')) {			
+				$( "#MegrendelesTetelek_netto_darabar" ).val("0") ;
+				nettoar_kalkulal() ;
+				osszegSzamol() ;
+			}
 		}
 		
 		function nettoar_kalkulal() {
-			var termek_id = $("#MegrendelesTetelek_termek_id").val() ;
-			calculateTermekNettoDarabAr(termek_id) ;
+			if (!$("#MegrendelesTetelek_egyedi_ar").prop('checked')) {			
+				var termek_id = $("#MegrendelesTetelek_termek_id").val() ;
+				calculateTermekNettoDarabAr(termek_id) ;
+			}
+			else
+			{
+				$( "#MegrendelesTetelek_netto_darabar" ).val($( "#MegrendelesTetelek_netto_darabar" ).val().replace(",",".")) ;
+				$('#MegrendelesTetelek_netto_ar' ).val ($('#MegrendelesTetelek_netto_darabar').val () * $( "#MegrendelesTetelek_darabszam" ).val());
+				$('#MegrendelesTetelek_brutto_ar' ).val ($('#MegrendelesTetelek_netto_ar' ).val () * 1.27);			//TODO: Betenni az aktuális áfa értéket, ne legyen így bedrótozva					
+			}
 		}
 		
 		function calculateTermekNettoDarabAr (termekId) {
@@ -198,18 +209,26 @@
 		<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>127, 'disabled' => ($model->arajanlatbol_letrehozva == 1 ? 'true' : ''))); ?>
 		<?php echo $form->error($model,'megjegyzes'); ?>
 	</div>
-
+	
+	<div class="row active">
+		<?php echo $form->checkBox($model,'egyedi_ar'); ?>
+		<?php echo $form->label($model,'egyedi_ar'); ?>
+		<?php echo $form->error($model,'egyedi_ar'); ?>
+	</div>	
+	
 	<div class="row active">
 		<?php echo $form->checkBox($model,'mutacio', ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true') : array())); ?>
 		<?php echo $form->label($model,'mutacio'); ?>
 		<?php echo $form->error($model,'mutacio'); ?>
 	</div>
-
+	
 	<div class="row active">
 		<?php echo $form->checkBox($model,'hozott_boritek', ($model->arajanlatbol_letrehozva == 1 ? array('disabled'=>'true') : array('onclick'=>'javascript:keyPressEvent();'))); ?>
 		<?php echo $form->label($model,'hozott_boritek'); ?>
 		<?php echo $form->error($model,'hozott_boritek'); ?>
 	</div>
+	
+	
 
 	<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 

@@ -141,15 +141,26 @@
 		}
 			
 		function keyPressEvent() {
-			$( "#ArajanlatTetelek_netto_darabar" ).val("0") ;
-			$( "#ArajanlatTetelek_brutto_darabar" ).val("0") ;
-			nettoar_kalkulal() ;
-			osszegSzamol() ;
+			$( "#ArajanlatTetelek_netto_darabar" ).val($( "#ArajanlatTetelek_netto_darabar" ).val().replace(",",".")) ;			
+			if (!$("#ArajanlatTetelek_egyedi_ar").prop('checked')) {
+				$( "#ArajanlatTetelek_netto_darabar" ).val("0") ;
+				$( "#ArajanlatTetelek_brutto_darabar" ).val("0") ;
+				nettoar_kalkulal() ;
+				osszegSzamol() ;
+			}
 		}
 		
 		function nettoar_kalkulal() {
-			var termek_id = $("#ArajanlatTetelek_termek_id").val() ;
-			calculateTermekNettoDarabAr(termek_id) ;
+			if (!$("#ArajanlatTetelek_egyedi_ar").prop('checked')) {
+				var termek_id = $("#ArajanlatTetelek_termek_id").val() ;
+				calculateTermekNettoDarabAr(termek_id) ;
+			}
+			else
+			{
+				$( "#ArajanlatTetelek_netto_darabar" ).val($( "#ArajanlatTetelek_netto_darabar" ).val().replace(",",".")) ;
+				$('#ArajanlatTetelek_netto_ar' ).val ($('#ArajanlatTetelek_netto_darabar').val () * $( "#ArajanlatTetelek_darabszam" ).val());
+				$('#ArajanlatTetelek_brutto_ar' ).val ($('#ArajanlatTetelek_netto_ar' ).val () * 1.27);			//TODO: Betenni az aktuális áfa értéket, ne legyen így bedrótozva	
+			}
 		}
 		
 		function calculateTermekNettoDarabAr (termekId) {
@@ -201,11 +212,15 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->checkBox($model,'hozott_boritek',array('onclick'=>'javascript:keyPressEvent();')); ?>
-		<?php echo $form->label($model,'hozott_boritek'); ?>
-		<?php echo $form->error($model,'hozott_boritek'); ?>
+		<?php echo $form->checkBox($model,'egyedi_ar'); ?>
+		<?php echo $form->label($model,'egyedi_ar'); ?>
+		<?php echo $form->error($model,'egyedi_ar'); ?>
 	</div>
 
+	<div class="row">
+	
+	</div>
+	
 	<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 
 					 array(

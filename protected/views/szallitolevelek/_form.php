@@ -46,7 +46,7 @@
 			'summaryText' => '',
 			'columns'=>array(
 				array( 'name'=>'id','header'=>'Id', 'value'=>'$data->id' ),
-				array( 'name'=>'termek.nev', 'header'=>'Terméknév', 'value'=>'$data->termek->nev' ),
+				array( 'name'=>'termek.nev', 'header'=>'Terméknév', 'value'=>'$data->termek->getDisplayTermekTeljesNev()' ),
 				array( 'name'=>'munka_neve', 'header'=>'Munka neve', 'value'=>'$data->munka_neve' ),
 				array( 'name'=>'darabszam', 'header'=>'Megrendelőn lévő darabszám (db)', 'value'=>'$data->darabszam' ),
 				array( 

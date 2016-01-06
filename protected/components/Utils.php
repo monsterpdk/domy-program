@@ -569,7 +569,7 @@
 					$afakulcs = AfaKulcsok::model() -> findByAttributes(array('id'=>$tetel->termek->afakulcs_id)) ;
 					$sor = array() ;
 					$sor["Cikkszam"] = $cikkszam;
-					$sor["CikkNev"] = $tetel->termek->nev ;
+					$sor["CikkNev"] = $tetel->termek->getDisplayTermekTeljesNev() ;
 					$sor["MEgyseg"] = "db" ;
 					$sor["AfaKulcs"] = $afakulcs->afa_szazalek ;
 					if ($tetel->termek->tipus == "Szolgáltatás") {

@@ -270,7 +270,8 @@ class MegrendelesekController extends Controller
 				$model->torolt = "0" ;		
 				$model->megrendeles_forras_id = $tomb["megrendeles_forras_id"] ;
 				$model->megrendeles_forras_megrendeles_id = $tomb["megrendeles_forras_megrendeles_id"] ;
-				
+				$fizmod = (string)$xml->orderhead_payment_mode ;
+				$model->proforma_fizetesi_mod = $fizmod ;
 				$model -> save(false);	
 				$megrendeles_id = $model->id ;			
 				for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
