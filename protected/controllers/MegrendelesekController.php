@@ -373,10 +373,10 @@ class MegrendelesekController extends Controller
 		
 		if ($model != null) {
 			// még nincs nyomdakönyvben, így nem engedjük a visszaigazolás nyomtatását
-			if ($model->nyomdakonyv_munka_id == 0) {
+/*			if ($model->nyomdakonyv_munka_id == 0) {
 				Yii::app()->user->setFlash('error', "A megrendelés nincs a nyomdakönyvbe felvéve!");
 				$this->redirect(Yii::app()->request->urlReferrer);
-			}
+			}*/
 			
 			//ha nincs még proforma számla sorszám generálva a megrendeléshez, most megtesszük
 			// ha első nyomtatás, akkor beállítjuk a proforma számlára vonatkozó default értékeket
@@ -387,11 +387,18 @@ class MegrendelesekController extends Controller
 				$fizetesiHatarido = 0;
 
 				$alapertelmezettFizetesiModId = Yii::app()->config->get('AlapertelmezettFizetesiMod');
-				$alapertelmezettFizetesiMod = FizetesiModok::model()->findByPk ($alapertelmezettFizetesiModId);
+//				$alapertelmezettFizetesiMod = FizetesiModok::model()->findByPk ($alapertelmezettFizetesiModId);
 				
-				if ($alapertelmezettFizetesiMod != null) {
-					$fizetesiHatarido = $alapertelmezettFizetesiMod->fizetesi_hatarido;
+				if ($model->proforma_fizetesi_mod <= 0) {
+					$model->proforma_fizetesi_mod = $alapertelmezettFizetesiModId ;
 				}
+				$valasztottFizetesiMod = FizetesiModok::model()->findByPk ($model->proforma_fizetesi_mod);
+				
+/*				if ($alapertelmezettFizetesiMod != null) {
+					$fizetesiHatarido = $alapertelmezettFizetesiMod->fizetesi_hatarido;
+				}*/
+				$fizetesiHatarido = $valasztottFizetesiMod->fizetesi_hatarido ;
+				
 				
 				$model -> proforma_kiallitas_datum = new CDbExpression('NOW()');
 				$model -> proforma_teljesites_datum = new CDbExpression('NOW()');
@@ -401,6 +408,7 @@ class MegrendelesekController extends Controller
 				}
 				
 				$model -> save(false);
+				$model -> refresh() ;
 			}
 			
 			# mPDF
@@ -544,6 +552,11 @@ class MegrendelesekController extends Controller
 			$megrendeles -> arajanlat_id = $arajanlat -> id;
 			$megrendeles -> rendelest_rogzito_user_id = Yii::app()->user->getId();
 			$megrendeles -> rendeles_idopont = date('Y-m-d H:i:s');
+			$alap_fizmod = Yii::app()->config->get('AlapertelmezettFizetesiMod');
+			if (!is_numeric($alap_fizmod)) {
+				$alap_fizmod = 3 ;	
+			}
+			$megrendeles -> proforma_fizetesi_mod = 3 ;		//Alapértelmezetten az átutalás kerül be, ha átállítják és mentik, úgyis felülírja
 
 			// elmentjük a modelt, hogy legyen model id a kezünkben
 			$megrendeles -> save(false);

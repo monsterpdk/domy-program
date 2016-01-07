@@ -258,12 +258,26 @@ class Termekek extends CActiveRecord
 	//										 ablakhely->hely + ablakhely->x_pozicio_honnan + ablakhely->x_pozicio_mm + ablakhely->y_pozicio_honnan + ablakhely->y_pozicio_mm
 	//										 ablakmeret->magassag + ablakmeret->szelesseg
 	//										 $papirtipus->nev + $papirtipus->suly
+	// TÁ: Kicsit szofisztikáltabban írjuk ki, mert sok termék lesz, aminél nincs ablak, papír, méret adat.
 	public function getDisplayTermekTeljesNev()
 	{
-		return $this->nev . ' ' . $this->zaras->nev . ' ' . $this->meret->magassag . 'x' . $this->meret->szelesseg . 'x' . $this->meret->vastagsag . ', ' . 
-			   $this->ablakhely->hely . ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm . ' ' .
-			   $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr'
-		;
+		$termek_teljes_ar = $this->nev ;
+		$termek_teljes_ar .= ' ' . $this->zaras->nev ;
+		if ($this->meret->magassag > 0) {
+			$termek_teljes_ar .= ' ' . $this->meret->magassag . 'x' . $this->meret->szelesseg . 'x' . $this->meret->vastagsag . ', ' ;
+		}
+		$termek_teljes_ar .= ' ' . $this->ablakhely->hely ;
+		if ($this->ablakhely->x_pozicio_honnan != '' && $this->ablakhely->x_pozicio_mm > 0) {
+			$termek_teljes_ar .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
+		}
+		if ($this->ablakmeret->magassag > 0) {
+			$termek_teljes_ar .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
+		}
+		if ($this->papirtipus->suly != 0 && $this->papirtipus->suly != "") {
+			$termek_teljes_ar .= ' ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr' ;
+		}
+		
+		return $termek_teljes_ar;
 	}
 
 	public function getActiveTermekAr ()

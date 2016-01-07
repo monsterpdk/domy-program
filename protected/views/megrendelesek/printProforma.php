@@ -109,9 +109,9 @@
 		<td><strong>Fizetési mód</strong></td>
 	</tr>
 	<tr>
-		<td> <?php echo $model->proforma_teljesites_datum; ?> </td>
-		<td> <?php echo $model->proforma_kiallitas_datum; ?> </td>
-		<td> <?php echo $model->proforma_fizetesi_hatarido; ?> </td>
+		<td> <?php echo strftime("%Y.%m.%d.", strtotime($model->proforma_teljesites_datum)); ?> </td>
+		<td> <?php echo strftime("%Y.%m.%d.", strtotime($model->proforma_kiallitas_datum)); ?> </td>
+		<td> <?php echo strftime("%Y.%m.%d.", strtotime($model->proforma_fizetesi_hatarido)); ?> </td>
 		<td> <?php echo $fizetesiMod->nev; ?> </td>
 	</tr>
 </table>
@@ -148,21 +148,22 @@
 				$termek = Termekek::model()->findByPk($tetel -> termek_id);
 				if ($termek == null)
 					$termek = new Termekek();
+				$termek_teljes_nev = $termek->getDisplayTermekTeljesNev() ;
 				
 				$nyomdakonyvi_munka = Nyomdakonyv::model() -> findByAttributes( array('megrendeles_tetel_id' => $tetel -> id,) );
 				if ($nyomdakonyvi_munka == null)
 					$nyomdakonyvi_munka = new Nyomdakonyv();
 
-				$tetel_netto_ara = $tetel->darabszam*$tetel->netto_darabar;
-				$tetel_afaja = $tetel_netto_ara*$afakulcs->afa_szazalek/100;
-				$tetel_brutto_ara = $tetel_netto_ara + $tetel_afaja;
+				$tetel_netto_ara = number_format($tetel->darabszam*$tetel->netto_darabar, 2, '.', '');
+				$tetel_afaja = number_format($tetel_netto_ara*$afakulcs->afa_szazalek/100, 2, '.', '');
+				$tetel_brutto_ara = number_format($tetel_netto_ara + $tetel_afaja, 2, '.', '');
 				// tételek kiírása
 				echo "
 					<tr>
 						<td>$termek->ksh_kod</td>
 						<td align=center>$nyomdakonyvi_munka->taskaszam</td>
 						<td align=center>$tetel->displayTermekSzinekSzama</td>
-						<td colspan='5'>$termek->nev / $termek->cikkszam</td>
+						<td colspan='5'>$termek_teljes_nev / $termek->cikkszam</td>
 					</tr>
 					<tr>
 						<td colspan='8'>$tetel->munka_neve</td>
@@ -171,10 +172,10 @@
 						<td colspan='2'>$model->rendeles_idopont</td>
 						<td align=center>$afakulcs->afa_szazalek</td>
 						<td align=center>$tetel->darabszam</td>
-						<td align=center>$tetel->netto_darabar</td>
-						<td align=center>$tetel_netto_ara</td>
-						<td align=center>$tetel_afaja</td>
-						<td align=center>$tetel_brutto_ara</td>
+						<td align=right>$tetel->netto_darabar</td>
+						<td align=right>$tetel_netto_ara</td>
+						<td align=right>$tetel_afaja</td>
+						<td align=right>$tetel_brutto_ara</td>
 					</tr>
 				";
 

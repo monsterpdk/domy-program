@@ -36,7 +36,7 @@ class UgyfelUgyintezok extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('ugyfel_id, nev, telefon, email', 'required'),
-			array('torolt, alapertelmezett_kapcsolattarto', 'numerical', 'integerOnly'=>true),
+			array('torolt', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_id', 'length', 'max'=>10),
 			array('nev, email', 'length', 'max'=>127),
 			array('telefon', 'length', 'max'=>30),
