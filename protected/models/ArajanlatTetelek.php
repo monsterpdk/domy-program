@@ -138,9 +138,9 @@ class ArajanlatTetelek extends CActiveRecord
 
 		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
 		// terméknevet kézzel kell kitöltenünk
-		$this -> autocomplete_termek_name = $this -> termek -> nev;
+		$this -> autocomplete_termek_name = $this -> termek -> getDisplayTermekTeljesNev();
 		if ($this -> hozott_boritek == true) {
-			$this -> termek -> nev = "Hozott " . $this -> termek -> nev ;
+			$this -> termek -> nev = "Hozott " . $this -> termek -> getDisplayTermekTeljesNev() ;
 		}
 	}	
 	

@@ -519,6 +519,14 @@
 					'htmlOptions'=>array('class'=>'btn btn-info'),
 				));
 				
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_list_szamla_generalas',
+					'caption'=>'Számla generálása',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {szamlageneralas();}'),
+					'htmlOptions'=>array('class'=>'btn btn-info'),
+				));				
+				
 			}
 		}
 	?>
@@ -606,6 +614,34 @@
 	 
 		function disableNyomdakonyvButton () {
 			$("#nyomdakonyvbeKuldesButton").attr("disabled", true);
+		}
+		
+		function szamlageneralas(buttonObj) {
+			id = 0 ;
+			if ($("#Megrendelesek_id").val() != "") {
+				id = $("#Megrendelesek_id").val() ;
+			}
+			if (id > 0) {
+				<?php echo CHtml::ajax(array(
+						'url'=> "js:'/index.php/megrendelesek/szamlageneralas/id/' + id",
+						'data'=> "js:$(this).serialize()",
+						'type'=>'get',
+						'id' => 'send-link-'.uniqid(),
+						'replace' => '',
+						'dataType'=>'json',
+						'success'=>"function(data)
+						{
+							if (data.status == 'failure')
+							{
+								//
+							}
+							else
+							{
+								alert('Számla xml legenerálva') ;
+							}		 
+						} ",
+				))?>;
+			}
 		}
 		
 	</script>

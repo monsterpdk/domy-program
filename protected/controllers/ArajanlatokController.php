@@ -158,7 +158,6 @@ class ArajanlatokController extends Controller
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
 			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
-			
 			# render
 			$mPDF1->WriteHTML($this->renderPartial("printArajanlat", array('model' => $model), true));
 	 

@@ -245,7 +245,7 @@ class Arajanlatok extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-                        'defaultOrder'=>'ajanlat_datum DESC',
+                        'defaultOrder'=>'ajanlat_datum desc, t.id DESC',
                     ),						
 		));
 	}

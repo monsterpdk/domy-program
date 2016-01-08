@@ -528,7 +528,7 @@
 				$partner_kozterulet_nev = $megrendeles_adatok->ugyfel->szekhely_cim	;
 				$partner_kozterulet_jellege = " " ;
 				$partner_kozterulet_hsz = " " ;
-				if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|)\s?(.*?)$/", $megrendeles_adatok->ugyfel->szekhely_cim, $matches)) {
+				if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|park)\s?(.*?)$/i", $megrendeles_adatok->ugyfel->szekhely_cim, $matches)) {
 					$partner_kozterulet_nev = trim($matches[1]) ;
 					$partner_kozterulet_jellege = trim($matches[2]) ;
 					$partner_kozterulet_hsz = trim($matches[3]) ;
@@ -578,7 +578,7 @@
 					$szallitasi_kozterulet_nev = $megrendeles_adatok->ugyfel->szallitasi_cim	;
 					$szallitasi_kozterulet_jellege = " " ;
 					$szallitasi_kozterulet_hsz = " " ;
-					if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|)\s?(.*?)$/", $megrendeles_adatok->ugyfel->szallitasi_cim, $matches)) {
+					if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|park|Park)\s?(.*?)$/i", $megrendeles_adatok->ugyfel->szallitasi_cim, $matches)) {
 						$szallitasi_kozterulet_nev = trim($matches[1]) ;
 						$szallitasi_kozterulet_jellege = trim($matches[2]) ;
 						$szallitasi_kozterulet_hsz = trim($matches[3]) ;
@@ -606,7 +606,7 @@
 					$afakulcs = AfaKulcsok::model() -> findByAttributes(array('id'=>$tetel->termek->afakulcs_id)) ;
 					$sor = array() ;
 					$sor["Cikkszam"] = $cikkszam;
-					$sor["CikkNev"] = $tetel->termek->getDisplayTermekTeljesNev() ;
+					$sor["CikkNev"] = substr($tetel->termek->getDisplayTermekTeljesNev(),0,100) ;
 					$sor["MEgyseg"] = "db" ;
 					$sor["AfaKulcs"] = $afakulcs->afa_szazalek ;
 					if ($tetel->termek->tipus == "Szolgáltatás") {

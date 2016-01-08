@@ -95,11 +95,11 @@ $this->menu=array(
                 'modal' => true,
 				'buttons' => array('Táska nyomtatása' => 'js:function()
 				{
-					model_id = $(this).data("model_id"), $(location).attr("href", "nyomdakonyv/printTaska?id=" + model_id + "&isCtp=0")
+					model_id = $(this).data("model_id"), $(location).attr("href", "printTaska?id=" + model_id + "&isCtp=0")
 				}',
 				'CTP-s táska nyomtatása' => 'js:function()
 				{
-					model_id = $(this).data("model_id"), $(location).attr("href", "nyomdakonyv/printTaska?id=" + model_id + "&isCtp=1")
+					model_id = $(this).data("model_id"), $(location).attr("href", "printTaska?id=" + model_id + "&isCtp=1")
 				}'),
                 'autoOpen'=>false,
         )));
