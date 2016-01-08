@@ -242,6 +242,20 @@ class MegrendelesekController extends Controller
 			$ugyfel_adatok["adoszam"] = (string)$xml->orderhead_partner_vatnumber ;
 			$ugyfel_adatok["arkategoria_id"] = (string)$forras->arkategoria_id ;
 			$ugyfel_adatok["elso_vasarlas_datum"] = (string)$xml->orderhead_timestamp ;
+			$ugyfel_adatok["szallitasi_irsz"] = (string)$xml->orderhead_shipping_zip ;
+			$szallitasi_varos_nev = (string)$xml->orderhead_shipping_city ;
+			if ($szallitasi_varos_nev != "") {
+				$varos_model = Varosok::model()->findByAttributes(array('varosnev' => $szallitasi_varos_nev)) ;
+				if ($varos_model == null) {
+					$varos_model = new Varosok;
+					$varos_model->iranyitoszam = $ugyfel_adatok["szallitasi_irsz"] ;
+					$varos_model->varosnev = $szallitasi_varos_nev ;
+					$varos_model->save() ;
+				}
+				$ugyfel_adatok["szallitasi_varos"] = $varos_model->id ;
+			}
+			$ugyfel_adatok["szallitasi_orszag"] = (string)$xml->orderhead_partner_country ;
+			$ugyfel_adatok["szallitasi_cim"] = (string)$xml->orderhead_shipping_address ;
 			$tomb["ugyfel_id"] = Ugyfelek::model()->insertUgyfelFromArray($ugyfel_adatok) ;
 			$tomb["ugyfel_arkategoria_id"] = $ugyfel_adatok["arkategoria_id"];
 		}
@@ -403,7 +417,7 @@ class MegrendelesekController extends Controller
 				$model -> proforma_kiallitas_datum = new CDbExpression('NOW()');
 				$model -> proforma_teljesites_datum = new CDbExpression('NOW()');
 				$model -> proforma_fizetesi_hatarido = new CDbExpression('NOW() + INTERVAL ' . $fizetesiHatarido . ' DAY');
-				if ($alapertelmezettFizetesiMod != null) {
+				if ($alapertelmezettFizetesiModId != null) {
 					$model -> proforma_fizetesi_mod = $alapertelmezettFizetesiMod->id;
 				}
 				

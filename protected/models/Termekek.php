@@ -261,23 +261,48 @@ class Termekek extends CActiveRecord
 	// TÁ: Kicsit szofisztikáltabban írjuk ki, mert sok termék lesz, aminél nincs ablak, papír, méret adat.
 	public function getDisplayTermekTeljesNev()
 	{
-		$termek_teljes_ar = $this->nev ;
-		$termek_teljes_ar .= ' ' . $this->zaras->nev ;
+		$termek_teljes_nev = $this->nev ;
+		$termek_teljes_nev .= ' ' . $this->zaras->nev ;
+		$meret = "" ;
 		if ($this->meret->magassag > 0) {
-			$termek_teljes_ar .= ' ' . $this->meret->magassag . 'x' . $this->meret->szelesseg . 'x' . $this->meret->vastagsag . ', ' ;
+			$meret .= ' ' . $this->meret->magassag ;
 		}
-		$termek_teljes_ar .= ' ' . $this->ablakhely->hely ;
+		if ($this->meret->szelesseg > 0) {
+			if ($meret != "") {
+				$meret .= "x" ;	
+			}
+			else
+			{
+				$meret .= " " ;	
+			}
+			$meret .= $this->meret->szelesseg ;
+		}
+		if ($this->meret->vastagsag > 0) {
+			if ($meret != "") {
+				$meret .= "x" ;	
+			}
+			else
+			{
+				$meret .= " " ;	
+			}
+			$meret .= $this->meret->vastagsag ;
+		}
+		if ($meret != "") {
+			$meret . ", " ;	
+		}
+		$termek_teljes_nev .= $meret ;
+		$termek_teljes_nev .= ' ' . $this->ablakhely->hely ;
 		if ($this->ablakhely->x_pozicio_honnan != '' && $this->ablakhely->x_pozicio_mm > 0) {
-			$termek_teljes_ar .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
+			$termek_teljes_nev .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
 		}
 		if ($this->ablakmeret->magassag > 0) {
-			$termek_teljes_ar .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
+			$termek_teljes_nev .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
 		}
 		if ($this->papirtipus->suly != 0 && $this->papirtipus->suly != "") {
-			$termek_teljes_ar .= ' ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr' ;
+			$termek_teljes_nev .= ' ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr' ;
 		}
 		
-		return $termek_teljes_ar;
+		return $termek_teljes_nev;
 	}
 
 	public function getActiveTermekAr ()

@@ -103,7 +103,11 @@ class UgyfelekController extends Controller
  
         if (isset($_POST['Ugyfelek']))
         {
+//        	print_r($_POST) ;
+//       	echo "<br /><br /><br />\n\n\n" ;
             $model->attributes = $_POST['Ugyfelek'];
+            $model->szallitasi_varos = $_POST["Ugyfelek"]["szallitasi_varos"] ;
+//        	print_r($model->attributes) ;
             if (isset($_POST['UgyfelUgyintezok']))
             {
                 $model->ugyfelUgyintezo = $_POST['UgyfelUgyintezok'];
@@ -171,7 +175,7 @@ class UgyfelekController extends Controller
             $this->exportCSV(array(), null, false);
 			
 			// mindig az aktuális
-            $this->exportCSV($dataProvider, array('id', 'ugyfel_tipus', 'cegnev', 'cegnev_teljes', 'szekhely_irsz', 'szekhely_orszag', 'szekhely_varos', 'szekhely_cim', 'posta_irsz', 'posta_orszag', 'posta_varos', 'posta_cim', 'ugyvezeto_nev', 'ugyvezeto_telefon', 'ugyvezeto_email', 'kapcsolattarto_nev', 'kapcsolattarto_telefon', 'kapcsolattarto_email', 'ceg_telefon', 'ceg_fax', 'ceg_email', 'ceg_honlap', 'cegforma', 'szamlaszam1', 'szamlaszam2', 'display_ugyfel_ugyintezok', 'adoszam', 'eu_adoszam', 'teaor', 'tevekenysegi_kor', 'arbevetel', 'foglalkoztatottak_szama', 'adatforras', 'besorolas', 'megjegyzes', 'fontos_megjegyzes', 'fizetesi_felszolitas_volt', 'ugyvedi_felszolitas_volt', 'levelezes_engedelyezett', 'email_engedelyezett', 'kupon_engedelyezett', 'egyedi_kuponkedvezmeny', 'elso_vasarlas_datum', 'utolso_vasarlas_datum', 'fizetesi_hatarido', 'max_fizetesi_keses', 'atlagos_fizetesi_keses', 'rendelesi_tartozasi_limit', 'fizetesi_moral', 'adatok_egyeztetve_datum', 'archiv', 'archivbol_vissza_datum', 'felvetel_idopont', 'torolt'));
+            $this->exportCSV($dataProvider, array('id', 'ugyfel_tipus', 'cegnev', 'cegnev_teljes', 'szekhely_irsz', 'szekhely_orszag', 'szekhely_varos', 'szekhely_cim', 'posta_irsz', 'posta_orszag', 'posta_varos', 'posta_cim', 'szallitasi_irsz', 'szallitasi_orszag', 'szallitasi_varos', 'szallitasi_cim', 'ugyvezeto_nev', 'ugyvezeto_telefon', 'ugyvezeto_email', 'kapcsolattarto_nev', 'kapcsolattarto_telefon', 'kapcsolattarto_email', 'ceg_telefon', 'ceg_fax', 'ceg_email', 'ceg_honlap', 'cegforma', 'szamlaszam1', 'szamlaszam2', 'display_ugyfel_ugyintezok', 'adoszam', 'eu_adoszam', 'teaor', 'tevekenysegi_kor', 'arbevetel', 'foglalkoztatottak_szama', 'adatforras', 'besorolas', 'megjegyzes', 'fontos_megjegyzes', 'fizetesi_felszolitas_volt', 'ugyvedi_felszolitas_volt', 'levelezes_engedelyezett', 'email_engedelyezett', 'kupon_engedelyezett', 'egyedi_kuponkedvezmeny', 'elso_vasarlas_datum', 'utolso_vasarlas_datum', 'fizetesi_hatarido', 'max_fizetesi_keses', 'atlagos_fizetesi_keses', 'rendelesi_tartozasi_limit', 'fizetesi_moral', 'adatok_egyeztetve_datum', 'archiv', 'archivbol_vissza_datum', 'felvetel_idopont', 'torolt'));
         }
 		
 		//send model object for search

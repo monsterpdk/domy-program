@@ -48,7 +48,10 @@
 		$papirtipus = new PapirTipusok();
 				
 	// ez csak egy évszám, ami nem tudom pontosan honnan jön, de kb. ez jó lehet ide, még pontosítani kell
-	$fejlecDatum = date('Y', strtotime(str_replace("-", "", $model->hatarido)));
+	$fejlecDatum = "" ;
+	if ($model->hatarido != "0000-00-00 00:00:00") {
+		$fejlecDatum = date('Y', strtotime(str_replace("-", "", $model->hatarido)));
+	}	
 	
 	$actualUserName = '';
 	$actualUser = User::model()->findByPk(Yii::app()->user->getId());
@@ -61,6 +64,40 @@
 	if ($normaAdat != null) {
 		$gyartasIdeje = $normaAdat['normaido'];
 	}
+	
+	$elooldal_szinek = "" ;
+	if ($model->szin_c_elo == 1) {
+		$elooldal_szinek .= "C" ;	
+	}
+	if ($model->szin_m_elo == 1) {
+		$elooldal_szinek .= "M" ;	
+	}
+	if ($model->szin_y_elo == 1) {
+		$elooldal_szinek .= "Y" ;	
+	}
+	if ($model->szin_k_elo == 1) {
+		$elooldal_szinek .= "K" ;	
+	}
+	if ($model->szin_k_elo == 1) {
+		$elooldal_szinek .= "K" ;	
+	}
+
+	$hatoldal_szinek = "" ;
+	if ($model->szin_c_hat == 1) {
+		$hatoldal_szinek .= "C" ;	
+	}
+	if ($model->szin_m_hat == 1) {
+		$hatoldal_szinek .= "M" ;	
+	}
+	if ($model->szin_y_hat == 1) {
+		$hatoldal_szinek .= "Y" ;	
+	}
+	if ($model->szin_k_hat == 1) {
+		$hatoldal_szinek .= "K" ;	
+	}
+	if ($model->szin_k_hat == 1) {
+		$hatoldal_szinek .= "K" ;	
+	}	
 	
 ?>
 
@@ -187,7 +224,7 @@
 	<tr>
 		<td colspan='3'> <strong> Boríték típusa, ragasztási módja, mérete, ablak <br /> Megjegyzés </strong> </td>
 		<td align='center'> <strong> Példányszám </strong> </td>
-		<td align='center'> <strong> Színek száma </strong> </td>
+		<td align='center'> <strong> Színek száma</strong> </td>
 	</tr>
 	<tr>
 		<td colspan='3'> <?php print "$termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag, $ablakhely->hely 			$ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm $ablakmeret->magassag x $ablakmeret->szelesseg mm $papirtipus->nev, $papirtipus->suly gr"; ?> </td>
@@ -195,8 +232,8 @@
 		<td align='center' width='110'> <?php echo $megrendeles_tetel->displayTermekSzinekSzama; ?> </td>
 	</tr>
 	<tr>
-		<td width='115'> <strong> PANTONE (szín)</strong> </td>
-		<td colspan='4'> <strong> ELŐOLDAL: <br /> HÁTOLDAL:</strong> </td>
+		<td width='115'> <strong> PANTONE (szín): <?php echo $model->szin_pantone;?></strong> </td>
+		<td colspan='4'> <strong> ELŐOLDAL: <?php echo $elooldal_szinek;?> <br /> HÁTOLDAL: <?php echo $hatoldal_szinek;?></strong> </td>
 	</tr>
 	<tr>
 		<td> <strong> UTASÍTÁS GÉP- <br/> MESTER-nek</strong> </td>

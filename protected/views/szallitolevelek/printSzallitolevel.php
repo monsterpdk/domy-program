@@ -23,6 +23,13 @@
 		$afakulcs = new AfaKulcsok();
 	
 	$szallitolevel_tetelek = SzallitolevelTetelek::model()->findAll(array("condition"=>"szallitolevel_id = $model->id"));
+	if ($ugyfel->szallitasi_cim != "") {
+		$szallitasi_cim = $ugyfel->getDisplay_ugyfel_szallitasi_cim() ;
+	}
+	else
+	{
+		$szallitasi_cim = $ugyfel -> display_ugyfel_cim ;
+	}
 ?>
 
 <style>
@@ -95,7 +102,7 @@
 		<td class = 'col1'><strong>Ügyintéző</strong></td>
 		<td class = 'col2'> <?php echo $actualUser -> fullname; ?> </td>
 		<td class = 'col3'><strong>Cég <br /> Szállítási cím</strong></td>
-		<td class = 'col4'> <?php echo $ugyfel -> cegnev . "<br />" . $ugyfel -> display_ugyfel_cim; ?> </td>
+		<td class = 'col4'> <?php echo $ugyfel -> cegnev . "<br />" . $szallitasi_cim; ?> </td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Telefon</strong></td>

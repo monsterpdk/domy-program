@@ -16,6 +16,10 @@
  * @property string $posta_orszag
  * @property string $posta_varos
  * @property string $posta_cim
+ * @property string $szallitasi_irsz
+ * @property string $szallitasi_orszag
+ * @property string $szallitasi_varos
+ * @property string $szallitasi_cim
  * @property string $ugyvezeto_nev
  * @property string $ugyvezeto_telefon
  * @property string $ugyvezeto_email
@@ -92,14 +96,14 @@ class Ugyfelek extends DomyModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, cegforma, arkategoria, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral', 'required'),
+			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, cegforma, arkategoria, rendelesi_tartozasi_limit', 'required'),
 			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, torolt', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_tipus', 'length', 'max'=>9),
 			array('cegnev, ugyvezeto_nev, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_email, ceg_email, tevekenysegi_kor', 'length', 'max'=>127),
-			array('cegnev_teljes, posta_cim, szekhely_cim, megjegyzes, fontos_megjegyzes', 'length', 'max'=>255),
-			array('szekhely_irsz, posta_irsz', 'length', 'max'=>6),
+			array('cegnev_teljes, posta_cim, szekhely_cim, szallitasi_cim, megjegyzes, fontos_megjegyzes', 'length', 'max'=>255),
+			array('szekhely_irsz, posta_irsz, szallitasi_irsz', 'length', 'max'=>6),
 			array('fizetesi_hatarido', 'length', 'max'=>6),
-			array('szekhely_orszag, posta_orszag', 'length', 'max'=>3),
+			array('szekhely_orszag, posta_orszag, szallitasi_orszag', 'length', 'max'=>3),
 			array('rendelesi_tartozasi_limit', 'length', 'max'=>10),
 			array('ugyvezeto_telefon, kapcsolattarto_telefon, ceg_telefon, ceg_fax, szamlaszam1, szamlaszam2, arbevetel, foglalkoztatottak_szama', 'length', 'max'=>30),
 			array('ceg_honlap', 'length', 'max'=>60),
@@ -111,7 +115,7 @@ class Ugyfelek extends DomyModel
 			array('elso_vasarlas_datum, utolso_vasarlas_datum, adatok_egyeztetve_datum, archivbol_vissza_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ugyfel_tipus, cegnev, cegnev_teljes, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, posta_cim, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, ceg_honlap, cegforma, szamlaszam1, szamlaszam2, adoszam, eu_adoszam, teaor, tevekenysegi_kor, arbevetel, foglalkoztatottak_szama, adatforras, arkategoria, besorolas, megjegyzes, fontos_megjegyzes, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, elso_vasarlas_datum, utolso_vasarlas_datum, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral, adatok_egyeztetve_datum, archiv, archivbol_vissza_datum, felvetel_idopont, torolt', 'safe', 'on'=>'search'),
+			array('id, ugyfel_tipus, cegnev, cegnev_teljes, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, posta_irsz, posta_orszag, posta_varos, posta_cim, szallitasi_irsz, szallitasi_orszag, szallitasi_varos, szallitasi_cim, ugyvezeto_nev, ugyvezeto_telefon, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_telefon, kapcsolattarto_email, ceg_telefon, ceg_fax, ceg_email, ceg_honlap, cegforma, szamlaszam1, szamlaszam2, adoszam, eu_adoszam, teaor, tevekenysegi_kor, arbevetel, foglalkoztatottak_szama, adatforras, arkategoria, besorolas, megjegyzes, fontos_megjegyzes, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, elso_vasarlas_datum, utolso_vasarlas_datum, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, rendelesi_tartozasi_limit, fizetesi_moral, adatok_egyeztetve_datum, archiv, archivbol_vissza_datum, felvetel_idopont, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -186,8 +190,10 @@ class Ugyfelek extends DomyModel
 			'cegforma_dsp'    => array(self::BELONGS_TO, 'Cegformak', 'cegforma'),
 			'szekhely_orszag_dsp'    => array(self::BELONGS_TO, 'Orszagok', 'szekhely_orszag'),
 			'posta_orszag_dsp'    => array(self::BELONGS_TO, 'Orszagok', 'posta_orszag'),
+			'szallitasi_orszag_dsp'    => array(self::BELONGS_TO, 'Orszagok', 'szallitasi_orszag'),
 			'szekhely_varos_dsp'    => array(self::BELONGS_TO, 'Varosok', 'szekhely_varos'),
 			'posta_varos_dsp'    => array(self::BELONGS_TO, 'Varosok', 'posta_varos'),
+			'szallitasi_varos_dsp'    => array(self::BELONGS_TO, 'Varosok', 'szallitasi_varos'),
 			
             'ugyfelUgyintezo' => array(self::HAS_MANY, 'UgyfelUgyintezok', 'ugyfel_id'),
 		);
@@ -207,10 +213,14 @@ class Ugyfelek extends DomyModel
 			'szekhely_orszag' => 'Székhely ország',
 			'szekhely_varos' => 'Székhely város',
 			'szekhely_cim' => 'Székhely cím utca, házszám',
-			'posta_irsz' => 'Szállítási cím irányítószám',
-			'posta_orszag' => 'Szállítási ország',
-			'posta_varos' => 'Szállítási cím város',
-			'posta_cim' => 'Szállítási cím utca, házszám',
+			'posta_irsz' => 'Postázási cím irányítószám',
+			'posta_orszag' => 'Postázási ország',
+			'posta_varos' => 'Postázási cím város',
+			'posta_cim' => 'Postázási cím utca, házszám',
+			'szallitasi_irsz' => 'Szállítási cím irányítószám',
+			'szallitasi_orszag' => 'Szállítási ország',
+			'szallitasi_varos' => 'Szállítási cím város',
+			'szallitasi_cim' => 'Szállítási cím utca, házszám',
 			'ugyvezeto_nev' => 'Ügyvezető név',
 			'ugyvezeto_telefon' => 'Ügyvezető telefonszám',
 			'ugyvezeto_email' => 'Ügyvezető email',
@@ -336,7 +346,13 @@ class Ugyfelek extends DomyModel
 			if ($check_posta_varos != null)
 				$this -> posta_varos = $check_posta_varos -> varosnev;
 		}
-			
+
+		if ($this -> szallitasi_varos != null) {
+			$check_szallitasi_varos = Varosok::model()->findByPk($this -> szallitasi_varos);
+			if ($check_szallitasi_varos != null)
+				$this -> szallitasi_varos = $check_szallitasi_varos -> varosnev;
+		}
+		
 		parent::afterFind();
 	}
 	
@@ -349,6 +365,7 @@ class Ugyfelek extends DomyModel
 		// szöveg van (value), ezért itt meg kell cserélnünk őket
 		$szekhely_varos = $this -> szekhely_varos;
 		$posta_varos = $this -> posta_varos;
+		$szallitasi_varos = $this -> szallitasi_varos;
 		
 		$q = new CDbCriteria( array(
 			'condition' => "varosnev = :szekhely_varos AND torolt = 0",
@@ -365,6 +382,15 @@ class Ugyfelek extends DomyModel
         $check_posta_varos = Varosok::model()->find($q);
 		if ($check_posta_varos != null)
 			$this -> posta_varos = $check_posta_varos -> id;
+
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :szallitasi_varos AND torolt = 0",
+			'params'    => array(':szallitasi_varos' => "$szallitasi_varos")
+		) );
+        $check_szallitasi_varos = Varosok::model()->find($q);
+		if ($check_szallitasi_varos != null)
+			$this -> szallitasi_varos = $check_szallitasi_varos -> id;
+
 		
 		return parent::beforeSave();
 	}
@@ -373,6 +399,8 @@ class Ugyfelek extends DomyModel
 	public function beforeValidate() {
 		$szekhely_varos = $this -> szekhely_varos;
 		$posta_varos = $this -> posta_varos;
+		$szallitasi_varos = $this -> szallitasi_varos;
+//		die($posta_varos . " -----" . $this -> szallitasi_varos) ;
 		
 		$match1 = addcslashes($szekhely_varos, '%_'); // escape LIKE's special characters
 		$q = new CDbCriteria( array(
@@ -387,6 +415,14 @@ class Ugyfelek extends DomyModel
 			'params'    => array(':posta_varos' => "$match2")
 		) );
         $posta_varosok = Varosok::model()->findAll($q);
+
+		$match3 = addcslashes($szallitasi_varos, '%_'); // escape LIKE's special characters
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :szallitasi_varos",
+			'params'    => array(':szallitasi_varos' => "$match3")
+		) );
+        $szallitasi_varosok = Varosok::model()->findAll($q);
+        
 		
 		// LI: ha nem létezik még ilyen város felvesszük
 		if (count($szekhely_varosok) == 0) {
@@ -401,7 +437,14 @@ class Ugyfelek extends DomyModel
 			$uj_varos -> varosnev = $match2;
 			$uj_varos -> save();
 		}
-	
+
+		if (count($szallitasi_varosok) == 0) {
+			$uj_varos = new Varosok;
+			$uj_varos -> varosnev = $match3;
+			$uj_varos -> save();
+		}
+		
+		
 		// LI: mivel a városokhoz ID-t (key) kell tárolnunk, az előregépelős mezőben viszont
 		// szöveg van (value), ezért itt meg kell cserélnünk őket
 		$q = new CDbCriteria( array(
@@ -419,7 +462,16 @@ class Ugyfelek extends DomyModel
         $check_posta_varos = Varosok::model()->find($q);
 		if ($check_posta_varos != null)
 			$this -> posta_varos = $check_posta_varos -> id;
-			
+
+		$q = new CDbCriteria( array(
+			'condition' => "varosnev = :szallitasi_varos AND torolt = 0",
+			'params'    => array(':szallitasi_varos' => "$szallitasi_varos")
+		) );
+        $check_szallitasi_varos = Varosok::model()->find($q);
+		if ($check_szallitasi_varos != null)
+			$this -> szallitasi_varos = $check_szallitasi_varos -> id;
+		
+		
 		return parent::beforeValidate();
 	}
 
@@ -436,6 +488,12 @@ class Ugyfelek extends DomyModel
 			$check_posta_varos = Varosok::model()->findByPk($this -> posta_varos);
 			if ($check_posta_varos != null)
 				$this -> posta_varos = $check_posta_varos -> varosnev;
+		}
+
+		if ($this -> szallitasi_varos != null) {
+			$check_szallitasi_varos = Varosok::model()->findByPk($this -> szallitasi_varos);
+			if ($check_szallitasi_varos != null)
+				$this -> szallitasi_varos = $check_szallitasi_varos -> varosnev;
 		}
 		
 		return parent::afterValidate();
@@ -470,6 +528,33 @@ class Ugyfelek extends DomyModel
 			$this -> szekhely_varos . (strlen($this -> szekhely_varos) > 0 ? ", " : "") .
 			$this -> szekhely_cim;
 	}
+	
+	/**
+	 * TÁ
+	 * Ügyfélhez tartozó szállítási cím összerakása 1 string-be.
+	 */
+	public function getDisplay_ugyfel_szallitasi_cim ()
+	{
+		$return = "" ;
+		$szallitasi_orszag = $szallitasi_irsz = $szallitasi_varosnev = $szallitasi_cim = "" ;
+		if ($this -> szallitasi_orszag != null && $this -> szallitasi_orszag > 0) { 
+			$szallitasi_orszag = Orszagok::model() -> findByPk ($this -> szallitasi_orszag);
+			$szallitasi_orszag = ($szallitasi_orszag == null) ? "" : $szallitasi_orszag -> nev;
+		}
+		if ($this -> szallitasi_varos != null && $this -> szallitasi_varos != '') {
+			$szallitasi_varos = Varosok::model() -> findByAttributes(array('varosnev' => $this -> szallitasi_varos)) ;
+			$szallitasi_varosnev = $this -> szallitasi_varos;
+			$szallitasi_irsz = $szallitasi_varos -> iranyitoszam;	
+		}
+		if ($this -> szallitasi_irsz != "") {
+			$szallitasi_irsz = $this -> szallitasi_irsz ;
+		}
+		if ($this -> szallitasi_cim != "") {
+			$szallitasi_cim = $this -> szallitasi_cim ;
+		}
+		$return = $szallitasi_orszag . (strlen($szallitasi_orszag) > 0 ? ", " : "") . $szallitasi_irsz . (strlen($szallitasi_irsz) > 0 ? " " : "") . $szallitasi_varosnev . (strlen($szallitasi_varosnev) > 0 ? ", " : "") . $szallitasi_cim;
+		return $return ;
+	}	
 
 	/**
 	 * TÁ
@@ -489,6 +574,7 @@ class Ugyfelek extends DomyModel
 		if ($modelOrszag != null) {
 			$model->szekhely_orszag = $modelOrszag->id;
 			$model->posta_orszag = $modelOrszag->id;;
+			$model->szallitasi_orszag = $modelOrszag->id;;
 		}
 		if ($ugyfel_adatok["cegnev"] != "") {
 			$cegforma_string = substr($ugyfel_adatok["cegnev"] , strrpos($ugyfel_adatok["cegnev"], " ") + 1) ;
@@ -519,6 +605,9 @@ class Ugyfelek extends DomyModel
 		$model->posta_irsz = $ugyfel_adatok["irsz"] ;	 	
 		$model->posta_varos = $ugyfel_adatok["telepules"] ;	 	
 		$model->posta_cim = $ugyfel_adatok["cim"] ;	 	
+		$model->szallitasi_irsz = $ugyfel_adatok["szallitasi_irsz"] ;	 	
+		$model->szallitasi_varos = $ugyfel_adatok["szallitasi_varos"] ;	 	
+		$model->szallitasi_cim = $ugyfel_adatok["szallitasi_cim"] ;	 	
 		$model->ceg_telefon = $ugyfel_adatok["telefon"] ;	 	
 		$model->ceg_fax = $ugyfel_adatok["fax"] ;	 	
 		$model->ceg_email = $ugyfel_adatok["email"] ;	 	

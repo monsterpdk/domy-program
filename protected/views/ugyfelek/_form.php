@@ -256,6 +256,92 @@
 		<?php echo $form->textField($model,'posta_cim',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'posta_cim'); ?>
 	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'szallitasi_irsz'); ?>
+
+		<?php
+			$this->widget('ext.typeahead.TbTypeAhead',array(
+				 'model' => $model,
+				 'attribute' => 'szallitasi_irsz',
+				 'enableHogan' => true,
+				 'options' => array(
+					 array(
+						 'name' => 'szallitasi_irsz',
+						 'valueKey' => 'iranyitoszam',
+						 'minLength' => 2,
+						 'remote' => array(
+							 'url' => Yii::app()->createUrl('/varosok/autoCompleteZipCode') . '?term=%QUERY',
+							 'filter' => new CJavaScriptExpression('function(parsedResponse) {
+								  var dataset = [];
+									for(i = 0; i < parsedResponse.length; i++) {
+										if (i == 0) {
+											$("#Ugyfelek_szallitasi_varos").val(parsedResponse[i].varosnev).off("blur");
+										}
+										
+										dataset.push({
+											iranyitoszam: parsedResponse[i].iranyitoszam,
+											varosnev: parsedResponse[i].varosnev,
+										});
+									}
+									return dataset;
+							 }'),
+						 ),
+						 'template' => '<p>{{iranyitoszam}}</p>',
+						 'engine' => new CJavaScriptExpression('Hogan'),
+					 )
+				 ),
+				'events' => array(
+					   'selected' => new CJavascriptExpression("function(evt,data) {
+						   $('#Ugyfelek_szallitasi_varos').val (data.varosnev).off('blur');
+					   }"),
+					   'autocompleted' => new CJavascriptExpression("function(evt,data) {
+						   $('#Ugyfelek_szallitasi_varos').val (data.varosnev).off('blur');
+					   }"),
+				),
+			));
+		?>		
+		
+		<?php echo $form->error($model,'szallitasi_irsz'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'szallitasi_orszag'); ?>
+		
+			<?php echo CHtml::activeDropDownList($model, 'szallitasi_orszag',
+				CHtml::listData(Orszagok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev')
+			); ?>
+			
+		<?php echo $form->error($model,'szallitasi_orszag'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'szallitasi_varos'); ?>
+		<?php
+			$this->widget('ext.typeahead.TbTypeAhead',array(
+				 'model' => $model,
+				 'attribute' => 'szallitasi_varos',
+				 'enableHogan' => true,
+				 'options' => array(
+					 array(
+						 'name' => 'szallitasi_varos',
+						 'valueKey' => 'varosnev',
+						 'remote' => array(
+							 'url' => Yii::app()->createUrl('/ugyfelek/autocomplete') . '?term=%QUERY',
+						 ),
+						 'template' => '<p>{{varosnev}}</p>',
+						 'engine' => new CJavaScriptExpression('Hogan'),
+					 )
+				 ),
+			));
+		?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'szallitasi_cim'); ?>
+		<?php echo $form->textField($model,'szallitasi_cim',array('size'=>60,'maxlength'=>255)); ?>
+		<?php echo $form->error($model,'szallitasi_cim'); ?>
+	</div>	
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'ugyvezeto_nev'); ?>

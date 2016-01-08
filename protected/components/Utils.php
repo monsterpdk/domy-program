@@ -491,13 +491,18 @@
 //						$key = 'item'.$key; //dealing with <0/>..<n/> issues
 						$key = 'BSor'; //dealing with <0/>..<n/> issues
 					}
+					if ($key == 'Szallitasicim') {
+						$key = 'Partnercim' ;	
+					}
 					if ($key != 'bsorok') {
 						$subnode = $xml_data->addChild($key);
 					}
 					Utils::array_to_xml($value, $subnode);
 				} else {
 //					$xml_data->addChild("$key",htmlspecialchars("$value"));
-					$xml_data->addChild("$key","$value");
+//					$xml_data->addChild("$key","$value");
+					$xml_data->addChild("$key") ;
+					$xml_data->$key = "$value" ;
 				}
 			 }
 		}		
@@ -523,7 +528,7 @@
 				$partner_kozterulet_nev = $megrendeles_adatok->ugyfel->szekhely_cim	;
 				$partner_kozterulet_jellege = " " ;
 				$partner_kozterulet_hsz = " " ;
-				if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|) (.*?)$/", $megrendeles_adatok->ugyfel->szekhely_cim, $matches)) {
+				if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|)\s?(.*?)$/", $megrendeles_adatok->ugyfel->szekhely_cim, $matches)) {
 					$partner_kozterulet_nev = trim($matches[1]) ;
 					$partner_kozterulet_jellege = trim($matches[2]) ;
 					$partner_kozterulet_hsz = trim($matches[3]) ;
@@ -532,6 +537,7 @@
 				$megrendeles["TranzakcioID"] = $megrendeles_id ; 
 				$megrendeles["TranzakcioTipus"] = 0 ;
 				$megrendeles["PartnerModositas"] = 0 ;
+				$megrendeles["Ideiglenes"] = 1 ;
 				$megrendeles["BFejlec"]["MozgasAlapID"] = 600 ;
 				$megrendeles["BFejlec"]["Kiallitas"] = date("Y.m.d") ;
 				$megrendeles["BFejlec"]["Teljesites"] = date("Y.m.d") ;
@@ -567,6 +573,26 @@
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["KozteruletNev"] = $partner_kozterulet_nev ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["KozteruletJelleg"] = $partner_kozterulet_jellege ;
 				$megrendeles["BFejlec"]["Partner"]["Partnercim"]["Hazszam"] = $partner_kozterulet_hsz ;
+				if ($megrendeles_adatok->ugyfel->szallitasi_cim != "" && $megrendeles_adatok->ugyfel->szallitasi_cim != $megrendeles_adatok->ugyfel->szekhely_cim) {
+					$szallitasi_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szallitasi_orszag)) ;
+					$szallitasi_kozterulet_nev = $megrendeles_adatok->ugyfel->szallitasi_cim	;
+					$szallitasi_kozterulet_jellege = " " ;
+					$szallitasi_kozterulet_hsz = " " ;
+					if (preg_match("/(.*?) (utca|u\.|u|tér|tere|út|körút|krt\.|sétány|köz|)\s?(.*?)$/", $megrendeles_adatok->ugyfel->szallitasi_cim, $matches)) {
+						$szallitasi_kozterulet_nev = trim($matches[1]) ;
+						$szallitasi_kozterulet_jellege = trim($matches[2]) ;
+						$szallitasi_kozterulet_hsz = trim($matches[3]) ;
+					}					
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["CimTipus"] = 2 ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["CimNev"] = $megrendeles_adatok->ugyfel->cegnev ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["IrSzam"] = $megrendeles_adatok->ugyfel->szallitasi_irsz ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["Helyseg"] = $megrendeles_adatok->ugyfel->szallitasi_varos ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["Orszag"] = $szallitasi_orszag->nev ;
+	//				$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["Utca"] = $megrendeles_adatok->ugyfel->szallitasi_cim ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["KozteruletNev"] = $szallitasi_kozterulet_nev ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["KozteruletJelleg"] = $szallitasi_kozterulet_jellege ;
+					$megrendeles["BFejlec"]["Partner"]["Szallitasicim"]["Hazszam"] = $szallitasi_kozterulet_hsz ;					
+				}
 				
 				$megrendeles["bsorok"] = array() ;				
 				foreach ($megrendeles_tetelek as $tetel) {
@@ -596,7 +622,7 @@
 				$xml_megrendeles = new SimpleXMLElement('<?xml version="1.0" encoding="ISO-8859-2"?><root/>');
 				Utils::array_to_xml($megrendeles_kesz, $xml_megrendeles) ;
 				$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
-//				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
+				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
 			}
 		}
 		
