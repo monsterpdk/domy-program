@@ -65,6 +65,7 @@
 	  odd-footer-name: html_myFooter2;
 	  even-footer-name: html_myFooter2;
 	}
+
 </style>
 
 <div class='wide form'>
@@ -159,7 +160,7 @@
 				$papirtipus = PapirTipusok::model()->findByPk($termek -> papir_id);
 				if ($papirtipus == null)
 					$papirtipus = new PapirTipusok();
-*/				
+*/		
 				
 				// tételek kiírása
 				echo "

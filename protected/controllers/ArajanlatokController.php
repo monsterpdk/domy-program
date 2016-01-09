@@ -155,9 +155,14 @@ class ArajanlatokController extends Controller
 		
 		if ($model != null) {
 			# mPDF
-			$mPDF1 = Yii::app()->ePdf->mpdf();
+			$mPDF1 = Yii::app()->ePdf->mpdf('', 'A4', 0, '', 15, 15, 15, 30, '', '', 'P');
 
 			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
+
+			// a content ne lógjon rá a header-re sem pedig a footer-re
+			$mPDF1->setAutoTopMargin 	= 'stretch';
+			$mPDF1->setAutoBottomMargin = 'stretch';
+			
 			# render
 			$mPDF1->WriteHTML($this->renderPartial("printArajanlat", array('model' => $model), true));
 	 
