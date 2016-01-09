@@ -73,6 +73,7 @@
 	'dataProvider'=>$model -> search(),
 	'id'=>'megrendelesek-gridview',
 	'template' => '{items} {summary} {pager}',
+	'rowCssClassExpression'=>'$data->cssClass',
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',

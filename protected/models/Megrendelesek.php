@@ -246,7 +246,7 @@ class Megrendelesek extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-                        'defaultOrder'=>'rendeles_idopont DESC',
+                        'defaultOrder'=>'t.id DESC, rendeles_idopont DESC',
                     ),			
 		));
 	}
@@ -304,4 +304,27 @@ class Megrendelesek extends CActiveRecord
 		return $this -> autocomplete_ugyfel_name;
 	}
 	
+	// TÁ: A megrendelések listázásánál a sorok css classát adja vissza, mivel eltérő színezést kell kapniuk attól függően, hogy van-e szállítólevél, minden termék szállítón van-e, stb.
+    public function getCssClass() {
+        $class = "" ;
+    	$szallitolevelek = Szallitolevelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id));
+    	if ($szallitolevelek != null) {
+			$class = "megrendeles_minden_szalliton" ;
+			$ossz_szallito_termekszam = 0 ;
+			$ossz_megrendeles_termekszam = 0 ;
+			foreach($szallitolevelek as $szallito) {
+				$szallito_db = $szallito->getTermekekDarabszamOsszesen() ;
+				$ossz_szallito_termekszam += $szallito_db ;
+			}
+			$megrendeles_tetelek = MegrendelesTetelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id)) ;
+			foreach($megrendeles_tetelek as $megrendeles_tetel) {
+				$ossz_megrendeles_termekszam += $megrendeles_tetel -> darabszam ;
+			}
+			if ($ossz_szallito_termekszam < $ossz_megrendeles_termekszam) {
+				$class = "megrendeles_resszallitos" ;	
+			}
+		}
+        return $class;
+        
+    }	
 }

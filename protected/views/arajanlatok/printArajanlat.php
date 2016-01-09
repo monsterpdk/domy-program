@@ -14,6 +14,10 @@
 	if ($afakulcs == null)
 		$afakulcs = new AfaKulcsok();
 	
+	$admin = User::model()->findByPk($model -> admin_id) ;
+	if ($admin == null) 
+		$admin = Yii::app()->user ;
+	
 	$arajanlat_tetelek = ArajanlatTetelek::model()->findAll(array("condition"=>"arajanlat_id = $model->id"));
 ?>
 
@@ -87,7 +91,7 @@
 		<td class = 'col1'><strong>Email</strong></td>
 		<td class = 'col2'> <?php echo $ugyfel -> ceg_email; ?> </td>
 		<td class = 'col3'><strong>Ügyintéző</strong></td>
-		<td class = 'col4'> <?php echo $model -> ugyintezo -> nev; ?> </td>
+		<td class = 'col4'> <?php echo $admin -> fullname; ?> </td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Telefon</strong></td>
@@ -136,7 +140,7 @@
 				if ($termek == null)
 					$termek = new Termekek();
 					
-				$termek_meret = TermekMeretek::model()->findByPk($termek -> meret_id);
+/*				$termek_meret = TermekMeretek::model()->findByPk($termek -> meret_id);
 				if ($termek_meret == null)
 					$termek_meret = new TermekMeretek();
 					
@@ -155,12 +159,12 @@
 				$papirtipus = PapirTipusok::model()->findByPk($termek -> papir_id);
 				if ($papirtipus == null)
 					$papirtipus = new PapirTipusok();
-				
+*/				
 				
 				// tételek kiírása
 				echo "
 					<tr>
-						<td> <strong> $termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm, $papirtipus->nev $papirtipus->suly gr</strong> </td>
+						<td> <strong> " . $termek->getDisplayTermekTeljesNev() . "</strong> </td>
 						<td align=right> $tetel->darabszam db</td>
 						<td align=right> $tetel->szinek_szama1+$tetel->szinek_szama2 </td>
 						<td align=right>" . number_format( (float)$tetel -> netto_darabar, 2) . "</td>

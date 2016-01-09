@@ -177,6 +177,17 @@ class Szallitolevelek extends CActiveRecord
 		return $this -> szallito_darabszamok;
 	}
 	
+	public function getTermekekDarabszamOsszesen() {
+		$db = 0 ;
+		$tetelek = SzallitolevelTetelek::model()->findAllByAttributes(array('szallitolevel_id' => $this->id)) ;
+		if ($tetelek != null) {
+			foreach ($tetelek as $tetel) {
+				$db += $tetel->darabszam ;	
+			}
+		}
+		return $db ;
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

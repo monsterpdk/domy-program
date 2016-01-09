@@ -67,37 +67,33 @@
 	
 	$elooldal_szinek = "" ;
 	if ($model->szin_c_elo == 1) {
-		$elooldal_szinek .= "C" ;	
+		$elooldal_szinek .= "C," ;	
 	}
 	if ($model->szin_m_elo == 1) {
-		$elooldal_szinek .= "M" ;	
+		$elooldal_szinek .= "M," ;	
 	}
 	if ($model->szin_y_elo == 1) {
-		$elooldal_szinek .= "Y" ;	
+		$elooldal_szinek .= "Y," ;	
 	}
 	if ($model->szin_k_elo == 1) {
-		$elooldal_szinek .= "K" ;	
+		$elooldal_szinek .= "K," ;	
 	}
-	if ($model->szin_k_elo == 1) {
-		$elooldal_szinek .= "K" ;	
-	}
+	$elooldali_szinek = rtrim($elooldali_szinek, ",") ;
 
 	$hatoldal_szinek = "" ;
 	if ($model->szin_c_hat == 1) {
-		$hatoldal_szinek .= "C" ;	
+		$hatoldal_szinek .= "C," ;	
 	}
 	if ($model->szin_m_hat == 1) {
-		$hatoldal_szinek .= "M" ;	
+		$hatoldal_szinek .= "M," ;	
 	}
 	if ($model->szin_y_hat == 1) {
-		$hatoldal_szinek .= "Y" ;	
+		$hatoldal_szinek .= "Y," ;	
 	}
 	if ($model->szin_k_hat == 1) {
-		$hatoldal_szinek .= "K" ;	
+		$hatoldal_szinek .= "K," ;	
 	}
-	if ($model->szin_k_hat == 1) {
-		$hatoldal_szinek .= "K" ;	
-	}	
+	$hatoldal_szinek = rtrim($hatoldal_szinek, ",") ;
 	
 ?>
 
@@ -227,7 +223,7 @@
 		<td align='center'> <strong> Színek száma</strong> </td>
 	</tr>
 	<tr>
-		<td colspan='3'> <?php print "$termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag, $ablakhely->hely 			$ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm $ablakmeret->magassag x $ablakmeret->szelesseg mm $papirtipus->nev, $papirtipus->suly gr"; ?> </td>
+		<td colspan='3'> <?php print $termek->getDisplayTermekTeljesNev(); ?> </td>
 		<td align='center' width='80'> <?php echo $megrendeles_tetel->darabszam; ?> </td>
 		<td align='center' width='110'> <?php echo $megrendeles_tetel->displayTermekSzinekSzama; ?> </td>
 	</tr>

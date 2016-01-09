@@ -929,3 +929,11 @@ table tr td.yellow {
 #megrendelesek-form #yw4 {
 	width: 60%;	
 }
+
+.megrendeles_minden_szalliton {
+	background-color: lightgreen ;	
+}
+
+.megrendeles_resszallitos {
+	background-color: peachpuff;	
+}
