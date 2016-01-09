@@ -155,7 +155,7 @@ class ArajanlatokController extends Controller
 		
 		if ($model != null) {
 			# mPDF
-			$mPDF1 = Yii::app()->ePdf->mpdf('', 'A4', 0, '', 15, 15, 15, 30, '', '', 'P');
+			$mPDF1 = Yii::app()->ePdf->mpdf('', 'A4', 0, '', 15, 15, 15, 35, '', '', 'P');
 
 			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
 
