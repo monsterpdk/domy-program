@@ -122,14 +122,21 @@ class MegrendelesekController extends Controller
 	*/
 	public function actionMunkakGeneralasaMegrendelesbol($id) {
 		$megrendeles = $this->loadModel($id);
-		
+
 		// ha létezik a megrendelés és még nincsenek a tételei a nyomdakönyvbe rakva
 		if ($megrendeles != null && $megrendeles->nyomdakonyv_munka_id == 0) {
 			foreach ($megrendeles -> tetelek as $tetel) {
-				if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {					
+				if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
 					$nyomdakonyv = new Nyomdakonyv;
 					$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
 					$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
+					
+					// a választható CTP vagy Film közül a deault a CTP
+					$nyomdakonyv->ctp = 1;
+					
+					// az ofszet festék és a vágójel szerinti pipáló mezők automatikusan legyenek pipálva
+					$nyomdakonyv->ofszet_festek = 1;
+					$nyomdakonyv->nyomas_vagojel_szerint = 1;
 					
 					// beállítjuk az alapértelmezett gépet a munkához, ha van
 					$gep = Nyomdagepek::model()->findByAttributes(array('alapertelmezett'=> 1));
@@ -149,19 +156,18 @@ class MegrendelesekController extends Controller
 						$nyomdakonyv -> munkatipus_id = $defaultMunkatipus;
 					}
 					
-					print_r($nyomdakonyv) ;
+//					print_r($nyomdakonyv) ;
 					
 					$nyomdakonyv -> save(false);
 				}
 			}
-			
 //			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
 			$megrendeles->nyomdakonyv_munka_id = 1;	//Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
-//			$megrendeles->save(false);
+			$megrendeles->save(false);
 		}
 		
 		Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
-//		$this->redirect(array('index'));
+		$this->redirect(array('index'));
 	}
 	
 	 /**

@@ -156,22 +156,22 @@
 	<tr>
 		<td></td>
 		<td></td>
-		<td style='font-size:15pt'> <strong> <?php echo $fejlecDatum; ?> </strong> </td>
+		<td style='font-size:15pt'> <strong> <?php //echo $fejlecDatum; ?> </strong> </td>
 		<td style='font-size:12pt'>TÁSKASZÁM:</td>
 		<td style='font-size:15pt'>  <strong> <?php echo $model->taskaszam; ?> </strong> </td>
 	</tr>
 	<tr>
 		<td width='110'>Nyomógép típusa:</td>
 		<td> <strong> <?php echo $gepTipusNev; ?> </strong> </td>
-		<td></td>
+		<td style='font-weight: bold;font-size:30pt'> <?php if ($model->sos == '1') echo 'SOS'; ?> </td>
 		<td colspan="2" align='right'> <h1> <span class='under'>MUNKATÁSKA</span> </h1> </td>
 	</tr>
 	<tr>
 		<td valign='center'>Dolgozó(k) neve: </td>
 		<td> <span class='alahuzas'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> </td>
 		<td></td>
-		<td style='font-size:12pt'>HATÁRIDŐ:</td>
-		<td style='font-size:12pt'> <strong> <?php echo $model->hatarido; ?> </strong> </td>		
+		<td style='font-size:11pt'>HATÁRIDŐ:</td>
+		<td style='font-size:11pt'> <strong> <?php echo $model->hatarido; ?> </strong> </td>		
 	</tr>
 	<tr>
 		<td>Gyártás ideje: </td>

@@ -40,9 +40,13 @@
 		</div>
 
 		<div class="row checkbox_group_horizontal">
-			<?php echo $form->checkBox($model,'ctp'); ?>
+			<?php echo $form->checkBox($model,'ctp',array('onclick'=>'if (($("#Nyomdakonyv_ctp").is(":checked"))) $("#Nyomdakonyv_film").prop("checked", false );')); ?>
 			<?php echo $form->labelEx($model,'ctp'); ?>
 			<?php echo $form->error($model,'ctp'); ?>
+
+			<?php echo $form->checkBox($model,'film',array('onclick'=>'if (($("#Nyomdakonyv_film").is(":checked"))) $("#Nyomdakonyv_ctp").prop("checked", false );')); ?>
+			<?php echo $form->labelEx($model,'film'); ?>
+			<?php echo $form->error($model,'film'); ?>
 
 			<?php echo $form->checkBox($model,'sos'); ?>
 			<?php echo $form->labelEx($model,'sos'); ?>
@@ -440,7 +444,7 @@
 				
 			<?php echo $form->error($model,'ertesitesi_datum'); ?>
 		</div>
-	
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'szallitolevel_datum'); ?>
 				
