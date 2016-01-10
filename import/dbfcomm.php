@@ -11,6 +11,8 @@
 //  define("ROOT_PATH", "C:\\wamp\\www\\domypress\\gepterem_komm/") ;
   define("UGYFELEK", "UGYFEL.dbf") ;
   define("TERMEKEK", "TERMEK.DBF") ;
+  
+error_reporting(E_ALL & ~E_NOTICE);  
 
 /**
  * A php meghívásánál paraméterben megkapott json típusú keresőparancs, ezt szűrjük / alakítjuk általunk használható (dbf_query függvénynek átadható) szűrő tömbre.

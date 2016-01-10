@@ -84,7 +84,7 @@ class ArajanlatTetelek extends CActiveRecord
 			'termek_id' => 'Termék',
 			'szinek_szama1' => 'Színek száma (előoldali)',
 			'szinek_szama2' => 'Színek száma (hátoldali)',
-			'darabszam' => 'Darabszám',
+			'darabszam' => 'Db',
 			'netto_darabar' => 'Nettó darabár',
 			'megjegyzes' => 'Megjegyzés',
 			'mutacio' => 'Mutáció',

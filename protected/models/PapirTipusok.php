@@ -68,6 +68,7 @@ class PapirTipusok extends CActiveRecord
 			'suly' => 'Súly (g)',
 			'aktiv' => 'Aktív',
 			'torolt' => 'Törölt',
+			'FullName' => 'Papírnév'
 		);
 	}
 
@@ -113,4 +114,10 @@ class PapirTipusok extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	// A papír teljes nevét adja vissza: Név + súly;
+	public function getFullName()
+	{
+		return $this->nev.' '.$this->suly.' gr';
+	}	
 }

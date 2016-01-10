@@ -25,7 +25,7 @@ $this->breadcrumbs=array(
 			'zaras.nev',
 			'ablakmeret.nev',
 			'ablakhely.nev',
-			'papirtipus.nev',
+			'papirtipus.FullName',
 			'afakulcs.afa_szazalek',
 			'redotalp',
 			'belesnyomott',

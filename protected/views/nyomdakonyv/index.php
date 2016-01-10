@@ -71,7 +71,7 @@ $this->menu=array(
 				),
 				'megrendeles_tetel.megrendeles.ugyfel.id',
 				'megrendeles_tetel.megrendeles.ugyfel.cegnev',
-				'megrendeles_tetel.termek.displayTermekTeljesNev',
+				'megrendeles_tetel.termek.DisplayTermekTeljesNev',
 				'megrendeles_tetel.displayTermekSzinekSzama',
 				'megrendeles_tetel.darabszam',
 				array(
