@@ -143,7 +143,7 @@ Alulírott, <strong><?php  echo $szallito->cegnev; ?> </strong> képviseletében
 					<tr>
 						<td style='border-left:0px;border-right:0px'>$termek->nev <br /> $zarasmod->nev</td>
 						<td style='border-left:0px;border-right:0px'><br /> $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm</td>
-						<td align=right style='border-left:0px;border-right:0px'>$ablakhely->nev <br /> $papirtipus->nev</td>
+						<td align=right style='border-left:0px;border-right:0px'>$ablakhely->nev <br /> " . $papirtipus->FullName . "</td>
 						<td align=right style='border-left:0px;border-right:0px'><br />$termek->suly gr</td>
 						<td align=right>$tetel->darabszam</td>
 						<td align=right>" . number_format((float)$tetel->netto_darabar * (100 + $afakulcs->afa_szazalek) / 100 , 2) . "</td>

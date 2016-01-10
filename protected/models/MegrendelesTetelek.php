@@ -95,7 +95,7 @@ class MegrendelesTetelek extends CActiveRecord
 			'szinek_szama1' => 'Színek (előold.) db',
 			'szinek_szama2' => 'Színek (hátold.) db',
 			'displayTermekSzinekSzama' => 'Színek száma',
-			'darabszam' => 'Darabszám',
+			'darabszam' => 'Db',
 			'netto_darabar' => 'Nettó darabár',
 			'megjegyzes' => 'Megjegyzés',
 			'munka_neve' => 'Munka neve',

@@ -79,7 +79,7 @@
 			'enablePagination' => false,
 			'dataProvider'=>$dataProvider,
 			'columns'=>array(
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					'szinek_szama1',
 					'szinek_szama2',
 					'darabszam',

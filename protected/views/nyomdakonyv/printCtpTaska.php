@@ -192,7 +192,7 @@
 		<td align='center'> <strong> Színek száma </strong> </td>
 	</tr>
 	<tr>
-		<td colspan='3'> <?php print "$termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag, $ablakhely->hely 			$ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm $ablakmeret->magassag x $ablakmeret->szelesseg mm $papirtipus->nev, $papirtipus->suly gr"; ?> </td>
+		<td colspan='3'> <?php print $termek->getDisplayTermekTeljesNev(); ?> </td>
 		<td align='center' width='80'> <?php echo $megrendeles_tetel->darabszam; ?> </td>
 		<td align='center' width='110'> <?php echo $megrendeles_tetel->displayTermekSzinekSzama; ?> </td>
 	</tr>

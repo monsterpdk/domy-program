@@ -146,7 +146,7 @@ class Termekek extends CActiveRecord
 			'torolt' => 'Törölt',
 			'belesnyomott' => 'Bélésnyomott',
 			
-			'displayTermekTeljesNev' => 'Boríték',
+			'DisplayTermekTeljesNev' => 'Termék',
 			
 		);
 	}

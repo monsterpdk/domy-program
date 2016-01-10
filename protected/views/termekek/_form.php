@@ -92,7 +92,7 @@
 			<?php echo $form->labelEx($model,'papir_id'); ?>
 			
 				<?php echo CHtml::activeDropDownList($model, 'papir_id',
-					CHtml::listData(PapirTipusok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev')
+					CHtml::listData(PapirTipusok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'FullName')
 				); ?>
 				
 			<?php echo $form->error($model,'papir_id'); ?>

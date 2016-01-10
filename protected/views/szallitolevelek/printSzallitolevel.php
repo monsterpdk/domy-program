@@ -183,7 +183,7 @@
 				// tétel kiírása
 				echo "
 					<tr>
-						<td> $termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm, $papirtipus->nev $papirtipus->suly gr </td>
+						<td> " . $termek->getDisplayTermekTeljesNev() . " </td>
 						<td align=right> $megrendelesTetel->szinek_szama1+$megrendelesTetel->szinek_szama2 </td>
 						<td align=right> $tetel->darabszam </td>
 						<td align=right> $megrendelesTetel->munka_neve </td>

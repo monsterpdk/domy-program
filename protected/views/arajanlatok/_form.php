@@ -574,7 +574,7 @@
 				'enablePagination' => false,
 				'dataProvider'=>$dataProvider,
 				'columns'=>array(
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					'szinek_szama1',
 					'szinek_szama2',
 					'darabszam',
@@ -582,7 +582,7 @@
 					'netto_darabar',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
-								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
+								'htmlOptions'=>array('style'=>'width: 60px; text-align: center;'),
 								'template' => '{update} {delete_item}',
 								
 								'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),

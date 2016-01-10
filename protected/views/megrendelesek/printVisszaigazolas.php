@@ -174,8 +174,7 @@
 				// tételek kiírása
 				echo "
 					<tr>
-						<td>$termek->nev $zarasmod->nev $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag, $ablakhely->hely $ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm 
-						$ablakmeret->magassag x $ablakmeret->szelesseg mm $papirtipus->nev, $papirtipus->suly gr <br /> $tetel->munka_neve</td>
+						<td> " . $termek->getDisplayTermekTeljesNev() . " <br /> $tetel->munka_neve</td>
 						<td align=right>$tetel->darabszam</td>
 						<td align=right>$tetel->displayTermekSzinekSzama</td>
 						<td align=right>" . number_format((float)$tetel->netto_darabar, 2) . "</td>
