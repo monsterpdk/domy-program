@@ -381,6 +381,60 @@ class NyomdakonyvController extends Controller
 		}
 	}
 	
+	// Ütemezés listát előállító action.
+	public function actionUtemezes()
+	{
+/*		$model=new Nyomdakonyv('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Nyomdakonyv']))
+			$model->attributes=$_GET['Nyomdakonyv'];
+*/
+
+		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
+			'criteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'order'=>'hatarido',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'pagination'=>array(
+				'pageSize'=>20,
+			),
+		));
+		
+		$this->render('utemezes',array(
+			'dataProvider'=>$dataProvider,
+		));		
+	}	
+	
+	// Ütemezés lista PDF-et előállító action.
+	public function actionPrintUtemezes()
+	{
+		if (isset($_GET['id'])) {
+			$model = $this -> loadModel($_GET['id']);
+		}
+		
+		// ha nem CTP-s a munkatáska, akkor 'simát' nyomtatunk
+		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
+		
+		if ($model != null) {
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Munkatáska #" . $model->taskaszam);
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial($pdfTemplateName, array('model' => $model), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+		
+	}	
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
