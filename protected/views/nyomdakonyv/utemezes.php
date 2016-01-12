@@ -12,7 +12,36 @@ $this->menu=array(
 
 <h1>Nyomdakönyv ütemezés</h1>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php
+    $this->widget('ext.groupgridview.BootGroupGridView', array(
+      'id' => 'utemezes_grid1',
+      'itemsCssClass'=>'items group-grid-view',
+      'dataProvider' => $dataProvider,
+      'extraRowColumns' => array('HataridoFormazott'),
+      'mergeColumns' => array('HataridoFormazott'),
+      'columns' => array(
+      	  				'HataridoFormazott',
+						'taskaszam',
+						'DisplayKifutok',
+						'megrendeles_tetel.munka_neve',
+						'megrendeles_tetel.megrendeles.ugyfel.cegnev',
+						'megrendeles_tetel.termek.DisplayTermekTeljesNev',
+						'megrendeles_tetel.displayTermekSzinekSzama',
+						'megrendeles_tetel.darabszam',
+						'GyartasiIdo',
+						array(
+							'header' => 'Törölt',
+							'type'=>'boolean',
+							'value' => '$data->torolt',
+							'visible' => Yii::app()->user->checkAccess('Admin'),
+						),
+      ),
+    ));
+?>
+    
+<?php
+/*
+	$this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
@@ -22,6 +51,7 @@ $this->menu=array(
 				),
                 'megrendeles_tetel.megrendeles.sorszam',
 				'taskaszam',
+				'DisplayKifutok',
 				'megrendeles_tetel.munka_neve',
 				'megrendeles_tetel.megrendeles.ugyfel.cegnev',
 				'megrendeles_tetel.termek.DisplayTermekTeljesNev',
@@ -34,7 +64,9 @@ $this->menu=array(
 					'visible' => Yii::app()->user->checkAccess('Admin'),
 				),
 			)
-)); ?>
+)); 
+*/
+?>
 
 <?php	
 	// TÁ: print dialog inicializálása

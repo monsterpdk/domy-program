@@ -94,7 +94,7 @@ class MegrendelesTetelek extends CActiveRecord
 			'termek_id' => 'Termék',
 			'szinek_szama1' => 'Színek (előold.) db',
 			'szinek_szama2' => 'Színek (hátold.) db',
-			'displayTermekSzinekSzama' => 'Színek száma',
+			'displayTermekSzinekSzama' => 'Színek',
 			'darabszam' => 'Db',
 			'netto_darabar' => 'Nettó darabár',
 			'megjegyzes' => 'Megjegyzés',
@@ -107,7 +107,7 @@ class MegrendelesTetelek extends CActiveRecord
 			
 			'netto_ar' => 'Nettó ár',
 			'brutto_ar' => 'Bruttó ár',
-			'displayTermekSzinekSzama' => 'Színek száma',
+			'displayTermekSzinekSzama' => 'Színek',
 		);
 	}
 
@@ -158,6 +158,11 @@ class MegrendelesTetelek extends CActiveRecord
 		if ($this -> hozott_boritek == true) {
 			$this -> termek -> nev = "Hozott " . $this -> termek -> nev ;
 		}		
+	}	
+	
+	public function beforeSave(){
+		$this->munka_neve = mb_strtoupper($this->munka_neve) ;
+		return parent::beforeSave();
 	}	
 	
 	/**

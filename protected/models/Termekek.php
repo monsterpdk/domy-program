@@ -264,10 +264,10 @@ class Termekek extends CActiveRecord
 		$termek_teljes_nev = $this->nev ;
 		$termek_teljes_nev .= ' ' . $this->zaras->nev ;
 		$meret = "" ;
-		if ($this->meret->magassag > 0) {
-			$meret .= ' ' . $this->meret->magassag ;
-		}
 		if ($this->meret->szelesseg > 0) {
+			$meret .= ' ' . $this->meret->szelesseg ;
+		}
+		if ($this->meret->magassag > 0) {
 			if ($meret != "") {
 				$meret .= "x" ;	
 			}
@@ -275,7 +275,7 @@ class Termekek extends CActiveRecord
 			{
 				$meret .= " " ;	
 			}
-			$meret .= $this->meret->szelesseg ;
+			$meret .= $this->meret->magassag ;
 		}
 		if ($this->meret->vastagsag > 0) {
 			if ($meret != "") {
@@ -291,10 +291,11 @@ class Termekek extends CActiveRecord
 			$meret . ", " ;	
 		}
 		$termek_teljes_nev .= $meret ;
-		$termek_teljes_nev .= ' ' . $this->ablakhely->hely ;
+		$termek_teljes_nev .= ' ' . $this->ablakhely->nev ;
+/*		$termek_teljes_nev .= ' ' . $this->ablakhely->hely ;
 		if ($this->ablakhely->x_pozicio_honnan != '' && $this->ablakhely->x_pozicio_mm > 0) {
 			$termek_teljes_nev .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
-		}
+		}*/
 		if ($this->ablakmeret->magassag > 0) {
 			$termek_teljes_nev .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
 		}
