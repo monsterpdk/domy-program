@@ -12,6 +12,17 @@ $this->menu=array(
 
 <h1>Nyomdakönyv ütemezés</h1>
 
+<?php	
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_print_utemezes',
+		'caption'=>'Lista nyomtatás',
+		'buttonType'=>'link',
+//		'onclick'=>'openPrintDialog()',
+		'url'=>Yii::app()->createUrl("nyomdakonyv/printUtemezes"),
+		'htmlOptions'=>array('class'=>'btn btn-success','target'=>'_blank'),
+	));
+?>
+
 <?php
     $this->widget('ext.groupgridview.BootGroupGridView', array(
       'id' => 'utemezes_grid1',
@@ -39,63 +50,20 @@ $this->menu=array(
     ));
 ?>
     
-<?php
-/*
-	$this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$dataProvider,
-	'template' => '{items} {summary} {pager}',
-	'columns'=>array(
-				array(      
-					'name'=>'hatarido',
-					'value'=>'date("Y.m.d.", strtotime($data->hatarido))',
-				),
-                'megrendeles_tetel.megrendeles.sorszam',
-				'taskaszam',
-				'DisplayKifutok',
-				'megrendeles_tetel.munka_neve',
-				'megrendeles_tetel.megrendeles.ugyfel.cegnev',
-				'megrendeles_tetel.termek.DisplayTermekTeljesNev',
-				'megrendeles_tetel.displayTermekSzinekSzama',
-				'megrendeles_tetel.darabszam',
-				array(
-					'header' => 'Törölt',
-					'type'=>'boolean',
-					'value' => '$data->torolt',
-					'visible' => Yii::app()->user->checkAccess('Admin'),
-				),
-			)
-)); 
-*/
-?>
-
 <?php	
-	// TÁ: print dialog inicializálása
-/*    $this->beginWidget('zii.widgets.jui.CJuiDialog',
-        array(
-            'id'=>'dialogUtemezesPrint',
-            
-            'options'=>array(
-                'title'=>'Nyomtatás',
-				'width'=> '450px',
-                'modal' => true,
-				'buttons' => array('Ütemezés nyomtatása' => 'js:function()
-				{
-					model_id = $(this).data("model_id"), $(location).attr("href", "printUtemezes")
-				}',
-                'autoOpen'=>false,
-                )
-            )
-            )
-    );
-		
-	echo 'Ütemezés nyomtatási előnézete.';
-			
-	$this->endWidget('zii.widgets.jui.CJuiDialog');*/
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_print_utemezes',
+		'caption'=>'Lista nyomtatás',
+		'buttonType'=>'link',
+//		'onclick'=>'openPrintDialog()',
+		'url'=>Yii::app()->createUrl("nyomdakonyv/printUtemezes"),
+		'htmlOptions'=>array('class'=>'btn btn-success','target'=>'_blank'),
+	));
 ?>
 
 
 <script type="text/javascript">
-		function openPrintDialog (button_obj) {		
-			$("#dialogUtemezesPrint").dialog("open");
+		function openPrintDialog () {		
+			window.open("/index.php/nyomdakonyv/printUtemezes","_blank") ;
 		}
 </script>

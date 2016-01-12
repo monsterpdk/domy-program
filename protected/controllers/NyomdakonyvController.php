@@ -414,21 +414,28 @@ class NyomdakonyvController extends Controller
 	// Ütemezés lista PDF-et előállító action.
 	public function actionPrintUtemezes()
 	{
-		if (isset($_GET['id'])) {
-			$model = $this -> loadModel($_GET['id']);
-		}
-		
-		// ha nem CTP-s a munkatáska, akkor 'simát' nyomtatunk
-		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
-		
-		if ($model != null) {
+		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
+			'criteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'order'=>'hatarido, ugyfel_id',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'sort'=> false,
+			'pagination'=>false,
+		));
+			
+		if ($dataProvider != null) {
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
-			$mPDF1->SetHtmlHeader("Munkatáska #" . $model->taskaszam);
+			$mPDF1->SetHtmlHeader("Nyomdakönyv ütemezés");
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial($pdfTemplateName, array('model' => $model), true));
+			$mPDF1->WriteHTML($this->renderPartial("printUtemezes", array('dataProvider' => $dataProvider), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();

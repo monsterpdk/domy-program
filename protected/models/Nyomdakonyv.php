@@ -234,6 +234,7 @@ class Nyomdakonyv extends CActiveRecord
 			'DisplayKifutok' =>	'Kifutó',
 			'HataridoFormazott' => 'Határidő',
 			'GyartasiIdo' => 'Gyártási idő',
+			'UtemezesBejegyzesPrint' => 'Munka részletek',
 		);
 	}
 
@@ -385,5 +386,20 @@ class Nyomdakonyv extends CActiveRecord
 	public function getGyartasiIdo() {
 		$norma = Utils::getNormaadat($this->megrendeles_tetel_id, $this->gep_id, $this->munkatipus_id, $this->max_fordulat);
 		return $norma ;
+	}
+	
+	//Az ütemezés nyomtatáshoz az egyes rekordokból csinál egy kompakt html blokkot olyan elrendezéssel, ahogy meg kell jelennie a nyomtatási képen
+	public function getUtemezesBejegyzesPrint() {
+		$ctp_vagy_film = "CTP" ;
+		if ($this->film == "1") {
+			$ctp_vagy_film = "FILM" ;	
+		}
+		$html = '<table class="blokk_table">' ;
+		$html .= '<tr><td style="width:75%;text-align:left;">&nbsp;<td><strong>' . $this->megrendeles_tetel->megrendeles->ugyfel->cegnev . '</strong></td><td style="text-align: right;">' . $ctp_vagy_film . '</td><td style="border: 1px solid #000000; width:200px;">&nbsp;</td></tr>' ;
+		$html .= '<tr><td>' . $this->taskaszam . '</td><td>' . $this->megrendeles_tetel->munka_neve . '</td><td>&nbsp;</td><td>CTP-nek átadva: &nbsp;&nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0,00</td></tr>' ;
+		$html .= '<tr><td class="kisbetu">' . $this->getDisplayKifutok() . '</td><td colspan="3" class="kisbetu">' . $this->megrendeles_tetel->termek->DisplayTermekTeljesNev . '</td>' ;
+		$html .= '<tr><td><span class="taska_kisbetu">Táska OK</span></td><td class="kisbetu" colspan="3">' . $this->megrendeles_tetel->displayTermekSzinekSzama . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->megrendeles_tetel->darabszam . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getGyartasiIdo() . '</td></tr>' ;
+		$html .= '</table>' ;
+		return $html;
 	}
 }

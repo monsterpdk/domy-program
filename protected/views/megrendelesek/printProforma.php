@@ -90,7 +90,7 @@
 		<td class = 'col2'></td>
 	<tr>
 	<tr>
-		<td class = 'col1'><strong>Számlaszám:</strong> OTP 11704021-20001814</td>
+		<td class = 'col1'><strong>Számlaszám:</strong> Unicredit 10918001-00000006-23320004</td>
 		<td class = 'col2'></td>
 	<tr>
 	<tr>
