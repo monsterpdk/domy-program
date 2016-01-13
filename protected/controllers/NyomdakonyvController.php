@@ -217,6 +217,17 @@ class NyomdakonyvController extends Controller
 		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
 		
 		if ($model != null) {
+			// növeljük eggyel a megfelelő, nyomtatást számláló mezőt
+			if (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) {
+				// CTP táska nyomtatása történik
+				$model->nyomtatva_ctp_taska = $model->nyomtatva_ctp_taska + 1;
+			} else if (isset($_GET['isCtp']) && ($_GET['isCtp'] == 0) ) {
+				// táska nyomtatása történik
+				$model->nyomtatva_taska = $model->nyomtatva_taska + 1;
+			}
+			
+			$model->save(false);
+			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 

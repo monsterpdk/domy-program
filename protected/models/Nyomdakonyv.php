@@ -69,6 +69,8 @@
  * @property string $kep_file_nev
  * @property string $sztornozas_oka 
  * @property integer $sztornozva
+ * @property integer $nyomtatva_taska
+ * @property integer $nyomtatva_ctp_taska
  * @property integer $torolt
  */
 class Nyomdakonyv extends CActiveRecord
@@ -85,7 +87,15 @@ class Nyomdakonyv extends CActiveRecord
 	public $szinszam2_ig_search;
 	public $folyamatban_levo_muvelet;
 	public $varhato_befejezes;
-	
+
+	// automatikusan töltődő mezők (külső táblákból)
+	public $dsp_szallitolevel_datum;
+	public $dsp_szallitolevel_sorszam;
+	public $dsp_szamla_datum;
+	public $dsp_szamla_sorszam;
+	public $dsp_proforma_datum;
+	public $dsp_proforma_sorszam;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -108,7 +118,7 @@ class Nyomdakonyv extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, nyomas_tipus, file_beerkezett, ctp_nek_atadas_datum, ctp_kezdes_datum, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, szallitolevel_datum, szamla_datum, sztornozva, torolt', 'required'),
-			array('ctp, film, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, szin_mutaciok_szam, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, torolt', 'numerical', 'integerOnly'=>true),
+			array('ctp, film, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, szin_mutaciok_szam, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, nyomtatva_taska, nyomtatva_ctp_taska, torolt', 'numerical', 'integerOnly'=>true),
 			array('megrendeles_tetel_id', 'length', 'max'=>10),
 			array('taskaszam, szallitolevel_sorszam', 'length', 'max'=>12),
 			array('kep_file_nev', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true, 'safe' => false),
@@ -235,6 +245,13 @@ class Nyomdakonyv extends CActiveRecord
 			'HataridoFormazott' => 'Határidő',
 			'GyartasiIdo' => 'Gyártási idő',
 			'UtemezesBejegyzesPrint' => 'Munka részletek',
+			
+			'dsp_szallitolevel_datum' => 'Szállítólevél dátuma',
+			'dsp_szallitolevel_sorszam' => 'Szállítólevél sorszáma',
+			'dsp_szamla_datum' => 'Számla dátuma',
+			'dsp_szamla_sorszam' => 'Számla sorszáma',
+			'dsp_proforma_datum' => 'Proforma számla dátuma',
+			'dsp_proforma_sorszam' => 'Profoma számla sorszáma',
 		);
 	}
 
@@ -352,6 +369,46 @@ class Nyomdakonyv extends CActiveRecord
 		));
 	}
 
+	// LI: miután betöltöttük a model-t az adatbázisból megnézzük, hogy van-e hozzá
+	// szálítólevél, számla ill proforma és ha igen, kiírjük a dátum és sorszám mezőket
+	protected function afterFind() {
+		parent::afterFind();
+		
+		$megrendeles_tetel = MegrendelesTetelek::model()->findByPk($this->megrendeles_tetel_id);
+		$megrendeles = null;
+		
+		if ($megrendeles_tetel != null) {
+			$megrendeles = Megrendelesek::model()->findByPk($megrendeles_tetel->megrendeles_id);
+		}
+		
+		if ($megrendeles != null && $megrendeles_tetel != null) {
+			// szállítólevelek keresése
+			$szallitolevelek = Szallitolevelek::model()->findAllByAttributes(array('megrendeles_id' => $megrendeles->id));
+			if ($szallitolevelek != null) {
+				foreach($szallitolevelek as $szallito) {
+					$szallitolevel_tetelek = $szallito -> tetelek;
+					
+					if (is_array($szallitolevel_tetelek)) {
+						foreach($szallitolevel_tetelek as $tetel) {
+							if ($tetel->megrendeles_tetel_id == $this->megrendeles_tetel_id) {
+								$this->dsp_szallitolevel_datum .= (strlen($this->dsp_szallitolevel_datum) > 0 ? ', ' : '') . $szallito->datum ;
+								$this->dsp_szallitolevel_sorszam .= (strlen($this->dsp_szallitolevel_sorszam) > 0 ? ', ' : '') . $szallito->sorszam ;
+							}
+						}
+					}
+				}
+			}
+
+			// számla keresése
+			$this -> dsp_szamla_datum = $megrendeles -> rendeles_idopont;
+			$this -> dsp_szamla_sorszam = $megrendeles -> szamla_sorszam;
+
+			// proforma számla keresése
+			$this -> dsp_proforma_datum = $megrendeles ->proforma_kiallitas_datum;
+			$this -> dsp_proforma_sorszam = $megrendeles -> proforma_szamla_sorszam;
+		}
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

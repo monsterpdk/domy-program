@@ -75,6 +75,10 @@ $this->menu=array(
 				'megrendeles_tetel.displayTermekSzinekSzama',
 				'megrendeles_tetel.darabszam',
 				array(
+					'header' => 'Nyomtatva (CTP/táska)',
+					'value' => '$data->nyomtatva_taska . " db / " . $data->nyomtatva_ctp_taska . " db"',
+				),
+				array(
 					'header' => 'Törölt',
 					'type'=>'boolean',
 					'value' => '$data->torolt',
