@@ -166,13 +166,19 @@
 			<?php echo $form->error($model,'szin_mutaciok_szam'); ?>
 		</div>
 
-		<div class = 'clear'>
-			<div class='row'>
-				<?php echo $form->labelEx($model,'szin_pantone'); ?>
-				<?php echo $form->textField($model,'szin_pantone', array('style'=>'width:575px')); ?>
-				<?php echo $form->error($model,'szin_pantone'); ?>
-			</div>
-		</div>
+		<?php $this->widget('application.extensions.multicomplete.MultiComplete', array(
+			  'model'=>$model,
+			  'attribute'=>'szin_pantone',
+			  'splitter'=>',',
+			  'sourceUrl'=>$this->createUrl('nyomdakonyv/searchPantones'),
+			  'options'=>array(
+					  'minLength'=>'1',
+			  ),
+			  'htmlOptions'=>array(
+					  'style'=>'width:575px',
+			  ),
+			));
+		?>
 			
 		<div class = 'clear'>
 			<div class="row">

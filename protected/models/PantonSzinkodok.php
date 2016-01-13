@@ -31,6 +31,7 @@ class PantonSzinkodok extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('nev', 'required'),
 			array('torolt', 'numerical', 'integerOnly'=>true),
 			array('nev', 'length', 'max'=>64),
 			// The following rule is used by search().

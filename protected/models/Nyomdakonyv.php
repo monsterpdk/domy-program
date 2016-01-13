@@ -129,12 +129,63 @@ class Nyomdakonyv extends CActiveRecord
 			array('nyomas_tipus', 'length', 'max'=>29),
 			array('nyomas_specialis', 'length', 'max'=>200),
 			array('sztornozas_oka', 'length', 'max'=>255),
+			
+			array('szin_pantone', 'check_szinek_szama'),
+			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, megrendeles_tetel_id, taskaszam, hatarido, munka_beerkezes_datum, taska_kiadasi_datum, elkeszulesi_datum, ertesitesi_datum, szallitolevel_sorszam, szallitolevel_datum, szamla_sorszam, szamla_datum, sos, film, szin_mutaciok, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, nyomas_tipus, utannyomas_valtoztatassal, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_specialis, gepindulasra_jon_ugyfel, ctp_nek_atadas_datum, file_beerkezett, ctp_kezdes_datum, ctp_belenyulasok, ctp_hibalista, jovahagyas, ctp_kesz_datum, nyomas_kezdes_datum, raktarbol_kiadva_datum, sztornozva, munkanev_search, megrendelonev_search, boritek_tipus_search, darabszam_tol_search, darabszam_ig_search, szinszam1_tol_search, szinszam1_ig_search, szinszam2_tol_search, szinszam2_ig_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
+	
+	// LI : A színek számát összevetni a megadott színek számával, ha nem egyezik, jelezni. Max. 8 db panton szín adható meg. A színek számának ellenőrzésekor a panton színek is számítanak.
+	public function check_szinek_szama ($attribute)
+	{
+		// read-only mezőbe található össz színek száma
+		$megadott_szinek_szama = 0;
+		
+		// a nyomdakönyvön a user által megadott össz színek száma
+		$szinek_szama = 0;
+		
+		$megrendeles_tetel =  MegrendelesTetelek::model()->findByPk($this->megrendeles_tetel_id);
+		if ($megrendeles_tetel != null) {
+			try {
+				$panton_szinek = explode(',', $this->szin_pantone);
+				if (is_array($panton_szinek)) {
+					// összesen max. 8 panton színt lehet felvenni, ezt is itt ellenőrzöm
+					foreach ($panton_szinek as $szin) {
+						if (trim($szin) != '') {
+							$szinek_szama += 1;
+						}
+					}
+					
+					if ($szinek_szama > 8) {
+						$this->addError($attribute, 'Max. 8 db panton szín adható meg!');
+					}
+				}
+
+				$megadott_szinek_szama = $megrendeles_tetel->szinek_szama1 + $megrendeles_tetel->szinek_szama2;
+				
+				if ($this->szin_c_elo == 1) $szinek_szama += 1;
+				if ($this->szin_m_elo == 1) $szinek_szama += 1;
+				if ($this->szin_y_elo == 1) $szinek_szama += 1;
+				if ($this->szin_k_elo == 1) $szinek_szama += 1;
+				if ($this->szin_c_hat == 1) $szinek_szama += 1;
+				if ($this->szin_m_hat == 1) $szinek_szama += 1;
+				if ($this->szin_y_hat == 1) $szinek_szama += 1;
+				if ($this->szin_k_hat == 1) $szinek_szama += 1;
+				
+				if ($megadott_szinek_szama != $szinek_szama) {
+					$this->addError($attribute, 'A színek száma nem egyezik a megadott színek számával!');
+				}
+				
+			} catch (Exception $e) {}
+		}
+
+		return true;
+	}
+	
 	/**
 	 * @return array relational rules.
 	 */

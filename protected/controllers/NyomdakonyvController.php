@@ -454,6 +454,29 @@ class NyomdakonyvController extends Controller
 		
 	}	
 	
+	// panton színkódok előregépelős beajánlásának keresője
+	public function actionSearchPantones ($term)
+	{
+		if(Yii::app()->request->isAjaxRequest && !empty($term))
+        {
+              $variants = array();
+              $criteria = new CDbCriteria;
+              $criteria->select='nev';
+              $criteria->addSearchCondition('nev',$term.'%',false);
+              $szinkodok = PantonSzinkodok::model()->findAll($criteria);
+              if(!empty($szinkodok))
+              {
+                foreach($szinkodok as $szinkod)
+                {
+                    $variants[] = $szinkod->attributes['nev'];
+                }
+              }
+              echo CJSON::encode($variants);
+        }
+        else
+            throw new CHttpException(400,'Hibás kérés.');
+    }
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
