@@ -143,7 +143,8 @@
 
 	<?php
 		if (is_array($megrendeles_tetelek)) {
-			
+			$ossz_netto = 0 ;
+			$ossz_afa = 0 ;
 			foreach ($megrendeles_tetelek as $tetel) {
 				$termek = Termekek::model()->findByPk($tetel -> termek_id);
 				if ($termek == null)
@@ -154,9 +155,9 @@
 				if ($nyomdakonyvi_munka == null)
 					$nyomdakonyvi_munka = new Nyomdakonyv();
 
-				$tetel_netto_ara = number_format($tetel->darabszam*$tetel->netto_darabar, 2, '.', '');
-				$tetel_afaja = number_format($tetel_netto_ara*$afakulcs->afa_szazalek/100, 2, '.', '');
-				$tetel_brutto_ara = number_format($tetel_netto_ara + $tetel_afaja, 2, '.', '');
+				$tetel_netto_ara = $tetel->NettoAr;
+				$tetel_afaja = $tetel->AfaOsszeg;
+				$tetel_brutto_ara = $tetel->BruttoAr;
 				// tételek kiírása
 				echo "
 					<tr>
@@ -171,16 +172,16 @@
 					<tr>
 						<td colspan='2'>$model->rendeles_idopont</td>
 						<td align=center>$afakulcs->afa_szazalek</td>
-						<td align=center>$tetel->darabszam</td>
+						<td align=center>$tetel->DarabszamFormazott</td>
 						<td align=right>$tetel->netto_darabar</td>
-						<td align=right>$tetel_netto_ara</td>
-						<td align=right>$tetel_afaja</td>
-						<td align=right>$tetel_brutto_ara</td>
+						<td align=right>$tetel->NettoArFormazott</td>
+						<td align=right>$tetel->AfaOsszegFormazott</td>
+						<td align=right>$tetel->BruttoArFormazott</td>
 					</tr>
 				";
 
-				$ossz_netto += number_format((float)$tetel_netto_ara, 2, '.', '');
-				$ossz_afa += number_format(round($tetel_afaja, 0), 2, '.', '');
+				$ossz_netto += $tetel_netto_ara;
+				$ossz_afa += $tetel_afaja;
 			}
 			
 			// adó szekció (ÁFA) kiírása
@@ -190,7 +191,7 @@
 				<table class='table_afa_osszegzo'>
 					<tr>
 						<td align=left><strong>$afakulcs->afa_szazalek%-os adóalap: <br /> $afakulcs->afa_szazalek%-os ÁFA: </strong></td>
-						<td align=right>" . number_format($ossz_netto, 2) . "<br />" . number_format($ossz_afa, 2) . "</td>
+						<td align=right>" . Utils::OsszegFormazas($ossz_netto) . "<br />" . Utils::OsszegFormazas($ossz_afa) . "</td>
 					</tr>
 				</table>
 			";
@@ -200,7 +201,7 @@
 				<table class='table_osszegzo'>
 					<tr>
 						<td align=left><strong>Fizetendő: <br /> azaz:</strong></td>
-						<td align=right><strong>" . number_format(round($ossz_netto + $ossz_afa), 2) . "</strong><br /> - " . mb_strtoupper (Utils::num2text(round($ossz_netto + $ossz_afa)), "UTF-8") . " Forint - </td>
+						<td align=right><strong>" . Utils::OsszegFormazas(round($ossz_netto + $ossz_afa)) . "</strong><br /> - " . mb_strtoupper (Utils::num2text(round($ossz_netto + $ossz_afa)), "UTF-8") . " Forint - </td>
 					</tr>
 				</table>
 			";

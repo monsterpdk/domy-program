@@ -394,11 +394,11 @@ class Nyomdakonyv extends CActiveRecord
 		if ($this->film == "1") {
 			$ctp_vagy_film = "FILM" ;	
 		}
-		$html = '<table class="blokk_table">' ;
-		$html .= '<tr><td style="width:75%;text-align:left;">&nbsp;<td><strong>' . $this->megrendeles_tetel->megrendeles->ugyfel->cegnev . '</strong></td><td style="text-align: right;">' . $ctp_vagy_film . '</td><td style="border: 1px solid #000000; width:200px;">&nbsp;</td></tr>' ;
-		$html .= '<tr><td>' . $this->taskaszam . '</td><td>' . $this->megrendeles_tetel->munka_neve . '</td><td>&nbsp;</td><td>CTP-nek átadva: &nbsp;&nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0,00</td></tr>' ;
-		$html .= '<tr><td class="kisbetu">' . $this->getDisplayKifutok() . '</td><td colspan="3" class="kisbetu">' . $this->megrendeles_tetel->termek->DisplayTermekTeljesNev . '</td>' ;
-		$html .= '<tr><td><span class="taska_kisbetu">Táska OK</span></td><td class="kisbetu" colspan="3">' . $this->megrendeles_tetel->displayTermekSzinekSzama . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->megrendeles_tetel->darabszam . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getGyartasiIdo() . '</td></tr>' ;
+		$html = '<table style="width:800px;" class="blokk_table">' ;
+		$html .= '<tr><td class="utemezes_elso_oszlop">&nbsp;</td><td class="utemezes_cegnev"><strong>' . $this->megrendeles_tetel->megrendeles->ugyfel->cegnev . '</strong></td><td class="utemezes_ctp_film">' . $ctp_vagy_film . '</td><td class="utemezes_ctp_input_td" style="width:180px;border: 1px solid #000000;">&nbsp;</td></tr>' ;
+		$html .= '<tr><td class="utemezes_elso_oszlop utemezes_taskaszam">' . $this->taskaszam . '</td><td colspan="2" class="utemezes_munka_neve">' . $this->megrendeles_tetel->munka_neve . '</td><td class="utemezes_ctpnek_atadva">CTP-nek átadva: &nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp; 0,00</td></tr>' ;
+		$html .= '<tr><td class="utemezes_elso_oszlop kisbetu utemezes_kifutok">' . $this->getDisplayKifutok() . '</td><td colspan="3" class="utemezes_termeknev kisbetu">' . $this->megrendeles_tetel->termek->DisplayTermekTeljesNev . '</td></tr>' ;
+		$html .= '<tr><td class="utemezes_elso_oszlop utemezes_taska">Táska OK</td><td class="utemezes_szinek_szama kisbetu" colspan="3">' . $this->megrendeles_tetel->displayTermekSzinekSzama . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->megrendeles_tetel->DarabszamFormazott . ' db&nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getGyartasiIdo() . '</td></tr>' ;
 		$html .= '</table>' ;
 		return $html;
 	}

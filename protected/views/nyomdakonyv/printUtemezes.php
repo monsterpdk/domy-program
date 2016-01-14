@@ -24,12 +24,12 @@
 		border-right-style: none ;
 		border-top-style: none ;
 		font-family: arial;
-		font-size: 10pt;
+		font-size: 11pt;
 		width: 100%;
 		padding: 2px ;
 		border-spacing: 0px;
 		border-collapse: separate;	
-		box-decoration-break: slice;
+		box-decoration-break: clone;
 	}
 	img {
 		margin: 0px;
@@ -52,7 +52,7 @@
 	
 	.blokk_table td {
 		border-style: none ;
-		font-size: 11px;
+		font-size: 9pt;
 	}
 	
 	.keretes_CTP_input {
@@ -60,11 +60,29 @@
 	}
 	
 	.taska_kisbetu {
-		font-size: 8px;	
+		font-size: 11pt;	
 	}
 	
 	.kisbetu {
-		font-size: 10px;	
+		font-size: 11pt;	
+	}
+	
+	.utemezes_elso_oszlop {
+		width:100px;
+		text-align:left;	
+	}
+	
+	.utemezes_cegnev {
+		text-align: left;	
+	}
+	
+	.utemezes_ctp_film {
+		text-align: right;	
+	}
+		
+	.utemezes_ctp_input_td {
+/*		border: 1px solid #000000; 
+		width:50px;*/		
 	}
     
 	@page {
@@ -72,6 +90,7 @@
 		size: auto;
 		odd-footer-name: html_myFooter2;
 		even-footer-name: html_myFooter2;
+		margin: 5%;
 	}
 </style>
 
@@ -87,11 +106,14 @@
       'extraRowColumns' => array('HataridoFormazott'),
       'mergeColumns' => array('HataridoFormazott'),
       'columns' => array(
-      	  				'HataridoFormazott',
+      	  				 array(
+      	  				 	'name'=>'HataridoFormazott',
+      	  				 	'headerHtmlOptions'=>array('style'=>'width:170px;'),
+      	  				 	),
 						 array(
 							'name'=>'UtemezesBejegyzesPrint',
 							'type'=>'raw',
-							'headerHtmlOptions'=>array('style'=>'width: 600px;'),							
+/*							'headerHtmlOptions'=>array('style'=>'width: 800px;'),*/							
 							),      	  				
       ),
     ));

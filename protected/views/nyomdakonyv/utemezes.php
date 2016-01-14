@@ -38,7 +38,7 @@ $this->menu=array(
 						'megrendeles_tetel.megrendeles.ugyfel.cegnev',
 						'megrendeles_tetel.termek.DisplayTermekTeljesNev',
 						'megrendeles_tetel.displayTermekSzinekSzama',
-						'megrendeles_tetel.darabszam',
+						'megrendeles_tetel.DarabszamFormazott',
 						'GyartasiIdo',
 						array(
 							'header' => 'Törölt',

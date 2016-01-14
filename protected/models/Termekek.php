@@ -41,6 +41,7 @@ class Termekek extends CActiveRecord
 	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
 	public $zaras_search;
 	public $ablakhely_search;
+	public $ablakmeret_search;
 	public $meret_search;
 	public $gyarto_search;
 	public $papirtipus_search;
@@ -87,7 +88,7 @@ class Termekek extends CActiveRecord
 			array('megjelenes_mettol, megjelenes_meddig', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, megjelenes_mettol, megjelenes_meddig, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
+			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, megjelenes_mettol, megjelenes_meddig, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -173,7 +174,7 @@ class Termekek extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->together = true;
-		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus');				
+		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus', 'ablakmeret');				
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('t.nev',$this->nev,true);
 		$criteria->compare('tipus',$this->tipus,true);
@@ -185,6 +186,7 @@ class Termekek extends CActiveRecord
 		
 		$criteria->compare('zaras.nev', $this->zaras_search, true );
 		$criteria->compare('ablakhely.nev', $this->ablakhely_search, true );
+		$criteria->compare('ablakmeret.nev', $this->ablakmeret_search, true );
 		$criteria->compare('meret.nev', $this->meret_search, true );
 		$criteria->compare('gyarto.cegnev', $this->gyarto_search, true );
 		$criteria->compare('papirtipus.nev', $this->papirtipus_search, true );

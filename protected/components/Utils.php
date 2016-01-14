@@ -1020,7 +1020,12 @@
 			);
 			return html_entity_decode(mb_convert_encoding(strtr($text, $map), 'UTF-8', 'ISO-8859-2'), ENT_QUOTES, 'UTF-8');
 		}		 
+
+		function OsszegFormazas($osszeg) {
+			return number_format($osszeg, 2, '.', ' ');		
+		}
 		
 	}
+	
 
 ?>
