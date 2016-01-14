@@ -217,6 +217,17 @@ class NyomdakonyvController extends Controller
 		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
 		
 		if ($model != null) {
+			// növeljük eggyel a megfelelő, nyomtatást számláló mezőt
+			if (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) {
+				// CTP táska nyomtatása történik
+				$model->nyomtatva_ctp_taska = $model->nyomtatva_ctp_taska + 1;
+			} else if (isset($_GET['isCtp']) && ($_GET['isCtp'] == 0) ) {
+				// táska nyomtatása történik
+				$model->nyomtatva_taska = $model->nyomtatva_taska + 1;
+			}
+			
+			$model->save(false);
+			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
@@ -446,6 +457,29 @@ class NyomdakonyvController extends Controller
 		}
 		
 	}	
+	
+	// panton színkódok előregépelős beajánlásának keresője
+	public function actionSearchPantones ($term)
+	{
+		if(Yii::app()->request->isAjaxRequest && !empty($term))
+        {
+              $variants = array();
+              $criteria = new CDbCriteria;
+              $criteria->select='nev';
+              $criteria->addSearchCondition('nev',$term.'%',false);
+              $szinkodok = PantonSzinkodok::model()->findAll($criteria);
+              if(!empty($szinkodok))
+              {
+                foreach($szinkodok as $szinkod)
+                {
+                    $variants[] = $szinkod->attributes['nev'];
+                }
+              }
+              echo CJSON::encode($variants);
+        }
+        else
+            throw new CHttpException(400,'Hibás kérés.');
+    }
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

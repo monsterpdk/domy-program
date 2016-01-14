@@ -68,8 +68,8 @@
 		</div>
 	
 		<div class="row">
-			<?php echo $form->labelEx($model,'megrendeles_tetel.megrendeles.ugyfel.cegnev_teljes'); ?>
-			<?php echo Chtml::textField('cegnev_teljes', $model->megrendeles_tetel->megrendeles->ugyfel->cegnev_teljes, array('size'=>12, 'maxlength'=>12, 'readonly'=>true)); ?>
+			<?php echo $form->labelEx($model,'megrendeles_tetel.megrendeles.ugyfel.cegnev'); ?>
+			<?php echo Chtml::textField('cegnev', $model->megrendeles_tetel->megrendeles->ugyfel->cegnev, array('size'=>12, 'maxlength'=>12, 'readonly'=>true)); ?>
 		</div>
 	
 		<div class="row">
@@ -166,13 +166,19 @@
 			<?php echo $form->error($model,'szin_mutaciok_szam'); ?>
 		</div>
 
-		<div class = 'clear'>
-			<div class='row'>
-				<?php echo $form->labelEx($model,'szin_pantone'); ?>
-				<?php echo $form->textField($model,'szin_pantone', array('style'=>'width:575px')); ?>
-				<?php echo $form->error($model,'szin_pantone'); ?>
-			</div>
-		</div>
+		<?php $this->widget('application.extensions.multicomplete.MultiComplete', array(
+			  'model'=>$model,
+			  'attribute'=>'szin_pantone',
+			  'splitter'=>',',
+			  'sourceUrl'=>$this->createUrl('nyomdakonyv/searchPantones'),
+			  'options'=>array(
+					  'minLength'=>'1',
+			  ),
+			  'htmlOptions'=>array(
+					  'style'=>'width:575px',
+			  ),
+			));
+		?>
 			
 		<div class = 'clear'>
 			<div class="row">
@@ -446,51 +452,33 @@
 		</div>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'szallitolevel_datum'); ?>
-				
-				<?php
-					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
-						'model'=>$model,
-						'attribute'=>'szallitolevel_datum',
-						'language' => 'hu',
-						'options'=>array(
-							'timeFormat' => 'hh:mm:ss',
-							'dateFormat'=>'yy-mm-dd',
-						)
-					));
-				?>
-				
-			<?php echo $form->error($model,'szallitolevel_datum'); ?>
+			<?php echo $form->labelEx($model,'dsp_szallitolevel_datum'); ?>
+			<?php echo $form->textField($model,'dsp_szallitolevel_datum',array('size'=>30,'maxlength'=>255, 'readonly'=>true)); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'dsp_szallitolevel_sorszam'); ?>
+			<?php echo $form->textField($model,'dsp_szallitolevel_sorszam',array('size'=>30,'maxlength'=>255, 'readonly'=>true)); ?>
 		</div>
 		
 		<div class="row">
-			<?php echo $form->labelEx($model,'szallitolevel_sorszam'); ?>
-			<?php echo $form->textField($model,'szallitolevel_sorszam',array('size'=>30,'maxlength'=>30)); ?>
-			<?php echo $form->error($model,'szallitolevel_sorszam'); ?>
+			<?php echo $form->labelEx($model,'dsp_szamla_datum'); ?>
+			<?php echo $form->textField($model,'dsp_szamla_datum',array('size'=>30,'maxlength'=>30, 'readonly'=>true)); ?>
 		</div>
-	
+
 		<div class="row">
-			<?php echo $form->labelEx($model,'szamla_datum'); ?>
-				
-				<?php
-					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
-						'model'=>$model,
-						'attribute'=>'szamla_datum',
-						'language' => 'hu',
-						'options'=>array(
-							'timeFormat' => 'hh:mm:ss',
-							'dateFormat'=>'yy-mm-dd',
-						)
-					));
-				?>
-				
-			<?php echo $form->error($model,'szamla_datum'); ?>
+			<?php echo $form->labelEx($model,'dsp_szamla_sorszam'); ?>
+			<?php echo $form->textField($model,'dsp_szamla_sorszam',array('size'=>30,'maxlength'=>30, 'readonly'=>true)); ?>
 		</div>
 		
 		<div class="row">
-			<?php echo $form->labelEx($model,'szamla_sorszam'); ?>
-			<?php echo $form->textField($model,'szamla_sorszam',array('size'=>30,'maxlength'=>30)); ?>
-			<?php echo $form->error($model,'szamla_sorszam'); ?>
+			<?php echo $form->labelEx($model,'dsp_proforma_datum'); ?>
+			<?php echo $form->textField($model,'dsp_proforma_datum',array('size'=>30,'maxlength'=>30, 'readonly'=>true)); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'dsp_proforma_sorszam'); ?>
+			<?php echo $form->textField($model,'dsp_proforma_sorszam',array('size'=>30,'maxlength'=>30, 'readonly'=>true)); ?>
 		</div>
 
 		<div class="row">

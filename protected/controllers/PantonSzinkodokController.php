@@ -1,8 +1,8 @@
 <?php
 
-class OrszagokController extends Controller
+class PantonSzinkodokController extends Controller
 {
-
+	
 	/**
 	 * @return array action filters
 	 */
@@ -30,14 +30,14 @@ class OrszagokController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Orszagok;
+		$model=new PantonSzinkodok;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Orszagok']))
+		if(isset($_POST['PantonSzinkodok']))
 		{
-			$model->attributes=$_POST['Orszagok'];
+			$model->attributes=$_POST['PantonSzinkodok'];
 			if($model->save())
 				$this->redirect(array('index'));
 		}
@@ -59,9 +59,9 @@ class OrszagokController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Orszagok']))
+		if(isset($_POST['PantonSzinkodok']))
 		{
-			$model->attributes=$_POST['Orszagok'];
+			$model->attributes=$_POST['PantonSzinkodok'];
 			if($model->save())
 				$this->redirect(array('index'));
 		}
@@ -83,7 +83,7 @@ class OrszagokController extends Controller
 		
 		$model->torolt = 1;
 		$model->save();
-
+		
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
@@ -94,10 +94,10 @@ class OrszagokController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Orszagok',
+		$dataProvider=new CActiveDataProvider('PantonSzinkodok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
-				
+
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -108,10 +108,10 @@ class OrszagokController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Orszagok('search');
+		$model=new PantonSzinkodok('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Orszagok']))
-			$model->attributes=$_GET['Orszagok'];
+		if(isset($_GET['PantonSzinkodok']))
+			$model->attributes=$_GET['PantonSzinkodok'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -122,12 +122,12 @@ class OrszagokController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Orszagok the loaded model
+	 * @return PantonSzinkodok the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Orszagok::model()->findByPk($id);
+		$model=PantonSzinkodok::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -135,11 +135,11 @@ class OrszagokController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Orszagok $model the model to be validated
+	 * @param PantonSzinkodok $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='orszagok-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='panton-szinkodok-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
