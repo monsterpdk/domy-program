@@ -21,6 +21,7 @@
 	'id' => 'munkatipusok-grid',
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',

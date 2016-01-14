@@ -36,6 +36,7 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$dataProvider,
 	'id'=>'nyomasi-arak-szazelek-gridview',
 	'template' => '{items} {summary} {pager}',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',

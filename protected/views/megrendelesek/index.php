@@ -74,6 +74,7 @@
 	'id'=>'megrendelesek-gridview',
 	'template' => '{items} {summary} {pager}',
 	'rowCssClassExpression'=>'$data->cssClass',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',

@@ -56,6 +56,7 @@ $this->breadcrumbs=array(
 	'dataProvider'=>$model -> search(),
 	'id'=>'nyomasi-arak-gridview',
 	'template' => '{items} {summary} {pager}',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
