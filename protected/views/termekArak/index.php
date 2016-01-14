@@ -70,10 +70,10 @@ $this->breadcrumbs=array(
 					'name'=>'termek.belesnyomott',
 					'type'=>'raw',
 					'value'=>function ($model, $index, $widget) {
-						return CHtml::checkbox('termek.belesnyomott[]', $model->termek->belesnyomott, array('value' => $index, 'disabled' => true));
+						return CHtml::checkbox('termek.belesnyomott[]', $model->termek != null ? $model->termek->belesnyomott : 0, array('value' => $index, 'disabled' => true));
 					},					
 					'htmlOptions'=>array('align'=>'center',),
-					'cssClassExpression' => '$data->termek->belesnyomott == 1 ? "yellow" : ""',
+					'cssClassExpression' => '$data->termek != null && $data->termek->belesnyomott == 1 ? "yellow" : ""',
 				),
 				array(
 					'name'=>'csomag_beszerzesi_ar',

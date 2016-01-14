@@ -259,10 +259,23 @@
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
 						'attribute'=>'ajanlat_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
 					));
 				?>
 				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_arajanlat_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Arajanlatok_ajanlat_datum").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
+			
 			<?php echo $form->error($model,'ajanlat_datum'); ?>
 		</div>
 
@@ -273,10 +286,23 @@
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
 						'attribute'=>'ervenyesseg_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
 					));
 				?>
 				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_ervenyesseg_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Arajanlatok_ervenyesseg_datum").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
+			
 			<?php echo $form->error($model,'ervenyesseg_datum'); ?>
 		</div>
 		
@@ -287,12 +313,25 @@
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
 						'attribute'=>'kovetkezo_hivas_ideje',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
 					));
 				?>
 				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_kovetkezo_hivas_idejem',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Arajanlatok_kovetkezo_hivas_ideje").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
+			
 			<?php echo $form->error($model,'kovetkezo_hivas_ideje'); ?>
-		</div>	
+		</div>
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'hatarido'); ?>
