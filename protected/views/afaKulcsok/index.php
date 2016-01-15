@@ -27,6 +27,7 @@ $this->breadcrumbs=array(
 	'id' => 'afakulcsok-grid',
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',

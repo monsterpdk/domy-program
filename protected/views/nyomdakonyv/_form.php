@@ -372,7 +372,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_munka_beerkezes_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_munka_beerkezes_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -390,7 +403,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_hatarido',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_hatarido").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -408,7 +434,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_taska_kiadasi_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_taska_kiadasi_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -426,7 +465,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_elkeszulesi_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_elkeszulesi_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -444,7 +496,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_ertesitesi_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_ertesitesi_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -492,7 +557,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_raktarbol_kiadva_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_raktarbol_kiadva_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -526,7 +604,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_file_beerkezett',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_file_beerkezett").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -682,7 +773,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_ctp_nek_atadas_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_ctp_nek_atadas_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -700,7 +804,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_ctp_kezdes_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_ctp_kezdes_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -736,7 +853,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_ctp_kesz_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_ctp_kesz_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -754,7 +884,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_nyomas_kezdes_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Nyomdakonyv_nyomas_kezdes_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				

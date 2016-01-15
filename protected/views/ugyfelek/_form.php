@@ -629,17 +629,30 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'adatok_egyeztetve_datum'); ?>
-		
+			
 			<?php
 				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$model,
 					'attribute'=>'adatok_egyeztetve_datum',
-					'options'=>array('dateFormat'=>'yy-mm-dd',)
+					'options'=>array('dateFormat'=>'yy-mm-dd',),
+					'htmlOptions'=>array('style' => 'width:123px'),
+				));
+			?>
+			
+			<?php
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_set_now_adatok_egyeztetve_datum',
+					'caption'=>'Most',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() {  
+						$("#Ugyfelek_adatok_egyeztetve_datum").datepicker("setDate", new Date());
+					}'),
+					'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
 				));
 			?>
 		
 		<?php echo $form->error($model,'adatok_egyeztetve_datum'); ?>
-	</div>
+	</div>	
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'archivbol_vissza_datum'); ?>

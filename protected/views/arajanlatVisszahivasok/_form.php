@@ -22,18 +22,33 @@
 	<?php echo $form->hiddenField($model, 'user_id'); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'visszahivas_datum'); ?>
-			
-			<?php
+		<div class="row">
+			<?php echo $form->labelEx($model,'visszahivas_datum'); ?>
+				
+				<?php
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
 						'attribute'=>'visszahivas_datum',
 						'options'=>array('dateFormat'=>'yy-mm-dd',),
-						'htmlOptions'=>array('value'=>$model->visszahivas_datum),
+						'htmlOptions'=>array('style' => 'width:123px'),
 					));
-			?>
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_visszahivas_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#ArajanlatVisszahivasok_visszahivas_datum").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
 			
-		<?php echo $form->error($model,'visszahivas_datum'); ?>
+			<?php echo $form->error($model,'visszahivas_datum'); ?>
+		</div>
+		
 		<?php echo $form->labelEx($model,'visszahivas_idopont'); ?>
 		<?php
 			$this->widget('CMaskedTextField', array(

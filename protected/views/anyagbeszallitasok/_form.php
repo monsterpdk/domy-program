@@ -71,10 +71,23 @@
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
 						'attribute'=>'beszallitas_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
 					));
 				?>
-				
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_beszallitas_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Anyagbeszallitasok_beszallitas_datum").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
+			
 			<?php echo $form->error($model,'beszallitas_datum'); ?>
 		</div>
 
@@ -85,7 +98,20 @@
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
 						'attribute'=>'kifizetes_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',)
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_kifizetes_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Anyagbeszallitasok_kifizetes_datum").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -98,7 +124,7 @@
 			<?php echo $form->error($model,'displayOsszertek'); ?>
 		</div>
 		
-		<div class="row">
+		<div class="row clear">
 			<?php echo $form->labelEx($model,'megjegyzes'); ?>
 			<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
 			<?php echo $form->error($model,'megjegyzes'); ?>

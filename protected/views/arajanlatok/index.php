@@ -54,6 +54,7 @@
 	'dataProvider'=>$model -> search(),
 	'id'=>'arajanlatok-gridview',
 	'template' => '{items} {summary} {pager}',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',

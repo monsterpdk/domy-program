@@ -184,7 +184,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_rendeles_idopont',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Megrendelesek_rendeles_idopont").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -211,7 +224,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_proforma_kiallitas_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Megrendelesek_proforma_kiallitas_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -229,7 +255,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_proforma_teljesites_datum',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Megrendelesek_proforma_teljesites_datum").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				
@@ -247,7 +286,20 @@
 						'options'=>array(
 							'timeFormat' => 'hh:mm:ss',
 							'dateFormat'=>'yy-mm-dd',
-						)
+						),
+						'htmlOptions'=>array('style' => 'width:135px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_proforma_fizetesi_hatarido',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#Megrendelesek_proforma_fizetesi_hatarido").datetimepicker("setDate", (new Date()) );
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'height:32px; width:65px', 'target' => '_blank'),
 					));
 				?>
 				

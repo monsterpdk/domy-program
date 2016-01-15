@@ -121,32 +121,58 @@ if (!isset($termek_adatok)) {
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'datum_mettol'); ?>
-			
-			<?php
-				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$model,
-					'attribute'=>'datum_mettol',
-					'options'=>array('dateFormat'=>'yy-mm-dd',)
-				));
-			?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+						'model'=>$model,
+						'attribute'=>'datum_mettol',
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_datum_mettol',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#TermekArak_datum_mettol").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
 			
 			<?php echo $form->error($model,'datum_mettol'); ?>
 		</div>
-
+		
 		<div class="row">
 			<?php echo $form->labelEx($model,'datum_meddig'); ?>
-			
-			<?php
-				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$model,
-					'attribute'=>'datum_meddig',
-					'options'=>array('dateFormat'=>'yy-mm-dd',)
-				));
-			?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+						'model'=>$model,
+						'attribute'=>'datum_meddig',
+						'options'=>array('dateFormat'=>'yy-mm-dd',),
+						'htmlOptions'=>array('style' => 'width:123px'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_set_now_datum_meddig',
+						'caption'=>'Most',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {  
+							$("#TermekArak_datum_meddig").datepicker("setDate", new Date());
+						}'),
+						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+					));
+				?>
 			
 			<?php echo $form->error($model,'datum_meddig'); ?>
 		</div>
-
+		
 		<?php if (Yii::app()->user->checkAccess('Admin')): ?>
 			<div class="row active">
 				<?php echo $form->checkBox($model,'torolt'); ?>

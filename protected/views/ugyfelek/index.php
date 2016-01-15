@@ -53,6 +53,7 @@
 	'dataProvider'=>$model -> search(),
 	'id'=>'ugyfelek-gridview',
 	'template' => '{items} {summary} {pager}',
+	'enableHistory' => true,
 	'columns'=>array(
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
