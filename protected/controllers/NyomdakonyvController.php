@@ -81,7 +81,8 @@ class NyomdakonyvController extends Controller
 		$model = $this->loadModel($id);
 
 		if ($model->elkeszulesi_datum == "0000-00-00 00:00:00") {
-				actionGepteremHivas($id) ;
+				//Szinkronizálunk a géptermi program adatbázisával, hátha van már elkészülési dátum
+//				$this->actionGepteremHivas($id) ;
 		}
 		
 		// Uncomment the following line if AJAX validation is needed
@@ -168,7 +169,7 @@ class NyomdakonyvController extends Controller
 		if(isset($_GET['Nyomdakonyv']))
 			$model->attributes=$_GET['Nyomdakonyv'];
 		
-		NyitottNyomdakonyvAdatszinkron() ;
+		$this->NyitottNyomdakonyvAdatszinkron() ;
 		
 		$this->render('index',array(
 			'model'=>$model,
@@ -520,7 +521,7 @@ class NyomdakonyvController extends Controller
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
-	 			actionGepteremHivas($munka->id) ;
+//	 			$this->actionGepteremHivas($munka->id) ;
 	 		}
 	 	}
 	}
