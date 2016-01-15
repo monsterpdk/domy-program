@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'dom_nyomdagepek':
  * @property string $id
+ * @property string $gepterem_id
  * @property string $gepnev
  * @property string $max_fordulat
  * @property integer $alapertelmezett
@@ -33,14 +34,14 @@ class Nyomdagepek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('gepnev, max_fordulat', 'required'),
-			array('alapertelmezett, torolt', 'numerical', 'integerOnly'=>true),
+			array('gepnev, gepterem_id, max_fordulat', 'required'),
+			array('gepterem_id, alapertelmezett, torolt', 'numerical', 'integerOnly'=>true),
 			array('gepnev', 'length', 'max'=>30),
 			array('max_fordulat', 'length', 'max'=>10),
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, gepnev, max_fordulat, alapertelmezett, torolt', 'safe', 'on'=>'search'),
+			array('id, gepterem_id, gepnev, max_fordulat, alapertelmezett, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,6 +67,7 @@ class Nyomdagepek extends CActiveRecord
 	{
 		return array(
 			'id' => 'Nyomdagép ID',
+			'gepterem_id' => 'Azonosítója a géptermi programban',
 			'gepnev' => 'Gépnév',
 			'max_fordulat' => 'Max. fordulat',
 			'alapertelmezett' => 'Alapértelmezett',
@@ -92,6 +94,7 @@ class Nyomdagepek extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
+		$criteria->compare('gepterem_id', $this->gepterem_id, true);
 		$criteria->compare('gepnev',$this->gepnev,true);
 		$criteria->compare('max_fordulat',$this->max_fordulat,true);
 		$criteria->compare('alapertelmezett',$this->alapertelmezett);

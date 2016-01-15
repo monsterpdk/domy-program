@@ -194,7 +194,7 @@ class Megrendelesek extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->select .= "t.id, sorszam, arajanlat.sorszam as arajanlat_sorszam, cimzett, rendeles_idopont, sztornozva, t.torolt, proforma_szamla_sorszam, proforma_szamla_fizetve, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
+		$criteria->select .= "t.id, t.sorszam, arajanlat.sorszam as arajanlat_sorszam, cimzett, rendeles_idopont, sztornozva, t.torolt, proforma_szamla_sorszam, proforma_szamla_fizetve, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
 		$criteria->together = true;
 		$criteria->with = array('ugyfel');
 		$criteria->join = "LEFT JOIN dom_arajanlatok as arajanlat ON (t.arajanlat_id = arajanlat.id)" ;
@@ -207,7 +207,7 @@ class Megrendelesek extends CActiveRecord
 		$criteria->with = array('ugyfel');
 		
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('sorszam',$this->sorszam,true);
+		$criteria->compare('t.sorszam',$this->sorszam,true);
 		$criteria->compare('arajanlat_sorszam',$this->arajanlat_sorszam,true);
 		$criteria->compare('ugyfel_id',$this->ugyfel_id,true);
 		$criteria->compare('cimzett',$this->cimzett,true);

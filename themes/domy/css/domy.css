@@ -819,6 +819,13 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-left: 20px;
 }
+#arajanlatok-form .tetelek {
+	width: 100% ;	
+}
+
+#arajanlatok-form #yw6 {
+	width: 100% ;	
+}
 #arajanlat-tetelek-form .portlet {
 	float: left;
 	margin-right: 20px;
@@ -828,6 +835,7 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-left: 20px;
 }
+
 #arajanlatTetelek-grid_c0, #megrendelesTetelek-grid_c0 {
     width: 45%;
 }
@@ -849,6 +857,9 @@ div.form .checkbox_group_horizontal  label
 #megrendeles-tetelek-form .row {
 	float: left;
 	margin-left: 20px;
+}
+#megrendelesek-form .tetelek {
+	width: 100% ;	
 }
 #anyagrendelesek-form .portlet {
 	float: left;
@@ -1072,7 +1083,7 @@ table tr td.yellow {
 }
 
 #megrendelesek-form #yw4 {
-	width: 60%;	
+	width: 100%;	
 }
 
 .megrendeles_minden_szalliton {

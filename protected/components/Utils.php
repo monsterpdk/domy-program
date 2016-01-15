@@ -1025,6 +1025,10 @@
 			return number_format($osszeg, 2, '.', ' ');		
 		}
 		
+		function SulyFormazas($suly) {
+			return (number_format($suly, 0, '.', ' '));
+		}
+		
 	}
 	
 

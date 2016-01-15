@@ -361,7 +361,7 @@
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Megrendelt tételek</strong>",
-			'htmlOptions'=>array('class'=>"portlet right-widget"),
+			'htmlOptions'=>array('class'=>"portlet tetelek"),
 		));
 
 			if (Yii::app()->user->checkAccess('MegrendelesTetelek.Create')) {

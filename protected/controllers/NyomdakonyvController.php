@@ -79,6 +79,10 @@ class NyomdakonyvController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
+
+		if ($model->elkeszulesi_datum == "0000-00-00 00:00:00") {
+				actionGepteremHivas($id) ;
+		}
 		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -163,6 +167,8 @@ class NyomdakonyvController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Nyomdakonyv']))
 			$model->attributes=$_GET['Nyomdakonyv'];
+		
+		NyitottNyomdakonyvAdatszinkron() ;
 		
 		$this->render('index',array(
 			'model'=>$model,
@@ -507,5 +513,15 @@ class NyomdakonyvController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+	
+	//A nyitott nyomdakönyv rekordokhoz letölti a géptermi program adatbázisából a legfrissebb adatokat
+	protected function NyitottNyomdakonyvAdatszinkron() {
+		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
+	 	if ($nyitott_munkak != null) {
+	 		foreach ($nyitott_munkak as $munka) {
+	 			actionGepteremHivas($munka->id) ;
+	 		}
+	 	}
 	}
 }

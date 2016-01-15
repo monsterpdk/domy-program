@@ -24,6 +24,12 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'gepterem_id'); ?>
+		<?php echo $form->textField($model,'gepterem_id',array('size'=>5,'maxlength'=>5)); ?>
+		<?php echo $form->error($model,'gepterem_id'); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->labelEx($model,'gepnev'); ?>
 		<?php echo $form->textField($model,'gepnev',array('size'=>30,'maxlength'=>30)); ?>
 		<?php echo $form->error($model,'gepnev'); ?>

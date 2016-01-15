@@ -69,6 +69,8 @@ class SzallitolevelTetelek extends CActiveRecord
 			'megrendeles_tetel_id' => 'Megrendelés tétel',
 			'darabszam' => 'Darabszám',
 			'torolt' => 'Törölt',
+			
+			'DarabszamFormazott' => 'Db',
 		);
 	}
 
@@ -115,5 +117,10 @@ class SzallitolevelTetelek extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function getDarabszamFormazott() {
+		return number_format($this->darabszam, 0, ' ', ' ');	
+	}
+	
 	
 }

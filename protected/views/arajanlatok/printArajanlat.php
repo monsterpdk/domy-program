@@ -165,11 +165,11 @@
 				// tételek kiírása
 				echo "
 					<tr>
-						<td> <strong> " . $termek->getDisplayTermekTeljesNev() . "</strong> </td>
-						<td align=right> $tetel->darabszam db</td>
+						<td> <strong> " . $tetel->getTetelnevHozottNemHozott() .  $termek->getDisplayTermekTeljesNev() . "</strong> </td>
+						<td align=right> " . $tetel->getDarabszamFormazott() . " db</td>
 						<td align=right> $tetel->szinek_szama1+$tetel->szinek_szama2 </td>
-						<td align=right>" . number_format( (float)$tetel -> netto_darabar, 2) . "</td>
-						<td align=right>" .  number_format( (float)$tetel->netto_darabar * $tetel->darabszam, 0, '.', ' ') . "</td>
+						<td align=right>" . Utils::OsszegFormazas((float)$tetel -> netto_darabar) . "</td>
+						<td align=right>" .  $tetel->getNettoArFormazott() . "</td>
 					</tr>
 				";
 

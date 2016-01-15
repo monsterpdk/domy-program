@@ -94,7 +94,10 @@ class ArajanlatTetelek extends CActiveRecord
 			
 			'netto_ar' => 'Nettó ár',
 			'brutto_ar' => 'Bruttó ár',
-		);
+			'displayTermekSzinekSzama' => 'Színek',
+			'DarabszamFormazott' => 'Db',
+			'NettoArFormazott' => 'Nettó ár',
+			'BruttoArFormazott' => 'Bruttó ár',		);
 	}
 
 	/**
@@ -158,4 +161,40 @@ class ArajanlatTetelek extends CActiveRecord
 	public function getSzorzo_tetel_arhoz () {
 		return $szorzo_tetel_arhoz;
 	}
+	
+	public function getTetelnevHozottNemHozott() {
+		if ($this->hozott_boritek)
+			return "Hozott " ;
+	}
+	
+	public function getDarabszamFormazott() {
+		return number_format($this->darabszam, 0, ' ', ' ');	
+	}
+
+	public function getNettoAr() {
+		return $this->darabszam*$this->netto_darabar ;
+	}
+	
+	public function getBruttoAr() {
+		$termek = Termekek::model()->findByPk($this -> termek_id);
+		$afakulcs = AfaKulcsok::model()->findByPk($termek -> afakulcs_id) ;
+		return $this->getNettoAr() * (1 + ($afakulcs->afa_szazalek / 100)) ;		
+	}
+	
+	public function getAfaOsszeg() {
+		$termek = Termekek::model()->findByPk($this -> termek_id);
+		return $this->getNettoAr() * ($termek->afakulcs->afa_szazalek / 100) ;
+	}
+	
+	public function getNettoArFormazott() {
+		return Utils::OsszegFormazas($this->getNettoAr());	
+	}
+
+	public function getBruttoArFormazott() {
+		return Utils::OsszegFormazas($this->getBruttoAr());	
+	}
+
+	public function getAfaOsszegFormazott() {
+		return Utils::OsszegFormazas($this->getAfaOsszeg());
+	}	
 }

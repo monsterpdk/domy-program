@@ -390,22 +390,7 @@
 				<?php echo $form->error($model,'torolt'); ?>
 			</div>
 		<?php endif; ?>
-	
-		<div class="row buttons">
-			<?php $this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'anyagrendelesek_form_submit',
-						'caption'=>'Mentés',
-						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
-					 )); ?>
-			<?php $this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'back',
-						'caption'=>'Vissza',
-						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
-					 )); ?>
-		</div>
-		
+			
 	<?php $this->endWidget(); ?>
 	
 	<?php
@@ -515,7 +500,7 @@
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Ajánlati lista</strong>",
-			'htmlOptions'=>array('class'=>"portlet right-widget"),
+			'htmlOptions'=>array('class'=>"portlet tetelek"),
 		));
 
 			if (Yii::app()->user->checkAccess('ArajanlatTetelek.Create')) {
@@ -577,7 +562,7 @@
 					'termek.DisplayTermekTeljesNev',
 					'szinek_szama1',
 					'szinek_szama2',
-					'darabszam',
+					'DarabszamFormazott',
 					'egyedi_ar:boolean',
 					'netto_darabar',
 					array(
@@ -629,6 +614,28 @@
 		// GRIDVIEW END
 	$this->endWidget();
 	?>
+	
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Vezérlőpult</strong>",
+		));
+	?>		
+		<div class="row buttons">
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'anyagrendelesek_form_submit',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					 )); ?>
+		</div>
+
+	<?php $this->endWidget(); ?>	
 
 <?php $this->endWidget(); ?>
 

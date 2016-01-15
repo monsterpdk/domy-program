@@ -82,15 +82,13 @@
 					'termek.DisplayTermekTeljesNev',
 					'szinek_szama1',
 					'szinek_szama2',
-					'darabszam',
+					array(
+							'name' => 'DarabszamFormazott',
+							'htmlOptions' => array('style' => 'width: 80px;'),
+						),
 					'hozott_boritek:boolean',
 					'egyedi_ar:boolean',
 					'netto_darabar',
-				array(
-							'class' => 'bootstrap.widgets.TbButtonColumn',
-							'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
-							'template' => '',
-					),
 			)
 		));
 	$this->endWidget();

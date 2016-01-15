@@ -12,6 +12,12 @@
 		$afakulcs = AfaKulcsok::model()->findByPk($megrendeles -> afakulcs_id);
 		$arkategoria = Arkategoriak::model()->findByPk($megrendeles -> arkategoria_id);
 	}
+	
+	$arajanlat_ugyintezo_id = 0 ;
+	if ($megrendeles->arajanlat_id > 0) {
+		$arajanlat = Arajanlatok::model()->findByPk($megrendeles->arajanlat_id) ;
+		$arajanlat_ugyintezo_id = $arajanlat->ugyintezo_id ;
+	}
 		
 	if ($ugyfel == null)
 		$ugyfel = new Ugyfelek();
@@ -96,7 +102,7 @@
 		<td class = 'col1'><strong>Szállító</strong></td>
 		<td class = 'col2'>DomyPack & Press Kft. <br /> 1139 Budapest, Lomb utca 37-39.</td>
 		<td class = 'col3'><strong>Megrendelő</strong></td>
-		<td class = 'col4'> <?php echo $ugyfel -> display_ugyfel_ugyintezok; ?> </td>
+		<td class = 'col4'> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok($arajanlat_ugyintezo_id); ?> </td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Ügyintéző</strong></td>
@@ -185,7 +191,7 @@
 					<tr>
 						<td> " . $termek->getDisplayTermekTeljesNev() . " </td>
 						<td align=right> $megrendelesTetel->szinek_szama1+$megrendelesTetel->szinek_szama2 </td>
-						<td align=right> $tetel->darabszam </td>
+						<td align=right> " . $tetel->DarabszamFormazott . " </td>
 						<td align=right> $megrendelesTetel->munka_neve </td>
 					</tr>
 				";
@@ -201,7 +207,7 @@
 			// tétel alatti összsúly és megyjegyzés rész kiírása
 			echo "
 				<p> <strong>Összsúly:</strong></p>
-				$osszsuly gr
+				" . Utils::SulyFormazas($osszsuly) . " gr
 				
 				<p> <strong>Megyjegyzés:</strong></p>
 				
@@ -243,7 +249,7 @@
 				<td></td>
 				<td align=center>Szállító <br /> <br /> DomyPack & Press Kft.</td>
 				<td></td>
-				<td align=center>Megrendelő <br /> <br /> <?php echo $ugyfel -> display_ugyfel_ugyintezok; ?> <br/> <?php echo $ugyfel -> cegnev; ?></td>
+				<td align=center>Megrendelő <br /> <br /> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok($arajanlat_ugyintezo_id); ?> <br/> <?php echo $ugyfel -> cegnev; ?></td>
 			</tr>
 		</table>
 	</p>
