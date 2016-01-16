@@ -6,6 +6,7 @@
 		'Ügyfelek',
 	);
 
+	/*
 	Yii::app()->clientScript->registerScript('search', "
 		$('.search-button').click(function(){
 			$('.search-form').toggle();
@@ -18,18 +19,10 @@
 			return false;
 		});
 	");
+	*/
 ?>
 
 <h1>Ügyfelek</h1>
-
-<?php
-	$this->widget('zii.widgets.jui.CJuiButton', array(
-		'name'=>'button_search_ugyfel',
-		'caption'=>'Keresés',
-		'buttonType'=>'link',
-		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
-	));
-?>
 
 <?php
 	if (Yii::app()->user->checkAccess('Ugyfelek.Create')) {
@@ -43,7 +36,18 @@
 	}
 ?>
 
-<div class="search-form" style="display:none">
+<?php
+/*
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_search_ugyfel',
+		'caption'=>'Keresés',
+		'buttonType'=>'link',
+		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
+	));
+*/
+?>
+
+<div class="search-form">
 	<?php  $this->renderPartial('_search',array(
 		'model'=>$model,
 	)); ?>

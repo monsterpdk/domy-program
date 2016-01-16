@@ -6,6 +6,7 @@ $this->breadcrumbs=array(
 	'Nyomási árak',
 );
 
+/*
 	Yii::app()->clientScript->registerScript('search', "
 		$('.search-button').click(function(){
 			$('.search-form').toggle();
@@ -18,7 +19,7 @@ $this->breadcrumbs=array(
 			return false;
 		});
 	");
-	
+	*/
 ?>
 
 <h1>Nyomási árak</h1>
@@ -38,15 +39,17 @@ $this->breadcrumbs=array(
 ?>
 
 <?php
+/*
 	$this->widget('zii.widgets.jui.CJuiButton', array(
 		'name'=>'button_search_nyomasi_ar',
 		'caption'=>'Keresés',
 		'buttonType'=>'link',
 		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
 	));
+*/	
 ?>
 
-<div class="search-form" style="display:none">
+<div class="search-form">
 	<?php  $this->renderPartial('_search',array(
 		'model'=>$model,
 	)); ?>

@@ -1093,4 +1093,6 @@ table tr td.yellow {
 .megrendeles_resszallitos {
 	background-color: peachpuff;	
 }
-
+.search-form {
+	margin-top: 10px;
+}

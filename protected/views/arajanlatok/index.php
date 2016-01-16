@@ -6,6 +6,7 @@
 		'Árajánlatok',
 	);
 
+	/*
 	Yii::app()->clientScript->registerScript('search', "
 		$('.search-button').click(function(){
 			$('.search-form').toggle();
@@ -18,19 +19,10 @@
 			return false;
 		});
 	");
-	
+	*/
 ?>
 
 <h1>Árajánlatok</h1>
-
-<?php
-	$this->widget('zii.widgets.jui.CJuiButton', array(
-		'name'=>'button_search_arajanlat',
-		'caption'=>'Keresés',
-		'buttonType'=>'link',
-		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
-	));
-?>
 
 <?php
 	if (Yii::app()->user->checkAccess('Arajanlatok.Create')) {
@@ -44,7 +36,18 @@
 	}
 ?>
 
-<div class="search-form" style="display:none">
+<?php
+/*
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_search_arajanlat',
+		'caption'=>'Keresés',
+		'buttonType'=>'link',
+		'htmlOptions'=>array('class'=>'btn btn-primary search-button'),
+	));
+*/	
+?>
+
+<div class="search-form">
 	<?php  $this->renderPartial('_search',array(
 		'model'=>$model,
 	)); ?>
