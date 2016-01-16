@@ -502,12 +502,14 @@ class Ugyfelek extends DomyModel
 	/**
 	 * LI
 	 * A nézetben meg kell jelenjen az adott ügyfél összes, hozzá felvett ügyintézője.
-	 * Őket itt szedem össze is adom vissza.	 *
+	 * Őket itt szedem össze is adom vissza.
 	 * TÁ: Bővítettem az ugyintezo_id paraméterrel, mert pl. a szállítólevélen csak annak az ügyintézőnek kell szerepelni, amelyik meg lett adva az árajánlatnál, mint ügyintéző
 	 * 	   Ha nincs megadva ügyintéző, akkor az összeset visszaadja, ha van megadva, akkor csak azt az egyet.
 	 */
 	public function getDisplay_ugyfel_ugyintezok ($ugyintezo_id = 0)
 	{
+		$result = '';
+		
 		foreach ($this -> ugyfelUgyintezo as $ugyintezo) {
 			if ($ugyintezo_id == 0 || $ugyintezo->id == $ugyintezo_id) {
 				$result .= (strlen($result) > 0 ? ', ' : '') . $ugyintezo -> nev;

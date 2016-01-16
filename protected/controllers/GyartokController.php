@@ -63,7 +63,7 @@ class GyartokController extends Controller
 		{
 			$model->attributes=$_POST['Gyartok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("gyartokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class GyartokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("gyartokIndex");
+		
 		$dataProvider=new CActiveDataProvider('Gyartok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

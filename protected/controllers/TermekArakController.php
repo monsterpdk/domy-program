@@ -62,7 +62,7 @@ class TermekArakController extends Controller
 		$termek = Termekek::model()->findAllByAttributes(array("id" => $model -> termek_id));
 
 //		echo "aaa:" . $termek[0]["attributes"]["belesnyomott"] ;
-		$termek_adatok = $termek[0]["attributes"];
+		$termek_adatok = ($termek != null) ? $termek[0]["attributes"] : null;
 //		print_r($termek_adatok) ;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -71,7 +71,7 @@ class TermekArakController extends Controller
 		{
 			$model->attributes=$_POST['TermekArak'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("termekarakIndex");
 		}
 
 		$this->render('update',array(
@@ -103,6 +103,8 @@ class TermekArakController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("termekarakIndex");
+		
 		$dataProvider = new CActiveDataProvider('TermekArak',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

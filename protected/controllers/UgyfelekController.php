@@ -124,8 +124,7 @@ class UgyfelekController extends Controller
                 }
             }
             if ($model->saveWithRelated('ugyfelUgyintezo'))
-				$this->redirect(array('index'));
-//              $this->redirect(array('view', 'id' => $model->id));
+				Utils::goToPrevPage("ugyfelekIndex");
             else
                 $model->addError('ugyfelUgyintezo', 'Hiba történt az ügyfélügyintéző mentése közben.');
         }
@@ -159,6 +158,8 @@ class UgyfelekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("ugyfelekIndex");
+		
 		$model=new Ugyfelek('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Ugyfelek']))

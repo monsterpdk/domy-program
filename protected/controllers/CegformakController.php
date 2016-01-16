@@ -63,7 +63,7 @@ class CegformakController extends Controller
 		{
 			$model->attributes=$_POST['Cegformak'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("cegformakIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class CegformakController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("cegformakIndex");
+		
 		$dataProvider=new CActiveDataProvider('Cegformak',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

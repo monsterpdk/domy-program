@@ -1028,8 +1028,17 @@
 		function SulyFormazas($suly) {
 			return (number_format($suly, 0, '.', ' '));
 		}
+
+		// egy sessionváltozóban tárolt url-re irányít át (az oldal nevét paraméterben várja)
+		function gotoPrevPage ($pageName) {
+			$this->redirect(Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL']);
+		}
+		
+		// egy sessionváltozóba menti a jelenlegi url-t (paraméterben várja, hogy milyen kulccsal mentse)
+		function saveCurrentPage ($pageName) {
+			Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL'] = Yii::app()->request->Url;
+		}
 		
 	}
-	
 
 ?>

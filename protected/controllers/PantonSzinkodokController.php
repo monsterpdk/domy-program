@@ -63,7 +63,7 @@ class PantonSzinkodokController extends Controller
 		{
 			$model->attributes=$_POST['PantonSzinkodok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("pantonSzinkodokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class PantonSzinkodokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("pantonSzinkodokIndex");
+		
 		$dataProvider=new CActiveDataProvider('PantonSzinkodok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

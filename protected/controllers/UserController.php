@@ -98,7 +98,7 @@ class UserController extends Controller
 			$model->attributes=$_POST['User'];
 			
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("felhasznalokIndex");
 		}
 
 		$this->render('update',array(
@@ -125,6 +125,8 @@ class UserController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("felhasznalokIndex");
+		
 		$dataProvider=new CActiveDataProvider('User');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,

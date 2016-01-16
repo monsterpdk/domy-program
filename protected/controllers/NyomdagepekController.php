@@ -91,7 +91,7 @@ class NyomdagepekController extends Controller
 			}
 			
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("nyomdagepekIndex");
 		}
 
 		$this->render('update',array(
@@ -122,6 +122,8 @@ class NyomdagepekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("nyomdagepekIndex");
+		
 		$dataProvider=new CActiveDataProvider('Nyomdagepek',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

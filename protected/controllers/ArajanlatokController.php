@@ -89,7 +89,7 @@ class ArajanlatokController extends Controller
 		{
 			$model->attributes=$_POST['Arajanlatok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("arajanlatokIndex");
 		}
 
 		$this->render('update',array(
@@ -120,6 +120,8 @@ class ArajanlatokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("arajanlatokIndex");
+		
 		$model=new Arajanlatok('search');
 		$model->unsetAttributes();
 		if(isset($_GET['Arajanlatok']))

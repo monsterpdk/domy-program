@@ -63,7 +63,7 @@ class PapirTipusokController extends Controller
 		{
 			$model->attributes=$_POST['PapirTipusok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("papirTipusokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class PapirTipusokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("papirTipusokIndex");
+		
 		$dataProvider=new CActiveDataProvider('PapirTipusok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

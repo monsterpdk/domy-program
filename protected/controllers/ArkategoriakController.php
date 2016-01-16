@@ -63,7 +63,7 @@ class ArkategoriakController extends Controller
 		{
 			$model->attributes=$_POST['Arkategoriak'];
 			if($model->save())
-				$this->redirect(array('index'));$this->redirect(array('index'));
+				Utils::goToPrevPage("arkategoriakIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class ArkategoriakController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("arkategoriakIndex");
+		
 		$dataProvider=new CActiveDataProvider('Arkategoriak',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

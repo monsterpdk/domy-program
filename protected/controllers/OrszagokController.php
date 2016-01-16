@@ -63,7 +63,7 @@ class OrszagokController extends Controller
 		{
 			$model->attributes=$_POST['Orszagok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("orszagokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class OrszagokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("orszagokIndex");
+		
 		$dataProvider=new CActiveDataProvider('Orszagok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

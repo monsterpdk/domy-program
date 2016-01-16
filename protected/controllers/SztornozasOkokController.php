@@ -63,7 +63,7 @@ class SztornozasOkokController extends Controller
 		{
 			$model->attributes=$_POST['SztornozasOkok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("sztornozasOkokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class SztornozasOkokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("sztornozasOkokIndex");
+		
 		$dataProvider=new CActiveDataProvider('SztornozasOkok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

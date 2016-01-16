@@ -110,7 +110,8 @@ class NyomdakonyvController extends Controller
 					
                     $uploadedFile->saveAs(Yii::app()->basePath . '/../uploads/nyomdakonyv/' . $model->id. '/' .$uploadedFile->name);
                 }
-				$this->redirect(array('index'));
+				
+				Utils::goToPrevPage("nyomdakonyvIndex");
 			}
 		}
 
@@ -164,6 +165,8 @@ class NyomdakonyvController extends Controller
 	 */
 	public function actionIndex()
 	{	
+		Utils::saveCurrentPage("nyomdakonyvIndex");
+		
 		$model=new Nyomdakonyv('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Nyomdakonyv']))

@@ -63,7 +63,7 @@ class VarosokController extends Controller
 		{
 			$model->attributes=$_POST['Varosok'];
 			if($model->save())
-				$this->redirect(array('index'));$this->redirect(array('index'));
+				Utils::goToPrevPage("varosokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class VarosokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("varosokIndex");
+		
 		$dataProvider=new CActiveDataProvider('Varosok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

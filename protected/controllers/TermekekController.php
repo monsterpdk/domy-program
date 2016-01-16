@@ -74,7 +74,7 @@ class TermekekController extends Controller
 		{
 			$model->attributes=$_POST['Termekek'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("termekekIndex");
 		}
 
 		$this->render('update',array(
@@ -105,6 +105,8 @@ class TermekekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("termekekIndex");
+		
 		$dataProvider = new CActiveDataProvider('Termekek',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

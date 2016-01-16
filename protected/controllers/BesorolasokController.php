@@ -63,7 +63,7 @@ class BesorolasokController extends Controller
 		{
 			$model->attributes=$_POST['Besorolasok'];
 			if($model->save())
-				$this->redirect(array('index'));$this->redirect(array('index'));
+				Utils::goToPrevPage("besorolasokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class BesorolasokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("besorolasokIndex");
+		
 		$dataProvider=new CActiveDataProvider('Besorolasok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

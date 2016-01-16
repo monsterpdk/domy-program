@@ -63,7 +63,7 @@ class FizetesiModokController extends Controller
 		{
 			$model->attributes=$_POST['FizetesiModok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("fizetesiModokIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class FizetesiModokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("fizetesiModokIndex");
+		
 		$dataProvider=new CActiveDataProvider('FizetesiModok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

@@ -63,7 +63,7 @@ class ZuhController extends Controller
 		{
 			$model->attributes=$_POST['Zuh'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("zuhIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class ZuhController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("zuhIndex");
+		
 		$dataProvider=new CActiveDataProvider('Zuh',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

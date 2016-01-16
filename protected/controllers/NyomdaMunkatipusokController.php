@@ -66,7 +66,7 @@ class NyomdaMunkatipusokController extends Controller
 		{
 			$model->attributes=$_POST['NyomdaMunkatipusok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("nyomdaMunkatipusokIndex");
 		}
 
 		$this->render('update',array(
@@ -97,6 +97,8 @@ class NyomdaMunkatipusokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("nyomdaMunkatipusokIndex");
+		
 		$dataProvider=new CActiveDataProvider('NyomdaMunkatipusok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

@@ -63,7 +63,7 @@ class AruhazakController extends Controller
 		{
 			$model->attributes=$_POST['Aruhazak'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("aruhazakIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class AruhazakController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("aruhazakIndex");
+		
 		$dataProvider=new CActiveDataProvider('Aruhazak',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

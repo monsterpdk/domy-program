@@ -63,7 +63,7 @@ class NyomdaMuveletekController extends Controller
 		{
 			$model->attributes=$_POST['NyomdaMuveletek'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("nyomdaMuveletekIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class NyomdaMuveletekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("nyomdaMuveletekIndex");
+		
 		$dataProvider=new CActiveDataProvider('NyomdaMuveletek',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

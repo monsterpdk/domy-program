@@ -65,7 +65,7 @@ class NyomasiArakController extends Controller
 		{
 			$model->attributes=$_POST['NyomasiArak'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("nyomasiArakIndex");
 		}
 
 		$this->render('update',array(
@@ -96,6 +96,8 @@ class NyomasiArakController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("nyomasiArakIndex");
+		
 		$model=new NyomasiArak ('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['NyomasiArak']))

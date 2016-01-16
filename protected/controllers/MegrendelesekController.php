@@ -91,7 +91,7 @@ class MegrendelesekController extends Controller
 		{
 			$model->attributes=$_POST['Megrendelesek'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("megrendelesekIndex");
 		}
 
 		$this->render('update',array(
@@ -167,7 +167,7 @@ class MegrendelesekController extends Controller
 		}
 		
 		Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
-		$this->redirect(array('index'));
+		Utils::goToPrevPage("megrendelesekIndex");
 	}
 	
 	 /**
@@ -368,6 +368,8 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("megrendelesekIndex");
+		
 		$this->webaruhazMegrendelesekBegyujt() ;
 		$model=new Megrendelesek('search');
 		$model->unsetAttributes();

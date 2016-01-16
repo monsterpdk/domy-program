@@ -184,14 +184,15 @@ class AnyagrendelesekController extends Controller
 						}
 					}
 					
-					$this->redirect(array('index'));
+					Utils::goToPrevPage("anyagrendelesekIndex");
 				}
 			}
 			
 			// ha a raktárellenőrzés során eltéréseket találtunk valahol, akkor csak 'simán' mentjük a modelt
 			$model->attributes=$_POST['Anyagrendelesek'];
-			if($model->save())
-				$this->redirect(array('index'));
+			if($model->save()) {
+				Utils::goToPrevPage("anyagrendelesekIndex");
+			}
 		}
 
 		$this->render('update',array(
@@ -218,6 +219,8 @@ class AnyagrendelesekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("anyagrendelesekIndex");
+		
 		$dataProvider=new CActiveDataProvider('Anyagrendelesek');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,

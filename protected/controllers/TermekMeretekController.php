@@ -63,7 +63,7 @@ class TermekMeretekController extends Controller
 		{
 			$model->attributes=$_POST['TermekMeretek'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::gotoPrevPage("termekMeretekIndex");
 		}
 
 		$this->render('update',array(
@@ -94,6 +94,8 @@ class TermekMeretekController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("termekMeretekIndex");
+		
 		$dataProvider=new CActiveDataProvider('TermekMeretek',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);

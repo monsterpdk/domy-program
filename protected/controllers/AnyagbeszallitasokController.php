@@ -131,14 +131,14 @@ class AnyagbeszallitasokController extends Controller
 						}
 					}
 					
-					$this->redirect(array('index'));
+					Utils::goToPrevPage("anyagbeszallitasokIndex");
 				}
 			}
 			
 			// ha a raktárellenőrzés során eltéréseket találtunk valahol, akkor csak 'simán' mentjük a modelt
 			$model->attributes=$_POST['Anyagbeszallitasok'];
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("anyagbeszallitasokIndex");
 		}
 
 		$this->render('update',array(
@@ -165,6 +165,8 @@ class AnyagbeszallitasokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("anyagbeszallitasokIndex");
+		
 		$dataProvider=new CActiveDataProvider('Anyagbeszallitasok');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,

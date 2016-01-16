@@ -90,7 +90,7 @@ class AfaKulcsokController extends Controller
 			}
 			
 			if($model->save())
-				$this->redirect(array('index'));
+				Utils::goToPrevPage("afaKulcsokIndex");
 		}
 
 		$this->render('update',array(
@@ -121,6 +121,8 @@ class AfaKulcsokController extends Controller
 	 */
 	public function actionIndex()
 	{
+		Utils::saveCurrentPage("afaKulcsokIndex");
+		
 		$dataProvider=new CActiveDataProvider('AfaKulcsok',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
