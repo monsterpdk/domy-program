@@ -18,7 +18,7 @@
 
 			$('#megrendelesenLevoTetelek-grid tr').each(function(rowIndex) {
 				$(this).find('td').each(function(cellIndex) {
-					if (cellIndex == 3)
+					if (cellIndex == 4)
 						data.push($(this).text());
 				});
 			});
