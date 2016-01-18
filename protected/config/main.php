@@ -206,7 +206,13 @@ return array(
             'defaults'  => array(              //default settings for all editable elements
                'emptytext' => 'Szerkesztéshez kattintson ide'
             )
-        ),		
+        ),
+        // TÁ: E-mail küldésekhez
+		'mailer' => array(
+		  'class' => 'application.extensions.mailer.EMailer',
+		  'pathViews' => 'application.views.email',
+		  'pathLayouts' => 'application.views.email.layouts'
+		),      		
 	),
 	// LI : login force-hoz kell
 	'behaviors' => array(

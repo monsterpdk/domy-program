@@ -110,7 +110,7 @@
 											'class'=>'btn btn-info btn-mini',
 											'style'=>'margin-left: 15px',
 											),
-								//'url'=> 'Yii::app()->createUrl("arajanlatok/sendViaEmail/arajanlat_id/" . $data->id)',
+								'url'=> 'Yii::app()->createUrl("arajanlatok/sendViaEmail/" . $data->id)',
 								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.CreateMegrendeles") && $data->torolt == 0 ',
 							),
 						),

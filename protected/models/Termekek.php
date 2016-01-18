@@ -298,6 +298,9 @@ class Termekek extends CActiveRecord
 		if ($this->ablakhely->x_pozicio_honnan != '' && $this->ablakhely->x_pozicio_mm > 0) {
 			$termek_teljes_nev .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
 		}*/
+		if ($this->ablakmeret->nev != "") {
+			$termek_teljes_nev .= ' ' . $this->ablakmeret->nev ;	
+		}
 		if ($this->ablakmeret->magassag > 0) {
 			$termek_teljes_nev .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
 		}

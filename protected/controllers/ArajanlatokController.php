@@ -362,6 +362,35 @@ class ArajanlatokController extends Controller
 		exit;
 	}
 	
+	/* Árajánlat kiküldése e-mailen */
+	public function actionsendViaEmail($id) {
+		if (is_numeric($id)) {
+			$model=$this->loadModel($id);		
+			
+			$message = 'Hello World!';
+			
+			$ajanlat_mailer = Yii::app()->mailer ;
+			
+			$ajanlat_mailer ->Host = "smtp.gmail.com";		//Az smtp szerver címe	-> admin beállításokból
+			$ajanlat_mailer ->IsSMTP();
+			$ajanlat_mailer ->SMTPAuth=true;
+			$ajanlat_mailer ->From = "toth.arpad.pdk@gmail.com";		//A küldő e-mail címe	-> admin beállításokból
+			$ajanlat_mailer ->Port = "465";		//Az smtp szerver portja -> admin beállításokból
+			$ajanlat_mailer ->Username = "toth.arpad.pdk@gmail.com";		//Az smtp bejelentkezéshez a usernév (e-mail cím) -> admin beállításokból
+			$ajanlat_mailer ->Password = "eso576lxb";		//Az smtp bejelentkezéshez a jelszó -> admin beállításokból
+			$ajanlat_mailer ->FromName = "Ferenc József";		//A küldő neve -> admin beállításokból
+			$ajanlat_mailer ->AddReplyTo("toth.arpad.pdk@gmail.com");		//A válasz e-mail cím, alapból a feladó e-mail címe lesz, ami az admin beállításokból jön
+			$ajanlat_mailer ->AddAddress("toth.arpad@pdk.hu");	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
+			$ajanlat_mailer ->Subject = "Árajánlat e-mail teszt";
+			$ajanlat_mailer ->Body = $message;
+			$ajanlat_mailer ->Send();
+		}
+		//send model object for search
+		$this->render('index',array(
+			'model'=>$model,)
+		);		
+	}	
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
