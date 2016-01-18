@@ -206,6 +206,45 @@ class MegrendelesTetelekController extends Controller
 		}
 	}
 
+	// LI: megrendelés űrlapon a munka_neve inline szerkeszthető a tétel táblázatban,
+	//     akkor ez a kódrész fut le
+	public function actionUpdateMunkaNeve()
+	{
+		if(isset($_POST['pk']) && isset($_POST['value']))
+        {
+            $megrendelesTetel = MegrendelesTetelek::model() -> findByPk ($_POST['pk']);
+			
+			if ($megrendelesTetel != null) {
+				$megrendelesTetel->munka_neve = $_POST['value'];
+				$megrendelesTetel->save(false);
+			}
+		}
+	}	
+	
+	// LI: egy megrendeléshez ellenőrzi, hogy a hozzá tartozó tételeknél ki van-e töltve mindenhol
+	//	   a munka neve mező.
+	public function actionCheckMunkaNevek()
+	{
+		$allMunkaNevIsFilled = true;
+		
+		if(isset($_GET['megrendelesId']) && is_numeric($_GET['megrendelesId'])) {
+			$megrendelesId = $_GET['megrendelesId'];
+			
+			if ($megrendelesId != null) {
+				$megrendeles = Megrendelesek::model() -> findByPk (($megrendelesId));
+
+				foreach ($megrendeles -> tetelek as $tetel) {
+					if (trim($tetel->munka_neve) == '') {
+						$allMunkaNevIsFilled = false;
+					}
+				}
+			}
+		}	
+		echo CJSON::encode(array(
+			'result' => $allMunkaNevIsFilled ? 'true' : 'false', 
+		));
+	}
+	
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
