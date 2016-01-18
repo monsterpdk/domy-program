@@ -467,7 +467,19 @@
 					'termek.DisplayTermekTeljesNev',
 					'szinek_szama1',
 					'szinek_szama2',
-					'munka_neve',
+					
+					array( 
+						'class' => 'editable.EditableColumn',
+						'name'  => 'munka_neve',
+						'value' => function($data, $row) use ($model){
+							return $data->munka_neve;
+						},
+						'header' => 'Munka neve',
+						'editable' => array(
+						  'placement' => 'right',
+						   'url'      => $this->createUrl('megrendelesTetelek/updateMunkaNeve'),
+						)),
+					
 					'DarabszamFormazott',
 					'egyedi_ar:boolean',
 					'netto_darabar',
@@ -534,12 +546,20 @@
 						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
 					 )); ?>
 			<?php if ($model -> nyomdakonyv_munka_id == 0) {
-					$this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'nyomdakonyvbeKuldesButton',
-						'caption'=>'Nyomdakönybe küldés',
-						'htmlOptions' => array ('class' => 'btn btn-success btn-lg', 'submit' => Yii::app()->createUrl("/megrendelesek/munkakGeneralasaMegrendelesbol/", array("id" => $model->id)), 'onclick' => 'js:disableNyomdakonyvButton()'),
-					 ));
+						$this->widget('zii.widgets.jui.CJuiButton', 
+						 array(
+							'name'=>'nyomdakonyvbeKuldesButton',
+							'caption'=>'Nyomdakönybe küldés',
+							'onclick'=>new CJavaScriptExpression('function() {return checkMunkaNevek();}'),
+							'htmlOptions' => array ('class' => 'btn btn-success btn-lg'),
+						 ));
+						 
+						 $this->widget('zii.widgets.jui.CJuiButton', 
+						 array(
+							'name'=>'nyomdakonyvbeKuldesButtonHidden',
+							'caption'=>'Nyomdakönybe küldés',
+							'htmlOptions' => array ('class' => 'btn btn-success btn-lg', 'style' => 'display:none', 'submit' => Yii::app()->createUrl("/megrendelesek/munkakGeneralasaMegrendelesbol/", array("id" => $model->id))),
+						 ));
 					}
 			?>
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 
@@ -667,6 +687,10 @@
 		function disableNyomdakonyvButton () {
 			$("#nyomdakonyvbeKuldesButton").attr("disabled", true);
 		}
+
+		function enableNyomdakonyvButton () {
+			$("#nyomdakonyvbeKuldesButton").attr("disabled", false);
+		}
 		
 		function szamlageneralas(buttonObj) {
 			id = 0 ;
@@ -675,25 +699,59 @@
 			}
 			if (id > 0) {
 				<?php echo CHtml::ajax(array(
-						'url'=> "js:'/index.php/megrendelesek/szamlageneralas/id/' + id",
-						'data'=> "js:$(this).serialize()",
-						'type'=>'get',
-						'id' => 'send-link-'.uniqid(),
-						'replace' => '',
-						'dataType'=>'json',
-						'success'=>"function(data)
+					'url'=> "js:'/index.php/megrendelesek/szamlageneralas/id/' + id",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'get',
+					'id' => 'send-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.status == 'failure')
 						{
-							if (data.status == 'failure')
-							{
-								//
-							}
-							else
-							{
-								alert('Számla xml legenerálva') ;
-							}		 
-						} ",
+							//
+						}
+						else
+						{
+							alert('Számla xml legenerálva') ;
+						}		 
+					} ",
 				))?>;
 			}
 		}
 		
+		function checkMunkaNevek () {
+			disableNyomdakonyvButton();
+			
+			var megrendelesId = 0 ;
+			if ($("#Megrendelesek_id").val() != "") {
+				megrendelesId = $("#Megrendelesek_id").val() ;
+			}
+			if (megrendelesId > 0) {	
+				<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/megrendelesTetelek/checkMunkaNevek/megrendelesId/' + megrendelesId",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'get',
+					'id' => 'send-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.result == 'true')
+						{
+							$('#nyomdakonyvbeKuldesButtonHidden').click();
+						}
+						else
+						{
+							alert('Minden megrendelés tétel esetén kötelező kitölteni a \'munka neve\' mezőt! Ezt a sárgával jelzett oszlopokra kattintva teheti meg.');
+							enableNyomdakonyvButton();
+							
+							return false;
+						}		 
+					} ",
+				)); ?>			
+			}
+			
+			return false;
+		}
 	</script>
