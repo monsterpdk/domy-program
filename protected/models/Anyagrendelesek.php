@@ -18,6 +18,9 @@ class Anyagrendelesek extends CActiveRecord
 	// a lenyíló listákban a bizonylatszám és rendelés dátuma egyszerre jelenjen meg
 	private $displayBizonylatszamDatum;
 	
+	// LI: anyagbeszállítás ID tárolására
+	private $anyagbeszallitas_id;
+	
 	// összérték tárolására
 	private $displayOsszertek;
 	
@@ -146,6 +149,13 @@ class Anyagrendelesek extends CActiveRecord
 		parent::afterFind();
 		
 		$this -> rendeles_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->rendeles_datum)));
+		$this -> anyagbeszallitas_id = 0;
+		
+		// LI: ha van anyagbeszállítás beírjuk az ID-ját
+		$anyagbeszallitas = Anyagbeszallitasok::model()->findByAttributes(array('anyagrendeles_id' => $this->id));
+		if ($anyagbeszallitas != null) {
+			$this -> anyagbeszallitas_id = $anyagbeszallitas -> id;
+		}
 		
 		$this->recalculateOsszertek ();
 	}
@@ -177,6 +187,10 @@ class Anyagrendelesek extends CActiveRecord
 
 	public function getDisplayOsszertek () {
 		return $this->displayOsszertek;
+	}
+	
+	public function getAnyagbeszallitas_id () {
+		return $this->anyagbeszallitas_id;
 	}
 	
 }
