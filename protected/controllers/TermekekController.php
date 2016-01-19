@@ -74,7 +74,7 @@ class TermekekController extends Controller
 		{
 			$model->attributes=$_POST['Termekek'];
 			if($model->save())
-				Utils::goToPrevPage("termekekIndex");
+				$this->redirect(array('index'));
 		}
 
 		$this->render('update',array(
@@ -105,8 +105,6 @@ class TermekekController extends Controller
 	 */
 	public function actionIndex()
 	{
-		Utils::saveCurrentPage("termekekIndex");
-		
 		$dataProvider = new CActiveDataProvider('Termekek',
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
@@ -161,7 +159,7 @@ class TermekekController extends Controller
 		return $model;
 	}
 
-	// LI : export-hoz kell
+	// LI : export-hoz kell.
 	public function behaviors() {
 		return array(
 			'exportableGrid' => array(
@@ -170,7 +168,52 @@ class TermekekController extends Controller
 				'csvDelimiter' => ";", // i.e. Excel friendly csv delimiter
             ));
 	}
+	
+	// LI: képek feltöltéséhez kell.
+	public function actionUploadImages () {
+		$termekId = isset($_POST['termekId']) ? $_POST['termekId'] : 'omlesztve';
+		$tempFolder = Yii::getPathOfAlias('webroot').'/uploads/termekek/kepek/' . $termekId . '/';
 
+		if (!is_dir($tempFolder)) {
+			mkdir($tempFolder, 0777, TRUE);
+		}
+		if (!is_dir($tempFolder.'chunks')) {
+			mkdir($tempFolder.'chunks', 0777, TRUE);
+		}
+
+		Yii::import("ext.EFineUploader.qqFileUploader");
+
+		$uploader = new qqFileUploader();
+		$uploader->allowedExtensions = array('jpg','jpeg','png');
+		$uploader->sizeLimit = 5 * 1024 * 1024; //maximum fájlméret egyelőre 5 MB
+		$uploader->chunksFolder = $tempFolder.'chunks';
+
+		$result = $uploader->handleUpload($tempFolder);
+		$result['filename'] = $uploader->getUploadName();
+		$result['folder'] = $tempFolder;
+		$result['imageUrl'] = Yii::app()->getBaseUrl(true) . '/uploads/termekek/kepek/' . $termekId . '/' . $result['filename'];
+
+		$uploadedFile=$tempFolder.$result['filename'];
+
+		header("Content-Type: text/plain");
+		$result=htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+		echo $result;
+		Yii::app()->end();
+	}
+	
+	// LI: képek feltöltésénél a törléshez kell.
+	public function actionDeleteImage () {
+		if (isset($_POST['filename'])) {
+			$termekId = isset($_POST['termekId']) ? $_POST['termekId'] : 'omlesztve';
+			
+			$tempFolder = Yii::getPathOfAlias('webroot').'/uploads/termekek/kepek/' . $termekId . '/';
+			
+			if (file_exists($tempFolder.$_POST['filename'])) {
+				unlink ($tempFolder.$_POST['filename']);
+			}
+		}
+	}
+	
 	/**
 	 * This is the action to handle external exceptions.
 	 */
