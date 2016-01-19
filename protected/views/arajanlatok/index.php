@@ -109,8 +109,8 @@
 								'options'=>array(
 											'class'=>'btn btn-info btn-mini',
 											'style'=>'margin-left: 15px',
+											'onclick'=>'js: arajanlatKuld($(this))',
 											),
-								'url'=> 'Yii::app()->createUrl("arajanlatok/sendViaEmail/" . $data->id)',
 								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.CreateMegrendeles") && $data->torolt == 0 ',
 							),
 						),
@@ -227,5 +227,27 @@ $this->endWidget(); ?>
 		
 		$('#select-tetel-form').submit();
 	}
+	
+	function arajanlatKuld(button_obj) {
+		hrefString = button_obj.parent().children().eq(1).attr("href");
+		row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);		
+		<?php echo CHtml::ajax(array(
+			'url'=> "js:'/index.php/arajanlatok/sendViaEmail/' + row_id",
+			'data'=> "js:$(this).serialize()",
+			'type'=>'post',
+			'id' => 'ajanlat-kuldes-'.uniqid(),
+			'dataType'=>'json',
+			'success'=>"function(data)
+			{
+				if (data.status == 'ok')
+				{
+					alert('Ajánlat elküldve!') ;
+				}
+				else if (data.status = 'failed') {
+					alert('Ajánlat elküldése sikertelen!') ;
+				}
+			} ",
+		))?>;
+	}	
 	
 </script>

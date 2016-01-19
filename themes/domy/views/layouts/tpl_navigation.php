@@ -66,6 +66,7 @@
                         array ('label'=>'Általános beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
 									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.AfaKulcsok') || Yii::app()->user->checkAccess('Admin'))),
+									array ('label'=>'E-mail beállítások', 'url'=> Yii::app()->createUrl('/emailBeallitasok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.EmailBeallitasok') || Yii::app()->user->checkAccess('Admin'))),
 									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SztornozasiOkok')) ),
 									array ('label'=>'Nyomdai beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
@@ -98,7 +99,7 @@
 		                        'items'=>array (
 	                            	array ('label'=>'Alapértelmezett beállítások', 'url'=> Yii::app()->createUrl('/szamlazoBeallitasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SzamlazasBeallitasok.AlapertelmezettBeallitasok')),
 	                            	array ('label'=>'Fizetési módok', 'url'=> Yii::app()->createUrl('/fizetesiModok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SzamlazasBeallitasok.FizetesiModok')),
-															), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SzamlazasBeallitasok'))),
+															), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SzamlazasBeallitasok'))),									
 							), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok')) ),
                         array ('label'=>'Adminisztráció <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (

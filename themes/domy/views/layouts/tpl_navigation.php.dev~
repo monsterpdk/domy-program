@@ -7,7 +7,7 @@
             <span class="icon-bar"></span>
           </a>
      
-          <a class="brand" href=""> <?php echo Yii::app()->name; ?> </a>
+          <a class="brand" href=""> <?php echo Yii::app()->name; ?> tesztfelület </a>
           
           <div class="nav-collapse">
 			<?php $this->widget('zii.widgets.CMenu',array(
@@ -75,6 +75,7 @@
 																array ('label'=>'Munkatípusok kezelése', 'url'=> Yii::app()->createUrl('/nyomdaMunkatipusok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomdaiBeallitasok.MunkatipusokKezelese')),
 																array ('label'=>'Művelet árak kezelése', 'url'=> Yii::app()->createUrl('/nyomdaMuveletNormaarak/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomdaiBeallitasok.MuveletArakKezelese')),
 																array ('label'=>'Nyomdakönyvi beállítások', 'url'=> Yii::app()->createUrl('/nyomdakonyvBeallitasok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomdaiBeallitasok.NyomdakonyviBeallitasok')),
+																array ('label'=>'Panton színkódok', 'url'=> Yii::app()->createUrl('/pantonSzinkodok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomdaiBeallitasok.PantonSzinkodok')),
 															), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomdaiBeallitasok')) ),	                                                                          
 		                    		array ('label'=>'Ügyfelekkel kapcsolatos beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (

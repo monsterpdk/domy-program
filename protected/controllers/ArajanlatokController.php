@@ -156,7 +156,8 @@ class ArajanlatokController extends Controller
 		}
 		
 		if ($model != null) {
-			# mPDF
+			$this->generatePdf($model) ;
+/*			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf('', 'A4', 0, '', 15, 15, 15, 35, '', '', 'P');
 
 			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
@@ -169,7 +170,7 @@ class ArajanlatokController extends Controller
 			$mPDF1->WriteHTML($this->renderPartial("printArajanlat", array('model' => $model), true));
 	 
 			# Outputs ready PDF
-			$mPDF1->Output();
+			$mPDF1->Output();*/
 		}
 		
 	}
@@ -364,31 +365,69 @@ class ArajanlatokController extends Controller
 	
 	/* Árajánlat kiküldése e-mailen */
 	public function actionsendViaEmail($id) {
+		$status = "failed" ;
 		if (is_numeric($id)) {
 			$model=$this->loadModel($id);		
 			
-			$message = 'Hello World!';
+			$validator = new CEmailValidator;
+			$ugyfel_email = $model->ugyintezo->email ;
+			if (!$validator->validateValue($ugyfel_email)) {
+				$ugyfel_email = $model->ugyfel->ceg_email ;
+			}
 			
-			$ajanlat_mailer = Yii::app()->mailer ;
-			
-			$ajanlat_mailer ->Host = "smtp.gmail.com";		//Az smtp szerver címe	-> admin beállításokból
-			$ajanlat_mailer ->IsSMTP();
-			$ajanlat_mailer ->SMTPAuth=true;
-			$ajanlat_mailer ->From = "emailcim@gmail.com";		//A küldő e-mail címe	-> admin beállításokból
-			$ajanlat_mailer ->Port = "465";		//Az smtp szerver portja -> admin beállításokból
-			$ajanlat_mailer ->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted			
-			$ajanlat_mailer ->Username = "emailcim@gmail.com";		//Az smtp bejelentkezéshez a usernév (e-mail cím) -> admin beállításokból
-			$ajanlat_mailer ->Password = "1111111";		//Az smtp bejelentkezéshez a jelszó -> admin beállításokból
-			$ajanlat_mailer ->FromName = "Ferenc József";		//A küldő neve -> admin beállításokból
-			$ajanlat_mailer ->AddReplyTo("emailcim@gmail.com");		//A válasz e-mail cím, alapból a feladó e-mail címe lesz, ami az admin beállításokból jön
-			$ajanlat_mailer ->AddAddress("toth.arpad@pdk.hu");	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
-			$ajanlat_mailer ->isHTML(true);
-			$ajanlat_mailer ->CharSet = "utf-8";			
-			$ajanlat_mailer ->Subject = "Árajánlat e-mail teszt";
-			$ajanlat_mailer ->Body = $message;
-			$ajanlat_mailer ->Send();
+ 
+            if($validator->validateValue($ugyfel_email)) {								
+				$ArajanlatKuldoEmail = Yii::app()->config->get('ArajanlatKuldoEmail');
+				$ArajanlatKuldoHost = Yii::app()->config->get('ArajanlatKuldoHost');
+				$ArajanlatKuldoPort = Yii::app()->config->get('ArajanlatKuldoPort');
+				$ArajanlatKuldoTitkositas = Yii::app()->config->get('ArajanlatKuldoTitkositas');
+				$ArajanlatKuldoSMTP = Yii::app()->config->get('ArajanlatKuldoSMTP');
+				if ($ArajanlatKuldoSMTP == 1)
+					$ArajanlatKuldoSMTP = true ;
+				else
+					$ArajanlatKuldoSMTP = false ;
+				
+				$ArajanlatKuldoSMTPUser = Yii::app()->config->get('ArajanlatKuldoSMTPUser');
+				$ArajanlatKuldoSMTPPassword = Yii::app()->config->get('ArajanlatKuldoSMTPPassword');
+				$ArajanlatKuldoFromName = Yii::app()->config->get('ArajanlatKuldoFromName');
+				$ArajanlatKuldoAlapertelmezettSubject = Yii::app()->config->get('ArajanlatKuldoAlapertelmezettSubject');
+				
+				
+				$ajanlat_mailer = Yii::app()->mailer ;			
+				$ajanlat_mailer ->Host = $ArajanlatKuldoHost;		//Az smtp szerver címe	-> admin beállításokból
+				$ajanlat_mailer ->From = $ArajanlatKuldoEmail;		//A küldő e-mail címe	-> admin beállításokból
+				$ajanlat_mailer ->Port = $ArajanlatKuldoPort;		//Az smtp szerver portja -> admin beállításokból
+				$ajanlat_mailer ->FromName = $ArajanlatKuldoFromName;		//A küldő neve -> admin beállításokból
+				$ajanlat_mailer ->AddReplyTo($ArajanlatKuldoEmail);		//A válasz e-mail cím, alapból a feladó e-mail címe lesz, ami az admin beállításokból jön
+//				$ajanlat_mailer ->AddAddress($ugyfel_email);	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
+				$ajanlat_mailer ->AddAddress("toth.arpad@pdk.hu");	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
+				$ajanlat_mailer ->isHTML(true);
+				if ($ArajanlatKuldoSMTP) {
+					$ajanlat_mailer ->IsSMTP();
+					$ajanlat_mailer ->SMTPAuth=$ArajanlatKuldoSMTP;
+					$ajanlat_mailer ->SMTPSecure = $ArajanlatKuldoTitkositas;                            // Enable TLS encryption, `ssl` also accepted			
+					$ajanlat_mailer ->Username = $ArajanlatKuldoSMTPUser;		//Az smtp bejelentkezéshez a usernév (e-mail cím) -> admin beállításokból
+					$ajanlat_mailer ->Password = $ArajanlatKuldoSMTPPassword;		//Az smtp bejelentkezéshez a jelszó -> admin beállításokból				
+				}
+				$ajanlat_mailer ->CharSet = "utf-8";			
+				$ajanlat_mailer ->Subject = $ArajanlatKuldoAlapertelmezettSubject;
+				
+				$ajanlat_file_url = Yii::app() -> getBasePath() . "/../uploads/ajanlatok/" . $model->sorszam . ".pdf" ;
+				$this->generatePdf($model, $ajanlat_file_url) ;
+				$ajanlat_mailer -> AddAttachment($ajanlat_file_url,"Árajánlat", "base64", "application/pdf");
+				
+				$email_body = $this->renderPartial("arajanlat_email_body", array('model'=>$model), true);
+				$ajanlat_mailer ->Body = $email_body;
+				
+				if ($ajanlat_mailer ->Send())
+					$status = "ok" ;	
+				unlink(Yii::app() -> getBasePath() . "/../uploads/ajanlatok/" . $model->sorszam . ".pdf") ;
+			}
 		}
-		$model=new Arajanlatok('search');
+		echo CJSON::encode(array(
+			'status' => $status,
+		));		
+/*		$model=new Arajanlatok('search');
 		$model->unsetAttributes();
 		if(isset($_GET['Arajanlatok']))
 			$model->attributes=$_GET['Arajanlatok'];
@@ -400,9 +439,34 @@ class ArajanlatokController extends Controller
 		//send model object for search
 		$this->render('index',array(
 			'model'=>$model,)
-		);
+		);*/
 	}	
 	
+	
+	public function generatePdf($model, $file_url = "") {
+		if ($model != null) {		
+			$mPDF1 = Yii::app()->ePdf->mpdf('', 'A4', 0, '', 15, 15, 15, 35, '', '', 'P');
+
+			$mPDF1->SetHtmlHeader("Árajánlat #" . $model->sorszam);
+
+			// a content ne lógjon rá a header-re sem pedig a footer-re
+			$mPDF1->setAutoTopMargin 	= 'stretch';
+			$mPDF1->setAutoBottomMargin = 'stretch';
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printArajanlat", array('model' => $model), true));
+	 
+			# Outputs ready PDF
+			if ($file_url != "") {
+				$mPDF1->Output($file_url,'F');
+			}
+			else
+			{
+				$mPDF1->Output();
+			}
+			return true ;
+		}
+	}
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

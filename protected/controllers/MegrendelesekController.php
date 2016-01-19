@@ -349,15 +349,19 @@ class MegrendelesekController extends Controller
 	 	 $webaruhazak = Aruhazak::model()->findAllByAttributes(array(),"aruhaz_megrendelesek_xml_url != ''");
 	 	 if ($webaruhazak != null) {
 	 	 		foreach ($webaruhazak as $webaruhaz) {
-	 	 			$xml_string = file_get_contents($webaruhaz->aruhaz_megrendelesek_xml_url);
-	 	 			if (!empty($xml_string)) {
-	 	 				$xml = new SimpleXMLElement($xml_string);
-						if ($xml->count() > 0) {
-							foreach ($xml->children() as $megrendeles) {
-								$this->insertMegrendelesFromXml($megrendeles, $webaruhaz) ;
-	//							die() ;
+	 	 			try {
+						$xml_string = @file_get_contents($webaruhaz->aruhaz_megrendelesek_xml_url);
+						if (!empty($xml_string)) {
+							$xml = new SimpleXMLElement($xml_string);
+							if ($xml->count() > 0) {
+								foreach ($xml->children() as $megrendeles) {
+									$this->insertMegrendelesFromXml($megrendeles, $webaruhaz) ;
+		//							die() ;
+								}
 							}
 						}
+					} catch (Exception $e) {
+						//	
 					}
 	 	 		}
 	 	 }
