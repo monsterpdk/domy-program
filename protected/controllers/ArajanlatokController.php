@@ -399,8 +399,7 @@ class ArajanlatokController extends Controller
 				$ajanlat_mailer ->Port = $ArajanlatKuldoPort;		//Az smtp szerver portja -> admin beállításokból
 				$ajanlat_mailer ->FromName = $ArajanlatKuldoFromName;		//A küldő neve -> admin beállításokból
 				$ajanlat_mailer ->AddReplyTo($ArajanlatKuldoEmail);		//A válasz e-mail cím, alapból a feladó e-mail címe lesz, ami az admin beállításokból jön
-//				$ajanlat_mailer ->AddAddress($ugyfel_email);	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
-				$ajanlat_mailer ->AddAddress("toth.arpad@pdk.hu");	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
+				$ajanlat_mailer ->AddAddress($ugyfel_email);	// Ide jön az ügyfél e-mail címe -> ügyfél adatokból
 				$ajanlat_mailer ->isHTML(true);
 				if ($ArajanlatKuldoSMTP) {
 					$ajanlat_mailer ->IsSMTP();
@@ -426,6 +425,7 @@ class ArajanlatokController extends Controller
 		}
 		echo CJSON::encode(array(
 			'status' => $status,
+			'cimzett_email' => $ugyfel_email,
 		));		
 /*		$model=new Arajanlatok('search');
 		$model->unsetAttributes();

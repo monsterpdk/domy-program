@@ -241,10 +241,10 @@ $this->endWidget(); ?>
 			{
 				if (data.status == 'ok')
 				{
-					alert('Ajánlat elküldve!') ;
+					alert('Ajánlat elküldve ide: ' + data.cimzett_email + '!') ;
 				}
 				else if (data.status = 'failed') {
-					alert('Ajánlat elküldése sikertelen!') ;
+					alert('Ajánlat elküldése sikertelen ide: ' + data.cimzett_email + '!') ;
 				}
 			} ",
 		))?>;
