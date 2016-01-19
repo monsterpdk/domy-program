@@ -216,7 +216,7 @@ class Arajanlatok extends CActiveRecord
 		$criteria->join .= "LEFT JOIN dom_afakulcsok as afakulcsok ON (t.afakulcs_id = afakulcsok.id)" ;
 		$criteria->group = "t.id" ;
 		
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('t.id',$this->id,true);
 		$criteria->compare('sorszam',$this->sorszam,true);
 		$criteria->compare('ugyfel_id',$this->ugyfel_id,true);
 		$criteria->compare('cimzett',$this->cimzett,true);
@@ -230,7 +230,7 @@ class Arajanlatok extends CActiveRecord
 		$criteria->compare('visszahivas_lezarva',$this->visszahivas_lezarva);
 		$criteria->compare('ugyfel_tel',$this->ugyfel_tel,true);
 		$criteria->compare('ugyfel_fax',$this->ugyfel_fax,true);
-		$criteria->compare('egyedi_ar',$this->egyedi_ar);
+		$criteria->compare('t.egyedi_ar',$this->egyedi_ar);
 		$criteria->compare('visszahivas_jegyzet',$this->visszahivas_jegyzet,true);
 		$criteria->compare('jegyzet',$this->jegyzet,true);
 		$criteria->compare('reklamszoveg',$this->reklamszoveg,true);
