@@ -17,6 +17,8 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
+		<?php echo $form->hiddenField($model, 'id'); ?>
+		
 		<?php
 			$this->beginWidget('zii.widgets.CPortlet', array(
 				'title'=>"<strong>Termékadatok #1</strong>",
@@ -289,6 +291,171 @@
 		</div>
 		
 	<?php $this->endWidget(); ?>
+	
+	<div class='clear'></div>
+
+		<?php
+			$this->beginWidget('zii.widgets.CPortlet', array(
+				'title'=>"<strong>Képek</strong>",
+				'htmlOptions'=> array ('style' => 'clear:both;width:100%!important', 'class' => 'portlet'),
+			));
+		?>
+
+		<script type="text/template" id="qq-thumbnails-template">
+			<div class="qq-uploader-selector qq-uploader" qq-drop-area-text="Húzza a feltöltendő képeket ide">
+				<div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+					<div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+				</div>
+				<div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+					<span class="qq-upload-drop-area-text-selector"></span>
+				</div>
+				<div class="qq-upload-button-selector qq-upload-button">
+					<div><i class="icon-plus icon-white"></i> Kép feltöltése</div>
+				</div>
+				<span class="qq-drop-processing-selector qq-drop-processing">
+					<span>Képek feldolgozása...</span>
+					<span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+				</span>
+				
+				<ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+					<li>
+						<div class="qq-progress-bar-container-selector">
+							<div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+						</div>
+						<span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+						<a target='_blank' class="view-link"> <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale> </a>
+						<span class="qq-upload-file-selector qq-upload-file"></span>
+						<span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Fájlnév szerkesztése"></span>
+						<input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+						<span class="qq-upload-size-selector qq-upload-size"></span>
+						<button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Mégse</button>
+						<button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Újra</button>
+						<button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Törlés</button>
+						<span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+					</li>
+				</ul>
+
+				<dialog class="qq-alert-dialog-selector">
+					<div class="qq-dialog-message-selector"></div>
+					<div class="qq-dialog-buttons">
+						<button type="button" class="qq-cancel-button-selector">Bezár</button>
+					</div>
+				</dialog>
+
+				<dialog class="qq-confirm-dialog-selector">
+					<div class="qq-dialog-message-selector"></div>
+					<div class="qq-dialog-buttons">
+						<button type="button" class="qq-cancel-button-selector">Nem</button>
+						<button type="button" class="qq-ok-button-selector">Igen</button>
+					</div>
+				</dialog>
+
+				<dialog class="qq-prompt-dialog-selector">
+					<div class="qq-dialog-message-selector"></div>
+					<input type="text">
+					<div class="qq-dialog-buttons">
+						<button type="button" class="qq-cancel-button-selector">Mégse</button>
+						<button type="button" class="qq-ok-button-selector">Ok</button>
+					</div>
+				</dialog>
+			</div>
+		</script>
+
+		<div>
+			<h4>Feltöltött képek</h4> <br />
+		</div>
+		
+		<div class='clear'></div>
+		
+		<?php
+			$dirname = Yii::getPathOfAlias('webroot').'/uploads/termekek/kepek/' . $model->id . '/';;
+			$images = glob($dirname."*.*");
+			$imageFolder = Yii::app()->getBaseUrl(true) . '/uploads/termekek/kepek/' . $model->id . '/';
+			
+			foreach($images as $image) {
+				$imageUrl = $imageFolder.basename($image);
+				echo '
+					<ul style="list-style: outside none none; margin: 0px 0px 20px 0px; padding: 0;">
+						<li>
+							<a href="' . $imageUrl . '" target="_blank" class="view-link"><img src = "' . $imageUrl . '" width=100px class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale></a>
+							<span class="qq-upload-file-selector qq-upload-file"> ' . basename($image) . ' </span>
+				';
+							echo CHtml::ajaxButton(
+								"Törlése",
+								$this->createUrl('deleteImage'),
+								array (
+									'context'=>'js:$(this)',
+									'type'=>'POST',
+									'data'=>array('termekId'=>$model->id, 'filename'=>basename($image)),
+									'success'=>'js:function(data){$(this).closest(\'li\').remove();}',
+																	
+								),
+								array('class'=>'qq-btn qq-upload-delete-selector qq-upload-delete')
+							);
+				echo '			
+						</li>
+					</ul>
+				';			
+			}
+		?>
+		
+		<div>
+			<h4>Új képek feltöltése</h4> <br />
+		</div>
+		
+		<div class='clear'></div>
+
+		<?php
+			$this->widget('ext.EFineUploader.EFineUploader',
+			 array(
+				   'id'=>'FineUploader',
+					'config'=>array(
+							   'template'=>'qq-thumbnails-template',
+							   'autoUpload'=>true,
+							   'multiple'=>true,
+						       'text'=> array(
+									'uploadButton'=>"<i class='icon-plus icon-white'></i> Kép feltöltése"
+								),
+							   'request'=>array(
+									'endpoint'=>$this->createUrl('uploadImages'),
+									'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken, 'termekId'=>$model->id),
+								),
+								'deleteFile'=> array(
+									'enabled'=>true,
+									'forceConfirm'=>true,
+									'method'=>'POST',
+									'endpoint'=>$this->createUrl('deleteImage'),
+								),	   
+								'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+								'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+								'callbacks'=>array(
+												'onComplete'=>"js:function(id, name, response){
+													var serverPathToFile = response.filePath,
+													fileItem = this.getItemByFileId(id);
+
+													if (response.success) {
+														var viewBtn = qq(fileItem).getByClass(\"view-link\")[0];
+
+														viewBtn.setAttribute(\"href\", response.imageUrl);
+													}
+												}",
+												//'onError'=>"js:function(id, name, errorReason){ }",
+												'onSubmitDelete' => "js:function(id) {
+													this.setDeleteFileParams({filename: this.getName(id), termekId: $('#Termekek_id').val()}, id);
+												}",
+												'onValidateBatch' => "js:function(fileOrBlobData) {}", // LI: e nélkül JS hiba
+												 ),
+								'validation'=>array(
+										 'allowedExtensions'=>array('jpg','jpeg', 'png'),
+										 'sizeLimit'=>5 * 1024 * 1024, // max. file limit egyelőre 5 MB
+												),
+				)
+			  ));
+		 
+		?>
+
+	<?php $this->endWidget(); ?>
+	
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->

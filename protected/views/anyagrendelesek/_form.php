@@ -25,6 +25,7 @@
 
 		<?php echo $form->hiddenField($model, 'id'); ?>
 		<?php echo $form->hiddenField($model, 'user_id'); ?>
+		<?php echo $form->hiddenField($model,'anyagbeszallitas_id'); ?>
 		
 		<?php echo CHtml::hiddenField('raktar_id' , '', array('id' => 'raktar_id')); ?>
 		
@@ -283,7 +284,7 @@
 				$.ajax({
 					type: 'GET',
 					dataType: 'JSON',
-					url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/checkProductDifference") . "/anyagbeszallitas_id//anyagrendeles_id/" . $model->id; ?>',
+					url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/checkProductDifference") . "/anyagbeszallitas_id/" . $model->anyagbeszallitas_id . "/anyagrendeles_id/" . $model->id; ?>',
 					success:function(data){
 						if (data !==  null) {
 							// a tételek ellenőrzés során eltérést találtunk
