@@ -23,6 +23,8 @@
  */
 class TermekArak extends CActiveRecord
 {
+	// az olyan jellegű keresésekhez, amiknél id-t tárolunk, de névre keresünk
+	public $termeknev_search;
 	
 	/**
 	 * @return string the associated database table name
@@ -55,7 +57,7 @@ class TermekArak extends CActiveRecord
 			array('termek_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, termek_id, csomag_beszerzesi_ar, db_beszerzesi_ar, csomag_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, csomag_ar2, db_ar2, csomag_ar3, db_ar3, datum_mettol, datum_meddig, torolt', 'safe', 'on'=>'search'),
+			array('id, termek_id, termeknev_search, csomag_beszerzesi_ar, db_beszerzesi_ar, csomag_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, csomag_ar2, db_ar2, csomag_ar3, db_ar3, datum_mettol, datum_meddig, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -109,6 +111,8 @@ class TermekArak extends CActiveRecord
 			'datum_mettol' => 'Dátum mettől',
 			'datum_meddig' => 'Dátum meddig',
 			'torolt' => 'Törölt',
+			
+			'termeknev_search' => 'Terméknév'
 		);
 	}
 
@@ -130,6 +134,9 @@ class TermekArak extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->together = true;
+		$criteria->with = array('termek');
+		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('termek_id',$this->termek_id,true);
 		$criteria->compare('csomag_beszerzesi_ar',$this->csomag_beszerzesi_ar);
@@ -145,6 +152,8 @@ class TermekArak extends CActiveRecord
 		$criteria->compare('db_ar3',$this->db_ar3);
 		$criteria->compare('datum_mettol',$this->datum_mettol,true);
 		$criteria->compare('datum_meddig',$this->datum_meddig,true);
+		
+		$criteria->compare('termek.nev', $this->termeknev_search, true );
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))

@@ -148,6 +148,12 @@ class Termekek extends CActiveRecord
 			'belesnyomott' => 'Bélésnyomott',
 			
 			'DisplayTermekTeljesNev' => 'Termék',
+			'zaras_search' => 'Zárásmód',
+			'ablakhely_search' => 'Ablakhely',
+			'ablakmeret_search' => 'Ablakméret',
+			'meret_search' => 'Méret',
+			'gyarto_search' => 'Cégnév',
+			'papirtipus_search' => 'Papírtípus'
 			
 		);
 	}
@@ -175,13 +181,13 @@ class Termekek extends CActiveRecord
 
 		$criteria->together = true;
 		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus', 'ablakmeret');				
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('t.id',$this->id,true);
 		$criteria->compare('t.nev',$this->nev,true);
 		$criteria->compare('tipus',$this->tipus,true);
 		$criteria->compare('kodszam',$this->kodszam,true);
 		$criteria->compare('cikkszam',$this->cikkszam,true);
 		$criteria->compare('meret_id',$this->meret_id);
-		$criteria->compare('suly',$this->suly);
+		$criteria->compare('t.suly',$this->suly);
 		$criteria->compare('zaras_id',$this->zaras_id);
 		
 		$criteria->compare('zaras.nev', $this->zaras_search, true );
@@ -219,6 +225,9 @@ class Termekek extends CActiveRecord
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+                        'defaultOrder'=>'t.nev ASC',
+                    ),						
 		));
 	}
 

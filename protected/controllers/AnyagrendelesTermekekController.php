@@ -69,6 +69,16 @@ class AnyagrendelesTermekekController extends Controller
         if(isset($_POST['AnyagrendelesTermekek']))
         {
             $model->attributes=$_POST['AnyagrendelesTermekek'];
+			
+			$termek_id = $model ->termek_id;
+			if (is_numeric ($termek_id)) {
+				$termek = Termekek::model() -> findByPk ($termek_id);
+				
+				if ($termek != null) {
+					$model -> autocomplete_termek_name = $termek ->nev;
+				}
+			}
+			
             if($model->save())
             {
                 if (Yii::app()->request->isAjaxRequest)
@@ -137,10 +147,20 @@ class AnyagrendelesTermekekController extends Controller
 		
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
- 
+		
         if(isset($_POST['AnyagrendelesTermekek']))
         {
             $model->attributes=$_POST['AnyagrendelesTermekek'];
+
+			$termek_id = $model->termek_id;
+			if (is_numeric ($termek_id)) {
+				$termek = Termekek::model() -> findByPk ($termek_id);
+				
+				if ($termek != null) {
+					$model -> autocomplete_termek_name = $termek ->nev;
+				}
+			}
+
 			$model->id = $id;
 
             if($model->save())

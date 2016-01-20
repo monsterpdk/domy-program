@@ -10,6 +10,12 @@ $this->breadcrumbs=array(
 
 <h1>Termékek</h1>
 
+<div class="search-form">
+	<?php  $this->renderPartial('_search',array(
+		'model'=>$model,
+	)); ?>
+</div>
+
 <?php
 	if (Yii::app()->user->checkAccess('Termekek.Create')) {
 		$this->widget('zii.widgets.jui.CJuiButton', array(
@@ -24,7 +30,7 @@ $this->breadcrumbs=array(
 	// import gomb megjelenítése
 	$this->widget('xupload.XUpload', array(
 			'url' => Yii::app()->createUrl("termekek/upload"),
-			'model' => $model,
+			'model' => $importModel,
 			'attribute' => 'file',
 			'htmlOptions'=>array('class'=>'pull-right'),
 			'multiple' => false,
@@ -36,7 +42,7 @@ $this->breadcrumbs=array(
 ?>
 
 <?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$dataProvider,
+	'dataProvider'=>$model -> search(),
 	'template' => '{items} {summary} {pager}',
 	'enableHistory' => true,
 	'columns'=>array(

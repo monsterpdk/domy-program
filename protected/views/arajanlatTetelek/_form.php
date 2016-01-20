@@ -70,12 +70,26 @@
 											var valasztott_meret = $("input[name=boritek_meret]:checked", "#arajanlat-tetelek-form").val()
 											var valasztott_zaras = $("input[name=boritek_zarodas]:checked", "#arajanlat-tetelek-form").val()
 											var valasztott_ablakmeret = $("#boritek_ablakmeret").val() ;
+											
+											var paramKeys = [];
+											var paramValues = [];
+											
 											if (valasztott_ablakmeret != "valasszon") {
-												$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[ablakmeret_search]", valasztott_ablakmeret) ;
+												paramKeys.push("Termekek[ablakmeret_search]");
+												paramValues.push(valasztott_ablakmeret);
 											}
-											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[meret_search]", valasztott_meret) ;
-											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[zaras_search]", valasztott_zaras) ;
-											$.updateGridView("termekek-grid' . $grid_id . '", "Termekek[nev]", $("#termek_kereso").val());
+
+
+											paramKeys.push("Termekek[meret_search]");
+											paramValues.push(valasztott_meret);
+
+											paramKeys.push("Termekek[zaras_search]");
+											paramValues.push(valasztott_zaras);
+
+											paramKeys.push("Termekek[nev]");
+											paramValues.push($("#termek_kereso").val());
+
+											$.updateGridView("termekek-grid' . $grid_id . '", paramKeys, paramValues);
 											
 											$("#termek_dialog' . $grid_id . '").dialog("open");
 											$("#termek_dialog' . $grid_id . '").dialog("moveToTop"); return false;

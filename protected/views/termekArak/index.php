@@ -24,7 +24,7 @@ $this->breadcrumbs=array(
 		// import gomb megjelenítése
 	$this->widget('xupload.XUpload', array(
 			'url' => Yii::app()->createUrl("termekArak/upload"),
-			'model' => $model,
+			'model' => $importModel,
 			'attribute' => 'file',
 			'htmlOptions'=>array('class'=>'pull-right'),
 			'multiple' => false,
@@ -34,8 +34,14 @@ $this->breadcrumbs=array(
 	));
 ?>
 
+<div class="search-form">
+	<?php  $this->renderPartial('_search',array(
+		'model'=>$model,
+	)); ?>
+</div>
+
 <?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$dataProvider,
+	'dataProvider'=>$model -> search(),
 	'template' => '{items} {summary} {pager}',
 	'enableHistory' => true,
 	'columns'=>array(

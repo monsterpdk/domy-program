@@ -12,6 +12,8 @@
  */
 class AnyagrendelesTermekek extends DomyModel
 {
+	public $autocomplete_termek_name;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -99,6 +101,14 @@ class AnyagrendelesTermekek extends DomyModel
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+
+	protected function afterFind(){
+		parent::afterFind();
+
+		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
+		// terméknevet kézzel kell kitöltenünk
+		$this -> autocomplete_termek_name = $this -> termek -> nev;
 	}
 	
 	// sikeres mentés után frissítjük a raktár eltérés lista megfelelő sorát a termék és darabszám adatokkal	

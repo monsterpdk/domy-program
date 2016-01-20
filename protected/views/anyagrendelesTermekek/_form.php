@@ -24,57 +24,86 @@
 		<?php echo $form->hiddenField($model,'termek_id'); ?>
 		<?php echo $form->hiddenField($model,'anyagrendeles_id'); ?>
 		
-		<input type="text" name="termeknev" id="termeknev" readonly value="<?php if ($model -> termek_id != null) echo Termekek::model()->findByPk($model -> termek_id)->nev; ?>">
+		<?php
+			$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+			$meretek = array('114x162 mm'=>'LC/6', '110x220 mm'=>'LA/4', '114x229 mm' => 'C6/C5', '162x229 mm' => 'LC/5', '162x229 mm' => 'TC/5', '176x250 mm' => 'TB/5', '229x324 mm' => 'LC/4', '229x324 mm' => 'TC/4', '250x353 mm' => 'TB/4') ;
+			$zarodasok = CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+			$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+			$zarodasok[" "] = "Nincs" ;
+			$ablakmeretek["valasszon"] = "-=Válasszon=-" ; 		
+		?>
+		
+		<!-- szűrő blokk -->
+		<div class="row search-options">
+			<fieldset>
+				<legend>Méret</legend>
+				<div class="boritekMeretRadioGroup">
+					<?php 
+						echo CHtml::radioButtonList('boritek_meret', '' ,$meretek, array( 'separator' => "  ", 'template' => '{label} {input}')); 
+					?>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Záródás</legend>
+				<div class="boritekZarodasRadioGroup">
+					<?php
+						echo CHtml::radioButtonList('boritek_zarodas', '' ,$zarodasok, array( 'separator' => "  ", 'template' => '{label} {input}')); 								
+					?>
+				</div>
+			</fieldset>
 
-		<?php if ($model->termek_id == null) echo CHtml::Button('x', array('name' => 'del_termeknev', 'id' => 'del_termeknev', 'onclick' => '$("#termeknev").val(""); $("#termek_id").val("")')) ?>
+			<fieldset>
+				<legend>Ablakméretek</legend>
+				<div class="boritekAblakMeretRadioGroup">
+					<?php echo CHtml::dropDownList('boritek_ablakmeret', 'valasszon' ,$ablakmeretek); ?>			
+				</div>
+			</fieldset>
+		</div>
 
-		<!-- CJUIDIALOG -->
-		<?php 
-		  $this->beginWidget('zii.widgets.jui.CJuiDialog', 
-			   array(   'id'=>'termek_dialog',
-						'options'=>array(
-										'title'=>'Gyártó termékei',
-										'width'=>'auto',
-										'autoOpen'=>false,
-										),
-								));
-		/* CGRIDVIEW */
-		$this->widget('zii.widgets.grid.CGridView', 
-		   array( 'id'=>'termekek-grid' . $grid_id,
-				  'dataProvider'=>$termek->search(),
-				  'filter'=>$termek,
-				  'selectableRows'=>1,
-				  'columns'=>array(
-								'nev',
-								'kodszam',
-								array(
-									'name' => 'zaras.nev',
-									'header' => 'Zárásmód',
-									'filter' => CHtml::activeTextField($termek, 'zaras_search'),
-									'value' => '$data->zaras->nev',
-								),
-								array(
-								  'header'=>'',
-								  'type'=>'raw',
-								  'value'=>'CHtml::Button("+", 
-															array("name" => "send_termek", 
-																"id" => "send_termek", 
-																"onClick" => "$(\"#termek_dialog\").dialog(\"close\");
-																$(\"#termeknev\").val(\"$data->nev\");
-																$(\"#AnyagrendelesTermekek_rendeleskor_netto_darabar\").val(\"$data->activeTermekAr\");
-																$(\"#AnyagrendelesTermekek_termek_id\").val(\"$data->id\");"))',
-															),
-								   ),
-				));
+		<div class="row boritekMeretRadioGroup">
+			<label>Termék kereső</label>
+			 <?php echo CHtml::textField('termek_kereso', '', array('maxlength' => 128)); ?>
+			 <?php echo CHtml::Button('Termék', array('name' => 'search_termek', 'id' => 'search_termek', 'onclick' =>
+												'
+												var valasztott_meret = $("input[name=boritek_meret]:checked", "#anyagrendeles-termekek-form").val()
+												var valasztott_zaras = $("input[name=boritek_zarodas]:checked", "#anyagrendeles-termekek-form").val()
+												var valasztott_ablakmeret = $("#boritek_ablakmeret").val() ;
+												
+												var paramKeys = [];
+												var paramValues = [];
+												
+												if (valasztott_ablakmeret != "valasszon") {
+													paramKeys.push("Termekek[ablakmeret_search]");
+													paramValues.push(valasztott_ablakmeret);
+												}
+												
+												paramKeys.push("Termekek[zaras_search]");
+												paramValues.push(valasztott_zaras);
 
-		$this->endWidget('zii.widgets.jui.CJuiDialog');
+												paramKeys.push("Termekek[nev]");
+												paramValues.push($("#termek_kereso").val());
 
-		if ($model->termek_id == null)
-			echo CHtml::Button('Termék kiválasztása', 
-							  array('onclick'=>'$("#termek_dialog").dialog("open"); $("#termek_dialog").dialog("moveToTop"); return false;',
-						   ));
+												$.updateGridView("termekek-grid' . $grid_id . '", paramKeys, paramValues);
 
-		 echo $form->error($model,'termek_id'); ?>
+												$("#termek_dialog' . $grid_id . '").dialog("open");
+												$("#termek_dialog' . $grid_id . '").dialog("moveToTop"); return false;
+												'
+											)); ?>
+			 <?php //if ($model->arajanlatbol_letrehozva != 1) echo CHtml::Button('Szolgáltatás', array('name' => 'search_szolgaltatas', 'id' => 'search_szolgaltatas', 'onclick' => '' )); ?>
+		</div>
+
+		<div style="clear:both"></div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'termek_id'); ?>
+			<?php echo $form->textField($model,'autocomplete_termek_name', array('style' => 'width:445px!important', 'disabled' => 'true') ); ?>
+			<?php echo $form->error($model,'termek_id'); ?>
+		</div>
+		
+		<div style="clear:both;">
+		</div>
+
 	</div>
 	
 	<!-- Termék tallózásához szükséges kódblokk vége -->
@@ -99,6 +128,81 @@
 					'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
 				 )); ?>
 	</div>
+	
+	<!-- CJUIDIALOG BEGIN -->
+		<?php 
+		  $this->beginWidget('zii.widgets.jui.CJuiDialog', 
+			   array(   'id'=>'termek_dialog' . $grid_id,
+						'options'=>array(
+										'title'=>'Termék kiválasztása',
+										'width'=>'auto',
+										'autoOpen'=>false,
+										),
+								));
+		/* CGRIDVIEW */
+		$this->widget('zii.widgets.grid.CGridView', 
+		   array( 'id'=>'termekek-grid' . $grid_id,
+				  'dataProvider'=>$termek->search(),
+				  'filter'=>$termek,
+				  'selectableRows'=>1,
+				  'columns'=>array(
+								'nev',
+								array(
+									'name' => 'meret.nev',
+									'header' => 'Méret',
+									'filter' => CHtml::activeTextField($termek, 'meret_search'),
+									'value' => '$data->meret->nev',
+								),
+								array(
+									'name' => 'gyarto.cegnev',
+									'header' => 'Gyártó',
+									'filter' => CHtml::activeTextField($termek, 'gyarto_search'),
+									'value' => '$data->gyarto->cegnev',
+								),
+								array(
+									'name' => 'papirtipus.nev',
+									'header' => 'Papírtípus',
+									'filter' => CHtml::activeTextField($termek, 'papirtipus_search'),
+									'value' => '$data->papirtipus->nev',
+								),
+								array(
+									'name' => 'zaras.nev',
+									'header' => 'Záródás',
+									'filter' => CHtml::activeTextField($termek, 'zaras_search'),
+									'value' => '$data->zaras->nev',
+								),
+								array(
+									'name' => 'ablakhely.nev',
+									'header' => 'Ablakhely',
+									'filter' => CHtml::activeTextField($termek, 'ablakhely_search'),
+									'value' => '$data->ablakhely->nev',
+								),
+								array(
+									'name' => 'ablakmeret.nev',
+									'header' => 'Ablakméret',
+									'filter' => CHtml::activeTextField($termek, 'ablakmeret_search'),
+									'value' => '$data->ablakmeret->nev',
+								),								
+								array(
+								  'header'=>'',
+								  'type'=>'raw',
+								  'value'=>'CHtml::Button("+", 
+															array("name" => "send_termek", 
+																"id" => "send_termek", 
+																"onClick" => "$(\"#termek_dialog' . $grid_id . '\").dialog(\"close\");
+																
+																			  $(\"#AnyagrendelesTermekek_termek_id\").val(\"$data->id\");
+																			  $(\"#AnyagrendelesTermekek_autocomplete_termek_name\").val(\"$data->nev\");
+																			  
+																			  // calculateTermekNettoDarabAr (\"$data->id\");
+																			 "))',
+															),
+								   ),
+				));
+
+		$this->endWidget('zii.widgets.jui.CJuiDialog');
+	?>
+	<!-- CJUIDIALOG END -->
 	
 <?php $this->endWidget(); ?>
 

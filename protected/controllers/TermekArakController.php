@@ -105,9 +105,15 @@ class TermekArakController extends Controller
 	{
 		Utils::saveCurrentPage("termekarakIndex");
 		
-		$dataProvider = new CActiveDataProvider('TermekArak',
-			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+		$model=new TermekArak('search');
+		$model->unsetAttributes();
+		if(isset($_GET['TermekArak']))
+			$model->attributes=$_GET['TermekArak'];
+	 	
+		$dataProvider=new CActiveDataProvider('TermekArak',
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'id DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'id DESC',),)
 		);
+		
 		
 		// LI : exporthoz kell ez a blokk
 		 if ($this->isExportRequest()) {
@@ -121,10 +127,10 @@ class TermekArakController extends Controller
 		
 		// LI : importhoz kell ez
 		Yii::import("xupload.models.XUploadForm");
-		$model = new XUploadForm;
+		$importModel = new XUploadForm;
 		
 		$this->render('index', array(
-			'dataProvider'=>$dataProvider,
+			'importModel' => $importModel,
 			'model' => $model,
 		));
 	}

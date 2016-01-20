@@ -2,6 +2,20 @@
 /* @var $this AnyagrendelesekController */
 /* @var $model Anyagrendelesek */
 /* @var $form CActiveForm */
+
+	Yii::app() -> clientScript->registerScript('updateGridView', '
+		$.updateGridView = function(gridID, nameList, valueList) {
+			var index;
+				
+			for	(index = 0; index < nameList.length; index++) {
+				$("#" + gridID + " input[name=\'" + nameList[index] + "\'], #" + gridID + " select[name=\'" + nameList[index] + "\']").val(valueList[index]);				
+			} 
+
+			$.fn.yiiGridView.update(gridID, {
+				data: $.param($("#"+gridID+" .filters input, #"+gridID+" .filters select"))
+			});
+		}
+		', CClientScript::POS_READY);
 ?>
 
 <div class="form">
@@ -116,6 +130,13 @@
 							'caption'=>'Vissza',
 							'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
 						 )); ?>
+				<?php $this->widget('zii.widgets.jui.CJuiButton', 
+						 array(
+							'name'=>'print',
+							'caption'=>'Nyomtatás',
+							 'onclick'=>new CJavaScriptExpression('function(){openPrintDialog($(this)); return false;}'),
+							'htmlOptions' => array ('class' => 'btn btn-danger btn-lg', 'style' =>'margin-left: 70px',),
+						 )); ?>						 
 		</div>
 		
 	<?php $this->endWidget(); ?>
@@ -143,8 +164,8 @@
 			'title'=>'Termék hozzáadása',
 			'autoOpen'=>false,
 			'modal'=>true,
-			'width'=>550,
-			'height'=>470,
+			'width'=>900,
+			'height'=>580,
 		),
 	));
 ?>
@@ -236,6 +257,7 @@
 				refreshOsszertek ();
 			}',
 			'columns'=>array(
+				'termek.kodszam',
 				'termek.nev',
 				'rendelt_darabszam',
 				'rendeleskor_netto_darabar',
@@ -361,4 +383,32 @@
 
 		return false;
 	}
+</script>
+
+<?php	
+	// LI: print dialog inicializálása
+    $this->beginWidget('zii.widgets.jui.CJuiDialog',
+        array(
+            'id'=>'dialogAnyagrendelesPrint',
+            
+            'options'=>array(
+                'title'=>'Nyomtatás',
+				'width'=> '400px',
+                'modal' => true,
+                'buttons' => array('Nyomtatás árral' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "../printPDF?id=" + model_id + "&type=arral");}', 'Nyomtatás ár nélkül' => 'js:function() { model_id = $(this).data("model_id"), $(location).attr("href", "../printPDF?id=" + model_id + "&type=arnelkul");}'),
+                'autoOpen'=>false,
+        )));
+?>		
+	<p> Nyomtatási mód kiválasztása </p>
+	
+<?php		
+	$this->endWidget('zii.widgets.jui.CJuiDialog');
+?>
+
+<script type="text/javascript">
+		function openPrintDialog (button_obj) {
+			var row_id = $("#Anyagrendelesek_id").val();
+			
+			$("#dialogAnyagrendelesPrint").data('model_id', row_id).dialog("open");
+		}
 </script>
