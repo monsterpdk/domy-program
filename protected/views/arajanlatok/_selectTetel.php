@@ -4,6 +4,7 @@
 /* @var $form CActiveForm */
 ?>
 
+	<input type='hidden' id='osszesTetelId' name='osszesTetelId' />
 
 	<?php $this->beginWidget('zii.widgets.jui.CJuiDialog',
 		array(
@@ -56,6 +57,34 @@
 					'netto_darabar:number',
 				)
 			));
+			
+			// LI: elrakjuk egy hidden változóba az összes tétel id-ját, így ha az 'összes  kijelölése'
+			//	   checkbox-ra nyom a felhasználó innen be tudjuk állítani az összes ID-t
+			$osszesTetelIdJsTomb = '[';
+			foreach (ArajanlatTetelek::model()->findAllByAttributes(array('arajanlat_id'=> $model->id)) as $tetel) {
+				$osszesTetelIdJsTomb .= (strlen($osszesTetelIdJsTomb) > 1 ? ',' : '').$tetel->id;
+			}
+			$osszesTetelIdJsTomb .= ']';
+
+			// kirajuk egy JS változóba az ID-kat
+			echo '<script>
+					$(\'#osszesTetelId\').val (' . $osszesTetelIdJsTomb . ');
+
+					// select all / deselect all checkbox-ra hallgatózás
+					$(document).on(\'click.yiiGridView\', \'#arajanlatTetelek-grid' . $grid_id. ' .select-all\', function (event) {
+						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("clearAllSelection");
+						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("addSelection", ' . $osszesTetelIdJsTomb . ');			
+						$( ".select-all" ).prop(\'checked\', true);						
+					});
+					
+					// select all / deselect all checkbox-ra hallgatózás
+					$(document).on(\'click.yiiGridView\', \'#arajanlatTetelek-grid' . $grid_id. ' .deselect-all\', function (event) {
+						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("clearAllSelection");
+						$( ".deselect-all" ).prop(\'checked\', false);						
+					});
+					
+					$(".select-all").prop("checked", true);
+				</script>';
 		?>
 		
 		<?php $this->endWidget('zii.widgets.jui.CJuiDialog'); ?>

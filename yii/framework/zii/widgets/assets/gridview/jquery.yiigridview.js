@@ -29,6 +29,10 @@
 				$checks = $("input[name='" + name + "']", table);
 			this.checked = $checks.length > 0 && $checks.length === $checks.filter(':checked').length;
 		});
+		
+		// LI: hack
+		$(".select-all").prop("checked", true);
+		
 		return this;
 	};
 
@@ -141,6 +145,7 @@
 
 				if (settings.selectableRows > 0) {
 					selectCheckedRows(this.id);
+					
 					$(document).on('click.yiiGridView', '#' + id + ' .' + settings.tableClass + ' > tbody > tr', function (e) {
 						var $currentGrid, $row, isRowSelected, $checks,
 							$target = $(e.target);
@@ -159,7 +164,11 @@
 							$checks.prop('checked', false);
 						}
 						$('input.select-on-check', $row).prop('checked', isRowSelected);
-						$("input.select-on-check-all", $currentGrid).prop('checked', $checks.length === $checks.filter(':checked').length);
+						
+						// LI: egy kicsit meg kellett rondítani a kért select all / deselect all miatt
+						//$("input.select-on-check-all", $currentGrid).prop('checked', $checks.length === $checks.filter(':checked').length);
+						$(".select-all").prop("checked", true);
+
 
 						if (settings.selectionChanged !== undefined) {
 							settings.selectionChanged(id);
@@ -174,11 +183,14 @@
 							if (this.checked) {
 								$rows.addClass('selected');
 								$checks.prop('checked', true);
-								$checksAll.prop('checked', true);
+								// LI: egy kicsit meg kellett rondítani a kért select all / deselect all miatt
+								//$checksAll.prop('checked', true);
 							} else {
 								$rows.removeClass('selected');
 								$checks.prop('checked', false);
-								$checksAll.prop('checked', false);
+								// LI: egy kicsit meg kellett rondítani a kért select all / deselect all miatt
+								//$checksAll.prop('checked', false);
+								$(".select-all").prop("checked", true);
 							}
 							if (settings.selectionChanged !== undefined) {
 								settings.selectionChanged(id);

@@ -523,7 +523,7 @@ li.almenu-balra span.caret, li.almenu-jobbra span.caret {
 /*GroupGridView*/
 .grid-view-loading
 {
-	background:url(/yii/framework/zii/widgets/assets/gridview/loading.gif) no-repeat;
+	background:url("loading.gif") no-repeat;
 }
 
 .grid-view

@@ -28,8 +28,9 @@
  * @property double $doboz_szelesseg
  * @property double $doboz_magassag
  * @property string $megjegyzes
- * @property string $megjelenes_mettol
- * @property string $megjelenes_meddig
+ * @property string $megjelenes_mettol - egyelőre nem használjuk, de még nem törlöm ki, hátha meggondolják magukat
+ * @property string $megjelenes_meddig - egyelőre nem használjuk, de még nem törlöm ki, hátha meggondolják magukat
+ * @property string $felveteli_datum
  * @property string $datum
  * @property integer $torolt
  * @property integer $belesnyomott
@@ -76,7 +77,7 @@ class Termekek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, csom_egys, doboz_suly, megjelenes_mettol, megjelenes_meddig', 'required'),
+			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, csom_egys, doboz_suly, felveteli_datum', 'required'),
 			array('meret_id, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, torolt, belesnyomott', 'numerical', 'integerOnly'=>true),
 			array('doboz_suly, suly, doboz_hossz, doboz_szelesseg, doboz_magassag', 'numerical'),
 			array('nev', 'length', 'max'=>127),
@@ -85,10 +86,10 @@ class Termekek extends CActiveRecord
 			array('redotalp', 'length', 'max'=>50),
 			array('kategoria_tipus', 'length', 'max'=>1),
 			array('gyarto_id, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, raklap_db', 'length', 'max'=>10),
-			array('megjelenes_mettol, megjelenes_meddig', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
+			array('felveteli_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, megjelenes_mettol, megjelenes_meddig, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
+			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -143,6 +144,7 @@ class Termekek extends CActiveRecord
 			'megjegyzes' => 'Megjegyzés',
 			'megjelenes_mettol' => 'Megjelenés mettől',
 			'megjelenes_meddig' => 'Megjelenés meddig',
+			'felveteli_datum' => 'Felvételi dátum',
 			'datum' => 'Dátum',
 			'torolt' => 'Törölt',
 			'belesnyomott' => 'Bélésnyomott',
@@ -214,8 +216,7 @@ class Termekek extends CActiveRecord
 		$criteria->compare('doboz_szelesseg',$this->doboz_szelesseg);
 		$criteria->compare('doboz_magassag',$this->doboz_magassag);
 		$criteria->compare('megjegyzes',$this->megjegyzes,true);
-		$criteria->compare('megjelenes_mettol',$this->megjelenes_mettol,true);
-		$criteria->compare('megjelenes_meddig',$this->megjelenes_meddig,true);
+		$criteria->compare('felveteli_datum',$this->felveteli_datum,true);
 		$criteria->compare('datum',$this->datum,true);
 		$criteria->compare('belesnyomott',$this->belesnyomott, true) ;
 
@@ -233,8 +234,10 @@ class Termekek extends CActiveRecord
 
 	protected function afterFind(){
 		parent::afterFind();
-		$this -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_mettol)));
-		$this -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_meddig)));
+		
+		//$this -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_mettol)));
+		//$this -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_meddig)));
+		$this -> felveteli_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->felveteli_datum)));
 		
 		// beírjuk a model-be az aktív termékárat
 		$termekAr = Utils::getActiveTermekar ($this->id);

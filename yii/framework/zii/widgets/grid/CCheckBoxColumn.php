@@ -200,8 +200,14 @@ EOD;
 		}
 
 		$item = '';
-		if($this->selectableRows===null && $this->grid->selectableRows>1)
-			$item = CHtml::checkBox($this->id.'_all',false,array('class'=>'select-on-check-all'));
+		$item2 = '';
+		if($this->selectableRows===null && $this->grid->selectableRows>1) {
+			$item = CHtml::checkBox($this->id.'_all',false,array('class'=>'select-on-check-all', 'style'=>'display:none'));
+			
+			//LI : pici hack ahhoz, hogy lehessen select all/ deselect all funkciót működtetni a gridview-ban az oldalak között
+			$item = CHtml::checkBox($this->id.'_all_select',true, array('class'=>'select-all'));
+			$item .= CHtml::checkBox($this->id.'_all_deselect',false, array('class'=>'deselect-all'));
+		}
 		elseif($this->selectableRows>1)
 			$item = CHtml::checkBox($this->id.'_all',false);
 		else

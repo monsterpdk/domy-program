@@ -45,12 +45,14 @@ class TermekekController extends Controller
 			if($model->save())
 				$this->redirect(array('index'));
 		} else {
-			// LI : új termék létrehozásánál beállítjuk az alapértelmezettnek beállított ÁFA kulcsot
+			// LI : új termék létrehozásánál beállítjuk az alapértelmezettnek beállított ÁFA kulcsot és a felvételi dátumot mostra
 			$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
 
 			if ($afaKulcs != null) {
 				$model -> afakulcs_id = $afaKulcs -> id;
 			}
+			
+			$model->felveteli_datum = date('Y-m-d');	
 		}
 
 		$this->render('create',array(

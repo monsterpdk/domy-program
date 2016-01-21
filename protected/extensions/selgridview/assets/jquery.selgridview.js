@@ -113,11 +113,11 @@
 
              //clear in url             
              var parsed = this.selGridView('parseUrl');
-             parsed.params[parsed.selVar] = [];
+	             parsed.params[parsed.selVar] = [];
   
              //set url back
              var newUrl = $.param.querystring(parsed.url, parsed.params);
-             this.selGridView('setUrl', newUrl);
+	         this.selGridView('setUrl', newUrl);
         },
         
         addSelection: function(keys) {

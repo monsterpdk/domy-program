@@ -214,12 +214,12 @@
 		</div>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'megjelenes_mettol'); ?>
+			<?php echo $form->labelEx($model,'felveteli_datum'); ?>
 				
 				<?php
 					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
 						'model'=>$model,
-						'attribute'=>'megjelenes_mettol',
+						'attribute'=>'felveteli_datum',
 						'options'=>array('dateFormat'=>'yy-mm-dd',),
 						'htmlOptions'=>array('style' => 'width:123px'),
 					));
@@ -227,44 +227,17 @@
 				
 				<?php
 					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'button_set_now_megjelenes_mettol',
+						'name'=>'button_set_now_felveteli_datum',
 						'caption'=>'Most',
 						'buttonType'=>'link',
 						'onclick'=>new CJavaScriptExpression('function() {  
-							$("#Termekek_megjelenes_mettol").datepicker("setDate", new Date());
+							$("#Termekek_felveteli_datum").datepicker("setDate", new Date());
 						}'),
 						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
 					));
 				?>
 			
-			<?php echo $form->error($model,'megjelenes_mettol'); ?>
-		</div>
-		
-		<div class="row">
-			<?php echo $form->labelEx($model,'megjelenes_meddig'); ?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'model'=>$model,
-						'attribute'=>'megjelenes_meddig',
-						'options'=>array('dateFormat'=>'yy-mm-dd',),
-						'htmlOptions'=>array('style' => 'width:123px'),
-					));
-				?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'button_set_now_megjelenes_meddigg',
-						'caption'=>'Most',
-						'buttonType'=>'link',
-						'onclick'=>new CJavaScriptExpression('function() {  
-							$("#Termekek_megjelenes_meddig").datepicker("setDate", new Date());
-						}'),
-						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
-					));
-				?>
-			
-			<?php echo $form->error($model,'megjelenes_meddig'); ?>
+			<?php echo $form->error($model,'felveteli_datum'); ?>
 		</div>
 		
 		<?php if (Yii::app()->user->checkAccess('Admin')): ?>
