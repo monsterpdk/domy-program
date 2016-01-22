@@ -613,6 +613,12 @@ class MegrendelesekController extends Controller
 					$megrendeles_tetel -> termek_id = $termek -> termek_id;
 					$megrendeles_tetel -> szinek_szama1 = $termek -> szinek_szama1;
 					$megrendeles_tetel -> szinek_szama2 = $termek -> szinek_szama2;
+					
+					// LI: ha nincs színszám az adott tételnél, akkor automatikusan a 'boríték eladás' szöveg kerül a munka nevébe
+					if ($termek -> szinek_szama1 == 0 && $termek -> szinek_szama2 == 0) {
+						$megrendeles_tetel -> munka_neve = 'BORÍTÉK ELADÁS';
+					}
+					
 					$megrendeles_tetel -> darabszam = $termek -> darabszam;
 					$megrendeles_tetel -> netto_darabar = $termek -> netto_darabar;
 					$megrendeles_tetel -> megjegyzes = $termek -> megjegyzes;

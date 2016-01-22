@@ -1049,6 +1049,12 @@ div.search-options fieldset legend {
 table tr td.yellow {
     background:#FFF6BF;
 }
+table tr td.green {
+    background:#33CC66;
+}
+table tr td.red {
+    background:#FFD5D5;
+}
 .table-zuh td
 {
 	padding: 5px;

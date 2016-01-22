@@ -1026,7 +1026,8 @@
 		}
 		
 		function SulyFormazas($suly) {
-			return (number_format($suly, 0, '.', ' '));
+			// LI: kilogrammban írja ne grammban
+			return (number_format($suly / 1000, 0, '.', ' '));
 		}
 
 		// egy sessionváltozóban tárolt url-re irányít át (az oldal nevét paraméterben várja)

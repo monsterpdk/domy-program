@@ -472,7 +472,8 @@
 					'szinek_szama1',
 					'szinek_szama2',
 					
-					array( 
+					// a munka neve szerkeszthető, ha üres, egyébként pedig statikusan jelenik meg, mint a többi
+					array(
 						'class' => 'editable.EditableColumn',
 						'name'  => 'munka_neve',
 						'value' => function($data, $row) use ($model){
@@ -480,10 +481,11 @@
 						},
 						'header' => 'Munka neve',
 						'editable' => array(
-						  'placement' => 'right',
-						   'url'      => $this->createUrl('megrendelesTetelek/updateMunkaNeve'),
+						   'apply'     => 'trim($data->munka_neve) == ""',
+ 						   'placement' => 'right',
+						   'url'       => $this->createUrl('megrendelesTetelek/updateMunkaNeve'),
 						)),
-					
+
 					'DarabszamFormazott',
 					'egyedi_ar:boolean',
 					'netto_darabar',

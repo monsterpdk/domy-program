@@ -207,7 +207,7 @@
 			// tétel alatti összsúly és megyjegyzés rész kiírása
 			echo "
 				<p> <strong>Összsúly:</strong></p>
-				" . Utils::SulyFormazas($osszsuly) . " gr
+				" . Utils::SulyFormazas($osszsuly) . " kg
 				
 				<p> <strong>Megyjegyzés:</strong></p>
 				

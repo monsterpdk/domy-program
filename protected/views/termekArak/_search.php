@@ -22,6 +22,31 @@
 			<?php echo $form->textField($model,'termeknev_search',array('size'=>10,'maxlength'=>127)); ?>
 		</div>
 
+		<div class="row">
+			<?php echo $form->label($model,'gyarto_search'); ?>
+			<?php echo $form->textField($model,'gyarto_search',array('size'=>10,'maxlength'=>30)); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->label($model,'meret_search'); ?>
+			<?php echo $form->textField($model,'meret_search',array('size'=>10,'maxlength'=>30)); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->label($model,'zaras_search'); ?>
+			<?php echo $form->textField($model,'zaras_search',array('size'=>10,'maxlength'=>30)); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->label($model,'cikkszam_search'); ?>
+			<?php echo $form->textField($model,'cikkszam_search',array('size'=>10,'maxlength'=>30)); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->label($model,'kodszam_search'); ?>
+			<?php echo $form->textField($model,'kodszam_search',array('size'=>10,'maxlength'=>30)); ?>
+		</div>
+
 		<div class="row buttons">
 			<?php echo CHtml::submitButton('Keresés'); ?>
 		</div>

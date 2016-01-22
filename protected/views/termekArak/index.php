@@ -73,6 +73,9 @@ $this->breadcrumbs=array(
 						),
                 ),
                 'termek.nev',
+				'termek.zaras.nev',
+				'termek.meret.nev',
+				/*
 				array(										
 					'name'=>'termek.belesnyomott',
 					'type'=>'raw',
@@ -82,6 +85,24 @@ $this->breadcrumbs=array(
 					'htmlOptions'=>array('align'=>'center',),
 					'cssClassExpression' => '$data->termek != null && $data->termek->belesnyomott == 1 ? "yellow" : ""',
 				),
+				*/
+				'termek.gyarto.cegnev',
+				
+				array(										
+					'name'=>'Státusz',
+					'type'=>'raw',
+					'value'=>function ($model, $index, $widget) {
+						$most = date("Y-m-d H:i:s");
+						return CHtml::checkbox('termekar.statusz[]', ($most >= $model->datum_mettol && $most <= $model->datum_meddig) ? 1 : 0, array('value' => $index, 'disabled' => true));
+					},					
+					'htmlOptions'=>array('align'=>'center',),
+					'cssClassExpression' => '(date("Y-m-d H:i:s") >= $data->datum_mettol && date("Y-m-d H:i:s") <= $data->datum_meddig) ? "green" : "red"',
+				),
+				
+				'termek.csom_egys',
+				'termek.cikkszam',
+				'termek.kodszam',
+				/*
 				array(
 					'name'=>'csomag_beszerzesi_ar',
 					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_beszerzesi_ar, "Ft")',
@@ -132,8 +153,7 @@ $this->breadcrumbs=array(
 					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_ar3, "Ft")',					
 					'htmlOptions'=>array('style' => 'text-align: right;'),					
 				),
-				'datum_mettol',
-				'datum_meddig',
+				*/
 				array(
 						'header' => 'Törölt',
 						'type'=>'boolean',
