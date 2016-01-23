@@ -41,8 +41,7 @@ $this->breadcrumbs=array(
 			'doboz_szelesseg:number',
 			'doboz_magassag:number',
 			'megjegyzes',
-			'megjelenes_mettol',
-			'megjelenes_meddig',
+			'felveteli_datum',
 			'datum',
 			array(
 				'name' => 'torolt',

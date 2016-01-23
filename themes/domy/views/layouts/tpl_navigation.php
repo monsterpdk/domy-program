@@ -39,6 +39,7 @@
 																array ('label'=>'Ablakméretek', 'url'=> Yii::app()->createUrl('/termekablakmeretek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekBeallitasok.Ablakmeretek')),
 																array ('label'=>'Papírtípusok', 'url'=> Yii::app()->createUrl('/papirtipusok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekBeallitasok.Papirtipusok')),
 																array ('label'=>'Termékméretek', 'url'=> Yii::app()->createUrl('/termekmeretek/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekBeallitasok.Termekmeretek')),
+																array ('label'=>'Termékcsoportok', 'url'=> Yii::app()->createUrl('/termekcsoportok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekBeallitasok.Termekcsoportok')),
 																array ('label'=>'Zárásmódok', 'url'=> Yii::app()->createUrl('/termekzarasimodok/index'), 'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekBeallitasok.Zarasmodok')),
 															),  'visible'=>Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekBeallitasok'))	                          
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('Menu.Termekek')) ),

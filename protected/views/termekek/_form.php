@@ -138,12 +138,23 @@
 			<?php echo $form->error($model,'belesnyomott'); ?>
 		</div>
 
+		<!--
 		<div class="row">
-			<?php echo $form->labelEx($model,'kategoria_tipus'); ?>
-			<?php echo $form->textField($model,'kategoria_tipus',array('size'=>1,'maxlength'=>1)); ?>
-			<?php echo $form->error($model,'kategoria_tipus'); ?>
+			<?php //echo $form->labelEx($model,'kategoria_tipus'); ?>
+			<?php //echo $form->textField($model,'kategoria_tipus',array('size'=>1,'maxlength'=>1)); ?>
+			<?php //echo $form->error($model,'kategoria_tipus'); ?>
 		</div>
-
+		-->
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'termekcsoport_id'); ?>
+			
+				<?php echo CHtml::activeDropDownList($model, 'termekcsoport_id',
+					CHtml::listData(termekcsoportok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev')
+				); ?>
+				
+			<?php echo $form->error($model,'termekcsoport_id'); ?>
+		</div>
 		
 	<?php $this->endWidget(); ?>
 

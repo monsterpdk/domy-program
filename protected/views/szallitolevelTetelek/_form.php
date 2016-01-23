@@ -194,19 +194,19 @@
 									'name' => 'meret.nev',
 									'header' => 'Méret',
 									'filter' => CHtml::activeTextField($termek, 'meret_search'),
-									'value' => '$data->meret->nev',
+									'value' => '$data->meret == null ? "" : $data->meret->nev',
 								),
 								array(
 									'name' => 'gyarto.cegnev',
 									'header' => 'Gyártó',
 									'filter' => CHtml::activeTextField($termek, 'gyarto_search'),
-									'value' => '$data->gyarto->cegnev',
+									'value' => '$data->gyarto == null ? "" : $data->gyarto->cegnev',
 								),
 								array(
 									'name' => 'papirtipus.nev',
 									'header' => 'Papírtípus',
 									'filter' => CHtml::activeTextField($termek, 'papirtipus_search'),
-									'value' => '$data->papirtipus->nev',
+									'value' => '$data->papirtipus == null ? "" : $data->papirtipus->nev',
 								),
 								array(
 								  'header'=>'',

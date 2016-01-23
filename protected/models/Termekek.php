@@ -46,6 +46,7 @@ class Termekek extends CActiveRecord
 	public $meret_search;
 	public $gyarto_search;
 	public $papirtipus_search;
+	public $termekcsoport_search;
 	
 	// LI amikor valamelyik űrlapról terméket tallózunk, akkor kódszám+terméknév formában jelenítjük meg a termékeket
 	private $displayTermeknev;
@@ -77,7 +78,7 @@ class Termekek extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, csom_egys, doboz_suly, felveteli_datum', 'required'),
+			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, csom_egys, doboz_suly, felveteli_datum, termekcsoport_id', 'required'),
 			array('meret_id, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, torolt, belesnyomott', 'numerical', 'integerOnly'=>true),
 			array('doboz_suly, suly, doboz_hossz, doboz_szelesseg, doboz_magassag', 'numerical'),
 			array('nev', 'length', 'max'=>127),
@@ -89,7 +90,7 @@ class Termekek extends CActiveRecord
 			array('felveteli_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
+			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, termekcsoport_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -101,13 +102,14 @@ class Termekek extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'meret'    => array(self::BELONGS_TO, 'TermekMeretek', 'meret_id'),
-			'zaras'    => array(self::BELONGS_TO, 'TermekZarasiModok', 'zaras_id'),
+			'meret'   		=> array(self::BELONGS_TO, 'TermekMeretek', 'meret_id'),
+			'zaras'    		=> array(self::BELONGS_TO, 'TermekZarasiModok', 'zaras_id'),
 			'ablakmeret'    => array(self::BELONGS_TO, 'TermekAblakMeretek', 'ablakmeret_id'),
-			'ablakhely'    => array(self::BELONGS_TO, 'TermekAblakHelyek', 'ablakhely_id'),
+			'ablakhely'    	=> array(self::BELONGS_TO, 'TermekAblakHelyek', 'ablakhely_id'),
 			'papirtipus'    => array(self::BELONGS_TO, 'PapirTipusok', 'papir_id'),
-			'afakulcs'    => array(self::BELONGS_TO, 'AfaKulcsok', 'afakulcs_id'),
-			'gyarto'    => array(self::BELONGS_TO, 'Gyartok', 'gyarto_id'),
+			'afakulcs'    	=> array(self::BELONGS_TO, 'AfaKulcsok', 'afakulcs_id'),
+			'gyarto'    	=> array(self::BELONGS_TO, 'Gyartok', 'gyarto_id'),
+			'termekcsoport'	=> array(self::BELONGS_TO, 'Termekcsoportok', 'termekcsoport_id'),
 		);
 	}
 
@@ -145,6 +147,7 @@ class Termekek extends CActiveRecord
 			'megjelenes_mettol' => 'Megjelenés mettől',
 			'megjelenes_meddig' => 'Megjelenés meddig',
 			'felveteli_datum' => 'Felvételi dátum',
+			'termekcsoport_id' =>'Termékcsoport',
 			'datum' => 'Dátum',
 			'torolt' => 'Törölt',
 			'belesnyomott' => 'Bélésnyomott',
@@ -155,7 +158,8 @@ class Termekek extends CActiveRecord
 			'ablakmeret_search' => 'Ablakméret',
 			'meret_search' => 'Méret',
 			'gyarto_search' => 'Cégnév',
-			'papirtipus_search' => 'Papírtípus'
+			'papirtipus_search' => 'Papírtípus',
+			'termekcsoport_search' => 'Termékcsoport'
 			
 		);
 	}
@@ -182,7 +186,7 @@ class Termekek extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->together = true;
-		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus', 'ablakmeret');				
+		$criteria->with = array('zaras', 'ablakhely', 'meret', 'gyarto', 'papirtipus', 'ablakmeret', 'termekcsoport');				
 		$criteria->compare('t.id',$this->id,true);
 		$criteria->compare('t.nev',$this->nev,true);
 		$criteria->compare('tipus',$this->tipus,true);
@@ -198,6 +202,7 @@ class Termekek extends CActiveRecord
 		$criteria->compare('meret.nev', $this->meret_search, true );
 		$criteria->compare('gyarto.cegnev', $this->gyarto_search, true );
 		$criteria->compare('papirtipus.nev', $this->papirtipus_search, true );
+		$criteria->compare('termekcsoport.nev', $this->termekcsoport_search, true );
 		
 		$criteria->compare('ablakmeret_id',$this->ablakmeret_id);
 		$criteria->compare('ablakhely_id',$this->ablakhely_id);
@@ -278,10 +283,10 @@ class Termekek extends CActiveRecord
 		$termek_teljes_nev = $this->nev ;
 		$termek_teljes_nev .= ' ' . $this->zaras->nev ;
 		$meret = "" ;
-		if ($this->meret->szelesseg > 0) {
+		if ($this->meret != null && $this->meret->szelesseg > 0) {
 			$meret .= ' ' . $this->meret->szelesseg ;
 		}
-		if ($this->meret->magassag > 0) {
+		if ($this->meret != null && $this->meret->magassag > 0) {
 			if ($meret != "") {
 				$meret .= "x" ;	
 			}
@@ -291,7 +296,7 @@ class Termekek extends CActiveRecord
 			}
 			$meret .= $this->meret->magassag ;
 		}
-		if ($this->meret->vastagsag > 0) {
+		if ($this->meret != null && $this->meret->vastagsag > 0) {
 			if ($meret != "") {
 				$meret .= "x" ;	
 			}
