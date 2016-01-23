@@ -74,10 +74,13 @@
 			<?php
 				$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 					'source'=>$this->createUrl('arajanlatok/autoCompleteUgyfel'),
-					'model'     => $model,
+					'id' => 'autocomplete-link-'.uniqid(),
+					'model' => $model,
+					'name' => 'autocomplete-link-'.uniqid(),
 					'attribute' => 'autocomplete_ugyfel_name',
 					'options'=> array(
 						'showAnim'=>'fold',
+						'minLength' => '1',
 						'select'=>"js:function(event, ui) {
 															$('#Arajanlatok_ugyfel_id').val (ui.item.id);
 															$('#Arajanlatok_ugyfel_tel').val (ui.item.tel);
@@ -669,12 +672,14 @@
 						'name'=>'anyagrendelesek_form_submit',
 						'caption'=>'Mentés',
 						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+						'onclick'=>new CJavaScriptExpression('function(){saveOrBack("save"); this.blur(); return false;}')
 					 )); ?>
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 
 					 array(
 						'name'=>'back',
 						'caption'=>'Vissza',
-						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg'),
+						'onclick'=>new CJavaScriptExpression('function(){saveOrBack("back"); this.blur(); return false;}')
 					 )); ?>
 		</div>
 
@@ -682,6 +687,24 @@
 
 <?php $this->endWidget(); ?>
 
+<?php
+ $this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+        'id'=>'confirmationDialog',
+        'options'=>array(
+            'title'=>'Figyelmeztetés',
+            'autoOpen'=>false,
+            'modal'=>true,
+            'buttons'=>array(
+                'Ok'=>'js:function(){deleteAndRedirect()}',
+                'Mégse'=>'js:function(){ $(this).dialog("close");}',
+            ),
+        ),
+    ));
+	
+	echo 'Nem található egy felvett tétel sem. Ha folytatja, akkor az árajánlat törlése kerül. Biztosan folytatja ?';
+	
+	$this->endWidget();
+?>
 
 </div><!-- form -->
 
@@ -710,6 +733,43 @@
 <!-- View Popup ends -->
 
 <script type="text/javascript">
+		// LI: ha nincs tétel felvéve egy árajánlathoz, akkor ha a felhasználó 'mentés' vagy 'Vissza' gombot
+		//	   nyom törölnünk kell az árajánlatot
+		function deleteAndRedirect () {
+			window.location = '<?php echo $this->createUrl('arajanlatok/deleteAndRedirect'); ?>/arajanlatId/' + $("#Arajanlatok_id").val();
+		}
+		
+		// LI: a mentés és vissza gomb onclick eseményének kezelése átkerült kliens oldalra, mert
+		//	   ellenőrizni kell ezen műveletek elvégzése előtt, hogy van-e felvéve legalább 1 tétel
+		//	   FALSE-sal tér vissza, ha 1 db tétel sincs
+		function saveOrBack (operation) {
+				var id = $("#Arajanlatok_id").val();
+				
+				<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/arajanlatok/checkTetelSzam/arajanlatId/' + id + '/saveOrBack/' + operation",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'post',
+					'id' => 'send-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.status == 'vanTetel') {
+							if (data.redirectUrl != '') {
+								// vissza gombot nyomtunk, így visszalépünk a nézet korábbi állapotába
+								window.location = data.redirectUrl;
+							} else {
+								// mentést nyomtunk, így submit-ot küldünk a formra
+								$( '#arajanlatok-form' ).submit();
+							}
+						} else {
+							// nem találtunk tételt az árajánlathoz
+							$('#confirmationDialog').dialog('open');
+						}
+					} ",
+				))?>;
+		}
+		
 		function ArajanlatTetelElozmenyek (buttonObj)
 		{
 			var ugyfel_id = $("#Arajanlatok_ugyfel_id").val() ;

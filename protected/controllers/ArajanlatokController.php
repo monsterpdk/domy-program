@@ -442,6 +442,48 @@ class ArajanlatokController extends Controller
 		);*/
 	}	
 	
+	// LI: megnézi van-e leglaább 1 db tétel egy adott árajánlathoz
+	//	   saveOrBack lehetséges értékei: 'save' / 'back'
+	public function actionCheckTetelSzam ($arajanlatId, $saveOrBack) {
+		$status = '';
+		$redirectUrl = '';
+		
+		$arajanlat = Arajanlatok::model()->findByPk( $arajanlatId );
+		
+		if ($arajanlat != null) {
+			// van legalább 1 tétele az árajánlatnak
+			if (count($arajanlat->tetelek) > 0) {
+				$status = 'vanTetel';
+				
+				if ($saveOrBack == 'save') {
+				} else {
+					$redirectUrl = Utils::getPrevPageUrl("arajanlatokIndex");
+				}
+			} else {
+				// nincs 1 tétele sem az árajánlatnak
+				$status = 'nincsTetel';
+			}
+		}
+		
+		echo CJSON::encode(array(
+			'status' => $status,
+			'redirectUrl' => $redirectUrl
+		));		
+
+	}
+	
+	// LI: töröljük az adott id-jú árajánlatot és csinálunk egy redirect-et az előző oldalra
+	public function actionDeleteAndRedirect ($arajanlatId) {
+		// logikai törlést alkalmazunk, 'torolt' mező értékét állítjuk 1-re
+		$model=$this->loadModel($arajanlatId);
+		
+		if ($model != null) {
+			$model->torolt = 1;
+			$model->save(false);
+		}
+		
+		Utils::goToPrevPage('arajanlatokIndex');
+	}
 	
 	public function generatePdf($model, $file_url = "") {
 		if ($model != null) {		

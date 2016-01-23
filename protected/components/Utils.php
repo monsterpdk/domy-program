@@ -1030,16 +1030,21 @@
 			return (number_format($suly / 1000, 0, '.', ' '));
 		}
 
-		// egy sessionváltozóban tárolt url-re irányít át (az oldal nevét paraméterben várja)
+		// LI: egy sessionváltozóban tárolt url-re irányít át (az oldal nevét paraméterben várja)
 		function gotoPrevPage ($pageName) {
 			$this->redirect(Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL']);
 		}
 		
-		// egy sessionváltozóba menti a jelenlegi url-t (paraméterben várja, hogy milyen kulccsal mentse)
+		// LI: egy sessionváltozóba menti a jelenlegi url-t (paraméterben várja, hogy milyen kulccsal mentse)
 		function saveCurrentPage ($pageName) {
 			Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL'] = Yii::app()->request->Url;
 		}
-	
+
+		// LI: a sessionváltozóba mentett URL-t adja vissza (paraméterben várja, hogy milyen kulccsal mentse)
+		function getPrevPageUrl ($pageName) {
+			return Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL'];
+		}
+		
 		// LI: az ékezeteket kicseréli a string-ben, az egyéb speciális karaktereket meg kiszűri
 		function atalakit_ekezet_nelkulire ($string) {
 			$mit = array("ö","ü","ó","ő","ú","ű","á","í","é","ő","ű");
