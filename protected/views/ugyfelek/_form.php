@@ -258,6 +258,28 @@
 	</div>
 	
 	<div class="row">
+
+		<?php
+			$this->widget('zii.widgets.jui.CJuiButton', array(
+				'name'=>'button_szekhely_cim_masolasa',
+				'caption'=>'Székhely cím másolása',
+				'buttonType'=>'link',
+				'onclick'=>new CJavaScriptExpression('function() {
+					// átmásoljuk a székhely adatokat a szállítási adatokba
+					
+					// elég lenne elvileg csak az irányítószámot átmásolni, mert az maga után húzza a várost is,
+					// de biztosra megyünk és külön átmásoljuk a várost is
+					$("#Ugyfelek_szallitasi_irsz").typeahead("setQuery", $("#Ugyfelek_szekhely_irsz").val());
+					$("#Ugyfelek_szallitasi_orszag").val($("#Ugyfelek_szekhely_orszag").val());
+					
+					// cím adatok átmásolása (ez később bontva lesz a NAV-os előírás miatt)
+					$("#Ugyfelek_szallitasi_cim").val($("#Ugyfelek_szekhely_cim").val());
+					
+				}'),
+				'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:5px; height:32px', 'target' => '_blank'),
+			));
+		?>
+
 		<?php echo $form->labelEx($model,'szallitasi_irsz'); ?>
 
 		<?php
@@ -301,7 +323,7 @@
 				),
 			));
 		?>		
-		
+
 		<?php echo $form->error($model,'szallitasi_irsz'); ?>
 	</div>
 
