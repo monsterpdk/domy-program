@@ -52,7 +52,22 @@ class TermekekController extends Controller
 				$model -> afakulcs_id = $afaKulcs -> id;
 			}
 			
+			// felvételi dátum alapértelmezetten a mai nap lesz
 			$model->felveteli_datum = date('Y-m-d');	
+			
+			// cikkszámnak beírjuk a legutoljára felvett terméket cikkszámát egyel megnövelve
+			$criteria = new CDbCriteria;
+			$criteria->select = 'max(id) AS id';
+			$row = Termekek::model() -> find ($criteria);
+			
+			if ($row != null) {
+				$utolsoTermekId = $row['id'];
+
+				$utolsoTermek = Termekek::model()->findByPk($utolsoTermekId);
+				if ($utolsoTermek != null) {
+					$model -> cikkszam = filter_var($utolsoTermek->cikkszam, FILTER_SANITIZE_NUMBER_INT) + 1;
+				}
+			}
 		}
 
 		$this->render('create',array(
