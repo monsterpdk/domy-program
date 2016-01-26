@@ -669,7 +669,7 @@ class MegrendelesekController extends Controller
 		} else echo 'Hiba!';
 	}
 
-	// LI: levélben kapott árajánlatból megrendelést készítő kód. Itt a felhaználó már kiválasztotta, hogy mit szeretne megrendelni,
+	// LI: levélben kapott árajánlatból megrendelést készítő kód. Itt a felhasználó már kiválasztotta, hogy mit szeretne megrendelni,
 	//	   így itt már a tényleges megrendelés készül el.
 	public function actionMegrendelesEredmeny () {
 		$resultText = 'A megrendelés nem sikerült. Kérjük próbálkozzon újra!';
@@ -684,9 +684,10 @@ class MegrendelesekController extends Controller
 
 				if ($result) {
 					$arajanlat->email_verification_code = '';
+					$arajanlat->van_megrendeles = 1;
 					$arajanlat->save(false);
 
-					$resultText = 'Megrendelésének feldolgozását megkezdte rendszerünk. Köszönjük vásárlását!';
+					$resultText = 'Megrendelésének feldolgozását megkezdte rendszerünk. Köszönjük megkeresését!';
 					$showBackButton = false;
 				}
 			}

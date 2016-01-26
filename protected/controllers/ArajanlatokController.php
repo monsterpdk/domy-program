@@ -375,7 +375,7 @@ class ArajanlatokController extends Controller
 				$ugyfel_email = $model->ugyfel->ceg_email ;
 			}
 
-            if($validator->validateValue($ugyfel_email)) {					
+            if($validator->validateValue($ugyfel_email) && $model->van_megrendeles != 1) {
 				$ArajanlatKuldoEmail = Yii::app()->config->get('ArajanlatKuldoEmail');
 				$ArajanlatKuldoHost = Yii::app()->config->get('ArajanlatKuldoHost');
 				$ArajanlatKuldoPort = Yii::app()->config->get('ArajanlatKuldoPort');
