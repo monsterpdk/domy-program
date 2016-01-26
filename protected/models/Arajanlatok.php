@@ -24,6 +24,7 @@
  * @property string $egyeb_megjegyzes
  * @property integer $van_megrendeles
  * @property integer $torolt
+ * @property integer $email_verification_code;
  * @property integer $admin_id
  */
 class Arajanlatok extends CActiveRecord
@@ -86,7 +87,7 @@ class Arajanlatok extends CActiveRecord
 			array('ajanlat_datum, ervenyesseg_datum, kovetkezo_hivas_ideje', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, admin_id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, cegnev_search, torolt', 'safe', 'on'=>'search'),
+			array('id, admin_id, sorszam, ugyfel_id, cimzett, arkategoria_id, ajanlat_datum, ervenyesseg_datum, hatarido, afakulcs_id, ugyintezo_id, kovetkezo_hivas_ideje, visszahivas_lezarva, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, cegnev_search, email_verification_code, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 

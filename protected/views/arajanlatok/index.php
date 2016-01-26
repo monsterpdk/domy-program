@@ -111,7 +111,7 @@
 											'style'=>'margin-left: 15px',
 											'onclick'=>'js: arajanlatKuld($(this))',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.CreateMegrendeles") && $data->torolt == 0 ',
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.CreateMegrendeles") && $data->torolt == 0 && $data->van_megrendeles == 0',
 							),
 						),
                 ),
@@ -171,7 +171,25 @@
 	// ez a rész erre a célra szolgál, ide fog az ajax lekérés válasza render-elődni
 	
 	echo "<div id='divForGrid'></div>";
+?>
 
+<?php
+	$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+		'id'=>'sendResultDialog',
+		'options'=>array(
+			'title'=>'Küldés eredménye',
+			'autoOpen'=>false,
+			'modal'=>true,
+			'width'=>400,
+			'buttons'=>array(
+				'Ok'=>'js:function(){ $(this).dialog("close");}',
+			),
+		),
+	));
+
+	echo '<div id="sendResultText"></div>';
+
+	$this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
@@ -230,7 +248,8 @@ $this->endWidget(); ?>
 	
 	function arajanlatKuld(button_obj) {
 		hrefString = button_obj.parent().children().eq(1).attr("href");
-		row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);		
+		row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);	
+		
 		<?php echo CHtml::ajax(array(
 			'url'=> "js:'/index.php/arajanlatok/sendViaEmail/' + row_id",
 			'data'=> "js:$(this).serialize()",
@@ -241,10 +260,12 @@ $this->endWidget(); ?>
 			{
 				if (data.status == 'ok')
 				{
-					alert('Ajánlat elküldve ide: ' + data.cimzett_email + '!') ;
+					$('#sendResultText').html('Az ajánlat sikeresen elküldve a következőre: <br /><br /> <strong> ' + data.cimzett_email + '. </strong>');
+					$('#sendResultDialog').dialog('open');
 				}
 				else if (data.status = 'failed') {
-					alert('Ajánlat elküldése sikertelen ide: ' + data.cimzett_email + '!') ;
+					$('#sendResultText').html('Az ajánlat küldése nem sikerült a következőre: <br /><br /> <strong> ' + data.cimzett_email + '. </strong>');
+					$('#sendResultDialog').dialog('open');
 				}
 			} ",
 		))?>;

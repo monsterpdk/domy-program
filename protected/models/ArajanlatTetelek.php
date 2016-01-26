@@ -96,8 +96,11 @@ class ArajanlatTetelek extends CActiveRecord
 			'brutto_ar' => 'Bruttó ár',
 			'displayTermekSzinekSzama' => 'Színek',
 			'DarabszamFormazott' => 'Db',
+			'NettoAr' => 'Nettó ár',
+			'BruttoAr' => 'Bruttó ár',
 			'NettoArFormazott' => 'Nettó ár',
-			'BruttoArFormazott' => 'Bruttó ár',		);
+			'BruttoArFormazott' => 'Bruttó ár',
+		);
 	}
 
 	/**

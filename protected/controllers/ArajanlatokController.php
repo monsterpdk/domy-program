@@ -368,31 +368,29 @@ class ArajanlatokController extends Controller
 		$status = "failed" ;
 		if (is_numeric($id)) {
 			$model=$this->loadModel($id);		
-			
+
 			$validator = new CEmailValidator;
-			$ugyfel_email = $model->ugyintezo->email ;
-			if (!$validator->validateValue($ugyfel_email)) {
+			$ugyfel_email = $model->ugyintezo != null ? $model->ugyintezo->email : null;
+			if ($ugyfel_email == null || !$validator->validateValue($ugyfel_email)) {
 				$ugyfel_email = $model->ugyfel->ceg_email ;
 			}
-			
- 
-            if($validator->validateValue($ugyfel_email)) {								
+$ugyfel_email = 'istvan.leanyvari@gmail.com';
+            if($validator->validateValue($ugyfel_email)) {					
 				$ArajanlatKuldoEmail = Yii::app()->config->get('ArajanlatKuldoEmail');
 				$ArajanlatKuldoHost = Yii::app()->config->get('ArajanlatKuldoHost');
 				$ArajanlatKuldoPort = Yii::app()->config->get('ArajanlatKuldoPort');
 				$ArajanlatKuldoTitkositas = Yii::app()->config->get('ArajanlatKuldoTitkositas');
 				$ArajanlatKuldoSMTP = Yii::app()->config->get('ArajanlatKuldoSMTP');
 				if ($ArajanlatKuldoSMTP == 1)
-					$ArajanlatKuldoSMTP = true ;
+					$ArajanlatKuldoSMTP = true;
 				else
-					$ArajanlatKuldoSMTP = false ;
+					$ArajanlatKuldoSMTP = false;
 				
 				$ArajanlatKuldoSMTPUser = Yii::app()->config->get('ArajanlatKuldoSMTPUser');
 				$ArajanlatKuldoSMTPPassword = Yii::app()->config->get('ArajanlatKuldoSMTPPassword');
 				$ArajanlatKuldoFromName = Yii::app()->config->get('ArajanlatKuldoFromName');
 				$ArajanlatKuldoAlapertelmezettSubject = Yii::app()->config->get('ArajanlatKuldoAlapertelmezettSubject');
-				
-				
+
 				$ajanlat_mailer = Yii::app()->mailer ;			
 				$ajanlat_mailer ->Host = $ArajanlatKuldoHost;		//Az smtp szerver címe	-> admin beállításokból
 				$ajanlat_mailer ->From = $ArajanlatKuldoEmail;		//A küldő e-mail címe	-> admin beállításokból
@@ -415,11 +413,22 @@ class ArajanlatokController extends Controller
 				$this->generatePdf($model, $ajanlat_file_url) ;
 				$ajanlat_mailer -> AddAttachment($ajanlat_file_url,"Árajánlat", "base64", "application/pdf");
 				
-				$email_body = $this->renderPartial("arajanlat_email_body", array('model'=>$model), true);
+				// LI: online megrendeléshez link
+				$email_verification_code = md5($model->sorszam . uniqid(rand(), true));
+				$ajanlat_url = $this->createAbsoluteUrl('megrendelesek/megrendelesKeszites',array('token'=>$email_verification_code));
+				
+				
+				$email_body = $this->renderPartial("arajanlat_email_body", array('model'=>$model, 'ajanlat_url'=>$ajanlat_url), true);
 				$ajanlat_mailer ->Body = $email_body;
 				
-				if ($ajanlat_mailer ->Send())
-					$status = "ok" ;	
+				if ($ajanlat_mailer ->Send()) {
+					$status = "ok";
+				}
+				
+				// LI: az email-ben kapott linkben található kód beírása az árajánlathoz
+				$model->email_verification_code = $email_verification_code;
+				$model->save(false);
+
 				unlink(Yii::app() -> getBasePath() . "/../uploads/ajanlatok/" . $model->sorszam . ".pdf") ;
 			}
 		}
@@ -509,7 +518,7 @@ class ArajanlatokController extends Controller
 			return true ;
 		}
 	}
-	
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

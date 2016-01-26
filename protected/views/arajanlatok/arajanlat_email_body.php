@@ -13,7 +13,7 @@ if ($ugyintezo_nev == "") {
 <p>Tisztelt <?php echo $ugyintezo_nev;?>!<br />
 <br />
 Csatolva küldjük árajánlatunkat a kért munkára, köszönjük megkeresését.<br />
-Kérjük, hogy az árajánlat elfogadását válasz e-mailben, vagy telefonon jelezze felénk.<br />
+Kérjük, hogy az árajánlat elfogadását a <a href='<?php echo $ajanlat_url; ?>'>webes felületen</a>, válasz e-mailben, vagy telefonon jelezze felénk.<br />
 <br />
 Köszönettel:<br />
 Gesztesi Anita<br />

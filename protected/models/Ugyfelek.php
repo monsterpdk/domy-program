@@ -583,7 +583,15 @@ class Ugyfelek extends DomyModel
 		}
 		if ($ugyfel_adatok["cegnev"] != "") {
 			$cegforma_string = substr($ugyfel_adatok["cegnev"] , strrpos($ugyfel_adatok["cegnev"], " ") + 1) ;
-			$cegforma = Cegformak::model()->findByAttributes(array('cegforma' => trim($cegforma_string))) ;
+			
+			$match = trim($cegforma_string);
+			$match = addcslashes($match, '%_');
+			$q = new CDbCriteria( array(
+				'condition' => "cegforma LIKE :match",
+				'params'    => array(':match' => "%$match%")
+			) );
+			$cegforma = Cegformak::model()->find( $q );
+
 			if ($cegforma != null) {
 				$model->cegforma = (int)$cegforma->id ;
 				$model->cegnev = substr($ugyfel_adatok["cegnev"] , 0,  strrpos($ugyfel_adatok["cegnev"], " ")) ;

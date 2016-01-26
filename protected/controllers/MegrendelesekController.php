@@ -9,10 +9,14 @@ class MegrendelesekController extends Controller
 	public function filters()
 	{
 		return array(
-			'rights',
+			'rights'
 		);
 	}
-
+	
+	public function allowedActions() {
+	  return 'megrendelesKeszites, megrendelesEredmeny';
+	}
+	
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
@@ -549,7 +553,10 @@ class MegrendelesekController extends Controller
 	 */
 	public function actionCreateFromArajanlat ()
 	{
-		if ( isset($_POST['arajanlat_id']) && isset($_POST['selected_tetel_list']) ) {
+		// LI: megrendelést tudunk árajánlatból az admin felületről is csinálni ill. e-mail-es megrendelésből is: ebben a flag-ben tároljuk, hogy honnan hívtuk meg
+		$createMegrendelesFromEmail = isset($_POST['createMegrendelesFromEmail']) ? $_POST['createMegrendelesFromEmail'] : '';
+		
+		if ( isset($_POST['arajanlat_id']) && (isset($_POST['selected_tetel_list']) && strlen($_POST['selected_tetel_list']) > 0)) {
 			$arajanlat_id = $_POST['arajanlat_id'];
 			$selected_tetels = $_POST['selected_tetel_list'];
 			
@@ -638,10 +645,60 @@ class MegrendelesekController extends Controller
 			// frissítjük az egyedi ár flag-et a megrendelésen
 			Utils::isEgyediArMegrendelesArajanlat ($megrendeles -> id, true);
 
-			$this->redirect(array('megrendelesek/update', 'id' => $megrendeles -> id,));
+			if ($createMegrendelesFromEmail == 1) {
+				return true;
+			} else {
+				$this->redirect(array('megrendelesek/update', 'id' => $megrendeles -> id,));
+			}
 		}
+		
+		return false;
 	}
 
+		// LI: levélben kapott árajánlatból megrendelést előkészítő kód (levélben linket kap a felhasználó, amit 
+	//	   megnyitva egy felületet kap, ahol összekattoghatja a megrendelését).
+	public function actionMegrendelesKeszites ($token) {
+		if (isset($token)) {
+			$arajanlat = Arajanlatok::model()->findByAttributes(array("email_verification_code" => $token));
+			
+			if ($arajanlat != null) {
+				$this->render('_megrendelesKeszites',array(
+					'model'=>$arajanlat,)
+				);
+			} else echo 'Hiba!';
+		} else echo 'Hiba!';
+	}
+
+	// LI: levélben kapott árajánlatból megrendelést készítő kód. Itt a felhaználó már kiválasztotta, hogy mit szeretne megrendelni,
+	//	   így itt már a tényleges megrendelés készül el.
+	public function actionMegrendelesEredmeny () {
+		$resultText = 'A megrendelés nem sikerült. Kérjük próbálkozzon újra!';
+		$arajanlatId = $_POST['arajanlat_id'];
+		$showBackButton = true;
+		
+		if ((isset($_POST['selected_tetel_list']) && trim($_POST['selected_tetel_list']) != '') && (isset($arajanlatId))) {
+			$arajanlat = Arajanlatok::model()->findByPk($arajanlatId);
+			if ($arajanlat != null) {
+				$_POST['createMegrendelesFromEmail'] = 1;
+				$result = $this->actionCreateFromArajanlat();
+
+				if ($result) {
+					$arajanlat->email_verification_code = '';
+					$arajanlat->save(false);
+
+					$resultText = 'Megrendelésének feldolgozását megkezdte rendszerünk. Köszönjük vásárlását!';
+					$showBackButton = false;
+				}
+			}
+		}
+		
+		$this->render('_megrendelesEredmeny',array(
+			'resultText' => $resultText,
+			'showBackButton' => $showBackButton,
+			)
+		);
+	}
+	
 	/**
 	 * Megrendelés sztornózása.
 	 */
