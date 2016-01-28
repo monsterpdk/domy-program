@@ -59,6 +59,18 @@
 				)
 			);
 
+			// LI: elrakjuk egy hidden változóba az összes tétel id-ját, így ha az 'összes  kijelölése'
+			//	   checkbox-ra nyom a felhasználó innen be tudjuk állítani az összes ID-t
+			$osszesTetelIdJsTomb = '[';
+			$osszesTetelIdPhpTomb = array();
+			foreach (ArajanlatTetelek::model()->findAllByAttributes(array('arajanlat_id'=> $model->id)) as $tetel) {
+				$osszesTetelIdJsTomb .= (strlen($osszesTetelIdJsTomb) > 1 ? ',' : '').$tetel->id;
+				array_push($osszesTetelIdPhpTomb, $tetel->id);
+			}
+			$osszesTetelIdJsTomb .= ']';
+
+			$_GET['ArajanlatTetelek_sel'] = $osszesTetelIdPhpTomb;
+			
 			$this->widget('ext.selgridview.SelGridView', array(
 				'id' => 'arajanlatTetelekMegrendeles-grid',
 				'dataProvider'=>$dataProvider,
@@ -78,14 +90,6 @@
 				)
 			));
 			
-			// LI: elrakjuk egy hidden változóba az összes tétel id-ját, így ha az 'összes  kijelölése'
-			//	   checkbox-ra nyom a felhasználó innen be tudjuk állítani az összes ID-t
-			$osszesTetelIdJsTomb = '[';
-			foreach (ArajanlatTetelek::model()->findAllByAttributes(array('arajanlat_id'=> $model->id)) as $tetel) {
-				$osszesTetelIdJsTomb .= (strlen($osszesTetelIdJsTomb) > 1 ? ',' : '').$tetel->id;
-			}
-			$osszesTetelIdJsTomb .= ']';
-
 			// kirajuk egy JS változóba az ID-kat
 			echo '<script>
 					$(\'#osszesTetelId\').val (' . $osszesTetelIdJsTomb . ');

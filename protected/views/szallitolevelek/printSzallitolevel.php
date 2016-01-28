@@ -34,7 +34,7 @@
 	}
 	else
 	{
-		$szallitasi_cim = $ugyfel -> display_ugyfel_cim ;
+		$szallitasi_cim = $ugyfel -> display_ugyfel_cim;
 	}
 ?>
 
@@ -89,6 +89,16 @@
 <div style='text-align:center'>
 	<h1> <span class='under'>Szállítólevél</span> </h1>
 </div>
+
+<?php
+	if ($futarszolgalatos) {
+		echo "
+			<div style='text-align:center'>
+				<h2> <span>FUTÁRSZOLGÁLAT</span> </h2>
+			</div>
+		";
+	}
+?>
 
 <!-- Szállítólevél fejléce -->
 <table>

@@ -194,20 +194,59 @@ class SzallitolevelekController extends Controller
 		if (isset($_GET['id'])) {
 			$model = $this -> loadModel($_GET['id']);
 		}
+
+		$print_copies = 3;
+		if (isset($_GET['copies'])) {
+			$print_copies = (int)$_GET['copies'];
+			if ($print_copies == 0) $print_copies = 3;
+		}
+		
+		$futarszolgalatos = false;
+		if (isset($_GET['futaros'])) {
+			$futaros = (int)$_GET['futaros'];
+			if ($futaros == 1) $futarszolgalatos = true;
+		}
 		
 		if ($model != null) {
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
-
 			$mPDF1->SetHtmlHeader("SZÁLLÍTÓLEVÉL #" . $model->sorszam);
+
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printSzallitolevel", array('model' => $model, 'futarszolgalatos' => false), true));
+
+			// LI: lementjük a szerverre a PDF fájlt, hogy a több példányt onnan nyomtathassuk, ne kelljen minden egyes nyomtatás előtt
+			//     legenerálni az egészet, mert nagyon erőforrásigényes művelet
+			$mPDF1->Output('uploads/szallitolevelek/' . $model->id . '.pdf', EYiiPdf::OUTPUT_TO_FILE);
+
+			// a példány, aminél választható a nyomtató és kiírjuk, ha futárszolgálatos
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+			$mPDF1->SetHtmlHeader("SZÁLLÍTÓLEVÉL #" . $model->sorszam);
+
+			// dobja fel a print dialog-ot
+			$mPDF1->SetJS('this.print();');
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printSzallitolevel", array('model' => $model), true));
-	 
-			# Outputs ready PDF
+			$mPDF1->WriteHTML($this->renderPartial("printSzallitolevel", array('model' => $model, 'futarszolgalatos' => $futarszolgalatos), true));
+			
+			// LI: kirajkuk böngészőre az elkészült pdf-et
 			$mPDF1->Output();
+			
+			// kinyomtatjuk annyiszor, ahányat beállítottunk
+			$this->printPdf($model->id, $print_copies);
 		}
-	}	
+	}
+	
+	// LI : egy megadott PDF-et nyomtat ki a megadott darabszámban
+	private function printPdf ($id, $print_copies) {
+		$webroot_url = Yii::app()->getBaseUrl(true) . '/uploads/szallitolevelek/';
+		$PdfBoxUrl = Yii::app()->config->get('PdfBoxUrl');
+		$print_cmd = "java -classpath " . $PdfBoxUrl . " org.apache.pdfbox.tools.PrintPDF -silentPrint " . $webroot_url . $id . ".pdf";
+
+		for ($i = 0; $i < $print_copies; $i++) {
+			exec($print_cmd);
+		} 
+	}
 	
 	/**
 	 * Manages all models.

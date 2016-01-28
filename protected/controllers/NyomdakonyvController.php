@@ -454,8 +454,7 @@ class NyomdakonyvController extends Controller
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
 			$mPDF1->SetHtmlHeader("Nyomdakönyv ütemezés");
-//			$mPDF1->shrink_tables_to_fit=0;
-			
+
 			# render
 			$mPDF1->WriteHTML($this->renderPartial("printUtemezes", array('dataProvider' => $dataProvider), true));
 	 

@@ -216,12 +216,12 @@ $this->endWidget(); ?>
 		hrefString = button_obj.parent().children().eq(1).attr("href");
 		row_id = hrefString.substr(hrefString.lastIndexOf("/") + 1);
 		grid_id = new Date().getTime();
-		
+
 		// lekérjük a gridview-t
 		<?php echo CHtml::ajax(array(
 			'url'=> "js:'/index.php/arajanlatok/getTetelList/arajanlat_id/' + row_id + '/grid_id/' + grid_id",
 			'data'=> "js:$(this).serialize()",
-			'type'=>'post',
+			'type'=>'get',
 			'id' => 'tetel-list-'.uniqid(),
 			'replace' => '',
 			'success'=>"function(data)
@@ -229,6 +229,8 @@ $this->endWidget(); ?>
 				$('#divForGrid').html(data);
 				$('#dialogTetelSelect').data('grid_id', grid_id);
 				$('#dialogTetelSelect').data('model_id', row_id).dialog('open');
+  
+				$('#arajanlatTetelek-grid' + grid_id).selGridView('addSelection', JSON.parse('[' + $('#osszesTetelId').val() + ']'));
 			} ",
 		))?>;
 			
@@ -237,6 +239,14 @@ $this->endWidget(); ?>
 	
 	function createMegrendelesWithSelectedTeteList (arajanlat_id, grid_id, buttonObj)
 	{
+		var arraySel = $("#arajanlatTetelek-grid" + grid_id).selGridView("getAllSelection");
+		
+		if (arraySel.length == 0) {
+			alert('A megrendelés létrehozásához legalább 1 tétel kiválasztása szükséges!');
+			
+			return false;
+		}
+		
 		var arraySel = $("#arajanlatTetelek-grid" + grid_id).selGridView("getAllSelection");
         var stringSel = arraySel.join(',');
 		

@@ -16,7 +16,7 @@ class RequireLogin extends CBehavior
             $login = 'site/login';
 
             // a vendégek (belépés nélküli user) csak az itt definiált oldalakhoz férnek hozzá
-            $allowed = array($login, 'megrendelesek/megrendelesKeszites', 'megrendelesek/megrendelesEredmeny');
+            $allowed = array($login, 'megrendelesek/megrendelesKeszites', 'megrendelesek/megrendelesEredmeny', 'szallitolevelek/printPDF');
 
             if ($user->isGuest && !in_array($request, $allowed)) {
 				$user->loginRequired();

@@ -70,21 +70,28 @@
 			echo '<script>
 					$(\'#osszesTetelId\').val (' . $osszesTetelIdJsTomb . ');
 
-					// select all / deselect all checkbox-ra hallgatózás
+					// select all checkbox-ra hallgatózás
 					$(document).on(\'click.yiiGridView\', \'#arajanlatTetelek-grid' . $grid_id. ' .select-all\', function (event) {
 						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("clearAllSelection");
-						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("addSelection", ' . $osszesTetelIdJsTomb . ');			
-						$( ".select-all" ).prop(\'checked\', true);						
+						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("addSelection", ' . $osszesTetelIdJsTomb . ');
+						$( ".select-all" ).prop(\'checked\', true);			
 					});
 					
-					// select all / deselect all checkbox-ra hallgatózás
+					// deselect all checkbox-ra hallgatózás
 					$(document).on(\'click.yiiGridView\', \'#arajanlatTetelek-grid' . $grid_id. ' .deselect-all\', function (event) {
 						$(\'#arajanlatTetelek-grid' . $grid_id . '\').selGridView("clearAllSelection");
 						$( ".deselect-all" ).prop(\'checked\', false);						
 					});
 					
 					$(".select-all").prop("checked", true);
-				</script>';
+
+					$( document ).ready(function() {
+						$("input.select-all").each(function(){
+							$(this).prop( "checked", true );
+						});
+					});
+			  </script>
+			';
 		?>
-		
+
 		<?php $this->endWidget('zii.widgets.jui.CJuiDialog'); ?>

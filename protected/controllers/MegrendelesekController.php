@@ -445,7 +445,7 @@ class MegrendelesekController extends Controller
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
 			$mPDF1->SetHtmlHeader("Megrendelés #" . $model->sorszam);
-			
+	
 			# render
 			$mPDF1->WriteHTML($this->renderPartial("printProforma", array('model' => $model), true));
 	 
