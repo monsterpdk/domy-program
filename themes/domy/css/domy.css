@@ -549,7 +549,7 @@ li.almenu-balra span.caret, li.almenu-jobbra span.caret {
 .grid-view table.group-grid-view th
 {
 	color: white;
-	background: url("/yii/framework/zii/widgets/assets/gridview/bg.gif") repeat scroll left top white;
+	background: url("../../../css/bg.gif") repeat scroll left top white;
 	text-align: center;
 }
 
