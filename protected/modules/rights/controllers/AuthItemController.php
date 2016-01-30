@@ -279,6 +279,9 @@ class AuthItemController extends RController
 			$formModel->attributes = $_POST['AuthItemForm'];
 			if( $formModel->validate()===true )
 			{
+				// URL-hez 'name' mező ékezet és minden nélkül verziója
+				$formModel->data = Utils::atalakit_ekezet_nelkulire($formModel->name);
+
 				// Create the item
 				$item = $this->_authorizer->createAuthItem($formModel->name, $type, $formModel->description, $formModel->bizRule, $formModel->data);
 				$item = $this->_authorizer->attachAuthItemBehavior($item);
@@ -303,7 +306,7 @@ class AuthItemController extends RController
 	* Updates an authorization item.
 	*/
 	public function actionUpdate()
-	{
+	{	
 		// Get the authorization item
 		$model = $this->loadModel();
 		$itemName = $model->getName();
@@ -316,16 +319,21 @@ class AuthItemController extends RController
 			$formModel->attributes = $_POST['AuthItemForm'];
 			if( $formModel->validate()===true )
 			{
+				// URL-hez 'name' mező ékezet és minden nélkül verziója
+				$formModel->data = Utils::atalakit_ekezet_nelkulire($formModel->name);
+				
 				// Update the item and load it
 				$this->_authorizer->updateAuthItem($itemName, $formModel->name, $formModel->description, $formModel->bizRule, $formModel->data);
 				$item = $this->_authorizer->authManager->getAuthItem($formModel->name);
 				$item = $this->_authorizer->attachAuthItemBehavior($item);
 
 				// Set a flash message for updating the item
+				/*
 				Yii::app()->user->setFlash($this->module->flashSuccessKey,
 					Rights::t('core', ':name updated.', array(':name'=>$item->getNameText()))
 				);
-
+				*/
+				
 				// Redirect to the correct destination
 				$this->redirect(Yii::app()->user->getRightsReturnUrl(array('authItem/permissions')));
 			}
@@ -346,7 +354,7 @@ class AuthItemController extends RController
 				if( $childFormModel->validate()===true )
 				{
 					// Add the child and load it
-					$this->_authorizer->authManager->addItemChild($itemName, $childFormModel->itemname);
+					$this->_authorizer->authManager->addItemChild(Utils::atalakit_ekezet_nelkulire($itemName), $childFormModel->itemname);
 					$child = $this->_authorizer->authManager->getAuthItem($childFormModel->itemname);
 					$child = $this->_authorizer->attachAuthItemBehavior($child);
 
@@ -356,7 +364,7 @@ class AuthItemController extends RController
 					);
 
 					// Reidrect to the same page
-					$this->redirect(array('authItem/update', 'name'=>urlencode($itemName)));
+					$this->redirect(array('authItem/update', 'name'=>urlencode(Utils::atalakit_ekezet_nelkulire($itemName))));
 				}
 			}
 		}
@@ -370,7 +378,7 @@ class AuthItemController extends RController
 		$formModel->description = $model->description;
 		$formModel->type = $model->type;
 		$formModel->bizRule = $model->bizRule!=='NULL' ? $model->bizRule : '';
-		$formModel->data = $model->data!==null ? serialize($model->data) : '';
+		$formModel->data = $model->data!==null ? $model->data : '';
 
 		$parentDataProvider = new RAuthItemParentDataProvider($model);
 		$childDataProvider = new RAuthItemChildDataProvider($model);
@@ -426,8 +434,8 @@ class AuthItemController extends RController
 		// We only allow deletion via POST request
 		if( Yii::app()->request->isPostRequest===true )
 		{
-			$itemName = $this->getItemName();
-			$childName = $this->getChildName();
+			$itemName = Utils::atalakit_ekezet_nelkulire($this->getItemName());
+			$childName = Utils::atalakit_ekezet_nelkulire($this->getChildName());
 			
 			// Remove the child and load it
 			$this->_authorizer->authManager->removeItemChild($itemName, $childName);
@@ -441,7 +449,7 @@ class AuthItemController extends RController
 
 			// If AJAX request, we should not redirect the browser
 			if( isset($_POST['ajax'])===false )
-				$this->redirect(array('authItem/update', 'name'=>urlencode($itemName)));
+				$this->redirect(array('authItem/update', 'name'=>Utils::atalakit_ekezet_nelkulire($itemName)));
 		}
 		else
 		{
@@ -549,6 +557,7 @@ class AuthItemController extends RController
 	*/
 	public function loadModel()
 	{
+		// LI: itt egy kis módosítás történt, a 'data' mezőben tároljuk a 'kulcsokat'
 		if( $this->_model===null )
 		{
 			$itemName = $this->getItemName();

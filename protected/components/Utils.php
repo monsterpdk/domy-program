@@ -1047,8 +1047,8 @@
 		
 		// LI: az ékezeteket kicseréli a string-ben, az egyéb speciális karaktereket meg kiszűri
 		function atalakit_ekezet_nelkulire ($string) {
-			$mit = array("ö","ü","ó","ő","ú","ű","á","í","é","ő","ű");
-			$mire = array("o","u","o","o","u","u","a","i","e","o","u");
+			$mit = array("ö","ü","ó","ő","ú","ű","á","í","é","ő","ű","Ö","Ü","Ó","Ő","Ú","Ű","Á","Í","É","Ő","Ű");
+			$mire = array("o","u","o","o","u","u","a","i","e","o","u","o","u","o","o","u","u","a","i","e","o","u");
 			$isUTF8 = preg_match('%^(?:
 				 [\x09\x0A\x0D\x20-\x7E]           # ASCII
 			   | [\xC2-\xDF][\x80-\xBF]            # non-overlong 2-byte

@@ -94,9 +94,10 @@ class RDbAuthManager extends CDbAuthManager
 
 		// Collect the items we want.
 		$items = array();
+
 		foreach( $this->_items as $name=>$item )
 		{
-			if( in_array($name, $names) )
+			if( in_array(Utils::atalakit_ekezet_nelkulire($name), $names) )
 			{
 				if( $nested===true )
 					$items[ $item->getType() ][ $name ] = $item;
@@ -120,6 +121,7 @@ class RDbAuthManager extends CDbAuthManager
 	*/
 	public function getAuthItems($type=null, $userId=null, $sort=true)
 	{
+
 		// We need to sort the items.
 		if( $sort===true )
 		{
@@ -145,7 +147,7 @@ class RDbAuthManager extends CDbAuthManager
 			{
 				$sql = "SELECT name,t1.type,description,t1.bizrule,t1.data,weight
 					FROM {$this->itemTable} t1
-					LEFT JOIN {$this->assignmentTable} t2 ON name=t2.itemname
+					LEFT JOIN {$this->assignmentTable} t2 ON t1.data=t2.itemname
 					LEFT JOIN {$this->rightsTable} t3 ON name=t3.itemname
 					WHERE userid=:userid
 					ORDER BY t1.type DESC, weight ASC";
@@ -167,7 +169,7 @@ class RDbAuthManager extends CDbAuthManager
 
 			$items = array();
 			foreach($command->queryAll() as $row)
-				$items[ $row['name'] ] = new CAuthItem($this, $row['name'], $row['type'], $row['description'], $row['bizrule'], unserialize($row['data']));
+				$items[ $row['name'] ] = new CAuthItem($this, $row['name'], $row['type'], $row['description'], $row['bizrule'], $row['data']);
 		}
 		// No sorting required.
 		else
@@ -202,13 +204,14 @@ class RDbAuthManager extends CDbAuthManager
 			// We only have one name.
 			if( is_string($names) )
 			{
+				$names = Utils::atalakit_ekezet_nelkulire($names);
 				$condition = 'parent='.$this->db->quoteValue($names);
 			}
 			// We have multiple names.
 			else if( $names===(array)$names && $names!==array() )
 			{
 				foreach($names as &$name)
-					$name=$this->db->quoteValue($name);
+					$name=$this->db->quoteValue(Utils::atalakit_ekezet_nelkulire($names));
 
 				$condition = 'parent IN ('.implode(', ', $names).')';
 			}
@@ -219,13 +222,15 @@ class RDbAuthManager extends CDbAuthManager
 
 			$sql = "SELECT name, type, description, bizrule, data
 				FROM {$this->itemTable}, {$this->itemChildTable}
-				WHERE {$condition} AND name=child";
+				WHERE {$condition} AND data=child";
 			$children = array();
+
 			foreach( $this->db->createCommand($sql)->queryAll() as $row )
 			{
-				if( ($data = @unserialize($row['data']))===false )
+				
+				if( ($data = $row['data'])===false )
 					$data = null;
-
+				
 				$children[ $row['name'] ] = new CAuthItem($this, $row['name'], $row['type'], $row['description'], $row['bizrule'], $data);
 			}
 

@@ -128,6 +128,9 @@ class CDbAuthManager extends CAuthManager
 	 */
 	public function addItemChild($itemName,$childName)
 	{
+		$itemName = Utils::atalakit_ekezet_nelkulire($itemName);
+		$childName = Utils::atalakit_ekezet_nelkulire($childName);
+		
 		if($itemName===$childName)
 			throw new CException(Yii::t('yii','Cannot add "{name}" as a child of itself.',
 					array('{name}'=>$itemName)));
@@ -135,7 +138,7 @@ class CDbAuthManager extends CAuthManager
 		$rows=$this->db->createCommand()
 			->select()
 			->from($this->itemTable)
-			->where('name=:name1 OR name=:name2', array(
+			->where('data=:name1 OR data=:name2', array(
 				':name1'=>$itemName,
 				':name2'=>$childName
 			))
@@ -259,7 +262,7 @@ class CDbAuthManager extends CAuthManager
 				'itemname'=>$itemName,
 				'userid'=>$userId,
 				'bizrule'=>$bizRule,
-				'data'=>serialize($data)
+				'data'=>Utils::atalakit_ekezet_nelkulire($itemName)
 			));
 		return new CAuthAssignment($this,$itemName,$userId,$bizRule,$data);
 	}
@@ -272,6 +275,8 @@ class CDbAuthManager extends CAuthManager
 	 */
 	public function revoke($itemName,$userId)
 	{
+		//$itemName = Utils::atalakit_ekezet_nelkulire($itemName);
+		
 		return $this->db->createCommand()
 			->delete($this->assignmentTable, 'itemname=:itemname AND userid=:userid', array(
 				':itemname'=>$itemName,
@@ -336,9 +341,10 @@ class CDbAuthManager extends CAuthManager
 			->where('userid=:userid', array(':userid'=>$userId))
 			->queryAll();
 		$assignments=array();
+
 		foreach($rows as $row)
 		{
-			if(($data=@unserialize($row['data']))===false)
+			if(($data=$row['data'])===false)
 				$data=null;
 			$assignments[$row['itemname']]=new CAuthAssignment($this,$row['itemname'],$row['userid'],$row['bizrule'],$data);
 		}
@@ -440,7 +446,7 @@ class CDbAuthManager extends CAuthManager
 				'type'=>$type,
 				'description'=>$description,
 				'bizrule'=>$bizRule,
-				'data'=>serialize($data)
+				'data'=>$data
 			));
 		return new CAuthItem($this,$name,$type,$description,$bizRule,$data);
 	}
@@ -478,10 +484,12 @@ class CDbAuthManager extends CAuthManager
 	 */
 	public function getAuthItem($name)
 	{
+		$data = Utils::atalakit_ekezet_nelkulire($name);
+		
 		$row=$this->db->createCommand()
 			->select()
 			->from($this->itemTable)
-			->where('name=:name', array(':name'=>$name))
+			->where('data=:data', array(':data'=>$data))
 			->queryRow();
 
 		if($row!==false)
@@ -530,7 +538,7 @@ class CDbAuthManager extends CAuthManager
 				'type'=>$item->getType(),
 				'description'=>$item->getDescription(),
 				'bizrule'=>$item->getBizRule(),
-				'data'=>serialize($item->getData()),
+				'data'=>$item->getData(),
 			), 'name=:whereName', array(
 				':whereName'=>$oldName===null?$item->getName():$oldName,
 			));

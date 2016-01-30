@@ -63,14 +63,15 @@ class RUserBehavior extends CModelBehavior
 	public function getAssignmentsText($type)
 	{
 		$assignedItems = $this->getAssignments();
-		
+
 		if( isset($assignedItems[ $type ])===true )
 		{
 			$items = $assignedItems[ $type ];
+
 			$names = array();
 			foreach( $items as $itemname=>$item )
 				$names[] = $item->getNameText();
-			
+
 			return implode('<br />', $names);
 		}
 	}

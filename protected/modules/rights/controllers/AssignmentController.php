@@ -100,7 +100,7 @@ class AssignmentController extends RController
 				if( $formModel->validate()===true )
 				{
 					// Update and redirect
-					$this->_authorizer->authManager->assign($formModel->itemname, $model->getId());
+					$this->_authorizer->authManager->assign(Utils::atalakit_ekezet_nelkulire($formModel->itemname), $model->getId());
 					$item = $this->_authorizer->authManager->getAuthItem($formModel->itemname);
 					$item = $this->_authorizer->attachAuthItemBehavior($item);
 

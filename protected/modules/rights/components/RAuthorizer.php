@@ -55,9 +55,11 @@ class RAuthorizer extends CApplicationComponent
 	{
 		$bizRule = $bizRule!=='' ? $bizRule : null;
 
+		/*
 		if( $data!==null )
 			$data = $data!=='' ? $this->sanitizeExpression($data.';') : null;
-
+		*/
+		
 		return $this->_authManager->createAuthItem($name, $type, $description, $bizRule, $data);
 	}
 
@@ -77,10 +79,15 @@ class RAuthorizer extends CApplicationComponent
 		$authItem->description = $description!=='' ? $description : null;
 		$authItem->bizRule = $bizRule!=='' ? $bizRule : null;
 
+		// LI: itt tároljuk az url-ekhez szükséges ékezet és egyéb speciális karakterek nélküli 'name' mező verziót
+		$authItem->data = $data;
+		
 		// Make sure that data is not already serialized.
+		/*
 		if( @unserialize($data)===false )
 			$authItem->data = $data!=='' ? $this->sanitizeExpression($data.';') : null;
-
+		*/
+		
 		$this->_authManager->saveAuthItem($authItem, $oldName);
 	}
 
@@ -242,9 +249,11 @@ class RAuthorizer extends CApplicationComponent
 			$item = $this->_authManager->getAuthItem($item);
 
 		$childrenNames = array();
-		foreach( $item->getChildren() as $childName=>$child )
-			if( $type===null || (int)$child->type===$type )
-				$childrenNames[] = $childName;
+
+		if ($item != null)
+			foreach( $item->getChildren() as $childName=>$child )
+				if( $type===null || (int)$child->type===$type )
+					$childrenNames[] = Utils::atalakit_ekezet_nelkulire($childName);
 
 		$children = $this->_authManager->getAuthItemsByNames($childrenNames);
 		$children = $this->attachAuthItemBehavior($children, null, $item);

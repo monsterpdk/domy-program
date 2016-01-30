@@ -29,7 +29,7 @@ class RAuthItemChildDataProvider extends RAuthItemDataProvider
 	*/
 	public function fetchData()
 	{
-		$this->items = Rights::getAuthorizer()->getAuthItemChildren($this->parent->name, $this->type);
+		$this->items = Rights::getAuthorizer()->getAuthItemChildren(Utils::atalakit_ekezet_nelkulire($this->parent->name), $this->type);
 		return parent::fetchData();
 	}
 }

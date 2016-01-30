@@ -28,7 +28,7 @@ class RAuthItemBehavior extends CBehavior
 	*/
 	public function __construct($userId=null, CAuthItem $parent=null)
 	{
-		$this->userId = $userId;
+		$this->userId = Utils::atalakit_ekezet_nelkulire($userId);
 		$this->parent = $parent;
 	}
 
@@ -78,7 +78,7 @@ class RAuthItemBehavior extends CBehavior
 	{
 		$markup = CHtml::link($this->owner->name, array(
 			'authItem/update',
-			'name'=>urlencode($this->owner->name),
+			'name'=>urlencode($this->owner->data),
 		));
 
 		$markup .= $this->childCount();
@@ -155,7 +155,7 @@ class RAuthItemBehavior extends CBehavior
 		if( $this->owner->name!==Rights::module()->superuserName )
 		{
 			return CHtml::linkButton('<i class="btn btn-danger btn-mini"><i class="icon-white icon-remove-sign"></i></i>', array(
-				'submit'=>array('authItem/delete', 'name'=>urlencode($this->owner->name)),
+				'submit'=>array('authItem/delete', 'name'=>Utils::atalakit_ekezet_nelkulire($this->owner->name)),
 				'class'=>'btn btn-primary',
 				'confirm'=>Rights::t('core', 'Are you sure you want to delete this role?'),
 				'class'=>'delete-link',
@@ -171,7 +171,7 @@ class RAuthItemBehavior extends CBehavior
 	public function getRemoveParentLink()
 	{
 		return CHtml::linkButton(Rights::t('core', 'Remove'), array(
-			'submit'=>array('authItem/removeChild', 'name'=>urlencode($this->owner->name), 'child'=>urlencode($this->parent->name)),
+			'submit'=>array('authItem/removeChild', 'name'=>Utils::atalakit_ekezet_nelkulire($this->owner->name), 'child'=>Utils::atalakit_ekezet_nelkulire($this->parent->name)),
 			'class'=>'remove-link',
 			'csrf'=>Yii::app()->request->enableCsrfValidation,
 		));
@@ -184,7 +184,7 @@ class RAuthItemBehavior extends CBehavior
 	public function getRemoveChildLink()
 	{
 		return CHtml::linkButton(Rights::t('core', 'Remove'), array(
-			'submit'=>array('authItem/removeChild', 'name'=>urlencode($this->parent->name), 'child'=>urlencode($this->owner->name)),
+			'submit'=>array('authItem/removeChild', 'name'=>Utils::atalakit_ekezet_nelkulire($this->parent->name), 'child'=>Utils::atalakit_ekezet_nelkulire($this->owner->name)),
 			'class'=>'remove-link',
 			'csrf'=>Yii::app()->request->enableCsrfValidation,
 		));
@@ -197,7 +197,7 @@ class RAuthItemBehavior extends CBehavior
 	public function getRevokeAssignmentLink()
 	{
 		return CHtml::linkButton(Rights::t('core', 'Revoke'), array(
-			'submit'=>array('assignment/revoke', 'id'=>$this->userId, 'name'=>urlencode($this->owner->name)),
+			'submit'=>array('assignment/revoke', 'id'=>$this->userId, 'name'=>Utils::atalakit_ekezet_nelkulire($this->owner->name)),
 			'class'=>'revoke-link',
 			'csrf'=>Yii::app()->request->enableCsrfValidation,
 		));
@@ -217,8 +217,8 @@ class RAuthItemBehavior extends CBehavior
 				jQuery.ajax({
 					type:'POST',
 					url:'".Yii::app()->controller->createUrl('authItem/revoke', array(
-						'name'=>urlencode($role->name), 
-						'child'=>urlencode($this->owner->name),
+						'name'=>Utils::atalakit_ekezet_nelkulire($role->name), 
+						'child'=>Utils::atalakit_ekezet_nelkulire($this->owner->name),
 					))."',
 					data:{ ajax:1 $csrf },
 					success:function() {
@@ -246,8 +246,8 @@ class RAuthItemBehavior extends CBehavior
 				jQuery.ajax({
 					type:'POST',
 					url:'".Yii::app()->controller->createUrl('authItem/assign', array(
-						'name'=>urlencode($role->name), 
-						'child'=>urlencode($this->owner->name),
+						'name'=>Utils::atalakit_ekezet_nelkulire($role->name), 
+						'child'=>Utils::atalakit_ekezet_nelkulire($this->owner->name),
 					))."',
 					data:{ ajax:1 $csrf },
 					success:function() {

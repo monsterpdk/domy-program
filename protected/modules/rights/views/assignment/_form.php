@@ -19,8 +19,8 @@
 				 array(
 					'name'=>'back',
 					'buttonType'=>'button',
-					'caption'=>'Mégse',
-					'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					'caption'=>'Vissza',
+					'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => $this->createUrl('/rights')),
 				 )); ?>
 
 	</div>
