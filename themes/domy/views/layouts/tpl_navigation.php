@@ -48,27 +48,27 @@
 
                         array ('label'=>'Árajánlatok <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
-                            array ('label'=>'Árajánlatok kezelése', 'url'=> Yii::app()->createUrl('/arajanlatok/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Arajanlatok.ArajanlatokKezelese')),
-                            array ('label'=>'Visszahívásaim', 'url'=> Yii::app()->createUrl('/arajanlatok/visszahivasok'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Arajanlatok.Visszahivasaim')),
+                            array ('label'=>'Árajánlatok kezelése', 'url'=> Yii::app()->createUrl('/arajanlatok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Arajanlatok.ArajanlatokKezelese')),
+                            array ('label'=>'Visszahívásaim', 'url'=> Yii::app()->createUrl('/arajanlatok/visszahivasok'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Arajanlatok.Visszahivasaim')),
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Arajanlatok')) ),
 
 						array ('label'=>'Megrendelések', 'url'=> Yii::app()->createUrl('/megrendelesek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Megrendelesek')),
                         array ('label'=>'Nyomdakönyv <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
-                            array ('label'=>'Nyomdakönyv kezelése', 'url'=> Yii::app()->createUrl('/nyomdakonyv/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Nyomdakonyv.NyomdakonyvKezelese')),
-                            array ('label'=>'Nyomdakönyv ütemezés lista', 'url'=> Yii::app()->createUrl('/nyomdakonyv/utemezes'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Nyomdakonyv.NyomdakonyvUtemezes')),
+                            array ('label'=>'Nyomdakönyv kezelése', 'url'=> Yii::app()->createUrl('/nyomdakonyv/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Nyomdakonyv.NyomdakonyvKezelese')),
+                            array ('label'=>'Nyomdakönyv ütemezés lista', 'url'=> Yii::app()->createUrl('/nyomdakonyv/utemezes'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Nyomdakonyv.NyomdakonyvUtemezes')),
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Nyomdakonyv')) ),
                         
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
-                            array ('label'=>'Ügyfelek kezelése', 'url'=> Yii::app()->createUrl('/ugyfelek/index'), 'visible' => !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Ugyfelek.UgyfelekKezelese')),
+                            array ('label'=>'Ügyfelek kezelése', 'url'=> Yii::app()->createUrl('/ugyfelek/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Ugyfelek.UgyfelekKezelese')),
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Ugyfelek')) ),
 
                         array ('label'=>'Általános beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
-									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.AfaKulcsok') || Yii::app()->user->checkAccess('admin'))),
-									array ('label'=>'E-mail beállítások', 'url'=> Yii::app()->createUrl('/emailBeallitasok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.EmailBeallitasok') || Yii::app()->user->checkAccess('admin'))),
-									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SztornozasiOkok')) ),
+									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.AfaKulcsok') || Yii::app()->user->checkAccess('admin'))),
+									array ('label'=>'E-mail beállítások', 'url'=> Yii::app()->createUrl('/emailBeallitasok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.EmailBeallitasok') || Yii::app()->user->checkAccess('admin'))),
+									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SztornozasiOkok')) ),
 									array ('label'=>'Nyomdai beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
 		                        'items'=>array (
 	                            	array ('label'=>'Nyomdagépek kezelése', 'url'=> Yii::app()->createUrl('/nyomdagepek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomdaiBeallitasok.NyomdagepekKezelese')),

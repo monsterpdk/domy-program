@@ -72,7 +72,7 @@ class CDbAuthManager extends CAuthManager
 	public function checkAccess($itemName,$userId,$params=array())
 	{
 		$assignments=$this->getAuthAssignments($userId);
-		return $this->checkAccessRecursive($itemName,$userId,$params,$assignments);
+		return $this->checkAccessRecursive($itemName,Utils::atalakit_ekezet_nelkulire($userId),$params,$assignments);
 	}
 
 	/**
@@ -90,8 +90,13 @@ class CDbAuthManager extends CAuthManager
 	 */
 	protected function checkAccessRecursive($itemName,$userId,$params,$assignments)
 	{
+		// ha 'admin' akkor egyből TRUE a visszatérési érték
+		if  ($userId == 1)
+			return true;
+		
 		if(($item=$this->getAuthItem($itemName))===null)
 			return false;
+		
 		Yii::trace('Checking permission "'.$item->getName().'"','system.web.auth.CDbAuthManager');
 		if(!isset($params['userId']))
 		    $params['userId'] = $userId;
