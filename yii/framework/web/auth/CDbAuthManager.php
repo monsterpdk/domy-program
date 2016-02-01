@@ -189,7 +189,7 @@ class CDbAuthManager extends CAuthManager
 	{
 		return $this->db->createCommand()
 			->delete($this->itemChildTable, 'parent=:parent AND child=:child', array(
-				':parent'=>$itemName,
+				':parent'=>Utils::atalakit_ekezet_nelkulire ($itemName),
 				':child'=>$childName
 			)) > 0;
 	}
@@ -206,7 +206,7 @@ class CDbAuthManager extends CAuthManager
 			->select('parent')
 			->from($this->itemChildTable)
 			->where('parent=:parent AND child=:child', array(
-				':parent'=>$itemName,
+				':parent'=>Utils::atalakit_ekezet_nelkulire($itemName),
 				':child'=>$childName))
 			->queryScalar() !== false;
 	}

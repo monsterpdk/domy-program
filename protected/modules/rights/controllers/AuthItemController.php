@@ -492,8 +492,9 @@ class AuthItemController extends RController
 			$model = $this->loadModel();
 			$childName = $this->getChildName();
 
-			if( $childName!==null && $model->hasChild($childName)===true )
+			if( $childName!==null && $model->hasChild($childName)===true ) {
 				$model->removeChild($childName);
+			}
 
 			// if AJAX request, we should not redirect the browser
 			if( isset($_POST['ajax'])===false )

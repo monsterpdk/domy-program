@@ -1047,8 +1047,10 @@
 		
 		// LI: az ékezeteket kicseréli a string-ben, az egyéb speciális karaktereket meg kiszűri
 		function atalakit_ekezet_nelkulire ($string) {
-			$mit = array("ö","ü","ó","ő","ú","ű","á","í","é","ő","ű","Ö","Ü","Ó","Ő","Ú","Ű","Á","Í","É","Ő","Ű");
-			$mire = array("o","u","o","o","u","u","a","i","e","o","u","o","u","o","o","u","u","a","i","e","o","u");
+			/*
+			$mit =  array("ö","ü","ó","ú","ű","á","í","é","ő","Ö","Ü","Ó","Ő","Ú","Ű","Á","Í","É");
+			$mire = array("o","u","o","u","u","a","i","e","o","o","u","o","o","u","u","a","i","e");
+
 			$isUTF8 = preg_match('%^(?:
 				 [\x09\x0A\x0D\x20-\x7E]           # ASCII
 			   | [\xC2-\xDF][\x80-\xBF]            # non-overlong 2-byte
@@ -1060,12 +1062,40 @@
 			   | \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
 		   )*$%xs', $string);
 			if(!$isUTF8){
-				$string  = utf8_encode($string);     
+				$string  = utf8_encode($string);
 			}
-			$string = str_replace($mit,$mire,strtolower($string));
-			$string = preg_replace('/[^a-z0-9_\-\.]/i','_',$string);
 			
-			return $string;
+			$string = str_replace($mit,$mire,strtolower($string));
+			$string = preg_replace('/[^a-z0-9_\-\.]/i','',$string);
+			*/
+			
+			$CHARMAP = array(  
+			  'ö' => 'o',  
+			  'Ö' => 'O',  
+			  'ó' => 'o',  
+			  'Ó' => 'O',  
+			  'ő' => 'o',  
+			  'Ő' => 'O',  
+			  'ú' => 'u',  
+			  'Ú' => 'U',  
+			  'ű' => 'u',  
+			  'Ű' => 'U',  
+			  'ü' => 'u',  
+			  'Ü' => 'U',  
+			  'á' => 'a',  
+			  'Á' => 'A',  
+			  'é' => 'e',  
+			  'É' => 'E',  
+			  'í' => 'i',  
+			  'Í' => 'I',  
+			);  
+			  
+			$string = strtr($string, $CHARMAP);  
+			  
+			// minden más karakter  
+			$string = preg_replace('/[^a-zA-Z0-9.]/','_',$string); 
+			
+			return strtolower($string);
 		}
 	
 	}

@@ -240,7 +240,7 @@ class RAuthItemBehavior extends CBehavior
 	public function getAssignPermissionLink(CAuthItem $role)
 	{
 		$csrf = Rights::getDataCsrf();
-		
+
 		return CHtml::link(Rights::t('core', 'Assign'), '#', array(
 			'onclick'=>"
 				jQuery.ajax({
