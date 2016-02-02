@@ -477,7 +477,7 @@ class CDbAuthManager extends CAuthManager
 		}
 
 		return $this->db->createCommand()
-			->delete($this->itemTable, 'name=:name', array(
+			->delete($this->itemTable, 'data=:name', array(
 				':name'=>$name
 			)) > 0;
 	}
