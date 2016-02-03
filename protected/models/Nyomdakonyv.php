@@ -410,7 +410,7 @@ class Nyomdakonyv extends CActiveRecord
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
-			$criteria->condition=" torolt = '0'";
+			$criteria->compare('t.torolt', 0, false);
 	
 		// id szerint csökkenő sorrendben kérdezzük le az adatokat, így biztos, hogy a legújabb lesz legfelül
 		$criteria->order = 't.id DESC';

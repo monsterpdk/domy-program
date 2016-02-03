@@ -100,10 +100,12 @@ class CDbAuthManager extends CAuthManager
 		Yii::trace('Checking permission "'.$item->getName().'"','system.web.auth.CDbAuthManager');
 		if(!isset($params['userId']))
 		    $params['userId'] = $userId;
+		
 		if($this->executeBizRule($item->getBizRule(),$params,$item->getData()))
 		{
 			if(in_array($itemName,$this->defaultRoles))
 				return true;
+			
 			if(isset($assignments[$itemName]))
 			{
 				$assignment=$assignments[$itemName];
@@ -115,6 +117,7 @@ class CDbAuthManager extends CAuthManager
 				->from($this->itemChildTable)
 				->where('child=:name', array(':name'=>$itemName))
 				->queryColumn();
+				
 			foreach($parents as $parent)
 			{
 				if($this->checkAccessRecursive($parent,$userId,$params,$assignments))

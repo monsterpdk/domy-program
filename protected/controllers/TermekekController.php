@@ -126,6 +126,7 @@ class TermekekController extends Controller
 		
 		$model=new Termekek('search');
 		$model->unsetAttributes();
+		
 		if(isset($_GET['Termekek']))
 			$model->attributes=$_GET['Termekek'];
 	 	
@@ -142,7 +143,7 @@ class TermekekController extends Controller
 			// mindig az aktuális
             $this->exportCSV($dataProvider, array('id', 'nev', 'tipus', 'kodszam', 'cikkszam', 'meret.id', 'meret.nev', 'suly', 'zaras.id', 'zaras.nev', 'ablakmeret.id', 'ablakmeret.nev', 'ablakhely.id', 'ablakhely.nev', 'papirtipus.id', 'papirtipus.nev', 'afakulcs.id', 'afakulcs.afa_szazalek', 'redotalp', 'belesnyomott', 'kategoria_tipus', 'gyarto.id', 'gyarto.cegnev', 'ksh_kod', 'csom_egys', 'minimum_raktarkeszlet', 'maximum_raktarkeszlet', 'doboz_suly', 'raklap_db', 'doboz_hossz', 'doboz_szelesseg', 'doboz_magassag', 'megjegyzes', 'megjelenes_mettol', 'megjelenes_meddig', 'datum', 'torolt'));
         }
-		
+
 		// LI : importhoz kell ez
 		Yii::import("xupload.models.XUploadForm");
 		$importMmodel = new XUploadForm;

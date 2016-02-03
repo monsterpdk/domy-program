@@ -93,7 +93,7 @@ class TermekZarasiModok extends CActiveRecord
 
 		// LI: logikailag törölt sorok ne jelenjenek meg
 		if (!Yii::app()->user->checkAccess('Admin'))
-			$criteria->condition=" torolt = '0'";
+			$criteria->compare('torolt', 0, false);
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

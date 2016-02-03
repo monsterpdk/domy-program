@@ -176,13 +176,13 @@ class Arajanlatok extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->select = "t.id, sorszam, cimzett, kovetkezo_hivas_ideje, ugyfel_tel, ajanlat_datum, t.torolt" ; 
-		$criteria->condition = "admin_id = '" . $belepett_admin . "' and kovetkezo_hivas_ideje >= CURDATE() and visszahivas_lezarva = 0";			
+		$criteria->condition = "admin_id = '" . $belepett_admin . "' and kovetkezo_hivas_ideje >= CURDATE() and visszahivas_lezarva = 0" . (!Yii::app()->user->checkAccess('Admin')) ? ' and torolt=0' : '';
 		
 		$criteria->compare('admin_id',$this->admin_id);
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
-			$criteria->condition .= " torolt = '0'";			
+			$criteria->compare('t.torolt', 0, false);
 			
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -241,7 +241,7 @@ class Arajanlatok extends CActiveRecord
 		
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
-			$criteria->condition=" torolt = '0'";			
+			$criteria->compare('t.torolt', 0, false);
 			
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
