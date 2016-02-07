@@ -634,7 +634,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'rendelesi_tartozasi_limit'); ?>
-		<?php echo $form->textField($model,'rendelesi_tartozasi_limit',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->textField($model,'rendelesi_tartozasi_limit',array('size'=>10,'maxlength'=>10, 'readonly' => !Yii::app()->user->checkAccess('Megrendelesek.LimitMegkerulese'))); ?>
 		<?php echo $form->error($model,'rendelesi_tartozasi_limit'); ?>
 	</div>
 

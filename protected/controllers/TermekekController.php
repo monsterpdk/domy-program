@@ -126,7 +126,6 @@ class TermekekController extends Controller
 		
 		$model=new Termekek('search');
 		$model->unsetAttributes();
-		
 		if(isset($_GET['Termekek']))
 			$model->attributes=$_GET['Termekek'];
 	 	

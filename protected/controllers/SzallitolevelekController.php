@@ -87,7 +87,14 @@ class SzallitolevelekController extends Controller
 			$model -> sorszam = "SZ" . date("Y") . str_pad( ($utolsoArajanlat != null) ? ($utolsoArajanlat + 1) : "000001", 6, '0', STR_PAD_LEFT );
 		}
 		
-		$dataProvider = new CArrayDataProvider(Utils::getSzallitolevelTetelToMegrendeles($id));
+		$dataProvider = new CArrayDataProvider(Utils::getSzallitolevelTetelToMegrendeles($id),
+			array(
+				'pagination'=>array(
+					'pageSize'=>100,
+				),
+			)
+		);
+
 		$this->render('create',array(
 			'dataProvider'=>$dataProvider,
 			'model'=>$model,

@@ -137,12 +137,13 @@ class CAccessControlFilter extends CFilter
 		{
 			if(($allow=$rule->isUserAllowed($user,$filterChain->controller,$filterChain->action,$ip,$verb))>0) // allowed
 				break;
-			elseif($allow<0) // denied
-			{
+			elseif($allow<=0) // denied
+			{ // LI: TODO ha így nem jó
 				if(isset($rule->deniedCallback))
 					call_user_func($rule->deniedCallback, $rule);
-				else
+				else {
 					$this->accessDenied($user,$this->resolveErrorMessage($rule));
+				}
 				return false;
 			}
 		}
@@ -315,6 +316,8 @@ class CAccessRule extends CComponent
 	 */
 	protected function isUserMatched($user)
 	{
+		return Yii::app()->user->checkAccess('Menu.Adminisztracio.SzerepkorokKiosztasa');
+		
 		if(empty($this->users))
 			return true;
 		foreach($this->users as $u)

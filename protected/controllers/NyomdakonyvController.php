@@ -82,7 +82,7 @@ class NyomdakonyvController extends Controller
 
 		if ($model->elkeszulesi_datum == "0000-00-00 00:00:00") {
 				//Szinkronizálunk a géptermi program adatbázisával, hátha van már elkészülési dátum
-//				$this->actionGepteremHivas($id) ;
+				$this->actionGepteremHivas($id) ;
 		}
 		
 		// Uncomment the following line if AJAX validation is needed
@@ -253,7 +253,7 @@ class NyomdakonyvController extends Controller
 	}
 	
 	// Meghívja a géptermi program adatbázisát, megnézi, hogy ehhez a munkához van-e már benne bejegyzés, ha nincs, akkor létrehozza, ha van, akkor pedig visszaadja az ott rögzített két olyan mezőt, ami kell nekünk: keszido (elkészülés dátum), keszsec (elkészülés idő - óra, perc)
-	public function actionGepteremHivas($munka_id) {
+	public function actionGepteremHivas($munka_id, $showmessage = true) {
 //		$nyom_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/NYOM.dbf") ;
 //		$workflow_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/workflow.dbf") ;
 		$nyom_dbf_url = rawurlencode(Yii::app()->config->get('NyomDbfPath'));
@@ -264,7 +264,7 @@ class NyomdakonyvController extends Controller
 //		print_r($megrendeles_tetel) ;
 			
 		$parameters = array() ;
-		$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;
+		$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;		
 		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $nyom_dbf_url . "&filter=" . json_encode($parameters) ;
 		$result = unserialize(Utils::httpGet($query_url)) ;
 		if (count($result) == 0) {
@@ -331,8 +331,8 @@ class NyomdakonyvController extends Controller
 			$parameters = array() ;
 			$nyomasi_kategoria = Utils::NyomasiKategoriaSzamol($model->megrendeles_tetel->displayTermekSzinekSzama, $model->megrendeles_tetel->darabszam, $megrendeles_tetel->termek->tipus,$model->kifutos) ; 
 			$parameters[] = array("TSZAM"=>rawurlencode($model->taskaszam),
-								  "CEGNEV"=>rawurlencode($ugyfel_nev),
-								  "MUNEV"=>rawurlencode(mb_strtoupper($model->megrendeles_tetel->munka_neve, "UTF-8")),
+								  "CEGNEV"=>rawurlencode(addslashes(preg_replace( "/\r|\n/", "", $ugyfel_nev))),
+								  "MUNEV"=>rawurlencode(preg_replace( "/\r|\n/", "", mb_strtoupper($model->megrendeles_tetel->munka_neve, "UTF-8"))),
 								  "NEV"=>rawurlencode($model->megrendeles_tetel->termek->displayTermekTeljesNev),
 								  "DARAB"=>$model->megrendeles_tetel->darabszam,
 								  "SZIN"=>rawurlencode($model->megrendeles_tetel->displayTermekSzinekSzama),
@@ -354,17 +354,27 @@ class NyomdakonyvController extends Controller
 								  "CTP"=>$ctp,
 								  "KIFUT"=>$kifutos) ;
 			$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=insert&dbf=" . $nyom_dbf_url . "&fields=" . json_encode($parameters) ;
-			$result = unserialize(Utils::httpGet($query_url)) ;
-			if (is_numeric($result)) {
-				$return["status"] = "inserted" ;
-				$return["message"] = "Géptermi adatbázisba mentve!" ;
+//			echo $query_url . "<br /><br />\n\n" ;
+			if (preg_replace( "/\r|\n/", "", $ugyfel_nev) != "" && $model->megrendeles_tetel->munka_neve != "") {
+				$result = unserialize(Utils::httpGet($query_url)) ;
+				if (is_numeric($result)) {
+					$return["status"] = "inserted" ;
+					$return["message"] = "Géptermi adatbázisba mentve!" ;
+				}
+				else
+				{
+					$return["status"] = "failed" ;
+					$return["message"] = "Géptermi adatbázis mentése sikertelen!" ;	
+				}
 			}
 			else
 			{
 				$return["status"] = "failed" ;
-				$return["message"] = "Géptermi adatbázis mentése sikertelen!" ;	
+				$return["message"] = "Nem található munka ehhez a táskaszámhoz: " . $model->taskaszam ;					
 			}
-			echo json_encode($return) ;
+			if ($showmessage) {
+				echo json_encode($return) ;
+			}
 		}
 		else
 		{
@@ -398,7 +408,9 @@ class NyomdakonyvController extends Controller
 			}
 			$return["status"] = "ok" ;
 //			print_r($return) ;
-			echo json_encode($return) ;
+			if ($showmessage) {
+				echo json_encode($return) ;
+			}
 		}
 	}
 	
@@ -523,7 +535,7 @@ class NyomdakonyvController extends Controller
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
-//	 			$this->actionGepteremHivas($munka->id) ;
+	 			$this->actionGepteremHivas($munka->id, false) ;
 	 		}
 	 	}
 	}

@@ -10,7 +10,7 @@ Yii::setPathOfAlias('editable', dirname(__FILE__).'/../extensions/x-editable');
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'DomyPack & Press',
+	'name'=>'DomyPack & Press tesztfelület',
 
 	'theme'=>'domy',
 	'language'=>'hu',
@@ -106,7 +106,7 @@ return array(
 		),
 		// LI
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=domy',
+			'connectionString' => 'mysql:host=localhost;dbname=domy_teszt',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => 'doMYP4ss',

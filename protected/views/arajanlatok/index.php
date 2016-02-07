@@ -101,7 +101,7 @@
 											'style'=>'margin-left: 15px',
 											'onclick' => 'js: openTetelSelectDialog ($(this))',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.CreateMegrendeles") && $data->van_megrendeles == 0 && $data->torolt == 0 && !(Utils::reachedUgyfelLimit ($data->id)) ',
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Create") && $data->van_megrendeles == 0 && $data->torolt == 0 && !(Utils::reachedUgyfelLimit ($data->id)) ',
 							),
 							'send_via_email' => array(
 								'label' => 'Megrendelés küldése e-mailben',
@@ -111,7 +111,7 @@
 											'style'=>'margin-left: 15px',
 											'onclick'=>'js: arajanlatKuld($(this))',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.CreateMegrendeles") && $data->torolt == 0 && $data->van_megrendeles == 0',
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Create") && $data->torolt == 0 && $data->van_megrendeles == 0',
 							),
 						),
                 ),
