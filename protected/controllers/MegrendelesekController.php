@@ -236,6 +236,21 @@ class MegrendelesekController extends Controller
 		if ($ugyfel != null) {
 			$tomb["ugyfel_id"] = $ugyfel->id ;
 			$tomb["ugyfel_arkategoria_id"] = $ugyfel->arkategoria ;
+			$szallitasi_varos_nev = (string)$xml->orderhead_shipping_city ;
+			if ($szallitasi_varos_nev != "") {
+				$varos_model = Varosok::model()->findByAttributes(array('varosnev' => $szallitasi_varos_nev)) ;
+				if ($varos_model == null) {
+					$varos_model = new Varosok;
+					$varos_model->iranyitoszam = $ugyfel_adatok["szallitasi_irsz"] ;
+					$varos_model->varosnev = $szallitasi_varos_nev ;
+					$varos_model->save() ;
+				}
+				$ugyfel->szallitasi_varos = $varos_model->id ;
+				$ugyfel->szallitasi_irsz = (string)$xml->orderhead_shipping_zip ;
+				$ugyfel->szallitasi_orszag = (string)$xml->orderhead_partner_country ;
+				$ugyfel->szallitasi_cim = (string)$xml->orderhead_shipping_address ;	
+				$ugyfel->save();
+			}			
 		}
 		else
 		{

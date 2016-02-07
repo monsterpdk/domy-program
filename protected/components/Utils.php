@@ -323,6 +323,10 @@
 		//		akkor nem lehet megrendelést csinálni az árajánlatból, tehát FALSE értékkel tér vissza a függvény. Minden más esetben TRUE-val.
 		function reachedUgyfelLimit ($arajanlat_id) {
 		
+		// LI: ha a felhasználó rendelkezik a Megrendelesek.LimitMegkerulese jogosultsággal, akkor nem ellenőrizzük, hogy az ügyfél elérte-e a limitet.
+		if (Yii::app()->user->checkAccess("Megrendelesek.LimitMegkerulese")) 
+			return false;
+		
 			if ($arajanlat_id != null) {
 				// megkeressük a paraméterben kapott árajánlatot
 				$arajanlat = Arajanlatok::model() -> with('tetelek') -> findByAttributes(array('id' => $arajanlat_id));
@@ -1093,7 +1097,7 @@
 			$string = strtr($string, $CHARMAP);  
 			  
 			// minden más karakter  
-			$string = preg_replace('/[^a-zA-Z0-9.]/','_',$string); 
+			$string = preg_replace('/[^a-zA-Z0-9.*]/','_',$string); 
 			
 			return strtolower($string);
 		}

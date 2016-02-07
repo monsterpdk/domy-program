@@ -22,14 +22,19 @@
 	<?php echo $form->hiddenField($model, 'szorzo_tetel_arhoz'); ?>
 	<?php
 //		$ablakhelyek = CHtml::listData(TermekAblakHelyek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-		$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+//		$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 		$meretek = array('114x162 mm'=>'LC/6', '110x220 mm'=>'LA/4', '114x229 mm' => 'C6/C5', '162x229 mm' => 'LC/5', '162x229 mm' => 'TC/5', '176x250 mm' => 'TB/5', '229x324 mm' => 'LC/4', '229x324 mm' => 'TC/4', '250x353 mm' => 'TB/4') ;
+		
 		$zarodasok = CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-		$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 		$zarodasok[" "] = "Nincs" ;
+		
+		$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 		$ablakmeretek["valasszon"] = "-=Válasszon=-" ; 		
+		
+		$termekcsoportok = CHtml::listData(Termekcsoportok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+		$termekcsoportok["valasszon"] = "-=Válasszon=-" ; 		
 //		$meretek["valasszon"] = "-=Válasszon=-" ; 		
-//		$zarodasok["valasszon"] = "-=Válasszon=-" ; 				
+//		$zarodasok["valasszon"] = "-=Válasszon=-" ; 		
 	?>
 	
 	<div class="row search-options">
@@ -53,10 +58,17 @@
 			</div>
 		</fieldset>
 
-		<fieldset>
+		<fieldset style='width: 46%; float:left; margin-right:10px'>
 			<legend>Ablakméretek</legend>
 			<div class="boritekAblakMeretRadioGroup">
 				<?php echo CHtml::dropDownList('boritek_ablakmeret', 'valasszon' ,$ablakmeretek); ?>			
+			</div>
+		</fieldset>
+		
+		<fieldset style='width: 46%; float:left;'>
+			<legend>Termékcsoportok</legend>
+			<div class="boritekAblakMeretRadioGroup">
+				<?php echo CHtml::dropDownList('termekcsoport', 'valasszon' ,$termekcsoportok); ?>			
 			</div>
 		</fieldset>
 
@@ -70,6 +82,7 @@
 											var valasztott_meret = $("input[name=boritek_meret]:checked", "#megrendeles-tetelek-form").val()
 											var valasztott_zaras = $("input[name=boritek_zarodas]:checked", "#megrendeles-tetelek-form").val()
 											var valasztott_ablakmeret = $("#boritek_ablakmeret").val() ;
+											var valasztott_termekcsoport = $("#termekcsoport").val() ;
 											
 											var paramKeys = [];
 											var paramValues = [];
@@ -78,6 +91,14 @@
 												paramKeys.push("Termekek[ablakmeret_search]");
 												paramValues.push(valasztott_ablakmeret);
 											}
+
+											if (valasztott_termekcsoport != "valasszon") {
+												paramKeys.push("Termekek[termekcsoport_search]");
+												paramValues.push(valasztott_termekcsoport);
+											}
+
+											paramKeys.push("Termekek[meret_search]");
+											paramValues.push(valasztott_meret);
 											
 											paramKeys.push("Termekek[zaras_search]");
 											paramValues.push(valasztott_zaras);
@@ -274,6 +295,12 @@
 				  'selectableRows'=>1,
 				  'columns'=>array(
 								'nev',
+								array(
+									'name' => 'termekcsoport.nev',
+									'header' => 'Termékcsoport',
+									'filter' => CHtml::activeTextField($termek, 'termekcsoport_search'),
+									'value' => '$data->termekcsoport == null ? "" : $data->termekcsoport->nev',
+								),
 								array(
 									'name' => 'meret.nev',
 									'header' => 'Méret',

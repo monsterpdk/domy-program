@@ -39,7 +39,7 @@ $this->menu=array(
 										'class'=>'btn btn-info btn-mini',
 										'onclick' => 'js: openPrintDialog($(this))',
 										),
-							'visible' => "Yii::app()->user->checkAccess('Megrendelesek.Print')",
+							'visible' => "Yii::app()->user->checkAccess('Nyomdakonyv.Create')",
 						),
 						'update' => array(
 							'label' => 'Szerkeszt',

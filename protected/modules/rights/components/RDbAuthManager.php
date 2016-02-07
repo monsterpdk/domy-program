@@ -47,8 +47,9 @@ class RDbAuthManager extends CDbAuthManager
 	public function assign($itemName, $userId, $bizRule=null, $data=null)
 	{
 		// Make sure that this user doesn't already have this assignment.
-		if( $this->getAuthAssignment($itemName, $userId)===null )
+		if( $this->getAuthAssignment($itemName, $userId)===null ) {
 			return parent::assign($itemName, $userId, $bizRule, $data);
+		}
 	}
 
 	/**
