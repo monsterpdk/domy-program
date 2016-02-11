@@ -225,6 +225,17 @@ class AnyagrendelesTermekekController extends Controller
 		));
 	}
 
+	public function actionCalculateNettoDarabAr ($ugyfel_id, $termek_id, $darabszam) {
+			if (isset($termek_id)) {
+				$result = Utils::getActiveTermekar($termek_id, $darabszam);
+
+				echo ($result != null && is_array($result)) ? $result['db_beszerzesi_ar'] : 0;
+				die();
+			}
+
+			echo 0;
+	}
+
 	/**
 	 * Manages all models.
 	 */

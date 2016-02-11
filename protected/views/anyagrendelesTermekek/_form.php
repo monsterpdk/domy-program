@@ -27,10 +27,15 @@
 		<?php
 			$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 			$meretek = array('114x162 mm'=>'LC/6', '110x220 mm'=>'LA/4', '114x229 mm' => 'C6/C5', '162x229 mm' => 'LC/5', '162x229 mm' => 'TC/5', '176x250 mm' => 'TB/5', '229x324 mm' => 'LC/4', '229x324 mm' => 'TC/4', '250x353 mm' => 'TB/4') ;
+
 			$zarodasok = CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-			$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 			$zarodasok[" "] = "Nincs" ;
-			$ablakmeretek["valasszon"] = "-=Válasszon=-" ; 		
+
+			$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+			$ablakmeretek["valasszon"] = "-=Válasszon=-" ;
+			
+			$termekcsoportok = CHtml::listData(Termekcsoportok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
+			$termekcsoportok["valasszon"] = "-=Válasszon=-" ; 		
 		?>
 		
 		<!-- szűrő blokk -->
@@ -53,12 +58,20 @@
 				</div>
 			</fieldset>
 
-			<fieldset>
+			<fieldset style='width: 46%; float:left; margin-right:10px'>
 				<legend>Ablakméretek</legend>
 				<div class="boritekAblakMeretRadioGroup">
 					<?php echo CHtml::dropDownList('boritek_ablakmeret', 'valasszon' ,$ablakmeretek); ?>			
 				</div>
 			</fieldset>
+			
+			<fieldset style='width: 46%; float:left;'>
+				<legend>Termékcsoportok</legend>
+				<div class="boritekAblakMeretRadioGroup">
+					<?php echo CHtml::dropDownList('termekcsoport', 'valasszon' ,$termekcsoportok); ?>			
+				</div>
+			</fieldset>
+			
 		</div>
 
 		<div class="row boritekMeretRadioGroup">
@@ -68,7 +81,8 @@
 												'
 												var valasztott_meret = $("input[name=boritek_meret]:checked", "#anyagrendeles-termekek-form").val()
 												var valasztott_zaras = $("input[name=boritek_zarodas]:checked", "#anyagrendeles-termekek-form").val()
-												var valasztott_ablakmeret = $("#boritek_ablakmeret").val() ;
+												var valasztott_ablakmeret = $("#boritek_ablakmeret").val();
+												var valasztott_termekcsoport = $("#termekcsoport").val() ;
 												
 												var paramKeys = [];
 												var paramValues = [];
@@ -76,8 +90,22 @@
 												if (valasztott_ablakmeret != "valasszon") {
 													paramKeys.push("Termekek[ablakmeret_search]");
 													paramValues.push(valasztott_ablakmeret);
+												} else {
+													paramKeys.push("Termekek[ablakmeret_search]");
+													paramValues.push("");
 												}
 												
+												if (valasztott_termekcsoport != "valasszon") {
+													paramKeys.push("Termekek[termekcsoport_search]");
+													paramValues.push(valasztott_termekcsoport);
+												} else {
+													paramKeys.push("Termekek[termekcsoport_search]");
+													paramValues.push("");
+												}
+												
+												paramKeys.push("Termekek[meret_search]");
+												paramValues.push(valasztott_meret);
+											
 												paramKeys.push("Termekek[zaras_search]");
 												paramValues.push(valasztott_zaras);
 
@@ -110,13 +138,13 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'rendelt_darabszam'); ?>
-		<?php echo $form->textField($model,'rendelt_darabszam',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->textField($model,'rendelt_darabszam',array('size'=>10,'maxlength'=>10, /* LI: ha nettó összeget is meg kell jeleníteni 'onChange'=>'javascript:nettoar_kalkulal();',*/)); ?>
 		<?php echo $form->error($model,'rendelt_darabszam'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'rendeleskor_netto_darabar'); ?>
-		<?php echo $form->textField($model,'rendeleskor_netto_darabar'); ?>
+		<?php echo $form->textField($model,'rendeleskor_netto_darabar', array('maxlength' => 128, 'readonly'=> true)); ?>
 		<?php echo $form->error($model,'rendeleskor_netto_darabar'); ?>
 	</div>
 
@@ -147,6 +175,12 @@
 				  'selectableRows'=>1,
 				  'columns'=>array(
 								'nev',
+								array(
+									'name' => 'termekcsoport.nev',
+									'header' => 'Termékcsoport',
+									'filter' => CHtml::activeTextField($termek, 'termekcsoport_search'),
+									'value' => '$data->termekcsoport == null ? "" : $data->termekcsoport->nev',
+								),
 								array(
 									'name' => 'meret.nev',
 									'header' => 'Méret',
@@ -194,7 +228,7 @@
 																			  $(\"#AnyagrendelesTermekek_termek_id\").val(\"$data->id\");
 																			  $(\"#AnyagrendelesTermekek_autocomplete_termek_name\").val(\"$data->nev\");
 																			  
-																			  // calculateTermekNettoDarabAr (\"$data->id\");
+																			  calculateTermekNettoDarabAr (\"$data->id\");
 																			 "))',
 															),
 								   ),
@@ -205,5 +239,48 @@
 	<!-- CJUIDIALOG END -->
 	
 <?php $this->endWidget(); ?>
+
+<script>
+	// LI: arra az esetre, ha nem csak darabár, hanem nettó összeg is kell, egyelőre nem használjuk
+	//$( "#AnyagrendelesTermekek_rendelt_darabszam" ).on("keyup", keyPressEvent);
+	
+	// LI: arra az esetre, ha nem csak darabár, hanem nettó összeg is kell, egyelőre nem használjuk
+	function osszegSzamol() {
+		var darabszam = $.isNumeric ($( "#AnyagrendelesTermekek_rendelt_darabszam" ).val()) ? $( "#AnyagrendelesTermekek_rendelt_darabszam" ).val() : 0;
+		var netto_darabar = $.isNumeric ($( "#AnyagrendelesTermekek_rendeleskor_netto_darabar" ).val()) ? $( "#AnyagrendelesTermekek_rendeleskor_netto_darabar" ).val() : 0;
+		
+		$( "#AnyagrendelesTermekek_rendeleskor_netto_darabar" ).val (Math.round(darabszam * netto_darabar));			
+	}
+	
+	function keyPressEvent() {
+		$( "#AnyagrendelesTermekek_rendeleskor_netto_darabar" ).val($( "#AnyagrendelesTermekek_rendeleskor_netto_darabar" ).val().replace(",",".")) ;
+		$( "#AnyagrendelesTermekek_rendeleskor_netto_darabar" ).val("0") ;
+		nettoar_kalkulal() ;
+		//osszegSzamol() ;
+	}
+	
+	function nettoar_kalkulal() {
+		var termek_id = $("#AnyagrendelesTermekek_termek_id").val() ;
+		calculateTermekNettoDarabAr(termek_id) ;
+	}
+	
+	function calculateTermekNettoDarabAr (termekId) {
+		var darabszam = $.isNumeric ($( "#AnyagrendelesTermekek_rendelt_darabszam" ).val()) ? $( "#AnyagrendelesTermekek_rendelt_darabszam" ).val() : 0;
+		var ugyfel_id = $('#Anyagrendelesek_gyarto_id').val ();
+
+		<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/anyagrendelesTermekek/calculateNettoDarabAr/ugyfel_id/' + ugyfel_id + '/termek_id/' + termekId + '/darabszam/' + darabszam",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'send-link-'.uniqid(),
+				'replace' => '',
+				'dataType'=>'json',
+				'success'=>"function(data)
+				{
+					$('#AnyagrendelesTermekek_rendeleskor_netto_darabar' ).val (data);
+				} ",
+		)); ?>;
+	}
+</script>
 
 </div><!-- form -->

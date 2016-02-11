@@ -295,14 +295,13 @@
 					$netto_osszeg = $nyomasi_ar + $darabszam_osszesen * $db_ar ;									
 				}				
 			}
-						
 
 			$ar = ($db_ar == 0) ? 0 : $db_ar;
 			if ($szinszam == 0)
 				$netto_osszeg = round($darabszam * $ar) ;			
 			else if ($darabszam > 0)
 				$ar = round($netto_osszeg / $darabszam, 2);
-			
+
 			$netto_osszeg = round($netto_osszeg * $szorzo) ;
 			$ar = round($ar * $szorzo, 2) ;
 

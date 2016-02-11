@@ -82,7 +82,7 @@ class NyomdakonyvController extends Controller
 
 		if ($model->elkeszulesi_datum == "0000-00-00 00:00:00") {
 				//Szinkronizálunk a géptermi program adatbázisával, hátha van már elkészülési dátum
-				$this->actionGepteremHivas($id) ;
+//				$this->actionGepteremHivas($id) ;
 		}
 		
 		// Uncomment the following line if AJAX validation is needed
@@ -535,7 +535,7 @@ class NyomdakonyvController extends Controller
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
-	 			$this->actionGepteremHivas($munka->id, false) ;
+//	 			$this->actionGepteremHivas($munka->id, false) ;
 	 		}
 	 	}
 	}

@@ -165,8 +165,8 @@ class TermekArak extends CActiveRecord
 		
 		$criteria->compare('termek.nev', $this->termeknev_search, true );
 		$criteria->compare('gyarto.cegnev', $this->gyarto_search, true );
-		$criteria->compare('meret.nev', $this->meret_search, true );
-		$criteria->compare('zaras.nev', $this->zaras_search, true );
+		$criteria->compare('meret.id', $this->meret_search, true );
+		$criteria->compare('zaras.id', $this->zaras_search, true );
 		$criteria->compare('termek.cikkszam', $this->cikkszam_search, true );
 		$criteria->compare('termek.kodszam', $this->kodszam_search, true );
 

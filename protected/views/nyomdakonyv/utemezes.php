@@ -38,6 +38,7 @@ $this->menu=array(
 						'megrendeles_tetel.megrendeles.ugyfel.cegnev',
 						'megrendeles_tetel.termek.DisplayTermekTeljesNev',
 						'megrendeles_tetel.displayTermekSzinekSzama',
+						'SzinErtekek',
 						'megrendeles_tetel.DarabszamFormazott',
 						'GyartasiIdo',
 						array(

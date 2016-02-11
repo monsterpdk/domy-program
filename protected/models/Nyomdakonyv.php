@@ -296,6 +296,7 @@ class Nyomdakonyv extends CActiveRecord
 			'HataridoFormazott' => 'Határidő',
 			'GyartasiIdo' => 'Gyártási idő',
 			'UtemezesBejegyzesPrint' => 'Munka részletek',
+			'SzinErtekek' => 'Színek',
 			
 			'dsp_szallitolevel_datum' => 'Szállítólevél dátuma',
 			'dsp_szallitolevel_sorszam' => 'Szállítólevél sorszáma',
@@ -496,6 +497,33 @@ class Nyomdakonyv extends CActiveRecord
 		return $norma ;
 	}
 	
+	//A nyomdai munkánál megadott színkódokat, színeket adja vissza listában, nyomtatásban megjelenítéshez
+	public function getSzinErtekek() {
+		$return = "" ;
+		$cmyk = "CMYK" ;
+		$szin_elooldali = $this->szin_c_elo . $this->szin_m_elo . $this->szin_y_elo . $this->szin_k_elo ;
+		$szin_hatoldali = $this->szin_c_hat . $this->szin_m_hat . $this->szin_y_hat . $this->szin_k_hat ;
+		for ($i = 0; $i < 4; $i++) {
+			if ($szin_elooldali[$i] == 1)
+				$szin_elooldali[$i] = $cmyk[$i] ;
+			if ($szin_hatoldali[$i] == 1)
+				$szin_hatoldali[$i] = $cmyk[$i] ;
+		}
+		$szin_elooldali = str_replace("0", "", $szin_elooldali) ;
+		$szin_hatoldali = str_replace("0", "", $szin_hatoldali) ;
+		$szin_pantone = $this->szin_pantone ;
+		if ($szin_elooldali != "") {
+			$return .= $szin_elooldali . ", " ;
+		}
+		if ($szin_hatoldali != "") {
+			$return .= $szin_hatoldali . ", " ;
+		}
+		if ($szin_pantone != "") {
+			$return .= $szin_pantone ;
+		}
+		return rtrim($return, ", ") ;
+	}
+	
 	//Az ütemezés nyomtatáshoz az egyes rekordokból csinál egy kompakt html blokkot olyan elrendezéssel, ahogy meg kell jelennie a nyomtatási képen
 	public function getUtemezesBejegyzesPrint() {
 		$ctp_vagy_film = "CTP" ;
@@ -506,7 +534,8 @@ class Nyomdakonyv extends CActiveRecord
 		$html .= '<tr><td class="utemezes_elso_oszlop">&nbsp;</td><td class="utemezes_cegnev"><strong>' . $this->megrendeles_tetel->megrendeles->ugyfel->cegnev . '</strong></td><td class="utemezes_ctp_film">' . $ctp_vagy_film . '</td><td class="utemezes_ctp_input_td" style="width:180px;border: 1px solid #000000;">&nbsp;</td></tr>' ;
 		$html .= '<tr><td class="utemezes_elso_oszlop utemezes_taskaszam">' . $this->taskaszam . '</td><td colspan="2" class="utemezes_munka_neve">' . $this->megrendeles_tetel->munka_neve . '</td><td class="utemezes_ctpnek_atadva">CTP-nek átadva: &nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp;. &nbsp;&nbsp;&nbsp; 0,00</td></tr>' ;
 		$html .= '<tr><td class="utemezes_elso_oszlop kisbetu utemezes_kifutok">' . $this->getDisplayKifutok() . '</td><td colspan="3" class="utemezes_termeknev kisbetu">' . $this->megrendeles_tetel->termek->DisplayTermekTeljesNev . '</td></tr>' ;
-		$html .= '<tr><td class="utemezes_elso_oszlop utemezes_taska">Táska OK</td><td class="utemezes_szinek_szama kisbetu" colspan="3">' . $this->megrendeles_tetel->displayTermekSzinekSzama . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->megrendeles_tetel->DarabszamFormazott . ' db&nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getGyartasiIdo() . '</td></tr>' ;
+//		$html .= '<tr><td class="utemezes_elso_oszlop utemezes_taska">Táska OK</td><td class="utemezes_szinek_szama kisbetu" colspan="3">' . $this->megrendeles_tetel->displayTermekSzinekSzama . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->megrendeles_tetel->DarabszamFormazott . ' db&nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getGyartasiIdo() . '</td></tr>' ;
+		$html .= '<tr><td class="utemezes_elso_oszlop utemezes_taska">Táska OK</td><td class="utemezes_szinek_szama kisbetu" colspan="3">' . $this->megrendeles_tetel->displayTermekSzinekSzama . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getSzinErtekek() . ' &nbsp;&nbsp;&nbsp;&nbsp; ' . $this->megrendeles_tetel->DarabszamFormazott . ' db&nbsp;&nbsp;&nbsp;&nbsp; ' . $this->getGyartasiIdo() . '</td></tr>' ;
 		$html .= '</table>' ;
 		return $html;
 	}
