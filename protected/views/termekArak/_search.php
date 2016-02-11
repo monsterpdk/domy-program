@@ -29,12 +29,26 @@
 		
 		<div class="row">
 			<?php echo $form->label($model,'meret_search'); ?>
-			<?php echo $form->textField($model,'meret_search',array('size'=>10,'maxlength'=>30)); ?>
+			<?php
+				echo $form->dropDownList($model, 'meret_search',
+					CHtml::listData(TermekMeretek::model()->findAll(array("condition"=>"torolt=0", 'order'=>'nev')), 'id', 'nev'),
+					array(
+						'empty'=>'--Minden--',
+					)
+				);
+			?>
 		</div>
 
 		<div class="row">
 			<?php echo $form->label($model,'zaras_search'); ?>
-			<?php echo $form->textField($model,'zaras_search',array('size'=>10,'maxlength'=>30)); ?>
+			<?php
+				echo $form->dropDownList($model, 'zaras_search',
+					CHtml::listData(TermekZarasiModok::model()->findAll(array("condition"=>"torolt=0 AND aktiv=1", 'order'=>'nev')), 'id', 'nev'),
+					array(
+						'empty'=>'--Minden--',
+					)
+				);
+			?>
 		</div>
 
 		<div class="row">

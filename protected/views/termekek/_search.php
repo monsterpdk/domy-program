@@ -29,27 +29,62 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'meret_search'); ?>
-		<?php echo $form->textField($model,'meret_search',array('size'=>10,'maxlength'=>30)); ?>
+		<?php
+			echo $form->dropDownList($model, 'meret_id',
+				CHtml::listData(TermekMeretek::model()->findAll(array("condition"=>"torolt=0", 'order'=>'nev')), 'id', 'nev'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'zaras_search'); ?>
-		<?php echo $form->textField($model,'zaras_search',array('size'=>10,'maxlength'=>30)); ?>
+		<?php
+			echo $form->dropDownList($model, 'zaras_id',
+				CHtml::listData(TermekZarasiModok::model()->findAll(array("condition"=>"torolt=0 AND aktiv=1", 'order'=>'nev')), 'id', 'nev'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'ablakhely_search'); ?>
-		<?php echo $form->textField($model,'ablakhely_search',array('size'=>10,'maxlength'=>30)); ?>
+				<?php
+			echo $form->dropDownList($model, 'ablakhely_id',
+				CHtml::listData(TermekAblakHelyek::model()->findAll(array("condition"=>"torolt=0 AND aktiv=1", 'order'=>'nev')), 'id', 'nev'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'ablakmeret_search'); ?>
-		<?php echo $form->textField($model,'ablakmeret_search',array('size'=>10,'maxlength'=>30)); ?>
+		<?php
+			echo $form->dropDownList($model, 'ablakmeret_id',
+				CHtml::listData(TermekAblakMeretek::model()->findAll(array("condition"=>"torolt=0 AND aktiv=1", 'order'=>'nev')), 'id', 'nev'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'papirtipus_search'); ?>
-		<?php echo $form->textField($model,'papirtipus_search',array('size'=>10,'maxlength'=>30)); ?>
+		<?php
+			echo $form->dropDownList($model, 'papir_id',
+				CHtml::listData(PapirTipusok::model()->findAll(array("condition"=>"torolt=0 AND aktiv=1", 'order'=>'nev')), 'id', 'fullName'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>
 	</div>
 
 	<div class="row">

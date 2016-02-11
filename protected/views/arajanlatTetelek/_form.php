@@ -28,11 +28,12 @@
 		$zarodasok = CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 		$zarodasok[" "] = "Nincs" ;
 		
-		$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-		$ablakmeretek["valasszon"] = "-=Válasszon=-" ; 		
+		$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev', 'order'=>'nev')), 'nev', 'nev');
+		//$ablakmeretek["valasszon"] = "-=Válasszon=-" ;
 		
-		$termekcsoportok = CHtml::listData(Termekcsoportok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-		$termekcsoportok["valasszon"] = "-=Válasszon=-" ; 		
+		$termekcsoportok = CHtml::listData(Termekcsoportok::model()->findAll(array('select' => 'nev', 'order'=>'nev')), 'nev', 'nev');
+		//$termekcsoportok["valasszon"] = "-=Válasszon=-" ;
+		
 //		$meretek["valasszon"] = "-=Válasszon=-" ; 		
 //		$zarodasok["valasszon"] = "-=Válasszon=-" ; 		
 	?>
@@ -61,14 +62,14 @@
 		<fieldset style='width: 46%; float:left; margin-right:10px'>
 			<legend>Ablakméretek</legend>
 			<div class="boritekAblakMeretRadioGroup">
-				<?php echo CHtml::dropDownList('boritek_ablakmeret', 'valasszon' ,$ablakmeretek); ?>			
+				<?php echo CHtml::dropDownList('boritek_ablakmeret', '-=Válasszon=-', $ablakmeretek, array('empty'=>'-=Válasszon=-',)); ?>
 			</div>
 		</fieldset>
 		
 		<fieldset style='width: 46%; float:left;'>
 			<legend>Termékcsoportok</legend>
 			<div class="boritekAblakMeretRadioGroup">
-				<?php echo CHtml::dropDownList('termekcsoport', 'valasszon' ,$termekcsoportok); ?>			
+				<?php echo CHtml::dropDownList('termekcsoport', '-=Válasszon=-', $termekcsoportok, array('empty'=>'-=Válasszon=-',)); ?>
 			</div>
 		</fieldset>
 	</div>
@@ -89,11 +90,17 @@
 											if (valasztott_ablakmeret != "valasszon") {
 												paramKeys.push("Termekek[ablakmeret_search]");
 												paramValues.push(valasztott_ablakmeret);
+											} else {
+												paramKeys.push("Termekek[ablakmeret_search]");
+												paramValues.push("");
 											}
-
+											
 											if (valasztott_termekcsoport != "valasszon") {
 												paramKeys.push("Termekek[termekcsoport_search]");
 												paramValues.push(valasztott_termekcsoport);
+											} else {
+												paramKeys.push("Termekek[termekcsoport_search]");
+												paramValues.push("");
 											}
 
 											paramKeys.push("Termekek[meret_search]");
