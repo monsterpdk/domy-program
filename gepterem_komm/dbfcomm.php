@@ -6,11 +6,12 @@
 	require_once "class.compare.php" ;
 	
 
-  define("ROOT_PATH", "C:\\inetpub\\wwwroot\\domyweb\\gepterem_komm/") ;
+//  define("ROOT_PATH", "C:\\inetpub\\wwwroot\\domywebdev\\gepterem_komm/") ;
 //  define("ROOT_PATH", "C:\\inetpub\\wwwroot\\domyweb\\gepterem_komm\\gepterem/") ;
 //  define("ROOT_PATH", "C:\\wamp\\www\\domypress\\gepterem_komm/") ;
-  define("NYOMDAKONYV", "NYOM.dbf") ;
-  define("WORKFLOW", "gepterem/workflow") ;
+//  define("NYOMDAKONYV", "NYOM.dbf") ;
+//  define("WORKFLOW", "workflow.dbf") ;
+//  define("WORKFLOW_gepterem", "gepterem/workflow.dbf") ;
 
 /**
  * A php meghívásánál paraméterben megkapott json típusú keresőparancs, ezt szűrjük / alakítjuk általunk használható (dbf_query függvénynek átadható) szűrő tömbre.
@@ -69,7 +70,15 @@
 			$i = 0 ;
 			while ($i < count($filters) && $match) {
 				$filter = $filters[$i] ;
-				if (!$cmp->is($record->getString($columns[$filter["field"]]), $filter["value"], $filter["operator"])) {
+//				echo $columns[$filter["field"]]->getType() . " - " . $record->getString($columns[$filter["field"]]) . "<br />" ;
+				if ($columns[$filter["field"]]->getType() == "D") {
+					$ertek = date("Y-m-d", $record->getDate($columns[$filter["field"]])) ;
+				}
+				else
+				{
+					$ertek = $record->getString($columns[$filter["field"]]) ;
+				}
+				if (!$cmp->is($ertek, $filter["value"], $filter["operator"])) {
 					$match = false ;
 				}
 				$i++ ;
@@ -92,7 +101,7 @@
  **/
   function dbf_fields_create($json_fields) {
   	  $return = array() ;
-  	  $tomb = json_decode($json_fields) ;  	  
+  	  $tomb = json_decode($json_fields) ;
   	  foreach ($tomb[0] as $kulcs => $ertek) {
 //  	  	  $return[strip_tags($kulcs)] = iconv("UTF-8", "ASCII//TRANSLIT", strip_tags($ertek)) ;
   	  	  $return[strip_tags($kulcs)] = strip_tags(rawurldecode($ertek)) ;

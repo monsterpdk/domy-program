@@ -86,22 +86,22 @@
 											
 											var paramKeys = [];
 											var paramValues = [];
+
+											if (valasztott_ablakmeret != "valasszon") {
+												paramKeys.push("Termekek[ablakmeret_search]");
+												paramValues.push(valasztott_ablakmeret);
+											} else {
+												paramKeys.push("Termekek[ablakmeret_search]");
+												paramValues.push("");
+											}
 											
-												if (valasztott_ablakmeret != "valasszon") {
-													paramKeys.push("Termekek[ablakmeret_search]");
-													paramValues.push(valasztott_ablakmeret);
-												} else {
-													paramKeys.push("Termekek[ablakmeret_search]");
-													paramValues.push("");
-												}
-												
-												if (valasztott_termekcsoport != "valasszon") {
-													paramKeys.push("Termekek[termekcsoport_search]");
-													paramValues.push(valasztott_termekcsoport);
-												} else {
-													paramKeys.push("Termekek[termekcsoport_search]");
-													paramValues.push("");
-												}
+											if (valasztott_termekcsoport != "valasszon") {
+												paramKeys.push("Termekek[termekcsoport_search]");
+												paramValues.push(valasztott_termekcsoport);
+											} else {
+												paramKeys.push("Termekek[termekcsoport_search]");
+												paramValues.push("");
+											}
 
 											paramKeys.push("Termekek[meret_search]");
 											paramValues.push(valasztott_meret);

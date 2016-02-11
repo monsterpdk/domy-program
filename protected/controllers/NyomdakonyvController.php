@@ -3,6 +3,8 @@
 class NyomdakonyvController extends Controller
 {
 	
+	public $aktualis_workflow_dbf_tartalom ; 
+	
 	/**
 	 * @return array action filters
 	 */
@@ -257,7 +259,7 @@ class NyomdakonyvController extends Controller
 //		$nyom_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/NYOM.dbf") ;
 //		$workflow_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/workflow.dbf") ;
 		$nyom_dbf_url = rawurlencode(Yii::app()->config->get('NyomDbfPath'));
-		$workflow_dbf_url = rawurlencode(Yii::app()->config->get('WorkflowDbfPath'));
+//		$workflow_dbf_url = rawurlencode(Yii::app()->config->get('WorkflowDbfPath'));
 		
 		$model = $this -> loadModel($munka_id) ;		
 		$megrendeles_tetel = MegrendelesTetelek::model()->with('termek')->findByPk($model->megrendeles_tetel_id);
@@ -378,17 +380,85 @@ class NyomdakonyvController extends Controller
 		}
 		else
 		{
-			//Visszaadjuk a keszido és keszsec mezők tartalmát, illetve a workflow dbf-ből az esetleges műveletet és műveletre vonatkozó időpontot
-			$parameters = array() ;
+			//Visszaadjuk a keszido és keszsec mezők tartalmát, illetve a workflow dbf-ből az esetleges műveleteket és műveletekre vonatkozó időpontot
+/*			$parameters = array() ;
 			$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;
 			$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $workflow_dbf_url . "&filter=" . json_encode($parameters) ;
-			$result = unserialize(Utils::httpGet($query_url)) ;
+			echo $query_url ;
+			$result = unserialize(Utils::httpGet($query_url)) ;		
+			print_r($result) ;*/
+			$muveletek = array() ;
+			if (count($this->aktualis_workflow_dbf_tartalom) > 0) {
+				foreach ($this->aktualis_workflow_dbf_tartalom as $aktualis_muvelet) {
+					if ($aktualis_muvelet["TSZAM"] == $model->taskaszam) {
+						$muveletek[] = $aktualis_muvelet ;	
+					}
+				}
+			}
 			$return["nyomas_kezdes"] = Utils::w1250_to_utf8($result[0]["KEZD"]);
 			$return["muvelet"] = Utils::w1250_to_utf8($result[0]["MEGJ"]);			
 			$return["muvelet_vege"] = "0000-00-00 00:00:00" ;
-			if ($result[0]["VEGEDATE"] != "") {
-				$return["muvelet_vege"] = mb_convert_encoding(str_replace(".", "-", $result[0]["VEGEDATE"]) . " " . str_replace(",", ":", $result[0]["VEGEIDO"]) . ":00",'UTF-8','UTF-8');
+			$elso_kezd_idopont = "0000-00-00 00:00:00" ;
+			$utolso_vege_idopont = "0000-00-00 00:00:00" ;
+			if (count($muveletek) > 0) {
+//				print_r($muveletek) ;
+//				die("aaaa: " . count($muveletek)) ;
+				foreach ($muveletek as $muvelet) {
+					if ($elso_kezd_idopont == "0000-00-00 00:00:00" || $muvelet["KEZD"] < $elso_kezd_idopont) {
+						$elso_kezd_idopont = Utils::w1250_to_utf8($muvelet["KEZD"]);
+					}
+					if ($muvelet["VEGE"] == "" || $muvelet["VEGE"] > $utolso_vege_idopont) {
+						$utolso_vege_idopont = Utils::w1250_to_utf8($muvelet["VEGE"]);
+					}		
+					$nyomda_feladat = NyomdaFeladatok::model()->findByAttributes(array('taskaszam'=>$model->taskaszam, 'muvelet_id'=>$muvelet["WFKOD"], 'muvelet_kezd_idopont'=>$muvelet["KEZD"])) ;
+					if ($nyomda_feladat == null) {
+						//felvesszük a műveletet a nyomda_feladatokhoz
+						$domy_user = User::model()->findByAttributes(array('gepterem_dolgkod'=>Utils::w1250_to_utf8($muvelet["DOLGKOD"])));
+						$domy_dolgkod = "" ;
+						if ($domy_user != null)
+							$domy_dolgkod = $domy_user->id ;
+						$kezd_idopont = substr($muvelet["KEZDDATE"], 0, 4) . "-" . substr($muvelet["KEZDDATE"], 4, 2) . "-" . substr($muvelet["KEZDDATE"], 6, 2) . " " . substr($muvelet["KEZDIDO"], 0, 2) . ":" . substr($muvelet["KEZDIDO"], 3, 2) . ":00" ;
+						$vege_idopont = "0000-00-00 00:00:00" ;
+						if ($muvelet["VEGEDATE"] > "") {
+							$vege_idopont = substr($muvelet["VEGEDATE"], 0, 4) . "-" . substr($muvelet["VEGEDATE"], 4, 2) . "-" . substr($muvelet["VEGEDATE"], 6, 2) . " " . substr($muvelet["VEGEIDO"], 0, 2) . ":" . substr($muvelet["VEGEIDO"], 3, 2) . ":00" ;
+						}
+						if ($muvelet["MENNY"] == "") {
+							$muvelet["MENNY"] = 0 ;	
+						}
+						$muvelet["MENNY"] = intval($muvelet["MENNY"]) ;
+						$nyomda_feladat = new NyomdaFeladatok() ;
+						$nyomda_feladat->taskaszam = Utils::w1250_to_utf8($muvelet["TSZAM"]);
+						$nyomda_feladat->user_id = $domy_dolgkod ;
+						$nyomda_feladat->muvelet_id = Utils::w1250_to_utf8($muvelet["WFKOD"]);
+						$nyomda_feladat->muvelet_kezd_idopont = $kezd_idopont;
+						$nyomda_feladat->muvelet_vege_idopont = $vege_idopont;
+						$nyomda_feladat->gep_id = Utils::w1250_to_utf8($muvelet["GEPKOD"]);
+						$nyomda_feladat->mennyiseg = $muvelet["MENNY"];
+						$nyomda_feladat->selejt_mennyiseg = Utils::w1250_to_utf8($muvelet["SMENNY"]);
+						$nyomda_feladat->megjegyzes = Utils::w1250_to_utf8($muvelet["MEGJ"]);
+						$nyomda_feladat->dijo = Utils::w1250_to_utf8($muvelet["DIJO"]);
+						$nyomda_feladat->torolt = 0 ;
+						$nyomda_feladat->save() ;
+					}
+					else
+					{
+						//Frissítjük az adatokat	
+						$vege_idopont = "0000-00-00 00:00:00" ;
+						if ($muvelet["VEGEDATE"] > "") {
+							$vege_idopont = substr($muvelet["VEGEDATE"], 0, 4) . "-" . substr($muvelet["VEGEDATE"], 4, 2) . "-" . substr($muvelet["VEGEDATE"], 6, 2) . " " . substr($muvelet["VEGEIDO"], 0, 2) . ":" . substr($muvelet["VEGEIDO"], 3, 2) . ":00" ;
+						}
+						$nyomda_feladat->muvelet_vege_idopont = $vege_idopont;
+						$nyomda_feladat->megjegyzes = Utils::w1250_to_utf8($muvelet["MEGJ"]);
+						$nyomda_feladat->dijo = Utils::w1250_to_utf8($muvelet["DIJO"]);
+						$nyomda_feladat->save() ;
+					}
+				}
 			}
+			$return["nyomas_kezdes"] = $elso_kezd_idopont ;
+			$return["muvelet_vege"] = $utolso_vege_idopont ;
+/*			if ($result[0]["VEGEDATE"] != "") {
+				$return["muvelet_vege"] = mb_convert_encoding(str_replace(".", "-", $result[0]["VEGEDATE"]) . " " . str_replace(",", ":", $result[0]["VEGEIDO"]) . ":00",'UTF-8','UTF-8');
+			}*/
 			
 			$parameters = array() ;
 			$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;
@@ -529,9 +599,30 @@ class NyomdakonyvController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+	/**
+	 * A workflow.dbf-ből beolvassa a nyomdakönyvi munkafolyamatok adatait egy tömbbe a megadott paraméterek szerint, és azt adja vissza
+	 * A paraméterek a dbfcomm.php hívásának megfelelő paraméterezésből kell, hogy álljon, tehát egy tömb, amelyben megadjuk a mezőt, ami szerint szűrünk, az értéket, aminek az adott mező meg kell, hogy feleljen (vagy éppen nem szabad megfelelnie), illetve az operátort (pl.: =, <, >, stb.)
+	 * Példa: $parameters[] = array("field"=>"KEZDDATE", "value"=>rawurlencode($datum_mettol), "op"=>">=") ;
+	 */
+	private function workflowDbfBeolvas($parameterek) {
+		$workflow_dbf_url = rawurlencode(Yii::app()->config->get('WorkflowDbfPath'));
+		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $workflow_dbf_url . "&filter=" . json_encode($parameterek) ;
+//		echo $query_url ;
+		$result = unserialize(Utils::httpGet($query_url)) ;	
+		return $result ;		
+	}
 	
 	//A nyitott nyomdakönyv rekordokhoz letölti a géptermi program adatbázisából a legfrissebb adatokat
 	protected function NyitottNyomdakonyvAdatszinkron() {
+		$datum_mettol = date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d"),   date("Y")-1));
+		$parameters = array() ;
+		$parameters[] = array("field"=>"KEZDDATE", "value"=>rawurlencode($datum_mettol), "op"=>">=") ;	
+		$result = $this->workflowDbfBeolvas($parameters) ;
+		if (count($result) > 0) {
+			$this->aktualis_workflow_dbf_tartalom = $result ; 
+		}
+		
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
