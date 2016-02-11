@@ -106,7 +106,7 @@ return array(
 		),
 		// LI
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=domy_teszt',
+			'connectionString' => 'mysql:host=localhost;dbname=domy',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => 'doMYP4ss',
