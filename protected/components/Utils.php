@@ -171,7 +171,13 @@
 						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
 														") -> queryRow();
-						$db_ar = $termekAr["db_eladasi_ar"] ;
+						if ($termek_reszletek->csom_egys <= $darabszam) {
+							$db_ar = $termekAr["csomag_eladasi_ar"] / $termek_reszletek->csom_egys ;	
+						}
+						else
+						{
+							$db_ar = $termekAr["db_eladasi_ar"] ;
+						}
 			}			
 			$selejt = $selejt1 = $selejt2 = 0 ;
 			$szinszam = max($szinszam1,$szinszam2) ;
@@ -180,10 +186,15 @@
 			}
 			
 			if ($termekAr != false && $darabszam > 0 && ($szinszam > 0)) {
-				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
-				$db_ar = $termekAr["db_ar_nyomashoz"] ;
-				
+				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával								
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
+				if ($termek_reszletek->csom_egys <= $darabszam) {
+					$db_ar = $termekAr["csomag_ar_nyomashoz"] / $termek_reszletek->csom_egys ;	
+				}
+				else
+				{
+					$db_ar = $termekAr["db_ar_nyomashoz"] ;	
+				}
 				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
 				$nyomasi_ar_kategoria_tipus = "" ;
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;

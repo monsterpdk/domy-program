@@ -17,17 +17,12 @@ $this->breadcrumbs=array(
 		'attributes'=>array(
 			'id',
 			'termek_id',
-			'csomag_beszerzesi_ar:number',
 			'db_beszerzesi_ar:number',
 			'csomag_ar_szamolashoz:number',
 			'csomag_ar_nyomashoz:number',
 			'db_ar_nyomashoz:number',
 			'csomag_eladasi_ar:number',
 			'db_eladasi_ar:number',
-			'csomag_ar2:number',
-			'db_ar2:number',
-			'csomag_ar3:number',
-			'db_ar3:number',
 			'datum_mettol',
 			'datum_meddig',
 			array(

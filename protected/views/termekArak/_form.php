@@ -24,7 +24,7 @@ if (!isset($termek_adatok)) {
 
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Csomag adatai</strong>",
+			'title'=>"<strong>Termék adatai</strong>",
 		));
 	?>
 	
@@ -40,9 +40,21 @@ if (!isset($termek_adatok)) {
 		</div>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'csomag_beszerzesi_ar'); ?>
-			<?php echo $form->textField($model,'csomag_beszerzesi_ar'); ?>
-			<?php echo $form->error($model,'csomag_beszerzesi_ar'); ?>
+			<?php echo $form->labelEx($model,'db_beszerzesi_ar'); ?>
+			<?php echo $form->textField($model,'db_beszerzesi_ar'); ?>
+			<?php echo $form->error($model,'db_beszerzesi_ar'); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'db_ar_nyomashoz'); ?>
+			<?php echo $form->textField($model,'db_ar_nyomashoz'); ?>
+			<?php echo $form->error($model,'db_ar_nyomashoz'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'db_eladasi_ar'); ?>
+			<?php echo $form->textField($model,'db_eladasi_ar'); ?>
+			<?php echo $form->error($model,'db_eladasi_ar'); ?>
 		</div>
 
 		<div class="row">
@@ -62,25 +74,7 @@ if (!isset($termek_adatok)) {
 			<?php echo $form->textField($model,'csomag_eladasi_ar'); ?>
 			<?php echo $form->error($model,'csomag_eladasi_ar'); ?>
 		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'csomag_ar2'); ?>
-			<?php echo $form->textField($model,'csomag_ar2'); ?>
-			<?php echo $form->error($model,'csomag_ar2'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'csomag_ar3'); ?>
-			<?php echo $form->textField($model,'csomag_ar3'); ?>
-			<?php echo $form->error($model,'csomag_ar3'); ?>
-		</div>
-		
-		<div class="row">
-			<?php echo $form->labelEx($model,'db_beszerzesi_ar'); ?>
-			<?php echo $form->textField($model,'db_beszerzesi_ar'); ?>
-			<?php echo $form->error($model,'db_beszerzesi_ar'); ?>
-		</div>
-
+	
 		<div class="row active">
 			<input id = "termek_belesnyomott" type="checkbox" value="<?php echo $termek_adatok["belesnyomott"]; ?>" <?php if ($termek_adatok["belesnyomott"] == 1) echo " checked "; ?> name="belesnyomott" disabled >
 			Bélésnyomott
@@ -90,34 +84,10 @@ if (!isset($termek_adatok)) {
 
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
-			'title'=>"<strong>Mennyiségi adatok</strong>",
+			'title'=>"<strong>Érvényesség</strong>",
 		));
 	?>
 	
-		<div class="row">
-			<?php echo $form->labelEx($model,'db_ar_nyomashoz'); ?>
-			<?php echo $form->textField($model,'db_ar_nyomashoz'); ?>
-			<?php echo $form->error($model,'db_ar_nyomashoz'); ?>
-		</div>
-
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'db_eladasi_ar'); ?>
-			<?php echo $form->textField($model,'db_eladasi_ar'); ?>
-			<?php echo $form->error($model,'db_eladasi_ar'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'db_ar2'); ?>
-			<?php echo $form->textField($model,'db_ar2'); ?>
-			<?php echo $form->error($model,'db_ar2'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'db_ar3'); ?>
-			<?php echo $form->textField($model,'db_ar3'); ?>
-			<?php echo $form->error($model,'db_ar3'); ?>
-		</div>
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'datum_mettol'); ?>
