@@ -297,6 +297,8 @@ class MegrendelesekController extends Controller
 				$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
 				$model->sorszam = $tomb["sorszam"] ;
 	
+				$aruhaz = Aruhazak::model()->findByPk($tomb["megrendeles_forras_id"]) ;
+				
 				if ($afaKulcs != null) {
 					$model -> afakulcs_id = $afaKulcs -> id;
 				}
@@ -304,7 +306,7 @@ class MegrendelesekController extends Controller
 				$model->rendeles_idopont = date('Y-m-d H:i:s', strtotime((string)$xml->orderhead_timestamp));		
 	
 				$model->ugyfel_id = $tomb["ugyfel_id"] ;
-				$model->arkategoria_id = $tomb["ugyfel_arkategoria_id"] ;
+				$model->arkategoria_id = $aruhaz->arkategoria_id ;
 				$model->sztornozva = "0" ;
 				$model->torolt = "0" ;		
 				$model->megrendeles_forras_id = $tomb["megrendeles_forras_id"] ;

@@ -221,7 +221,7 @@ class AnyagrendelesekController extends Controller
 	{
 		Utils::saveCurrentPage("anyagrendelesekIndex");
 		
-		$dataProvider=new CActiveDataProvider('Anyagrendelesek');
+		$dataProvider=new CActiveDataProvider('Anyagrendelesek', array('criteria'=>array('order'=>"t.id DESC, rendeles_datum DESC",),));
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));

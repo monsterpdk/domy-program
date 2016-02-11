@@ -70,7 +70,15 @@
 			$i = 0 ;
 			while ($i < count($filters) && $match) {
 				$filter = $filters[$i] ;
-				if (!$cmp->is($record->getString($columns[$filter["field"]]), $filter["value"], $filter["operator"])) {
+//				echo $columns[$filter["field"]]->getType() . " - " . $record->getString($columns[$filter["field"]]) . "<br />" ;
+				if ($columns[$filter["field"]]->getType() == "D") {
+					$ertek = date("Y-m-d", $record->getDate($columns[$filter["field"]])) ;
+				}
+				else
+				{
+					$ertek = $record->getString($columns[$filter["field"]]) ;
+				}
+				if (!$cmp->is($ertek, $filter["value"], $filter["operator"])) {
 					$match = false ;
 				}
 				$i++ ;
@@ -113,7 +121,6 @@
 		$record[$c->getName()] = iconv("utf-8", "windows-1250", $fields[$c->getName()]) ;
 	}	
 	$XBaseId = xbase_open($dbf_file,$flags=1) ;
-	print_r($record) ;
 	xbase_add_record($XBaseId, $record) ;
 
 	return xbase_numrecords($XBaseId) ;  	  
