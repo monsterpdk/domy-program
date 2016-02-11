@@ -31,11 +31,11 @@
 			$zarodasok = CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 			$zarodasok[" "] = "Nincs" ;
 
-			$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-			$ablakmeretek["valasszon"] = "-=Válasszon=-" ;
+			$ablakmeretek = CHtml::listData(TermekAblakMeretek::model()->findAll(array('select' => 'nev', 'order'=>'nev')), 'nev', 'nev');
+			//$ablakmeretek["valasszon"] = "-=Válasszon=-" ;
 			
-			$termekcsoportok = CHtml::listData(Termekcsoportok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-			$termekcsoportok["valasszon"] = "-=Válasszon=-" ; 		
+			$termekcsoportok = CHtml::listData(Termekcsoportok::model()->findAll(array('select' => 'nev', 'order'=>'nev')), 'nev', 'nev');
+			//$termekcsoportok["valasszon"] = "-=Válasszon=-" ; 		
 		?>
 		
 		<!-- szűrő blokk -->
@@ -61,14 +61,14 @@
 			<fieldset style='width: 46%; float:left; margin-right:10px'>
 				<legend>Ablakméretek</legend>
 				<div class="boritekAblakMeretRadioGroup">
-					<?php echo CHtml::dropDownList('boritek_ablakmeret', 'valasszon' ,$ablakmeretek); ?>			
+					<?php echo CHtml::dropDownList('boritek_ablakmeret', '-=Válasszon=-', $ablakmeretek, array('empty'=>'-=Válasszon=-',)); ?>
 				</div>
 			</fieldset>
 			
 			<fieldset style='width: 46%; float:left;'>
 				<legend>Termékcsoportok</legend>
 				<div class="boritekAblakMeretRadioGroup">
-					<?php echo CHtml::dropDownList('termekcsoport', 'valasszon' ,$termekcsoportok); ?>			
+					<?php echo CHtml::dropDownList('termekcsoport', '-=Válasszon=-', $termekcsoportok, array('empty'=>'-=Válasszon=-',)); ?>
 				</div>
 			</fieldset>
 			
