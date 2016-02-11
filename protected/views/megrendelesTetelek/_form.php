@@ -94,6 +94,14 @@
 												paramKeys.push("Termekek[ablakmeret_search]");
 												paramValues.push("");
 											}
+
+											if (valasztott_termekcsoport != "valasszon") {
+												paramKeys.push("Termekek[termekcsoport_search]");
+												paramValues.push(valasztott_termekcsoport);
+											}
+
+											paramKeys.push("Termekek[meret_search]");
+											paramValues.push(valasztott_meret);
 											
 											if (valasztott_termekcsoport != "valasszon") {
 												paramKeys.push("Termekek[termekcsoport_search]");
