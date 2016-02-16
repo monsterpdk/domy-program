@@ -96,7 +96,7 @@ class TermekArak extends CActiveRecord
 	{
 		return array(
 			'id' => 'Termékár ID',
-			'termek_id' => 'Termék',
+			'termek_id' => 'Termék ID',
 			'db_beszerzesi_ar' => 'Db beszerzési ár (Ft)',
 			'csomag_ar_szamolashoz' => 'Csomag ár számoláshoz (Ft)',
 			'csomag_ar_nyomashoz' => 'Csomag ár nyomáshoz (Ft)',

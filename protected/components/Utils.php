@@ -1112,6 +1112,107 @@
 			return strtolower($string);
 		}
 	
+		// LI: 'általános' e-mailküldő metódus, első körben a raktárkészlettel kapcsolatos figyelmeztető üzenetek kiküldéséhez használom
+		function sendEmail ($recipients, $subject, $body_text) {
+			$model=$this->loadModel($id);		
+
+			$mailer = Yii::app()->mailer;
+			$validator = new CEmailValidator;
+
+			// A $recipients lehet sima string, vagy akár tömb is, ha több címzettnek akarjuk küldeni az e-mailt.
+			// Ha több, mint 1 címzett van, akkor az első címzett után CC-ben címződnek a többiek.
+			
+			if (is_array($recipients)) {
+				$len = count($recipients);
+				
+				$isFirst = true;
+				foreach ($recipients as $recipient) {
+					if ($validator->validateValue($recipient)) {
+						if ($isFirst) {
+							$mailer->AddAddress($recipient, '');
+							$isFirst = false;
+						} else {
+							$mailer->AddCC($recipient, '');
+						}
+					}
+				}
+			} else {
+				if ($validator->validateValue($recipients)) {
+					$mailer->AddAddress($recipients, '');
+				} else
+					return false;
+			}
+
+			$ArajanlatKuldoEmail = Yii::app()->config->get('ArajanlatKuldoEmail');
+			$ArajanlatKuldoHost = Yii::app()->config->get('ArajanlatKuldoHost');
+			$ArajanlatKuldoPort = Yii::app()->config->get('ArajanlatKuldoPort');
+			$ArajanlatKuldoTitkositas = Yii::app()->config->get('ArajanlatKuldoTitkositas');
+			$ArajanlatKuldoSMTP = Yii::app()->config->get('ArajanlatKuldoSMTP');
+			
+			if ($ArajanlatKuldoSMTP == 1)
+				$ArajanlatKuldoSMTP = true;
+			else
+				$ArajanlatKuldoSMTP = false;
+			
+			$ArajanlatKuldoSMTPUser = Yii::app()->config->get('ArajanlatKuldoSMTPUser');
+			$ArajanlatKuldoSMTPPassword = Yii::app()->config->get('ArajanlatKuldoSMTPPassword');
+			$ArajanlatKuldoFromName = Yii::app()->config->get('ArajanlatKuldoFromName');
+
+			$mailer ->Host = $ArajanlatKuldoHost;			// Az smtp szerver címe	-> admin beállításokból
+			$mailer ->From = $ArajanlatKuldoEmail;			// A küldő e-mail címe	-> admin beállításokból
+			$mailer ->Port = $ArajanlatKuldoPort;			// Az smtp szerver portja -> admin beállításokból
+			$mailer ->FromName = $ArajanlatKuldoFromName;	// A küldő neve -> admin beállításokból
+			$mailer ->AddReplyTo($ArajanlatKuldoEmail);		// A válasz e-mail cím, alapból a feladó e-mail címe lesz, ami az admin beállításokból jön
+			$mailer ->isHTML(true);
+			
+			if ($ArajanlatKuldoSMTP) {
+				$mailer ->IsSMTP();
+				$mailer ->SMTPAuth=$ArajanlatKuldoSMTP;
+				$mailer ->SMTPSecure = $ArajanlatKuldoTitkositas;	// Enable TLS encryption, `ssl` also accepted			
+				$mailer ->Username = $ArajanlatKuldoSMTPUser;		// Az smtp bejelentkezéshez a usernév (e-mail cím) -> admin beállításokból
+				$mailer ->Password = $ArajanlatKuldoSMTPPassword;	// Az smtp bejelentkezéshez a jelszó -> admin beállításokból				
+			}
+			
+			$mailer ->CharSet = "utf-8";			
+			$mailer ->Subject = $subject;
+			$mailer ->Body = $body_text;
+			
+			return $mailer ->Send();
+		}
+		
+		// LI: visszaad egy string listát, ami a nagyfőnök jogosultsággal rendelkező felhasználók e-mail címei találhatók
+		function getNagyfonokFelhasznaloEmailek () {
+			$emailek = array();
+			
+			$sql = "
+				SELECT tbl_users.email from authassignment
+				INNER JOIN tbl_users ON authassignment.userid=tbl_users.id
+				WHERE itemname = 'fonok'
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$nagyfonokEmailek = $command->queryAll();
+			
+			if (is_array ($nagyfonokEmailek) ) {
+				foreach ($nagyfonokEmailek as $email) {
+					array_push($emailek, $email['email']);
+				}
+			}
+			
+			return $emailek;
+		}
+	
+		// LI: visszaadja az aktuálisan bejelentkezett felhaználó e-mail címét
+		function getAktualisFelhasznaloEmail () {
+			$resultEmail = '';
+			
+			$user = User::model()->findByPk(Yii::app()->user->id);
+			if ($user != null) {
+				$resultEmail = $user->email;
+			}
+
+			return $resultEmail;
+		}
 	}
 
 ?>

@@ -96,7 +96,7 @@
 											'class'=>'btn btn-info btn-mini',
 											'onclick' => 'js: openPrintDialog($(this))',
 											),
-								'visible' => "Yii::app()->user->checkAccess('Megrendelesek.Print')",
+								'visible' => "Yii::app()->user->checkAccess('Megrendelesek.PrintProforma') || Yii::app()->user->checkAccess('Megrendelesek.PrintVisszaigazolas')",
 							),
 							'view' => array(
 								'label' => 'Megtekint',
@@ -115,7 +115,7 @@
 								'options'=>array(
 												'class'=>'btn btn-inverse btn-mini',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.DeliveryNote") && $data->sztornozva != 1',
+								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1',
 							),
 							'delete' => array(
 								'label' => 'Töröl',
