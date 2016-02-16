@@ -1114,8 +1114,6 @@
 	
 		// LI: 'általános' e-mailküldő metódus, első körben a raktárkészlettel kapcsolatos figyelmeztető üzenetek kiküldéséhez használom
 		function sendEmail ($recipients, $subject, $body_text) {
-			$model=$this->loadModel($id);		
-
 			$mailer = Yii::app()->mailer;
 			$validator = new CEmailValidator;
 
@@ -1202,16 +1200,32 @@
 			return $emailek;
 		}
 	
-		// LI: visszaadja az aktuálisan bejelentkezett felhaználó e-mail címét
-		function getAktualisFelhasznaloEmail () {
+		// LI: visszaadja az aktuálisan bejelentkezett / paraméterben kapott felhasználó e-mail címét
+		function getFelhasznaloEmail ($userId = null) {
 			$resultEmail = '';
-			
-			$user = User::model()->findByPk(Yii::app()->user->id);
+
+			$user = User::model()->findByPk($userId == null ? Yii::app()->user->id : $userId);
 			if ($user != null) {
 				$resultEmail = $user->email;
 			}
 
 			return $resultEmail;
+		}
+		
+		// LI: küldünk az árajnálat lérehozójának egy e-mailt, ami tartalmazza az e-mailből létrehozott megrendelés linkjét
+		function sendEmailToArajanlatCreator ($megrendeles, $arajanlat) {
+			if ($megrendeles != null && $arajanlat != null) {
+				$user = User::model()->findByPk($arajanlat->admin_id);
+				if ($user != null) {
+					$arajanlat_letrehozo = $user->fullname;
+				}
+				
+				$megrendeles_url = Yii::app()->controller->createAbsoluteUrl('megrendelesek/update', array('id'=>$megrendeles->id));
+				$email_body = Yii::app()->controller->renderPartial('application.views.megrendelesek.megrendeles_ertesites_email_body', array('arajanlat_letrehozo'=>$arajanlat_letrehozo, 'megrendeles_url'=>$megrendeles_url), true);
+
+				$recipient = Utils::getFelhasznaloEmail($arajanlat->admin_id);
+				Utils::sendEmail ($recipient, 'Megrendelés érkezett', $email_body);
+			}
 		}
 	}
 

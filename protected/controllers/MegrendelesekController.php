@@ -508,7 +508,7 @@ class MegrendelesekController extends Controller
 		if ($model != null) {
 			Utils::szamla_letrehozasa($_GET['id']) ;
 		}		
-	}	
+	}
 		
 	
 	/**
@@ -653,8 +653,7 @@ class MegrendelesekController extends Controller
 					// az árajánlatból létrehozott tételeket külön jelezzük, mert azoknak az adatai nem szerkeszthettők többé
 					$megrendeles_tetel -> arajanlatbol_letrehozva = 1;
 					$megrendeles_tetel -> arajanlat_tetel_id = $termek -> id ;
-	
-					
+
 					$megrendeles_tetel ->save (false);
 				}
 			}
@@ -663,6 +662,10 @@ class MegrendelesekController extends Controller
 			Utils::isEgyediArMegrendelesArajanlat ($megrendeles -> id, true);
 
 			if ($createMegrendelesFromEmail == 1) {
+				// LI: az árajánlat létrehozójának küldünk egy e-mailt a megrendelés létrejöttéről,
+				//	   amiben csatolunk egy megrendelésre mutató linket is
+				Utils::sendEmailToArajanlatCreator($megrendeles, $arajanlat);
+				
 				return true;
 			} else {
 				$this->redirect(array('megrendelesek/update', 'id' => $megrendeles -> id,));
