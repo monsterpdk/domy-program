@@ -579,7 +579,7 @@
 		<div class="row buttons">		
 	<?php
 		if ($model->ugyfel_id > 0 && count($model->tetelek) > 0) {
-			if (Yii::app()->user->checkAccess('MegrendelesSzallitolevelek.Create')) {
+			if (Yii::app()->user->checkAccess('Szallitolevelek.Create')) {
 				
 				$this->widget('zii.widgets.jui.CJuiButton', array(
 					'name'=>'button_create_szallitolevel',

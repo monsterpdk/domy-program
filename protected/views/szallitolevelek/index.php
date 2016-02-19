@@ -53,7 +53,7 @@ $this->breadcrumbs=array(
 											'class'=>'btn btn-info btn-mini',
 											'onclick' => 'js: openPrintDialog($(this))',
 											),
-								'visible' => "Yii::app()->user->checkAccess('Szallitolevelek.Print')",
+								'visible' => "Yii::app()->user->checkAccess('Szallitolevelek.PrintPDF')",
 							),
 							'view' => array(
 								'label' => 'Megtekint',
