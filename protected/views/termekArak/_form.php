@@ -33,7 +33,7 @@ if (!isset($termek_adatok)) {
 			<?php //echo $form->textField($model,'termek_id',array('size'=>10,'maxlength'=>10)); ?>
 			
 			<?php echo CHtml::activeDropDownList($model, 'termek_id',
-				CHtml::listData(Termekek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'displayTermeknev')
+				CHtml::listData(Termekek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'displayTermekTeljesNev')
 			); ?>
 			
 			<?php echo $form->error($model,'termek_id'); ?>
@@ -150,6 +150,108 @@ if (!isset($termek_adatok)) {
 				<?php echo $form->error($model,'torolt'); ?>
 			</div>
 		<?php endif; ?>
+		
+		<?php
+			$this->beginWidget('zii.widgets.CPortlet', array(
+				'title'=>"<strong>Csomag ár sávok</strong>",
+				'htmlOptions'=>array('class'=>"portlet right-widget"),
+			));
+	
+				if (Yii::app()->user->checkAccess('TermekSavosCsomagarak.Create')) {
+					
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'button_create_csomagar_sav',
+						'caption'=>'Ár sáv hozzáadása',
+						'buttonType'=>'link',
+						'onclick'=>new CJavaScriptExpression('function() {addArSav("create", $(this));}'),
+						'htmlOptions'=>array('class'=>'btn btn-success'),
+					));
+				}
+				
+				// a dialógus ablak inicializálása
+				$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+					'id'=>'dialogArSav',
+					'options'=>array(
+						'title'=>'Ár sáv hozzáadása',
+						'autoOpen'=>false,
+						'modal'=>true,
+						'width'=>400,
+						'height'=>400,
+					),
+				));
+				
+				echo "<div class='divForForm'></div>";
+				
+				$this->endWidget();
+				
+				
+			// GRIDVIEW BEGIN
+				$dataProvider=new CActiveDataProvider('TermekSavosCsomagarak',
+					array( 'data' => $model->termeksavoscsomagarak,
+							'sort'=>array(
+								'attributes'=>array(
+									'id' => array(
+										'asc' => 'id ASC',
+										'desc' => 'id DESC',
+									),
+								),
+							),
+					)
+				);
+	
+				$this->widget('zii.widgets.grid.CGridView', array(
+					'id' => 'savos-csomagarak-grid',
+					'enablePagination' => false,
+					'dataProvider'=>$dataProvider,
+					'columns'=>array(
+						'user.fullname',
+						'idopont',
+						'jegyzet',
+						array(
+									'class' => 'bootstrap.widgets.TbButtonColumn',
+									'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
+									'template' => '{update} {delete_item}',
+									
+									'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
+									
+									'buttons' => array(
+										'update' => array(
+											'label' => 'Szerkeszt',
+											'icon'=>'icon-white icon-pencil',
+											'url'=>'',
+											'click'=>'function() {addUpdateArSav("update", $(this));}',
+											'visible' => "Yii::app()->user->checkAccess('TermekSavosCsomagarak.Update')",
+										),
+										'delete_item' => array
+										(
+											'label'=>'Töröl',
+											'icon'=>'icon-white icon-remove-sign',
+											'options'=>array(
+												'class'=>'btn btn-danger btn-mini',
+												),
+											'url'=>'"#"',
+											'visible' => "Yii::app()->user->checkAccess('TermekSavosCsomagarak.Delete')",
+											'click'=>"function(){
+															$.fn.yiiGridView.update('savos-csomagarak-grid', {
+																type:'POST',
+																dataType:'json',
+																url:$(this).attr('href'),
+																success:function(data) {
+																	$.fn.yiiGridView.update('savos-csomagarak-grid');
+																}
+															})
+															return false;
+													  }
+											 ",
+											 'url'=> 'Yii::app()->createUrl("TermekSavosCsomagarak/delete/" . $data->id)',
+										),
+									),
+							),
+					)
+				));
+			// GRIDVIEW END
+		$this->endWidget();
+		?>		
 
 		<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 

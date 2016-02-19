@@ -76,7 +76,7 @@
 											'class'=>'btn btn-info btn-mini',
 											'onclick' => 'js: openPrintDialog($(this))',
 											),
-								'visible' => "Yii::app()->user->checkAccess('Arajanlatok.Print')",
+								'visible' => "Yii::app()->user->checkAccess('Arajanlatok.PrintPDF')",
 							),
 							'view' => array(
 								'label' => 'Megtekint',
@@ -104,14 +104,14 @@
 								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Create") && $data->van_megrendeles == 0 && $data->torolt == 0 && !(Utils::reachedUgyfelLimit ($data->id)) ',
 							),
 							'send_via_email' => array(
-								'label' => 'Megrendelés küldése e-mailben',
+								'label' => 'Árajánlat küldése e-mailben',
 								'icon'=>'icon-white icon-envelope',
 								'options'=>array(
 											'class'=>'btn btn-info btn-mini',
 											'style'=>'margin-left: 15px',
 											'onclick'=>'js: arajanlatKuld($(this))',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Create") && $data->torolt == 0 && $data->van_megrendeles == 0',
+								'visible' => 'Yii::app()->user->checkAccess("Arajanlatok.sendViaEmail") && $data->torolt == 0 && $data->van_megrendeles == 0',
 							),
 						),
                 ),

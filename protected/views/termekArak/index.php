@@ -75,6 +75,8 @@ $this->breadcrumbs=array(
                 'termek.nev',
 				'termek.zaras.nev',
 				'termek.meret.nev',
+				'termek.ablakhely.nev',
+				'termek.ablakmeret.nev',
 				/*
 				array(										
 					'name'=>'termek.belesnyomott',

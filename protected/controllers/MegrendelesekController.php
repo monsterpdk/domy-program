@@ -342,7 +342,12 @@ class MegrendelesekController extends Controller
 				}
 				for ($i = 0; $i < count($xml->services->service); $i++) {
 					$szolgaltatas = $xml->services->service[$i] ;
-					$szolgaltatas_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$szolgaltatas->service_model)) ;
+					if ((string)$szolgaltatas->service_model != "") {
+						$szolgaltatas_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$szolgaltatas->service_model)) ;
+					}
+					else if (strpos((string)$szolgaltatas->service_name, "Kupon:") !== false) {
+						$szolgaltatas_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>"kuponfelhasznalas")) ;
+					}
 //					print_r($termek_adatok) ;
 					if ($szolgaltatas_adatok != null) {
 						$megrendeles_tetel = new MegrendelesTetelek;
@@ -508,7 +513,7 @@ class MegrendelesekController extends Controller
 		if ($model != null) {
 			Utils::szamla_letrehozasa($_GET['id']) ;
 		}		
-	}	
+	}
 		
 	
 	/**
@@ -653,8 +658,7 @@ class MegrendelesekController extends Controller
 					// az árajánlatból létrehozott tételeket külön jelezzük, mert azoknak az adatai nem szerkeszthettők többé
 					$megrendeles_tetel -> arajanlatbol_letrehozva = 1;
 					$megrendeles_tetel -> arajanlat_tetel_id = $termek -> id ;
-	
-					
+
 					$megrendeles_tetel ->save (false);
 				}
 			}
@@ -663,6 +667,10 @@ class MegrendelesekController extends Controller
 			Utils::isEgyediArMegrendelesArajanlat ($megrendeles -> id, true);
 
 			if ($createMegrendelesFromEmail == 1) {
+				// LI: az árajánlat létrehozójának küldünk egy e-mailt a megrendelés létrejöttéről,
+				//	   amiben csatolunk egy megrendelésre mutató linket is
+				Utils::sendEmailToArajanlatCreator($megrendeles, $arajanlat);
+				
 				return true;
 			} else {
 				$this->redirect(array('megrendelesek/update', 'id' => $megrendeles -> id,));

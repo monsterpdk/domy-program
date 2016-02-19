@@ -17,6 +17,7 @@ $this->breadcrumbs=array(
 		'attributes'=>array(
 			'id',
 			'termek_id',
+			'termek.DisplayTermekTeljesNev',
 			'db_beszerzesi_ar:number',
 			'csomag_ar_szamolashoz:number',
 			'csomag_ar_nyomashoz:number',
