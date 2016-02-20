@@ -551,6 +551,12 @@
 			'title'=>"<strong>Kapcsolók</strong>",
 		));
 	?>
+
+	<div class="row active">
+		<?php echo $form->checkBox($model,'kiemelt'); ?>
+		<?php echo $form->labelEx($model,'kiemelt'); ?>
+		<?php echo $form->error($model,'kiemelt'); ?>
+	</div>
 	
 	<div class="row active">
 		<?php echo $form->checkBox($model,'fizetesi_felszolitas_volt'); ?>

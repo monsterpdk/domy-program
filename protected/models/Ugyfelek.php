@@ -97,7 +97,7 @@ class Ugyfelek extends DomyModel
 		// will receive user inputs.
 		return array(
 			array('cegnev, szekhely_irsz, szekhely_orszag, szekhely_varos, szekhely_cim, cegforma, arkategoria, rendelesi_tartozasi_limit', 'required'),
-			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, torolt', 'numerical', 'integerOnly'=>true),
+			array('cegforma, adatforras, arkategoria, besorolas, fizetesi_felszolitas_volt, ugyvedi_felszolitas_volt, levelezes_engedelyezett, email_engedelyezett, kupon_engedelyezett, egyedi_kuponkedvezmeny, fizetesi_hatarido, max_fizetesi_keses, atlagos_fizetesi_keses, fizetesi_moral, archiv, kiemelt, torolt', 'numerical', 'integerOnly'=>true),
 			array('ugyfel_tipus', 'length', 'max'=>9),
 			array('cegnev, ugyvezeto_nev, ugyvezeto_email, kapcsolattarto_nev, kapcsolattarto_email, ceg_email, tevekenysegi_kor', 'length', 'max'=>127),
 			array('cegnev_teljes, posta_cim, szekhely_cim, szallitasi_cim, megjegyzes, fontos_megjegyzes', 'length', 'max'=>255),

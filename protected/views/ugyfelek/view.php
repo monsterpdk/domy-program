@@ -56,6 +56,7 @@ $this->breadcrumbs=array(
 			'besorolas_dsp.besorolas',
 			'megjegyzes',
 			'fontos_megjegyzes',
+			'kiemelt:boolean',
 			'fizetesi_felszolitas_volt:boolean',
 			'ugyvedi_felszolitas_volt:boolean',
 			'levelezes_engedelyezett:boolean',
