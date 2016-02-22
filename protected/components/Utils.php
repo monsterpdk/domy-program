@@ -171,8 +171,22 @@
 						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
 														") -> queryRow();
+						$termek_teljes_csomagszam = floor($darabszam / $termek_reszletek->csom_egys) ;
+						$termekSavosCsomagAr = Yii::app() -> db -> createCommand ("SELECT * FROM dom_termek_ar_savos_csomagarak WHERE 
+														termek_ar_id = '" . $termekAr["id"] . "' and torolt = 0 and (" . $termek_teljes_csomagszam . " BETWEEN csomagszam_tol AND csomagszam_ig)
+														") -> queryRow();
+/*						print_r($termekSavosCsomagAr) ;
+						die("SELECT * FROM dom_termek_ar_savos_csomagarak WHERE 
+														termek_ar_id = '" . $termekAr->id . "' and torolt = 0 and (" . $termek_teljes_csomagszam . " BETWEEN csomagszam_tol AND csomagszam_ig)
+														") ;*/
 						if ($termek_reszletek->csom_egys <= $darabszam) {
-							$db_ar = $termekAr["csomag_eladasi_ar"] / $termek_reszletek->csom_egys ;	
+							if ($termekSavosCsomagAr != null) {
+								$db_ar = $termekSavosCsomagAr["csomag_eladasi_ar"] / $termek_reszletek->csom_egys ;
+							}
+							else
+							{
+								$db_ar = $termekAr["csomag_eladasi_ar"] / $termek_reszletek->csom_egys ;
+							}
 						}
 						else
 						{
@@ -189,7 +203,13 @@
 				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával								
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
 				if ($termek_reszletek->csom_egys <= $darabszam) {
-					$db_ar = $termekAr["csomag_ar_nyomashoz"] / $termek_reszletek->csom_egys ;	
+					if ($termekSavosCsomagAr != null) {
+						$db_ar = $termekSavosCsomagAr["csomag_ar_nyomashoz"] / $termek_reszletek->csom_egys ;						
+					}
+					else
+					{
+						$db_ar = $termekAr["csomag_ar_nyomashoz"] / $termek_reszletek->csom_egys ;
+					}
 				}
 				else
 				{

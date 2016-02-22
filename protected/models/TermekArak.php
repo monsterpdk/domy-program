@@ -82,6 +82,7 @@ class TermekArak extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'termek'    => array(self::BELONGS_TO, 'Termekek', 'termek_id'),
+			'termeksavoscsomagarak' => array(self::HAS_MANY, 'TermekSavosCsomagarak', 'termek_ar_id'),
 		);
 	}
 

@@ -21,6 +21,7 @@ if (!isset($termek_adatok)) {
 )); ?>
 
 	<?php echo $form->errorSummary($model); ?>
+	<?php echo $form->hiddenField($model, 'id'); ?>
 
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
@@ -149,12 +150,29 @@ if (!isset($termek_adatok)) {
 				<?php echo $form->label($model,'torolt'); ?>
 				<?php echo $form->error($model,'torolt'); ?>
 			</div>
-		<?php endif; ?>
-		
+		<?php endif; ?>	
+
+		<div class="row buttons">
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'submitForm',
+						'caption'=>'Mentés',
+						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+					 )); ?>
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+					 array(
+						'name'=>'back',
+						'caption'=>'Vissza',
+						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
+					 )); ?>
+		</div>
+	
+	<?php $this->endWidget(); ?>		
+	
 		<?php
 			$this->beginWidget('zii.widgets.CPortlet', array(
 				'title'=>"<strong>Csomag ár sávok</strong>",
-				'htmlOptions'=>array('class'=>"portlet right-widget"),
+				'htmlOptions'=>array('class'=>"portlet left-widget"),
 			));
 	
 				if (Yii::app()->user->checkAccess('TermekSavosCsomagarak.Create')) {
@@ -176,7 +194,7 @@ if (!isset($termek_adatok)) {
 						'autoOpen'=>false,
 						'modal'=>true,
 						'width'=>400,
-						'height'=>400,
+						'height'=>460,
 					),
 				));
 				
@@ -204,9 +222,11 @@ if (!isset($termek_adatok)) {
 					'enablePagination' => false,
 					'dataProvider'=>$dataProvider,
 					'columns'=>array(
-						'user.fullname',
-						'idopont',
-						'jegyzet',
+						'csomagszam_tol',
+						'csomagszam_ig',
+						'csomag_ar_szamolashoz',
+						'csomag_ar_nyomashoz',
+						'csomag_eladasi_ar',
 						array(
 									'class' => 'bootstrap.widgets.TbButtonColumn',
 									'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -219,7 +239,7 @@ if (!isset($termek_adatok)) {
 											'label' => 'Szerkeszt',
 											'icon'=>'icon-white icon-pencil',
 											'url'=>'',
-											'click'=>'function() {addUpdateArSav("update", $(this));}',
+											'click'=>'function() {addArSav("update", $(this));}',
 											'visible' => "Yii::app()->user->checkAccess('TermekSavosCsomagarak.Update')",
 										),
 										'delete_item' => array
@@ -252,23 +272,6 @@ if (!isset($termek_adatok)) {
 			// GRIDVIEW END
 		$this->endWidget();
 		?>		
-
-		<div class="row buttons">
-			<?php $this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'submitForm',
-						'caption'=>'Mentés',
-						'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
-					 )); ?>
-			<?php $this->widget('zii.widgets.jui.CJuiButton', 
-					 array(
-						'name'=>'back',
-						'caption'=>'Vissza',
-						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
-					 )); ?>
-		</div>
-	
-	<?php $this->endWidget(); ?>		
 
 <?php $this->endWidget(); ?>
 
@@ -310,4 +313,55 @@ if (!isset($termek_adatok)) {
 
 		return false; 
 	}
+	
+		function addArSav (createOrUpdate, buttonObj)
+		{
+		
+			redirectUrl = "";
+			try {
+				redirectUrl = createOrUpdate.target.action;
+			} catch (e) {
+				redirectUrl = "";
+			}
+			
+			if (typeof buttonObj != 'undefined')
+				hrefString = buttonObj.parent().children().eq(1).attr('href');
+				
+			isUpdate = createOrUpdate == "update" || (typeof redirectUrl != 'undefined' && redirectUrl != '' && redirectUrl.indexOf("update") != -1);
+			op = (isUpdate) ? "update" : "create";
+			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#TermekArak_id").val();
+			dialog_title = (isUpdate) ? "Csomag ár sáv módosítása" : "Csomag ár sáv hozzáadása";
+
+			<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/termekSavosCsomagarak/' + op + '/id/' + id + '/grid_id/' + new Date().getTime()",
+					'data'=> "js:$(this).serialize()",
+					'type'=>'post',
+					'id' => 'send-link-'.uniqid(),
+					'replace' => '',
+					'dataType'=>'json',
+					'success'=>"function(data)
+					{
+						if (data.status == 'failure')
+						{
+							$('#dialogArSav div.divForForm').html(data.div);
+							$('#dialogArSav div.divForForm form').submit(addArSav);
+						}
+						else
+						{
+							$.fn.yiiGridView.update(\"savos-csomagarak-grid\",{ complete: function(jqXHR, status) {}})
+														
+							$('#dialogArSav div.divForForm').html(data.div);
+							$('#dialogArSav').dialog('close');
+						}
+		 
+					} ",
+			))?>;
+
+			
+			$("#dialogArSav").dialog("open");
+			$("#dialogArSav").dialog('option', 'title', dialog_title);
+			
+			return false; 
+		}
+	
 </script>
