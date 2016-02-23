@@ -616,8 +616,8 @@ class NyomdakonyvController extends Controller
 		$workflow_dbf_url = rawurlencode(Yii::app()->config->get('WorkflowDbfPath'));
 		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $workflow_dbf_url . "&filter=" . json_encode($parameterek) ;
 //		echo $query_url ;
-	//	$result = unserialize(Utils::httpGet($query_url)) ;	
-		return null;
+		$result = unserialize(Utils::httpGet($query_url)) ;	
+		return $result;
 	}
 	
 	//A nyitott nyomdakönyv rekordokhoz letölti a géptermi program adatbázisából a legfrissebb adatokat
