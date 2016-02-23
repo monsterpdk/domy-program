@@ -33,6 +33,10 @@
 	<?php echo CHtml::encode($data->szin_3_db); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('aktiv')); ?>:</b>
+	<?php echo CHtml::encode($data->aktiv); ?>
+	<br />
+	
 	<?php /*
 	<b><?php echo CHtml::encode($data->getAttributeLabel('tobb_szin_db')); ?>:</b>
 	<?php echo CHtml::encode($data->tobb_szin_db); ?>

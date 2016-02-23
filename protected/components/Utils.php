@@ -246,7 +246,8 @@
 					}							
 				}*/
 				
-				$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0)" ;
+				$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0) order by ervenyesseg_tol desc limit 1" ;
+//				echo $sql ;
 				$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
 				$nyomasi_ar = 0 ;
 //				print_r($nyomasiAr) ;
@@ -275,54 +276,85 @@
 						default: $hatoldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
 					}
 					$nyomasi_ar = $elooldali_nyomasi_ar + $hatoldali_nyomasi_ar ;
+//					echo $nyomasi_ar ;
 				}
-//				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
+				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
 
 				//Selejtszámítás a nyomáshoz
 				//Selejtszámítást kérésre kivettem, de nem törlöm, mert gyanús, hogy kelleni fog még
-/*				
-				if ($szinszam1 > 0) {
-					if ($szinszam1 > 2) {
-						$selejt1=($szinszam1)*(($darabszam<10000) ? 200 : $darabszam*.02);
-					}
-					else
-					{
-						if ($darabszam < 10000) {
-							$selejt1 = $szinszam1 * 300 ;
-						}			
-						else if ($darabszam >= 10000 && $darabszam < 20000) {
-							$selejt1 = $szinszam1 * ($darabszam * .03) ;
+				$sql = "SELECT * FROM dom_zuh WHERE ('" . $darabszam . "' BETWEEN db_tol AND db_ig) AND (nyomasi_kategoria = '$nyomasi_ar_kategoria_tipus' AND torolt = 0 and aktiv = 1)" ;				
+				$ervenyes_zuh_rekord = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
+				if ($ervenyes_zuh_rekord != false) {					
+					if ($szinszam1 > 0) {
+						if ($szinszam1 > 3) {
+							$selejt1 = ($ervenyes_zuh_rekord["szin_" . $szinszam1 . "_db"] > 0 ? $ervenyes_zuh_rekord["szin_" . $szinszam1 . "_db"] * $szinszam1 : $darabszam * ($ervenyes_zuh_rekord["szin_" . $szinszam1 . "_szazalek"] / 100));							
 						}
-						else {
-							$selejt1 = $szinszam1 * ($darabszam * .02) ;
-						}
+						else
+						{
+							$selejt1 = ($ervenyes_zuh_rekord["tobb_szin_db"] > 0 ? $ervenyes_zuh_rekord["tobb_szin_db"] : $darabszam * ($ervenyes_zuh_rekord["tobb_szin_szazalek"] / 100));
+						}						
 					}
+					
+					if ($szinszam2 > 0) {
+						if ($szinszam1 > 3) {
+							$selejt2 = ($ervenyes_zuh_rekord["szin_" . $szinszam2 . "_db"] > 0 ? $ervenyes_zuh_rekord["szin_" . $szinszam2 . "_db"] * $szinszam2 : $darabszam * ($ervenyes_zuh_rekord["szin_" . $szinszam2 . "_szazalek"] / 100));							
+						}
+						else
+						{
+							$selejt2 = ($ervenyes_zuh_rekord["tobb_szin_db"] > 0 ? $ervenyes_zuh_rekord["tobb_szin_db"] : $darabszam * ($ervenyes_zuh_rekord["tobb_szin_szazalek"] / 100));
+						}						
+					}
+					$selejt = $selejt1 + $selejt2 ;
+//					echo $selejt ;
 				}
 				
-				if ($szinszam2 > 0) {
-					if ($szinszam2 > 2) {
-						$selejt2=($szinszam2)*(($darabszam<10000) ? 200 : $darabszam*.02);
-					}
-					else
-					{
-						if ($darabszam < 10000) {
-							$selejt2 = $szinszam2 * 300 ;
-						}			
-						else if ($darabszam >= 10000 && $darabszam < 20000) {
-							$selejt2 = $szinszam2 * ($darabszam * .03) ;
+/*	
+//Selejtszámítás régi, elvileg ez már nem kell majd
+				if ($ervenyes_zuh_rekord != false) {				
+					if ($szinszam1 > 0) {
+						if ($szinszam1 > 2) {
+							$selejt1=($szinszam1)*(($darabszam<10000) ? 200 : $darabszam*.02);
 						}
-						else {
-							$selejt2 = $szinszam2 * ($darabszam * .02) ;
+						else
+						{
+							if ($darabszam < 10000) {
+								$selejt1 = $szinszam1 * 300 ;
+							}			
+							else if ($darabszam >= 10000 && $darabszam < 20000) {
+								$selejt1 = $szinszam1 * ($darabszam * .03) ;
+							}
+							else {
+								$selejt1 = $szinszam1 * ($darabszam * .02) ;
+							}
 						}
 					}
-				}
+					
+					if ($szinszam2 > 0) {
+						if ($szinszam2 > 2) {
+							$selejt2=($szinszam2)*(($darabszam<10000) ? 200 : $darabszam*.02);
+						}
+						else
+						{
+							if ($darabszam < 10000) {
+								$selejt2 = $szinszam2 * 300 ;
+							}			
+							else if ($darabszam >= 10000 && $darabszam < 20000) {
+								$selejt2 = $szinszam2 * ($darabszam * .03) ;
+							}
+							else {
+								$selejt2 = $szinszam2 * ($darabszam * .02) ;
+							}
+						}
+					}
 				$selejt = $selejt1 + $selejt2 ;
+				$darabszam_osszesen = $darabszam ;
 */				
+				
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
 								
 				if ($darabszam >= 2000) {
-					$netto_osszeg = ($darabszam * $db_ar) + ($nyomasi_ar * $darabszam) ;
+					$netto_osszeg = ($darabszam_osszesen * $db_ar) + ($nyomasi_ar * $darabszam_osszesen) ;
 				}
 				else
 				{					
@@ -334,7 +366,7 @@
 			if ($szinszam == 0)
 				$netto_osszeg = round($darabszam * $ar) ;			
 			else if ($darabszam > 0)
-				$ar = round($netto_osszeg / $darabszam, 2);
+				$ar = round($netto_osszeg / $darabszam_osszesen, 2);
 
 			$netto_osszeg = round($netto_osszeg * $szorzo) ;
 			$ar = round($ar * $szorzo, 2) ;

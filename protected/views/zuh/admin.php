@@ -51,6 +51,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'db_ig',
 		'szin_1_db',
 		'szin_2_db',
+		'kiemelt:boolean',
 		/*
 		'szin_3_db',
 		'tobb_szin_db',
