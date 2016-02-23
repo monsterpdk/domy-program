@@ -533,8 +533,8 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 						'Mégse'=>'js:function(){ $(this).dialog("close" );}',),
 					'autoOpen'=>false,
 			)));
-			
-			$list = CHtml::listData(Raktarak::model()->findAll(array("condition"=>"torolt=0")), 'id', 'nev');
+
+			$list = CHtml::listData(Raktarak::model()->findAll(array("condition"=>"torolt=0 AND tipus='alap' AND nev LIKE '%nyag%'")), 'id', 'nev');
 			echo CHtml::dropDownList('raktar', '', $list, array());
 			
 			$this->endWidget();

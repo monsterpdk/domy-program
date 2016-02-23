@@ -1235,6 +1235,63 @@
 			return $resultEmail;
 		}
 		
+		// LI: 	egy belső függvény, ami a tételek raktárban történő helyváltoztatásait kezeli le 
+		// 		tetelId 	- a szóban forgó megrendelés tétel id-ja,
+		// 		darabszam 	- az adott tételből hány darabra vonatkozik az elvégzendő művelet
+		//		muvelet		- BERAK, FOGLAL, SZTORNOZ, KIVESZ, KIVESZ_SZTORNOZ értékek lehetnek itt
+		private function raktarMozgas ($tetelId, $darabszam, $muvelet) {
+			if ($tetelId != null && $darabszam != null && $muvelet != null) {
+				$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $tetelId));
+
+				if ($raktarTermek != null) {
+					if ($muvelet != "") {
+						
+						if ($muvelet == 'BERAK') {
+						} else if ($muvelet == 'FOGLAL') {
+							$raktarTermek -> foglalt_db += $darabszam;
+							$raktarTermek -> elerheto_db -= $darabszam;
+						} else if ($muvelet == 'SZTORNOZ') {
+							$raktarTermek -> foglalt_db -= $darabszam;
+							$raktarTermek -> elerheto_db += $darabszam;
+						} else if ($muvelet == 'KIVESZ') {
+							$raktarTermek -> foglalt_db -= $darabszam;
+							$raktarTermek -> osszes_db -= $darabszam;							
+						} else if ($muvelet == 'KIVESZ_SZTORNOZ') {
+							$raktarTermek -> foglalt_db += $darabszam;
+							$raktarTermek -> osszes_db += $darabszam;							
+						}
+						
+						$raktarTermek ->save(false);
+					}
+				}
+			}
+		}
+		
+		// LI: tétel raktárba történő bevétele
+		function raktarbaBerak ($tetelId, $darabszam) {
+			Utils::raktarMozgas ($tetelId, $darabszam, 'BERAK');
+		}
+		
+		// LI: tétel raktárban történő lefoglalása
+		function raktarbanFoglal ($tetelId, $darabszam) {
+			Utils::raktarMozgas ($tetelId, $darabszam, 'FOGLAL');
+		}
+
+		// LI: tétel raktárban történő sztornózás
+		function raktarbanSztornoz ($tetelId, $darabszam) {
+			Utils::raktarMozgas ($tetelId, $darabszam, 'SZTORNOZ');
+		}
+		
+		// LI: tétel raktárból történő kivétele
+		function raktarbolKivesz ($tetelId, $darabszam) {
+			Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ');
+		}
+		
+		// LI: tétel raktárból történő kivétel sztornózása
+		function raktarbolKiveszSztornoz ($tetelId, $darabszam) {
+			Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ_SZTORNOZ');
+		}
+		
 		// LI: küldünk az árajnálat lérehozójának egy e-mailt, ami tartalmazza az e-mailből létrehozott megrendelés linkjét
 		function sendEmailToArajanlatCreator ($megrendeles, $arajanlat) {
 			if ($megrendeles != null && $arajanlat != null) {

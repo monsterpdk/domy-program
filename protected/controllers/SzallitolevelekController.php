@@ -66,6 +66,11 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> megrendeles_tetel_id = $tetelekAMegrendelon[$i] -> id;
 						$tetelASzalliton -> darabszam = $tetelekASzallitolevelen[$i];
 						
+						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
+						
+						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
+						Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam);
+						
 						$tetelASzalliton -> save();
 					}
 				}
@@ -125,6 +130,12 @@ class SzallitolevelekController extends Controller
 				$tetelekAMegrendelon = Utils::getSzallitolevelTetelToMegrendeles($model -> megrendeles_id, $model -> id);
 				$tetelekASzallitolevelen = explode('$#$', $model -> szallito_darabszamok);
 				
+				// LI: a raktárból sztornózzuk a szállítólevél egyes tételeit, majd újra felvesszük őket az új darabszámmal
+				foreach ($model->tetelek as $szallitolevel_tetel) {
+					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
+					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam);
+				}
+				
 				// töröljük a szállítólevélhez már felvett tételeket, majd újra létrehozzuk őket az új darabszámmal
 				$command = Yii::app()->db->createCommand("DELETE FROM dom_szallitolevel_tetelek WHERE szallitolevel_id = " . $id);
 				$command -> execute ();
@@ -136,6 +147,11 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> szallitolevel_id = $model -> id;
 						$tetelASzalliton -> megrendeles_tetel_id = $tetelekAMegrendelon[$i] -> id;
 						$tetelASzalliton -> darabszam = $tetelekASzallitolevelen[$i];
+						
+						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
+						
+						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
+						Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam);
 						
 						$tetelASzalliton -> save();
 					}
@@ -283,6 +299,12 @@ class SzallitolevelekController extends Controller
 
 			if ($szallitolevel != null) {
 				$szallitolevel -> sztornozva = 1;
+				
+				// a raktárban növeljük a foglalt és az összes mennyiségeket
+				foreach ($szallitolevel->tetelek as $szallitolevel_tetel) {
+					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
+					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam);
+				}
 				
 				$szallitolevel -> save(false);
 			}

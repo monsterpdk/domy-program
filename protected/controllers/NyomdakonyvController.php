@@ -137,6 +137,13 @@ class NyomdakonyvController extends Controller
 				$nyomdakonyv -> sztornozas_oka = $storno_ok;
 				$nyomdakonyv -> sztornozva = 1;
 				
+				$megrendelesTetel = MegrendelesTetelek::model()->findByPk($nyomdakonyv->megrendeles_tetel_id);
+				
+				if ($megrendelesTetel != null) {
+					// a raktárban töröljük az ide vonatkozó foglalást
+					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam);
+				}
+				
 				$nyomdakonyv -> save(false);
 			}
 		}
@@ -174,7 +181,7 @@ class NyomdakonyvController extends Controller
 		if(isset($_GET['Nyomdakonyv']))
 			$model->attributes=$_GET['Nyomdakonyv'];
 		
-//		$this->NyitottNyomdakonyvAdatszinkron() ;
+		$this->NyitottNyomdakonyvAdatszinkron() ;
 		
 		$this->render('index',array(
 			'model'=>$model,
@@ -609,8 +616,8 @@ class NyomdakonyvController extends Controller
 		$workflow_dbf_url = rawurlencode(Yii::app()->config->get('WorkflowDbfPath'));
 		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $workflow_dbf_url . "&filter=" . json_encode($parameterek) ;
 //		echo $query_url ;
-		$result = unserialize(Utils::httpGet($query_url)) ;	
-		return $result ;		
+	//	$result = unserialize(Utils::httpGet($query_url)) ;	
+		return null;
 	}
 	
 	//A nyitott nyomdakönyv rekordokhoz letölti a géptermi program adatbázisából a legfrissebb adatokat
@@ -626,7 +633,7 @@ class NyomdakonyvController extends Controller
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
-	 			$this->actionGepteremHivas($munka->id, false) ;
+//	 			$this->actionGepteremHivas($munka->id, false) ;
 	 		}
 	 	}
 	}
