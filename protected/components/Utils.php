@@ -278,7 +278,9 @@
 				}
 //				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
 
-				//Selejtszámítás a nyomáshoz						
+				//Selejtszámítás a nyomáshoz
+				//Selejtszámítást kérésre kivettem, de nem törlöm, mert gyanús, hogy kelleni fog még
+/*				
 				if ($szinszam1 > 0) {
 					if ($szinszam1 > 2) {
 						$selejt1=($szinszam1)*(($darabszam<10000) ? 200 : $darabszam*.02);
@@ -314,7 +316,8 @@
 						}
 					}
 				}
-				$selejt = $selejt1 + $selejt2 ;	
+				$selejt = $selejt1 + $selejt2 ;
+*/				
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
 								

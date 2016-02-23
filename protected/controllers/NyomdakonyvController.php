@@ -174,7 +174,7 @@ class NyomdakonyvController extends Controller
 		if(isset($_GET['Nyomdakonyv']))
 			$model->attributes=$_GET['Nyomdakonyv'];
 		
-		$this->NyitottNyomdakonyvAdatszinkron() ;
+//		$this->NyitottNyomdakonyvAdatszinkron() ;
 		
 		$this->render('index',array(
 			'model'=>$model,
@@ -626,7 +626,7 @@ class NyomdakonyvController extends Controller
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
-//	 			$this->actionGepteremHivas($munka->id, false) ;
+	 			$this->actionGepteremHivas($munka->id, false) ;
 	 		}
 	 	}
 	}

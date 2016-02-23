@@ -10,8 +10,50 @@
 
 	  define("UGYFELEK", "C:\inetpub\wwwroot\domyweb/import/UGYFEL.dbf") ;
 	  define("TERMEKEK", "C:\inetpub\wwwroot\domyweb/import/TERMEK.DBF") ;
+	  define("NYOMASI_ARAK", "C:\inetpub\wwwroot\domyweb/import/NYOMASAR.DBF") ;
 
-		
+
+//Nyomási árak importja  
+	function nyomasi_arak_import() {
+		echo "nyomasi arak import inditas<br />" ;		
+		$parameters = array() ;
+		$parameters[] = array("field"=>"EKEZD", "value"=>date("Y.m.d"), "op"=>"<=") ;
+		$parameters[] = array("field"=>"EVEGE", "value"=>date("Y.m.d"), "op"=>">=") ;
+		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/import/dbfcomm.php?mode=select&dbf=" . NYOMASI_ARAK . "&filter=" . json_encode($parameters) ;
+		echo $query_url ;
+		$dbf_result = unserialize(httpGet($query_url)) ;
+		foreach ($dbf_result as $sor) {
+			foreach ($sor as $mezo => $ertek) {
+				$sor[$mezo] = w1250_to_utf8($ertek) ;	
+			}
+			$ertekek = array() ;
+			$ertekek["kategoria_tipus"] = str_replace("/", "", $sor["TIPUS"]) ;
+			$ertekek["boritek_fajtak"] = $sor["NEVEK"] ;
+			$ertekek["lehetseges_szinek"] = $sor["SZINEK"] ;
+			$ertekek["peldanyszam_tol"] = $sor["ARHATAR1"] ;
+			$ertekek["peldanyszam_ig"] = $sor["ARHATAR2"] ;
+			$ertekek["szin_egy"] = $sor["AR1SZIN"] ;
+			$ertekek["szin_ketto"] = $sor["AR2SZIN"] ;
+			$ertekek["szin_harom"] = $sor["AR3SZIN"] ;
+			$ertekek["szin_tobb"] = $sor["AR4SZIN"] ;
+			$ertekek["grafika"] = $sor["GRAFIKA"] ;
+			$ertekek["grafika_roviden"] = $sor["GRAFROV"] ;
+			$ertekek["megjegyzes"] = $sor["MEGJEGYZ"] ;
+			$ertekek["ervenyesseg_tol"] = str_replace(".", "-", $sor["EKEZD"]) ;
+			$mezok_query = $ertekek_query = "" ;
+			foreach ($ertekek as $kulcs => $ertek) {
+				$mezok_query .= $kulcs . "," ;
+				$ertekek_query .= "'" . addslashes($ertek) . "'," ;
+			}
+			$mezok_query = "(" . rtrim($mezok_query,",") . ")" ;
+			$ertekek_query = "(" . rtrim($ertekek_query, ",") . ")" ;
+			$query = "insert into dom_nyomasi_arak $mezok_query values $ertekek_query" ;
+//				echo $query . "<br />" ;
+			lekerdez($query) ;
+		}
+	}
+	  
+	  
 //Ügyfelek importja  
 	function ugyfel_import($mettol, $hanyat) {
 		echo "ugyfel import inditas<br />" ;		
@@ -527,6 +569,9 @@
 			break ;
 		case "termek": termek_import($mettol, $hanyat) ;
 					   $max_sorszam = 900 ;
+			break ;				
+		case "nyomasi_arak": nyomasi_arak_import() ;
+					   $mettol = $max_sorszam = 200 ;
 			break ;				
 	}
 	
