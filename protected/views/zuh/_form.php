@@ -38,6 +38,13 @@
 			<?php echo $form->labelEx($model,'db_ig'); ?>
 			<?php echo $form->textField($model,'db_ig',array('size'=>10,'maxlength'=>9)); ?>
 		</div>
+		
+		<div class="row">
+			<?php echo $form->labelEx($model,'aktiv'); ?>
+			<?php echo $form->checkBox($model,'aktiv',array('disabled' => !Yii::app()->user->checkAccess('Zuh.AktivKapcsolo'))); ?>
+			<?php echo $form->error($model,'aktiv'); ?>
+		</div>
+		
 	</div>
 	
 	<div class="clear">

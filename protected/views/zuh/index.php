@@ -61,5 +61,6 @@
 				'szin_3_szazalek',
 				'tobb_szin_szazalek',
 				'aruhaz.display_aruhazkod_nev',
+				'aktiv:boolean',
 			)
 )); ?>

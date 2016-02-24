@@ -18,6 +18,8 @@
  * @property double $tobb_szin_szazalek
  * @property integer $aruhaz_id
  * @property string $megjegyzes
+ * @property integer $aktiv
+ * @property integer $torolt
  */
 class Zuh extends CActiveRecord
 {
@@ -44,6 +46,7 @@ class Zuh extends CActiveRecord
 		return array(
 			array('db_tol, db_ig', 'required'),
 			array('aruhaz_id, szin_1_szazalek, szin_2_szazalek, szin_3_szazalek, tobb_szin_szazalek', 'numerical'),
+			array('aktiv, torolt', 'numerical', 'integerOnly'=>true),
 			array('nyomasi_kategoria', 'length', 'max'=>6),
 			array('szin_1_db, szin_2_db, szin_3_db, tobb_szin_db', 'length', 'max'=>6),
 			array('aruhaz_id, db_tol, db_ig', 'length', 'max'=>10),
@@ -57,7 +60,7 @@ class Zuh extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nyomasi_kategoria, db_tol, db_ig, szin_1_db, szin_2_db, szin_3_db, tobb_szin_db, szin_2_szazalek, szin_3_szazalek, tobb_szin_szazalek, aruhaz_id, megjegyzes', 'safe', 'on'=>'search'),
+			array('id, nyomasi_kategoria, db_tol, db_ig, szin_1_db, szin_2_db, szin_3_db, tobb_szin_db, szin_2_szazalek, szin_3_szazalek, tobb_szin_szazalek, aruhaz_id, megjegyzes, aktiv, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -153,6 +156,8 @@ class Zuh extends CActiveRecord
 			'tobb_szin_szazalek' => 'Több szín százalék',
 			'aruhaz_id' => 'Áruház',
 			'megjegyzes' => 'Megjegyzés',
+			'aktiv' => 'Aktív',
+			'torolt' => 'Törölt',
 		);
 	}
 
@@ -192,6 +197,8 @@ class Zuh extends CActiveRecord
 		$criteria->compare('tobb_szin_szazalek',$this->tobb_szin_szazalek);
 		$criteria->compare('aruhaz_id',$this->aruhaz_id,true);
 		$criteria->compare('megjegyzes',$this->megjegyzes,true);
+		$criteria->compare('aktiv',$this->aktiv,true);
+		$criteria->compare('torolt',$this->torolt,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

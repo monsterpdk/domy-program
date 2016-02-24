@@ -28,7 +28,7 @@
 							),
                             array ('label'=>'Termékek árazása', 'url'=> Yii::app()->createUrl('/termekarak/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekekArazasa')),
                             array ('label'=>'Nyomási árak', 'url'=> Yii::app()->createUrl('/nyomasiarak/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.NyomasiArak')),
-//							array ('label'=>'Nyomási termékárak %', 'url'=> Yii::app()->createUrl('/nyomasiarakszazalek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.NyomasiTermekarak')),
+							array ('label'=>'Nyomási termékárak %', 'url'=> Yii::app()->createUrl('/nyomasiarakszazalek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.NyomasiTermekarak')),
                             array ('label'=>'Raktárkészletek', 'url'=> Yii::app()->createUrl('/raktartermekek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.Raktarkeszletek')),
                             array ('label'=>'ZUH beállítások', 'url'=> Yii::app()->createUrl('/zuh/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.ZUHBeallitasok')),
 							array ('label'=>'Áruházak', 'url'=> Yii::app()->createUrl('/aruhazak/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.Aruhazak')),
@@ -58,11 +58,6 @@
                             array ('label'=>'Nyomdakönyv kezelése', 'url'=> Yii::app()->createUrl('/nyomdakonyv/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Nyomdakonyv.NyomdakonyvKezelese')),
                             array ('label'=>'Nyomdakönyv ütemezés lista', 'url'=> Yii::app()->createUrl('/nyomdakonyv/utemezes'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Nyomdakonyv.NyomdakonyvUtemezes')),
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Nyomdakonyv')) ),
-
-                        array ('label'=>'Statisztikák <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                        'items'=>array (
-                            array ('label'=>'Napi kombinált statisztika', 'url'=> Yii::app()->createUrl('/statisztikak/NapiKombinaltStatisztika'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.NapiKombinaltStatisztika')),
-                        ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak')) ),
                         
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (

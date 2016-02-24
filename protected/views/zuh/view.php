@@ -23,6 +23,7 @@
 			'tobb_szin_szazalek',
 			'aruhaz.display_aruhazkod_nev',
 			'megjegyzes',
+			'aktiv:boolean',
 		),
 	)); ?>
 </p>
