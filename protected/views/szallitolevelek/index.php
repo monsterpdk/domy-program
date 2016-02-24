@@ -11,6 +11,25 @@ $this->breadcrumbs=array(
 <h1><?php echo $megrendeles->sorszam; ?> megrendelés szállítólevelei</h1>
 
 <?php
+    Yii::app()->clientScript->registerScript(
+       'myHideEffect',
+       '$(".flash-success").animate({opacity: 1.0}, 3000).fadeOut("slow");',
+       CClientScript::POS_READY
+    );
+?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+    <div class="flash-success">
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+    </div>
+<?php endif; ?>
+
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="flash-error">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
+
+<?php
 	if (Yii::app()->user->checkAccess('Szallitolevelek.Create')) {
 		$this->widget('zii.widgets.jui.CJuiButton', array(
 			'name'=>'button_create_szallitolevlek',

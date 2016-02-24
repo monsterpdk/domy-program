@@ -171,9 +171,10 @@ class MegrendelesekController extends Controller
 //			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
 			$megrendeles->nyomdakonyv_munka_id = 1;	//Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
 			$megrendeles->save(false);
+			
+			Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
 		}
 		
-		Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
 		Utils::goToPrevPage("megrendelesekIndex");
 	}
 	

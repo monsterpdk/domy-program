@@ -1272,6 +1272,8 @@
 		// 		darabszam 	- az adott tételből hány darabra vonatkozik az elvégzendő művelet
 		//		muvelet		- BERAK, FOGLAL, SZTORNOZ, KIVESZ, KIVESZ_SZTORNOZ értékek lehetnek itt
 		private function raktarMozgas ($tetelId, $darabszam, $muvelet) {
+			$result = true;
+			
 			if ($tetelId != null && $darabszam != null && $muvelet != null) {
 				$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $tetelId));
 
@@ -1281,11 +1283,20 @@
 						if ($muvelet == 'BERAK') {
 						} else if ($muvelet == 'FOGLAL') {
 							$raktarTermek -> foglalt_db += $darabszam;
+
+							// ez azért kell, hogy a hívó oldalon ki tudjuk jelezni, hogy mínuszos lett az elérhető mennyiség
+							if ($raktarTermek -> elerheto_db < $darabszam)
+								$result = false;
+							
 							$raktarTermek -> elerheto_db -= $darabszam;
 						} else if ($muvelet == 'SZTORNOZ') {
 							$raktarTermek -> foglalt_db -= $darabszam;
 							$raktarTermek -> elerheto_db += $darabszam;
 						} else if ($muvelet == 'KIVESZ') {
+							// ez azért kell, hogy a hívó oldalon ki tudjuk jelezni, hogy mínuszos lett az összes mennyiség
+							if ($raktarTermek -> osszes_db < $darabszam)
+								$result = false;
+							
 							$raktarTermek -> foglalt_db -= $darabszam;
 							$raktarTermek -> osszes_db -= $darabszam;							
 						} else if ($muvelet == 'KIVESZ_SZTORNOZ') {
@@ -1297,31 +1308,33 @@
 					}
 				}
 			}
+			
+			return $result;
 		}
 		
 		// LI: tétel raktárba történő bevétele
 		function raktarbaBerak ($tetelId, $darabszam) {
-			Utils::raktarMozgas ($tetelId, $darabszam, 'BERAK');
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'BERAK');
 		}
 		
 		// LI: tétel raktárban történő lefoglalása
 		function raktarbanFoglal ($tetelId, $darabszam) {
-			Utils::raktarMozgas ($tetelId, $darabszam, 'FOGLAL');
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'FOGLAL');
 		}
 
 		// LI: tétel raktárban történő sztornózás
 		function raktarbanSztornoz ($tetelId, $darabszam) {
-			Utils::raktarMozgas ($tetelId, $darabszam, 'SZTORNOZ');
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'SZTORNOZ');
 		}
 		
 		// LI: tétel raktárból történő kivétele
 		function raktarbolKivesz ($tetelId, $darabszam) {
-			Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ');
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ');
 		}
 		
 		// LI: tétel raktárból történő kivétel sztornózása
 		function raktarbolKiveszSztornoz ($tetelId, $darabszam) {
-			Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ_SZTORNOZ');
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ_SZTORNOZ');
 		}
 		
 		// LI: küldünk az árajnálat lérehozójának egy e-mailt, ami tartalmazza az e-mailből létrehozott megrendelés linkjét
