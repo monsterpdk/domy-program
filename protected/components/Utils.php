@@ -281,7 +281,6 @@
 				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
 
 				//Selejtszámítás a nyomáshoz
-				//Selejtszámítást kérésre kivettem, de nem törlöm, mert gyanús, hogy kelleni fog még
 				$sql = "SELECT * FROM dom_zuh WHERE ('" . $darabszam . "' BETWEEN db_tol AND db_ig) AND (nyomasi_kategoria = '$nyomasi_ar_kategoria_tipus' AND torolt = 0 and aktiv = 1)" ;				
 				$ervenyes_zuh_rekord = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
 				if ($ervenyes_zuh_rekord != false) {					
@@ -306,49 +305,7 @@
 					}
 					$selejt = $selejt1 + $selejt2 ;
 //					echo $selejt ;
-				}
-				
-/*	
-//Selejtszámítás régi, elvileg ez már nem kell majd
-				if ($ervenyes_zuh_rekord != false) {				
-					if ($szinszam1 > 0) {
-						if ($szinszam1 > 2) {
-							$selejt1=($szinszam1)*(($darabszam<10000) ? 200 : $darabszam*.02);
-						}
-						else
-						{
-							if ($darabszam < 10000) {
-								$selejt1 = $szinszam1 * 300 ;
-							}			
-							else if ($darabszam >= 10000 && $darabszam < 20000) {
-								$selejt1 = $szinszam1 * ($darabszam * .03) ;
-							}
-							else {
-								$selejt1 = $szinszam1 * ($darabszam * .02) ;
-							}
-						}
-					}
-					
-					if ($szinszam2 > 0) {
-						if ($szinszam2 > 2) {
-							$selejt2=($szinszam2)*(($darabszam<10000) ? 200 : $darabszam*.02);
-						}
-						else
-						{
-							if ($darabszam < 10000) {
-								$selejt2 = $szinszam2 * 300 ;
-							}			
-							else if ($darabszam >= 10000 && $darabszam < 20000) {
-								$selejt2 = $szinszam2 * ($darabszam * .03) ;
-							}
-							else {
-								$selejt2 = $szinszam2 * ($darabszam * .02) ;
-							}
-						}
-					}
-				$selejt = $selejt1 + $selejt2 ;
-				$darabszam_osszesen = $darabszam ;
-*/				
+				}			
 				
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
