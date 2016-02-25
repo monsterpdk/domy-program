@@ -648,7 +648,7 @@
 				$xml_megrendeles = new SimpleXMLElement('<?xml version="1.0" encoding="ISO-8859-2"?><root/>');
 				Utils::array_to_xml($megrendeles_kesz, $xml_megrendeles) ;
 				$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
-				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
+// alma				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
 			}
 		}
 		
@@ -1224,6 +1224,29 @@
 			return $resultEmail;
 		}
 		
+		// LI: visszaadja egy termék min. vagy max. raktárkészlete alá esése esetén értesítendő felhasználók e-mail címét listába szervezve
+		function getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail ($userId = null) {
+			$emailek = array();
+			
+			$sql = "
+				SELECT tbl_users.email from authassignment
+				INNER JOIN tbl_users ON authassignment.userid = tbl_users.id
+				INNER JOIN authitemchild ON authassignment.itemname = authitemchild.parent
+				WHERE authitemchild.child = 'termekek.raktarkeszlethataratlepesertesites'
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			$nagyfonokEmailek = $command->queryAll();
+			
+			if (is_array ($nagyfonokEmailek) ) {
+				foreach ($nagyfonokEmailek as $email) {
+					array_push($emailek, $email['email']);
+				}
+			}
+			
+			return $emailek;
+		}
+
 		// LI: 	egy belső függvény, ami a tételek raktárban történő helyváltoztatásait kezeli le 
 		// 		tetelId 	- a szóban forgó megrendelés tétel id-ja,
 		// 		darabszam 	- az adott tételből hány darabra vonatkozik az elvégzendő művelet
@@ -1233,8 +1256,9 @@
 			
 			if ($tetelId != null && $darabszam != null && $muvelet != null) {
 				$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $tetelId));
+				$termek = Termekek::model() -> findByPk($tetelId);
 
-				if ($raktarTermek != null) {
+				if ($raktarTermek != null && $termek != null) {
 					if ($muvelet != "") {
 						
 						if ($muvelet == 'BERAK') {
@@ -1255,7 +1279,17 @@
 								$result = false;
 							
 							$raktarTermek -> foglalt_db -= $darabszam;
-							$raktarTermek -> osszes_db -= $darabszam;							
+							$raktarTermek -> osszes_db -= $darabszam;
+							
+							// itt vizsgáljuk, hogy a termék minimum raktárkészlete alá mentünk-e,
+							// ha igen e-mailt küldünk azoknak felhasználóknak, akik jogosultat megkapni ezt az infót
+							if ($raktarTermek -> osszes_db < $termek -> minimum_raktarkeszlet) {
+								$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
+								$termek_info = $termek->nev . ', jelenlegi raktármennyiség:  <strong>' . $raktarTermek -> osszes_db . ' db</strong>, minimum raktármennyiség: <strong>' . $termek -> minimum_raktarkeszlet . '</strong>';
+								$email_body = Yii::app()->controller->renderPartial('application.views.szallitolevelek.ertesites_minimum_raktarkeszlet', array('termek_info'=>$termek_info), true);
+								
+								Utils::sendEmail ($recipients, 'Figyelmeztetés! Minimum raktárkészlet túllépve', $email_body);
+							}
 						} else if ($muvelet == 'KIVESZ_SZTORNOZ') {
 							$raktarTermek -> foglalt_db += $darabszam;
 							$raktarTermek -> osszes_db += $darabszam;							
