@@ -23,7 +23,7 @@
 	<?php
 //		$ablakhelyek = CHtml::listData(TermekAblakHelyek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 //		$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
-		$meretek = array('114x162 mm'=>'LC/6', '110x220 mm'=>'LA/4', '114x229 mm' => 'C6/C5', '162x229 mm' => 'LC/5', '176x250 mm' => 'TB/5', '229x324 mm' => 'LC/4', '229x324 mm' => 'TC/4', '250x353 mm' => 'TB/4', 'Légpárnás' => 'Légpárnás') ;
+		$meretek = array('114x162 mm'=>'LC/6', '110x220 mm'=>'LA/4', '114x229 mm' => 'C6/C5', '162x229 mm' => 'LC/5', '176x250 mm' => 'TB/5', '229x324 mm' => 'LC/4', '229x324 mm' => 'TC/4', '250x353 mm' => 'TB/4') ;
 		
 //		$zarodasok = CHtml::listData(TermekZarasiModok::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 //		$zarodasok[" "] = "Nincs" ;
@@ -47,6 +47,7 @@
 					echo CHtml::radioButtonList('boritek_meret', '' ,$meretek, array( 'separator' => "  ", 'template' => '{label} {input}')); 
 //					echo CHtml::dropDownList('boritek_meret', 'valasszon' ,$meretek); 				
 				?>
+				Légpárnás <?php echo CHtml::checkBox('legparnas',false); ?>
 			</div>
 		</fieldset>
 		
@@ -84,6 +85,7 @@
 											var valasztott_zaras = $("input[name=boritek_zarodas]:checked", "#arajanlat-tetelek-form").val()
 											var valasztott_ablakmeret = $("#boritek_ablakmeret").val() ;
 											var valasztott_termekcsoport = $("#termekcsoport").val() ;
+											var valasztott_legparnas = $("#legparnas").prop("checked") ;
 											
 											var paramKeys = [];
 											var paramValues = [];
@@ -102,7 +104,7 @@
 											} else {
 												paramKeys.push("Termekek[termekcsoport_search]");
 												paramValues.push("");
-											}
+											}																					
 
 											paramKeys.push("Termekek[meret_search]");
 											paramValues.push(valasztott_meret);
@@ -110,8 +112,16 @@
 											paramKeys.push("Termekek[zaras_search]");
 											paramValues.push(valasztott_zaras);
 
-											paramKeys.push("Termekek[nev]");
-											paramValues.push($("#termek_kereso").val());
+											if (valasztott_legparnas) {
+												paramKeys.push("Termekek[nev]") ;
+												paramValues.push("Légpárnás");
+											}
+											else
+											{
+												paramKeys.push("Termekek[nev]");
+												paramValues.push($("#termek_kereso").val());
+											}
+											
 
 											$.updateGridView("termekek-grid' . $grid_id . '", paramKeys, paramValues);
 											

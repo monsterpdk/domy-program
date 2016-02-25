@@ -64,6 +64,12 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'geptermi_kod'); ?>
+		<?php echo $form->textField($model,'geptermi_kod',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->error($model,'geptermi_kod'); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->labelEx($model,'megjegyzes'); ?>
 		<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'megjegyzes'); ?>

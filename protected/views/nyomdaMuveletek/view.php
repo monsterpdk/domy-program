@@ -16,6 +16,7 @@
 			'muvelet_ido',
 			'szinszam_tol',
 			'szinszam_ig',
+			'geptermi_kod',
 			'megjegyzes',
 			array(
 				'name' => 'torolt',

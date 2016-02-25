@@ -30,6 +30,7 @@ $this->menu=array(
       'dataProvider' => $dataProvider,
       'extraRowColumns' => array('HataridoFormazott'),
       'mergeColumns' => array('HataridoFormazott'),
+//      'maxMergedRows' => 5,      
       'columns' => array(
       	  				'HataridoFormazott',
 						'taskaszam',

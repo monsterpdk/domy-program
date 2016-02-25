@@ -105,6 +105,8 @@
       'dataProvider' => $dataProvider,
       'extraRowColumns' => array('HataridoFormazott'),
       'mergeColumns' => array('HataridoFormazott'),
+      'extraRowPos' => 'above',
+      'maxMergedRows' => 10,
       'columns' => array(
       	  				 array(
       	  				 	'name'=>'HataridoFormazott',

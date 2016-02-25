@@ -12,6 +12,7 @@
  * @property integer $szinszam_tol
  * @property integer $szinszam_ig
  * @property string $megjegyzes
+ * @property string $geptermi_kod 
  * @property integer $torolt
  */
 class NyomdaMuveletek extends CActiveRecord
@@ -40,7 +41,7 @@ class NyomdaMuveletek extends CActiveRecord
 			array('gep_id, muvelet_nev, elokeszites_ido, muvelet_ido, szinszam_tol, szinszam_ig, torolt', 'required'),
 			array('szinszam_tol, szinszam_ig, torolt', 'numerical', 'integerOnly'=>true),
 			array('elokeszites_ido, muvelet_ido', 'numerical'),
-			array('gep_id', 'length', 'max'=>10),
+			array('gep_id, geptermi_kod', 'length', 'max'=>10),
 			array('muvelet_nev', 'length', 'max'=>50),
 			array('megjegyzes', 'length', 'max'=>127),
 			
@@ -48,7 +49,7 @@ class NyomdaMuveletek extends CActiveRecord
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, gep_id, muvelet_nev, elokeszites_ido, muvelet_ido, szinszam_tol, szinszam_ig, megjegyzes, torolt', 'safe', 'on'=>'search'),
+			array('id, gep_id, muvelet_nev, elokeszites_ido, muvelet_ido, szinszam_tol, szinszam_ig, geptermi_kod, megjegyzes, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -91,6 +92,7 @@ class NyomdaMuveletek extends CActiveRecord
 			'szinszam_tol' => 'Színszám -tól',
 			'szinszam_ig' => 'Színszám -ig',
 			'megjegyzes' => 'Megjegyzés',
+			'geptermi_kod' => 'Géptermi kód',
 			'torolt' => 'Törölt',
 		);
 	}
@@ -121,6 +123,7 @@ class NyomdaMuveletek extends CActiveRecord
 		$criteria->compare('szinszam_tol',$this->szinszam_tol);
 		$criteria->compare('szinszam_ig',$this->szinszam_ig);
 		$criteria->compare('megjegyzes',$this->megjegyzes,true);
+		$criteria->compare('geptermi_kod',$this->geptermi_kod,true);
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))

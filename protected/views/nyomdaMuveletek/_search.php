@@ -47,6 +47,11 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->label($model,'geptermi_kod'); ?>
+		<?php echo $form->textField($model,'geptermi_kod'); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->label($model,'megjegyzes'); ?>
 		<?php echo $form->textField($model,'megjegyzes',array('size'=>60,'maxlength'=>127)); ?>
 	</div>

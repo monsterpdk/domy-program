@@ -85,7 +85,7 @@
 												var valasztott_zaras = $("input[name=boritek_zarodas]:checked", "#anyagrendeles-termekek-form").val()
 												var valasztott_ablakmeret = $("#boritek_ablakmeret").val();
 												var valasztott_termekcsoport = $("#termekcsoport").val() ;
-												var valasztott_legparnas = $("#legparnas").prop("checked") ;	
+												var valasztott_legparnas = $("#legparnas").prop("checked") ;
 												
 												var paramKeys = [];
 												var paramValues = [];

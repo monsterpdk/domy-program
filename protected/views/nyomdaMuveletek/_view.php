@@ -33,6 +33,10 @@
 	<?php echo CHtml::encode($data->szinszam_ig); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('geptermi_kod')); ?>:</b>
+	<?php echo CHtml::encode($data->geptermi_kod); ?>
+	<br />
+	
 	<?php /*
 	<b><?php echo CHtml::encode($data->getAttributeLabel('megjegyzes')); ?>:</b>
 	<?php echo CHtml::encode($data->megjegyzes); ?>

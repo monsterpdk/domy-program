@@ -21,6 +21,7 @@ class BootGroupGridView extends TbGridView {
     public $mergeColumns = array();
     public $mergeType = self::MERGE_SIMPLE;
     public $mergeCellCss = 'text-align: center; vertical-align: middle';
+    public $maxMergedRows = -1 ;
     
     //list of columns on which change extrarow will be triggered
     public $extraRowColumns = array();
@@ -71,7 +72,14 @@ class BootGroupGridView extends TbGridView {
           
         //values for first row
         $values = $this->getRowValues($groupColumns, $data[0], 0);
+        $index = 0 ;
         foreach($values as $colName => $value) {
+/*        	if ($this->maxMergedRows > -1) {
+        		if ($index > $this->maxMergedRows) {
+        			$value = $value . " " ;	
+        		}
+        	}*/            
+        	$index++ ;
             $groups[$colName][] = array(
                 'value'  => $value,
                 'column' => $colName,
@@ -88,9 +96,16 @@ class BootGroupGridView extends TbGridView {
         }
 
         //iterate data 
+        $index = 0 ;
         for($i = 1; $i < count($data); $i++) {
             //save row values in array
             $current = $this->getRowValues($groupColumns, $data[$i], $i);
+/*        	if ($this->maxMergedRows > -1) {
+        		if ($index > $this->maxMergedRows) {
+        			$current['value'] = $current['value'] . " " ;	
+        		}
+        	}*/            
+        	$index++ ;
 
             //define is change occured. Need this extra foreach for correctly proceed extraRows
             $changedColumns = array();
@@ -146,12 +161,42 @@ class BootGroupGridView extends TbGridView {
             }  
         }
 
+//        print_r($groups) ;
         //finalize group for last row
-        foreach($groups as $colName => $v) {
+        foreach($groups as $colName => $v) {			        	
             $lastIndex = count($groups[$colName]) - 1;
             $groups[$colName][$lastIndex]['end'] = count($data) - 1;
             $groups[$colName][$lastIndex]['totals'] = $totals;
         }
+        
+        if ($this->maxMergedRows > -1) {
+        	$groups_temp = $groups ;        	
+        	$groups = array() ;
+			foreach($groups_temp as $colName => $csoportok) {
+				$lastIndex = count($groups_temp[$colName]) - 1;	
+				foreach ($csoportok as $csoportindex => $v) {
+					if ($groups_temp[$colName][$csoportindex]['end'] - $groups_temp[$colName][$csoportindex]['start'] > $this->maxMergedRows) {
+						$csoport_end = $groups_temp[$colName][$csoportindex]['end'] ;
+						//Ha az adott csoport több elemből áll, mint ami a maxMergedRows paraméterben engedélyezett, bontjuk, és beszúrjuk a groupokba közvetlenül a megnyitott mögé
+						$uj_vege = $v['start'] + $this->maxMergedRows ;
+						$groups[$colName][] = array('start'=>$v['start'], 'end'=>$uj_vege, 'column'=>$v['column'], 'value'=>$v['value'], 'totals'=>$totals) ;
+						while ($uj_vege < $csoport_end) {
+							$elozo_vege = $uj_vege ;
+							$uj_vege = $elozo_vege + $this->maxMergedRows ;
+							if ($uj_vege > $csoport_end) {
+								$uj_vege = $csoport_end ;	
+							}
+							$groups[$colName][] = array('start'=>$elozo_vege + 1, 'end'=>$uj_vege, 'column'=>$v['column'], 'value'=>$v['value'], 'totals'=>$totals) ;
+						}
+					}
+					else
+					{
+						//Különben beszúrjuk az eredeti csoportot magában ;
+						$groups[$colName][] = $groups_temp[$colName][$csoportindex] ;	
+					}
+				}
+			}
+		}
         
         $this->_groups = $groups;
     }
@@ -307,7 +352,7 @@ class BootGroupGridView extends TbGridView {
     */
     private function isGroupEdge($colName, $row) 
     {
-        $result = array();
+        $result = array();        
         foreach($this->_groups[$colName] as $index => $v) {
            if($v['start'] == $row) {
                $result['start'] = $row;
