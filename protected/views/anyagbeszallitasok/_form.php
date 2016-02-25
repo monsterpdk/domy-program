@@ -60,7 +60,7 @@
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'bizonylatszam'); ?>
-			<?php echo $form->textField($model,'bizonylatszam',array('size'=>10,'maxlength'=>10)); ?>
+			<?php echo $form->textField($model,'bizonylatszam',array('size'=>12,'maxlength'=>12)); ?>
 			<?php echo $form->error($model,'bizonylatszam'); ?>
 		</div>
 
@@ -492,8 +492,12 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 							if (data !==  null) {
 								// a tételek ellenőrzés során eltérést találtunk
 								if (data != "") {
-									$('#dialogUnSuccesfullCheck').html(data);
-									$('#dialogUnSuccesfullCheck').dialog('open');
+									
+									// LI: egy új kérés szerint nem dobunk fel dialog-ot az eltérésről, hagyjuk menteni
+									$("#anyagbeszallitasok-form").submit()
+									
+									// $('#dialogUnSuccesfullCheck').html(data);
+									// $('#dialogUnSuccesfullCheck').dialog('open');
 								} else if (data == "") {
 									// a tételek ellenőrzés során megegyeztek a tételek az anyagrendelés és beszállítás során, lezárható
 									// az anyagbeszállításhoz tartozó anyagrendelés

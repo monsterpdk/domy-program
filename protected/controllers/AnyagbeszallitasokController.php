@@ -177,7 +177,7 @@ class AnyagbeszallitasokController extends Controller
 	{
 		Utils::saveCurrentPage("anyagbeszallitasokIndex");
 		
-		$dataProvider=new CActiveDataProvider('Anyagbeszallitasok');
+		$dataProvider=new CActiveDataProvider('Anyagbeszallitasok', array('criteria'=>array('order'=>"beszallitas_datum DESC",),));
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));

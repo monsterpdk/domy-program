@@ -60,7 +60,7 @@
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'bizonylatszam'); ?>
-			<?php echo $form->textField($model,'bizonylatszam',array('size'=>10,'maxlength'=>10)); ?>
+			<?php echo $form->textField($model,'bizonylatszam',array('size'=>12,'maxlength'=>12)); ?>
 			<?php echo $form->error($model,'bizonylatszam'); ?>
 		</div>
 
@@ -312,7 +312,7 @@
 							// a tételek ellenőrzés során eltérést találtunk
 							if (data != "") {
 								// eltérés esetén nem teszünk jelenleg semmit, hagyjuk menteni az anyagrendelést
-								$("#anyagrendelesek-form").submit()
+								$("#anyagrendelesek-form").submit();
 							} else if (data == "") {
 								// a tételek ellenőrzés során megegyeztek a tételek az anyagrendelés és beszállítás során, lezárható
 								// az anyagbeszállításhoz tartozó anyagrendelés
