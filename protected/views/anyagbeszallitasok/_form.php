@@ -5,7 +5,7 @@
 
 // pl. raktáro munkakörhöz kellhez, csak a raktárba érkezett anyagmennyiséget tudja szerkeszteni,
 // a beszállítás adatait ne
-$canEditBeszallitasData = Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.Update');
+$canEditBeszallitasData = Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.Update') || Yii::app()->user->checkAccess('Admin');
 
 Yii::app() -> clientScript->registerScript('updateGridView', '
 	$.updateGridView = function(gridID, nameList, valueList) {
@@ -79,7 +79,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'bizonylatszam'); ?>
-			<?php echo $form->textField($model,'bizonylatszam',array('size'=>12,'maxlength'=>12, 'readOnly'=>!$canEditBeszallitasData)); ?>
+			<?php echo $form->textField($model,'bizonylatszam',array('size'=>12,'maxlength'=>12, 'readonly'=>!$canEditBeszallitasData)); ?>
 			<?php echo $form->error($model,'bizonylatszam'); ?>
 		</div>
 
@@ -141,19 +141,19 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 		
 		<div class="row">
 			<?php echo $form->labelEx($model,'displayOsszertekIroda'); ?>
-			<?php echo $form->textField($model,'displayOsszertekIroda',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
+			<?php echo $form->textField($model,'displayOsszertekIroda',array('size'=>10,'maxlength'=>8, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'displayOsszertekIroda'); ?>
 		</div>
 		
 		<div class="row">
 			<?php echo $form->labelEx($model,'displayOsszertekRaktar'); ?>
-			<?php echo $form->textField($model,'displayOsszertekRaktar',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
+			<?php echo $form->textField($model,'displayOsszertekRaktar',array('size'=>10,'maxlength'=>8, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'displayOsszertekRaktar'); ?>
 		</div>
 		
 		<div class="row clear">
 			<?php echo $form->labelEx($model,'megjegyzes'); ?>
-			<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255, 'readOnly'=>!$canEditBeszallitasData)); ?>
+			<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255, 'readonly'=>!$canEditBeszallitasData)); ?>
 			<?php echo $form->error($model,'megjegyzes'); ?>
 		</div>
 
