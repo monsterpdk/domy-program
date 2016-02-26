@@ -84,7 +84,7 @@ class NyomdakonyvController extends Controller
 
 		if ($model->elkeszulesi_datum == "0000-00-00 00:00:00") {
 				//Szinkronizálunk a géptermi program adatbázisával, hátha van már elkészülési dátum
-//				$this->actionGepteremHivas($id) ;
+				$this->actionGepteremHivas($id, false, false) ;
 		}
 		
 		// Uncomment the following line if AJAX validation is needed
@@ -255,7 +255,7 @@ class NyomdakonyvController extends Controller
 	}
 	
 	// Meghívja a géptermi program adatbázisát, megnézi, hogy ehhez a munkához van-e már benne bejegyzés, ha nincs, akkor létrehozza, ha van, akkor pedig visszaadja az ott rögzített két olyan mezőt, ami kell nekünk: keszido (elkészülés dátum), keszsec (elkészülés idő - óra, perc)
-	public function actionGepteremHivas($munka_id, $showmessage = true) {
+	public function actionGepteremHivas($munka_id, $showmessage = true, $insert_if_not_exist = true) {
 //		$nyom_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/NYOM.dbf") ;
 //		$workflow_dbf_url = rawurlencode("C:\inetpub\wwwroot\domyweb/gepterem_komm/gepterem/workflow.dbf") ;
 		$nyom_dbf_url = rawurlencode(Yii::app()->config->get('NyomDbfPath'));
@@ -269,7 +269,7 @@ class NyomdakonyvController extends Controller
 		$parameters[] = array("field"=>"TSZAM", "value"=>rawurlencode($model->taskaszam), "op"=>"=") ;		
 		$query_url = "http://" . $_SERVER["HTTP_HOST"] . "/gepterem_komm/dbfcomm.php?mode=select&dbf=" . $nyom_dbf_url . "&filter=" . json_encode($parameters) ;
 		$result = unserialize(Utils::httpGet($query_url)) ;
-		if (count($result) == 0) {
+		if (count($result) == 0 && $insert_if_not_exist) {
 			//Hozzáadjuk a nyom.dbf-hez az új rekordot
 			$criteria=new CDBCriteria;
 			$criteria->select= 'cegnev, cegnev_teljes';
@@ -626,7 +626,7 @@ class NyomdakonyvController extends Controller
 		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
-	 			$this->actionGepteremHivas($munka->id, false) ;
+	 			$this->actionGepteremHivas($munka->id, false, false) ;
 	 		}
 	 	}
 	}
