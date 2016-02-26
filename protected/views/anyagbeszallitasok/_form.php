@@ -2,6 +2,25 @@
 /* @var $this AnyagbeszallitasokController */
 /* @var $model Anyagbeszallitasok */
 /* @var $form CActiveForm */
+
+// pl. raktáro munkakörhöz kellhez, csak a raktárba érkezett anyagmennyiséget tudja szerkeszteni,
+// a beszállítás adatait ne
+$canEditBeszallitasData = Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.Update');
+
+Yii::app() -> clientScript->registerScript('updateGridView', '
+	$.updateGridView = function(gridID, nameList, valueList) {
+		var index;
+			
+		for	(index = 0; index < nameList.length; index++) {
+			$("#" + gridID + " input[name=\'" + nameList[index] + "\'], #" + gridID + " select[name=\'" + nameList[index] + "\']").val(valueList[index]);				
+		} 
+
+		$.fn.yiiGridView.update(gridID, {
+			data: $.param($("#"+gridID+" .filters input, #"+gridID+" .filters select"))
+		});
+	}
+	', CClientScript::POS_READY);
+
 ?>
 
 <div class="form">
@@ -51,8 +70,8 @@
 			<?php echo $form->labelEx($model,'anyagrendeles_id'); ?>
 			
 				<?php echo CHtml::activeDropDownList($model, 'anyagrendeles_id',
-					($model->lezarva != 1) ? CHtml::listData(Anyagrendelesek::model()->findAll(array("condition"=>"lezarva=0")), 'id', 'displayBizonylatszamDatum') : CHtml::listData(Anyagrendelesek::model()->findAll(), 'id', 'displayBizonylatszamDatum'),
-					array('empty'=>'', 'disabled'=>(!$model->anyagrendeles_id == null))
+					($model->lezarva != 1) ? CHtml::listData(Anyagrendelesek::model()->findAll(array("condition"=>"lezarva=0", 'order'=>'bizonylatszam DESC')), 'id', 'displayBizonylatszamDatum') : CHtml::listData(Anyagrendelesek::model()->findAll(), 'id', 'displayBizonylatszamDatum'),
+					array('empty'=>'', 'disabled'=>(!$model->anyagrendeles_id == null) || !$canEditBeszallitasData )
 				); ?>
 				
 			<?php echo $form->error($model,'anyagrendeles_id'); ?>
@@ -60,73 +79,81 @@
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'bizonylatszam'); ?>
-			<?php echo $form->textField($model,'bizonylatszam',array('size'=>12,'maxlength'=>12)); ?>
+			<?php echo $form->textField($model,'bizonylatszam',array('size'=>12,'maxlength'=>12, 'readOnly'=>!$canEditBeszallitasData)); ?>
 			<?php echo $form->error($model,'bizonylatszam'); ?>
 		</div>
 
-		<div class="row">
-			<?php echo $form->labelEx($model,'beszallitas_datum'); ?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'model'=>$model,
-						'attribute'=>'beszallitas_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',),
-						'htmlOptions'=>array('style' => 'width:123px'),
-					));
-				?>
+		<div class="clear">			
+			<div class="row">
+				<?php echo $form->labelEx($model,'beszallitas_datum'); ?>
+					
+					<?php
+						$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+							'model'=>$model,
+							'attribute'=>'beszallitas_datum',
+							'options'=>array('dateFormat'=>'yy-mm-dd',),
+							'htmlOptions'=>array('style' => 'width:123px', 'disabled'=>!$canEditBeszallitasData),
+						));
+					?>
 
-				<?php
-					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'button_set_now_beszallitas_datum',
-						'caption'=>'Most',
-						'buttonType'=>'link',
-						'onclick'=>new CJavaScriptExpression('function() {  
-							$("#Anyagbeszallitasok_beszallitas_datum").datepicker("setDate", new Date());
-						}'),
-						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
-					));
-				?>
-			
-			<?php echo $form->error($model,'beszallitas_datum'); ?>
+					<?php if ($canEditBeszallitasData)
+						$this->widget('zii.widgets.jui.CJuiButton', array(
+							'name'=>'button_set_now_beszallitas_datum',
+							'caption'=>'Most',
+							'buttonType'=>'link',
+							'onclick'=>new CJavaScriptExpression('function() {  
+								$("#Anyagbeszallitasok_beszallitas_datum").datepicker("setDate", new Date());
+							}'),
+							'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+						));
+					?>
+				
+				<?php echo $form->error($model,'beszallitas_datum'); ?>
+			</div>
+
+			<div class="row">
+				<?php echo $form->labelEx($model,'kifizetes_datum'); ?>
+					
+					<?php
+						$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+							'model'=>$model,
+							'attribute'=>'kifizetes_datum',
+							'options'=>array('dateFormat'=>'yy-mm-dd',),
+							'htmlOptions'=>array('style' => 'width:123px', 'disabled'=>!$canEditBeszallitasData),
+						));
+					?>
+					
+					<?php if ($canEditBeszallitasData)
+						$this->widget('zii.widgets.jui.CJuiButton', array(
+							'name'=>'button_set_now_kifizetes_datum',
+							'caption'=>'Most',
+							'buttonType'=>'link',
+							'onclick'=>new CJavaScriptExpression('function() {  
+								$("#Anyagbeszallitasok_kifizetes_datum").datepicker("setDate", new Date());
+							}'),
+							'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
+						));
+					?>
+					
+				<?php echo $form->error($model,'kifizetes_datum'); ?>
+			</div>	
 		</div>
-
+		
 		<div class="row">
-			<?php echo $form->labelEx($model,'kifizetes_datum'); ?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'model'=>$model,
-						'attribute'=>'kifizetes_datum',
-						'options'=>array('dateFormat'=>'yy-mm-dd',),
-						'htmlOptions'=>array('style' => 'width:123px'),
-					));
-				?>
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'button_set_now_kifizetes_datum',
-						'caption'=>'Most',
-						'buttonType'=>'link',
-						'onclick'=>new CJavaScriptExpression('function() {  
-							$("#Anyagbeszallitasok_kifizetes_datum").datepicker("setDate", new Date());
-						}'),
-						'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
-					));
-				?>
-				
-			<?php echo $form->error($model,'kifizetes_datum'); ?>
-		</div>	
-
+			<?php echo $form->labelEx($model,'displayOsszertekIroda'); ?>
+			<?php echo $form->textField($model,'displayOsszertekIroda',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
+			<?php echo $form->error($model,'displayOsszertekIroda'); ?>
+		</div>
+		
 		<div class="row">
-			<?php echo $form->labelEx($model,'displayOsszertek'); ?>
-			<?php echo $form->textField($model,'displayOsszertek',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
-			<?php echo $form->error($model,'displayOsszertek'); ?>
+			<?php echo $form->labelEx($model,'displayOsszertekRaktar'); ?>
+			<?php echo $form->textField($model,'displayOsszertekRaktar',array('size'=>10,'maxlength'=>8, 'readOnly'=>true)); ?>
+			<?php echo $form->error($model,'displayOsszertekRaktar'); ?>
 		</div>
 		
 		<div class="row clear">
 			<?php echo $form->labelEx($model,'megjegyzes'); ?>
-			<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255)); ?>
+			<?php echo $form->textArea($model,'megjegyzes',array('size'=>60,'maxlength'=>255, 'readOnly'=>!$canEditBeszallitasData)); ?>
 			<?php echo $form->error($model,'megjegyzes'); ?>
 		</div>
 
@@ -194,8 +221,8 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 			'title'=>'Termék hozzáadása',
 			'autoOpen'=>false,
 			'modal'=>true,
-			'width'=>550,
-			'height'=>470,
+			'width'=>900,
+			'height'=>580,
 		),
 	));?>
 	<div class="divForForm"></div>
@@ -283,6 +310,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 					refreshOsszertek ();
 				}',
 				'columns'=>array(
+					'termek.kodszam',
 					'termek.nev',
 					'darabszam',
 					'netto_darabar',
@@ -343,8 +371,8 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 			'title'=>'Termék hozzáadása',
 			'autoOpen'=>false,
 			'modal'=>true,
-			'width'=>550,
-			'height'=>470,
+			'width'=>900,
+			'height'=>580,
 		),
 	));?>
 	<div class="divForForm"></div>
@@ -432,6 +460,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 					refreshOsszertek ();
 				}',
 				'columns'=>array(
+					'termek.kodszam',
 					'termek.nev',
 					'darabszam',
 					'netto_darabar',
@@ -586,7 +615,8 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 			url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/refreshOsszertek") . "/anyagbeszallitas_id/" . $model->id; ?>',
 			success:function(data){
 				if (data !== null) {
-					$('#Anyagbeszallitasok_displayOsszertek').val(data.osszertek);
+					$('#Anyagbeszallitasok_displayOsszertekIroda').val(data.osszertekIroda);
+					$('#Anyagbeszallitasok_displayOsszertekRaktar').val(data.osszertekRaktar);
 
 					return false;
 				}

@@ -19,8 +19,11 @@ class Anyagbeszallitasok extends DomyModel
 	// a lenyíló listákban a bizonylatszám és beszállítás dátuma egyszerre jelenjen meg
 	private $displayBizonylatszamDatum;
 	
-	// összérték tárolására
-	private $displayOsszertek;
+	// összérték tárolására (iroda)
+	private $displayOsszertekIroda;
+	
+	// összérték tárolására (raktár)
+	private $displayOsszertekRaktar;
 	
 	/**
 	 * @return string the associated database table name
@@ -131,7 +134,8 @@ class Anyagbeszallitasok extends DomyModel
 			'user_id' => 'Ügyintéző',
 			'anyagrendeles_id' => 'Anyagrendelés',
 			'lezarva' => 'Lezárva',
-			'displayOsszertek' => 'Összérték (Ft)',			
+			'displayOsszertekIroda' => 'Összérték, iroda (Ft)',
+			'displayOsszertekRaktar' => 'Összérték, raktár (Ft)',
 		);
 	}
 
@@ -180,16 +184,21 @@ class Anyagbeszallitasok extends DomyModel
 	}
 
 	public function recalculateOsszertek () {
-		// a beszállításon lévő termékek értékének összegzése
-		$osszertek = 0;
+		// a beszállításon lévő termékek értékének összegzése (iroda)
+		$osszertekIroda = 0;
+
+		// a beszállításon lévő termékek értékének összegzése (raktár)
+		$osszertekRaktar = 0;
+		
 		foreach ($this -> termekek as $termek) {
-			$osszertek +=  $termek->darabszam * $termek->netto_darabar;
+			$osszertekIroda +=  $termek->darabszam * $termek->netto_darabar;
 		}
 		foreach ($this -> termekekIroda as $termek) {
-			$osszertek +=  $termek->darabszam * $termek->netto_darabar;
+			$osszertekRaktar +=  $termek->darabszam * $termek->netto_darabar;
 		}
 		
-		$this -> displayOsszertek = $osszertek;
+		$this -> displayOsszertekIroda = $osszertekIroda;
+		$this -> displayOsszertekRaktar = $osszertekRaktar;
 	}
 	
 	// sikeres mentés után frissítjük a raktár eltérés lista megfelelő sorát arra az esetre, hogy
@@ -238,8 +247,12 @@ class Anyagbeszallitasok extends DomyModel
 		return $this->bizonylatszam . ' - ' . date('Y.m.d', strtotime($this->beszallitas_datum));
 	}
 	
-	public function getDisplayOsszertek () {
-		return $this->displayOsszertek;
+	public function getDisplayOsszertekIroda () {
+		return $this->displayOsszertekIroda;
+	}
+	
+	public function getDisplayOsszertekRaktar () {
+		return $this->displayOsszertekRaktar;
 	}
 	
 }

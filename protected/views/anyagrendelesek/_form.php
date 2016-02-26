@@ -3,19 +3,19 @@
 /* @var $model Anyagrendelesek */
 /* @var $form CActiveForm */
 
-	Yii::app() -> clientScript->registerScript('updateGridView', '
-		$.updateGridView = function(gridID, nameList, valueList) {
-			var index;
-				
-			for	(index = 0; index < nameList.length; index++) {
-				$("#" + gridID + " input[name=\'" + nameList[index] + "\'], #" + gridID + " select[name=\'" + nameList[index] + "\']").val(valueList[index]);				
-			} 
+Yii::app() -> clientScript->registerScript('updateGridView', '
+	$.updateGridView = function(gridID, nameList, valueList) {
+		var index;
+			
+		for	(index = 0; index < nameList.length; index++) {
+			$("#" + gridID + " input[name=\'" + nameList[index] + "\'], #" + gridID + " select[name=\'" + nameList[index] + "\']").val(valueList[index]);				
+		} 
 
-			$.fn.yiiGridView.update(gridID, {
-				data: $.param($("#"+gridID+" .filters input, #"+gridID+" .filters select"))
-			});
-		}
-		', CClientScript::POS_READY);
+		$.fn.yiiGridView.update(gridID, {
+			data: $.param($("#"+gridID+" .filters input, #"+gridID+" .filters select"))
+		});
+	}
+	', CClientScript::POS_READY);
 ?>
 
 <div class="form">

@@ -71,6 +71,7 @@
 
                         array ('label'=>'Általános beállítások <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (
+									array ('label'=>'Általános beállítások', 'url'=> Yii::app()->createUrl('/altalanosBeallitasok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.AltalanosBeallitasok') || Yii::app()->user->checkAccess('admin'))),
 									array ('label'=>'ÁFA kulcsok', 'url'=> Yii::app()->createUrl('/afakulcsok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.AfaKulcsok') || Yii::app()->user->checkAccess('admin'))),
 									array ('label'=>'E-mail beállítások', 'url'=> Yii::app()->createUrl('/emailBeallitasok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.EmailBeallitasok') || Yii::app()->user->checkAccess('admin'))),
 									array ('label'=>'Sztornózás okok', 'url'=> Yii::app()->createUrl('/sztornozasOkok/index'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SztornozasiOkok')) ),

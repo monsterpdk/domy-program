@@ -97,7 +97,7 @@ class NyomdaMuveletekController extends Controller
 		Utils::saveCurrentPage("nyomdaMuveletekIndex");
 		
 		$dataProvider=new CActiveDataProvider('NyomdaMuveletek',
-			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+			Yii::app()->user->checkAccess('Admin') ? array('pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)) : array( 'criteria'=>array('condition'=>"torolt = 0 ",), 'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),))
 		);
 
 		$this->render('index',array(

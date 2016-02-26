@@ -97,7 +97,7 @@ class TermekCsoportokController extends Controller
 		Utils::saveCurrentPage("termekcsoportokIndex");
 		
 		$dataProvider=new CActiveDataProvider('Termekcsoportok',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'nev DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'nev DESC',),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'nev DESC',), 'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'nev DESC',), 'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),))
 		);
 
 		$this->render('index',array(

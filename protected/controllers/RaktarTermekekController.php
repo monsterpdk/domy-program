@@ -19,6 +19,7 @@ class RaktarTermekekController extends Controller
 				
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
 		));
 	}
 

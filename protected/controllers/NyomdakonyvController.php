@@ -511,10 +511,7 @@ class NyomdakonyvController extends Controller
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,
-			'pagination'=>array(
-				'pageSize'=>20,
-			),
-		));
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)		));
 		
 		$this->render('utemezes',array(
 			'dataProvider'=>$dataProvider,

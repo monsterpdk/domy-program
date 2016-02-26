@@ -15,8 +15,15 @@ class RaktarEltereslistaController extends Controller
 	
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('RaktarEltereslista', array( 'criteria'=>array('condition'=>"(rendeleskor_leadott_db != iroda_altal_atvett_db) OR (rendeleskor_leadott_db != raktar_altal_atvett_db) ",)));
-				
+		$dataProvider=new CActiveDataProvider('RaktarEltereslista', array(
+			'criteria'=>array(
+				'condition' => '(rendeleskor_leadott_db != iroda_altal_atvett_db) OR (rendeleskor_leadott_db != raktar_altal_atvett_db)',
+				'order'=>'rendeles_datum DESC',
+				'with'=>array('anyagrendeles'),
+			),
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
+		));
+		
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));

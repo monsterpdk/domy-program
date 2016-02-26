@@ -233,7 +233,8 @@ class Termekek extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
                         'defaultOrder'=>'t.nev ASC',
-                    ),						
+                    ),
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
 		));
 	}
 

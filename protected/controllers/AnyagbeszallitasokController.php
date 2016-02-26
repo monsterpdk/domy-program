@@ -177,7 +177,7 @@ class AnyagbeszallitasokController extends Controller
 	{
 		Utils::saveCurrentPage("anyagbeszallitasokIndex");
 		
-		$dataProvider=new CActiveDataProvider('Anyagbeszallitasok', array('criteria'=>array('order'=>"beszallitas_datum DESC",),));
+		$dataProvider=new CActiveDataProvider('Anyagbeszallitasok', array('criteria'=>array('order'=>"beszallitas_datum DESC",), 'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)));
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -218,7 +218,8 @@ class AnyagbeszallitasokController extends Controller
 		$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk ($anyagbeszallitas_id);
 
 		echo CJSON::encode(array(
-				'osszertek'=>$anyagbeszallitas == null ? 0 : $anyagbeszallitas->displayOsszertek,
+				'osszertekIroda'=>$anyagbeszallitas == null ? 0 : $anyagbeszallitas->displayOsszertekIroda,
+				'osszertekRaktar'=>$anyagbeszallitas == null ? 0 : $anyagbeszallitas->displayOsszertekRaktar,
 				));
 		Yii::app()->end();
 	}

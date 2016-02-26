@@ -130,7 +130,7 @@ class TermekekController extends Controller
 			$model->attributes=$_GET['Termekek'];
 	 	
 		$dataProvider=new CActiveDataProvider('Termekek',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'nev DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'nev DESC',),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'nev DESC',), ) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'nev DESC',),)
 		);
 		
 		// LI : exporthoz kell ez a blokk

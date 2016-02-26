@@ -1343,6 +1343,19 @@
 				Utils::sendEmail ($recipient, 'Megrendelés érkezett', $email_body);
 			}
 		}
+		
+		// LI: lekérdezi a beállításokban beállított, nézetekben megjelenítendő sorok számát
+		//     (ha nincs beállítva az alapértelmezett a 10 db)
+		function getIndexPaginationNumber () {
+			$pagination = Yii::app()->config->get('IndexViewPagination');
+
+			if ($pagination == null || !is_numeric($pagination)) {
+				$pagination = 10;
+			}
+			
+			return $pagination;
+		}
+
 	}
 
 ?>

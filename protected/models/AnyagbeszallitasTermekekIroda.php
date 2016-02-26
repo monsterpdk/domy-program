@@ -12,6 +12,8 @@
  */
 class AnyagbeszallitasTermekekIroda extends DomyModel
 {
+	public $autocomplete_termek_name;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -101,6 +103,14 @@ class AnyagbeszallitasTermekekIroda extends DomyModel
 		));
 	}
 
+	protected function afterFind(){
+		parent::afterFind();
+
+		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
+		// terméknevet kézzel kell kitöltenünk
+		$this -> autocomplete_termek_name = $this -> termek -> nev;
+	}
+	
 	// sikeres mentés után frissítjük a raktár eltérés lista megfelelő sorát a termék és darabszám adatokkal	
 	public function afterSave() {
 		$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk($this->anyagbeszallitas_id);

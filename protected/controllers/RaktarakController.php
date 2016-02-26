@@ -63,7 +63,7 @@ class RaktarakController extends Controller
 		{
 			$model->attributes=$_POST['Raktarak'];
 			if($model->save())
-				$this->redirect(array('index'));$this->redirect(array('index'));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('update',array(
@@ -95,7 +95,7 @@ class RaktarakController extends Controller
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('Raktarak',
-			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+			Yii::app()->user->checkAccess('Admin') ? array('pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)) : array( 'criteria'=>array('condition'=>"torolt = 0 ",), 'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),))
 		);
 				
 		$this->render('index',array(

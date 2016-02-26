@@ -303,6 +303,7 @@ class Ugyfelek extends DomyModel
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
 		));
 	}
 

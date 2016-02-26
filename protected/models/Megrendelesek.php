@@ -247,7 +247,8 @@ class Megrendelesek extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
                         'defaultOrder'=>'t.id DESC, rendeles_idopont DESC',
-                    ),			
+                    ),
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
 		));
 	}
 

@@ -176,7 +176,7 @@ class Arajanlatok extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->select = "t.id, sorszam, cimzett, kovetkezo_hivas_ideje, ugyfel_tel, ajanlat_datum, t.torolt" ; 
-		$criteria->condition = "admin_id = '" . $belepett_admin . "' and kovetkezo_hivas_ideje >= CURDATE() and visszahivas_lezarva = 0" . (!Yii::app()->user->checkAccess('Admin')) ? ' and torolt=0' : '';
+		$criteria->condition = "admin_id = '" . $belepett_admin . "' and kovetkezo_hivas_ideje >= CURDATE() and visszahivas_lezarva = 0";
 		
 		$criteria->compare('admin_id',$this->admin_id);
 		
@@ -188,7 +188,8 @@ class Arajanlatok extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
                         'defaultOrder'=>'kovetkezo_hivas_ideje DESC',
-                    ),						
+                    ),
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
 		));		
 	}
 	
@@ -247,7 +248,8 @@ class Arajanlatok extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
                         'defaultOrder'=>'ajanlat_datum desc, t.id DESC',
-                    ),						
+                    ),
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
 		));
 	}
 
