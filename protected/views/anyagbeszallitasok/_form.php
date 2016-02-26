@@ -60,7 +60,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 			
 				<?php echo CHtml::activeDropDownList($model, 'gyarto_id',
 					CHtml::listData(Gyartok::model()->findAll(array("condition"=>"torolt=0")), 'id', 'cegnev'),
-					array('disabled'=>(!$model->gyarto_id == null))
+					array('disabled'=>(!$model->gyarto_id == null || !$canEditBeszallitasData))
 				); ?>
 				
 			<?php echo $form->error($model,'gyarto_id'); ?>
