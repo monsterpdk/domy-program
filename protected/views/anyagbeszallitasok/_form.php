@@ -139,16 +139,18 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 			</div>	
 		</div>
 		
-		<div class="row">
-			<?php echo $form->labelEx($model,'displayOsszertekIroda'); ?>
-			<?php echo $form->textField($model,'displayOsszertekIroda',array('size'=>10,'maxlength'=>8, 'readonly'=>true)); ?>
-			<?php echo $form->error($model,'displayOsszertekIroda'); ?>
-		</div>
-		
-		<div class="row">
-			<?php echo $form->labelEx($model,'displayOsszertekRaktar'); ?>
-			<?php echo $form->textField($model,'displayOsszertekRaktar',array('size'=>10,'maxlength'=>8, 'readonly'=>true)); ?>
-			<?php echo $form->error($model,'displayOsszertekRaktar'); ?>
+		<div class='clear'>
+			<div class="row">
+				<?php echo $form->labelEx($model,'displayOsszertekIroda'); ?>
+				<?php echo $form->textField($model,'displayOsszertekIroda',array('size'=>10,'maxlength'=>8, 'readonly'=>true)); ?>
+				<?php echo $form->error($model,'displayOsszertekIroda'); ?>
+			</div>
+			
+			<div class="row">
+				<?php echo $form->labelEx($model,'displayOsszertekRaktar'); ?>
+				<?php echo $form->textField($model,'displayOsszertekRaktar',array('size'=>10,'maxlength'=>8, 'readonly'=>true)); ?>
+				<?php echo $form->error($model,'displayOsszertekRaktar'); ?>
+			</div>
 		</div>
 		
 		<div class="row clear">
