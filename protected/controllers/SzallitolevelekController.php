@@ -149,6 +149,7 @@ class SzallitolevelekController extends Controller
 				$command = Yii::app()->db->createCommand("DELETE FROM dom_szallitolevel_tetelek WHERE szallitolevel_id = " . $id);
 				$command -> execute ();
 				
+				$minuszosTermekek = '';
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
 					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
@@ -160,10 +161,18 @@ class SzallitolevelekController extends Controller
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam);
+						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam)) {
+							$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
+						}
 						
 						$tetelASzalliton -> save();
 					}
+				}
+				
+				if (strlen($minuszosTermekek) > 0) {
+					$minuszosTermekek = '<strong>' . $minuszosTermekek . '</strong>';
+					$minuszosTermekek = 'A következő termékeknél negatív darabszám keletkezett (további információ a <strong><a href="' . Yii::app()->createUrl("raktartermekek/index") . '" target="_blank">Raktárkészletek</a></strong> menüpont alatt):<br />' . $minuszosTermekek;
+					Yii::app()->user->setFlash('error', $minuszosTermekek);
 				}
 				
 				$this->redirect(array('szallitolevelek/index','id'=>$model->megrendeles_id,));
