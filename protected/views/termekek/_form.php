@@ -138,7 +138,7 @@
 			<?php echo $form->error($model,'belesnyomott'); ?>
 		</div>
 
-		<div class="row active" style="width:214px;">
+		<div class="row active">
 			<?php echo $form->checkBox($model,'arkalkulacioban_megjelenik'); ?>
 			<?php echo $form->label($model,'arkalkulacioban_megjelenik'); ?>
 			<?php echo $form->error($model,'arkalkulacioban_megjelenik'); ?>
