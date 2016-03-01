@@ -255,8 +255,14 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Anyagbeszallitasok_id").val();
 			dialog_title = (isUpdate) ? "Termék módosítása" : "Termék hozzáadása";
 			
+			anyagrendeles_id = $('select[id=\"Anyagbeszallitasok_anyagrendeles_id\"]').val();
+			if (anyagrendeles_id == '') anyagrendeles_id = "null";
+			
+			bizonylatszam = $("#Anyagbeszallitasok_bizonylatszam").val();
+			if (bizonylatszam == '') bizonylatszam = "null";
+			
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/AnyagbeszallitasTermekek/' + op + '/id/' + id + '/gyarto_id/' + $('select[id=\"Anyagbeszallitasok_gyarto_id\"]').val() + '/anyagrendeles_id/' + $('select[id=\"Anyagbeszallitasok_anyagrendeles_id\"]').val() + '/bizonylatszam/' + $(\"#Anyagbeszallitasok_bizonylatszam\").val()+ '/grid_id/' + new Date().getTime()",
+					'url'=> "js:'/index.php/AnyagbeszallitasTermekek/' + op + '/id/' + id + '/gyarto_id/' + $('select[id=\"Anyagbeszallitasok_gyarto_id\"]').val() + '/anyagrendeles_id/' + anyagrendeles_id + '/bizonylatszam/' + bizonylatszam + '/grid_id/' + new Date().getTime()",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
@@ -405,8 +411,14 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 			id = (isUpdate) ? hrefString.substr(hrefString.lastIndexOf("/") + 1) : $("#Anyagbeszallitasok_id").val();
 			dialog_title = (isUpdate) ? "Termék módosítása" : "Termék hozzáadása";
 			
+			anyagrendeles_id = $('select[id=\"Anyagbeszallitasok_anyagrendeles_id\"]').val();
+			if (anyagrendeles_id == '') anyagrendeles_id = "null";
+			
+			bizonylatszam = $("#Anyagbeszallitasok_bizonylatszam").val();
+			if (bizonylatszam == '') bizonylatszam = "null";
+			
 			<?php echo CHtml::ajax(array(
-					'url'=> "js:'/index.php/AnyagbeszallitasTermekekIroda/' + op + '/id/' + id + '/gyarto_id/' + $('select[id=\"Anyagbeszallitasok_gyarto_id\"]').val() + '/anyagrendeles_id/' + $('select[id=\"Anyagbeszallitasok_anyagrendeles_id\"]').val() + '/bizonylatszam/' + $(\"#Anyagbeszallitasok_bizonylatszam\").val()+ '/grid_id/' + new Date().getTime()",
+					'url'=> "js:'/index.php/AnyagbeszallitasTermekekIroda/' + op + '/id/' + id + '/gyarto_id/' + $('select[id=\"Anyagbeszallitasok_gyarto_id\"]').val() + '/anyagrendeles_id/' + anyagrendeles_id + '/bizonylatszam/' + bizonylatszam + '/grid_id/' + new Date().getTime()",
 					'data'=> "js:$(this).serialize()",
 					'type'=>'post',
 					'id' => 'send-link-'.uniqid(),
