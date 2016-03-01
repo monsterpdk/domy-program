@@ -122,7 +122,7 @@ class TermekArakController extends Controller
             $this->exportCSV(array(), null, false);
 			
 			// mindig az aktuális
-            $this->exportCSV($dataProvider, array('id', 'termek.nev', 'termek.id', 'termek.belesnyomott', 'csomag_beszerzesi_ar', 'db_beszerzesi_ar', 'csomag_ar_szamolashoz', 'csomag_ar_nyomashoz', 'db_ar_nyomashoz', 'csomag_eladasi_ar', 'db_eladasi_ar', 'csomag_ar2', 'db_ar2', 'csomag_ar3', 'db_ar3', 'datum_mettol', 'datum_meddig', 'torolt'));
+            $this->exportCSV($dataProvider, array('id', 'termek.nev', 'termek.id', 'termek.belesnyomott', 'csomag_beszerzesi_ar', 'db_beszerzesi_ar', 'darab_ar_szamolashoz', 'csomag_ar_nyomashoz', 'db_ar_nyomashoz', 'csomag_eladasi_ar', 'db_eladasi_ar', 'datum_mettol', 'datum_meddig', 'torolt'));
         }
 		
 		// LI : importhoz kell ez

@@ -12,35 +12,62 @@ $this->menu=array(
 
 <h1>Napi kombinált statisztika</h1>
 
-<?php	
-	$this->widget('zii.widgets.jui.CJuiButton', array(
-		'name'=>'button_print_statisztika',
-		'caption'=>'Statisztika nyomtatás',
-		'buttonType'=>'link',
-//		'onclick'=>'openPrintDialog()',
-		'url'=>Yii::app()->createUrl("statisztika/printNapiKombinaltStatisztika"),
-		'htmlOptions'=>array('class'=>'btn btn-success','target'=>'_blank'),
-	));
-?>
+<div class="wide form">
 
-<?php
-   echo "aaaa" ;
-?>
-    
-<?php	
-	$this->widget('zii.widgets.jui.CJuiButton', array(
-		'name'=>'button_print_statisztika',
-		'caption'=>'Statisztika nyomtatás',
-		'buttonType'=>'link',
-//		'onclick'=>'openPrintDialog()',
-		'url'=>Yii::app()->createUrl("statisztika/printNapiKombinaltStatisztika"),
-		'htmlOptions'=>array('class'=>'btn btn-success','target'=>'_blank'),
-	));
-?>
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'action'=>Yii::app()->createUrl($this->route . "PrintPDF"),
+	'method'=>'post',
+)); ?>
 
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'htmlOptions'=>array('class'=>'well'),
+		));
+	?>
+	
+	<?php 
+		echo $form->errorSummary($model); 
+	?>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'statisztika_mettol'); ?>
+			
+			<?php
+				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+					'model'=>$model,
+					'attribute'=>'statisztika_mettol',
+					'language' => 'hu',
+					'options'=>array('dateFormat'=>'yy-mm-dd',),
+					'htmlOptions'=>array('style' => 'width:123px'),
+				));			
+			?>
 
-<script type="text/javascript">
-		function openPrintDialog () {		
-			window.open("/index.php/statisztika/printNapiKombinaltStatisztika","_blank") ;
-		}
-</script>
+		<?php echo $form->labelEx($model,'statisztika_meddig'); ?>
+			
+			<?php
+				$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+					'model'=>$model,
+					'attribute'=>'statisztika_meddig',
+					'language' => 'hu',
+					'options'=>array('dateFormat'=>'yy-mm-dd',),
+					'htmlOptions'=>array('style' => 'width:123px'),
+				));			
+			?>
+			
+			<?php $this->widget('zii.widgets.jui.CJuiButton', 
+				 array(
+					'name'=>'submitForm',
+					'caption'=>'Lekérés',
+					'htmlOptions' => array ('class' => 'btn btn-primary btn-lg',),
+				 )); ?>
+			
+	</div>
+	
+	<div class="clear"></div>
+
+	<?php $this->endWidget(); ?>
+	
+<?php $this->endWidget(); ?>
+
+</div>
+

@@ -7,7 +7,7 @@
  * @property string $id
  * @property string $termek_id
  * @property double $db_beszerzesi_ar
- * @property double $csomag_ar_szamolashoz
+ * @property double $darab_ar_szamolashoz
  * @property double $csomag_ar_nyomashoz
  * @property double $db_ar_nyomashoz
  * @property double $csomag_eladasi_ar
@@ -47,9 +47,9 @@ class TermekArak extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('termek_id, db_beszerzesi_ar, csomag_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, datum_mettol, datum_meddig', 'required'),
+			array('termek_id, db_beszerzesi_ar, darab_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, datum_mettol, datum_meddig', 'required'),
 			array('torolt', 'numerical', 'integerOnly'=>true),
-			array('db_beszerzesi_ar, csomag_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar', 'numerical'),
+			array('db_beszerzesi_ar, darab_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar', 'numerical'),
             array('datum_mettol, datum_meddig', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			
 			array('datum_mettol', 'isIntervalOverlap'),
@@ -57,7 +57,7 @@ class TermekArak extends CActiveRecord
 			array('termek_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, termek_id, termeknev_search, db_beszerzesi_ar, csomag_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, datum_mettol, datum_meddig, gyarto_search, meret_search, zaras_search, cikkszam_search, kodszam_search, torolt', 'safe', 'on'=>'search'),
+			array('id, termek_id, termeknev_search, db_beszerzesi_ar, darab_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, datum_mettol, datum_meddig, gyarto_search, meret_search, zaras_search, cikkszam_search, kodszam_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -99,7 +99,7 @@ class TermekArak extends CActiveRecord
 			'id' => 'Termékár ID',
 			'termek_id' => 'Termék ID',
 			'db_beszerzesi_ar' => 'Db beszerzési ár (Ft)',
-			'csomag_ar_szamolashoz' => 'Csomag ár számoláshoz (Ft)',
+			'darab_ar_szamolashoz' => 'Darab ár számoláshoz (Ft)',
 			'csomag_ar_nyomashoz' => 'Csomag ár nyomáshoz (Ft)',
 			'db_ar_nyomashoz' => 'Db ár nyomáshoz (Ft)',
 			'csomag_eladasi_ar' => 'Csomag eladasi ár (Ft)',
@@ -141,7 +141,7 @@ class TermekArak extends CActiveRecord
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('termek_id',$this->termek_id,true);
 		$criteria->compare('db_beszerzesi_ar',$this->db_beszerzesi_ar);
-		$criteria->compare('csomag_ar_szamolashoz',$this->csomag_ar_szamolashoz);
+		$criteria->compare('darab_ar_szamolashoz',$this->darab_ar_szamolashoz);
 		$criteria->compare('csomag_ar_nyomashoz',$this->csomag_ar_nyomashoz);
 		$criteria->compare('db_ar_nyomashoz',$this->db_ar_nyomashoz);
 		$criteria->compare('csomag_eladasi_ar',$this->csomag_eladasi_ar);

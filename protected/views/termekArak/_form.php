@@ -59,9 +59,9 @@ if (!isset($termek_adatok)) {
 		</div>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'csomag_ar_szamolashoz'); ?>
-			<?php echo $form->textField($model,'csomag_ar_szamolashoz'); ?>
-			<?php echo $form->error($model,'csomag_ar_szamolashoz'); ?>
+			<?php echo $form->labelEx($model,'darab_ar_szamolashoz'); ?>
+			<?php echo $form->textField($model,'darab_ar_szamolashoz'); ?>
+			<?php echo $form->error($model,'darab_ar_szamolashoz'); ?>
 		</div>
 
 		<div class="row">
@@ -224,7 +224,7 @@ if (!isset($termek_adatok)) {
 					'columns'=>array(
 						'csomagszam_tol',
 						'csomagszam_ig',
-						'csomag_ar_szamolashoz',
+						'darab_ar_szamolashoz',
 						'csomag_ar_nyomashoz',
 						'csomag_eladasi_ar',
 						array(

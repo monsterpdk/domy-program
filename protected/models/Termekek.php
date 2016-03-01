@@ -110,6 +110,7 @@ class Termekek extends CActiveRecord
 			'afakulcs'    	=> array(self::BELONGS_TO, 'AfaKulcsok', 'afakulcs_id'),
 			'gyarto'    	=> array(self::BELONGS_TO, 'Gyartok', 'gyarto_id'),
 			'termekcsoport'	=> array(self::BELONGS_TO, 'Termekcsoportok', 'termekcsoport_id'),
+			'termekar'		=> array(self::HAS_MANY, 'TermekArak', 'termek_id'),
 		);
 	}
 

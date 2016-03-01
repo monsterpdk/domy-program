@@ -49,7 +49,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'termek_id',
 		'csomag_beszerzesi_ar',
 		'db_beszerzesi_ar',
-		'csomag_ar_szamolashoz',
+		'darab_ar_szamolashoz',
 		'csomag_ar_nyomashoz',
 		/*
 		'db_ar_nyomashoz',

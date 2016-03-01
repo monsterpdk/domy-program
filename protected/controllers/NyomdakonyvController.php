@@ -101,6 +101,9 @@ class NyomdakonyvController extends Controller
 			
 			if($model->save()) {
 				// szükség esetén firssítjük az űrlapon a csatolt képet
+				if ($model->hatarido != "0000-00-00 00:00:00" && $model->taska_kiadasi_datum != "0000-00-00 00:00:00") {
+					$this->actionGepteremHivas($model->id, false, true) ;	//A géptermi program adatbázisában létrehozzuk a bejegyzést, ha a szükséges mezők ki lettek töltve
+				}
 				if(!empty($uploadedFile))
                 {
 					// ha nem létezik még a nyomdakönyvhöz tartozó upload könyvtár, akkor létrehozzuk
@@ -532,10 +535,10 @@ class NyomdakonyvController extends Controller
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,
-//			'pagination'=>false,
-			'pagination'=>array(
+			'pagination'=>false,
+/*			'pagination'=>array(
 				'pageSize'=>20,
-			),
+			),*/
 		));
 			
 		if ($dataProvider != null) {
@@ -630,7 +633,7 @@ class NyomdakonyvController extends Controller
 			$this->aktualis_workflow_dbf_tartalom = $result ; 
 		}
 		
-		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00'");
+		$nyitott_munkak = Nyomdakonyv::model()->findAllByAttributes(array(),"elkeszulesi_datum = '0000-00-00 00:00:00' and taska_kiadasi_datum > '0000-00-00 00:00:00'");
 	 	if ($nyitott_munkak != null) {
 	 		foreach ($nyitott_munkak as $munka) {
 	 			$this->actionGepteremHivas($munka->id, false, false) ;

@@ -19,7 +19,7 @@ $this->breadcrumbs=array(
 			'termek_id',
 			'termek.DisplayTermekTeljesNev',
 			'db_beszerzesi_ar:number',
-			'csomag_ar_szamolashoz:number',
+			'darab_ar_szamolashoz:number',
 			'csomag_ar_nyomashoz:number',
 			'db_ar_nyomashoz:number',
 			'csomag_eladasi_ar:number',

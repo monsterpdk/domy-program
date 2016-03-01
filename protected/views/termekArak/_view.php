@@ -17,8 +17,8 @@
 	<?php echo CHtml::encode($data->db_beszerzesi_ar); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('csomag_ar_szamolashoz')); ?>:</b>
-	<?php echo CHtml::encode($data->csomag_ar_szamolashoz); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('darab_ar_szamolashoz')); ?>:</b>
+	<?php echo CHtml::encode($data->darab_ar_szamolashoz); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('csomag_ar_nyomashoz')); ?>:</b>

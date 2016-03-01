@@ -48,7 +48,7 @@ class Anyagbeszallitasok extends DomyModel
 		return array(
 			array('beszallitas_datum, gyarto_id, user_id', 'required'),
 			array('user_id, gyarto_id, lezarva', 'numerical', 'integerOnly'=>true),
-			array('bizonylatszam, anyagrendeles_id', 'length', 'max'=>10),
+			array('bizonylatszam, anyagrendeles_id', 'length', 'max'=>12),
 			array('megjegyzes', 'length', 'max'=>255),
 			array('beszallitas_datum, kifizetes_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			

@@ -509,7 +509,7 @@ class MegrendelesekController extends Controller
 	}	
 	
 	public function actionSzamlageneralas()
-	{
+	{	
 		if (is_numeric($_GET['id'])) {
 			$model = $this -> loadModel($_GET['id']);
 		}

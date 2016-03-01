@@ -644,11 +644,10 @@
 					$megrendeles["bsorok"][] = $sor ;
 				}
 				$megrendeles_kesz["Tranzakcio"] = $megrendeles ; 
-				
 				$xml_megrendeles = new SimpleXMLElement('<?xml version="1.0" encoding="ISO-8859-2"?><root/>');
 				Utils::array_to_xml($megrendeles_kesz, $xml_megrendeles) ;
 				$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
-// alma				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
+				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
 			}
 		}
 		
@@ -1047,8 +1046,8 @@
 			return html_entity_decode(mb_convert_encoding(strtr($text, $map), 'UTF-8', 'ISO-8859-2'), ENT_QUOTES, 'UTF-8');
 		}		 
 
-		function OsszegFormazas($osszeg) {
-			return number_format($osszeg, 2, '.', ' ');		
+		function OsszegFormazas($osszeg, $tizedes = 2) {
+			return number_format($osszeg, $tizedes, '.', ' ');		
 		}
 		
 		function SulyFormazas($suly) {
