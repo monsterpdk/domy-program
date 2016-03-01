@@ -132,7 +132,7 @@
 											else
 											{
 												paramKeys.push("Termekek[arkalkulacioban_megjelenik]");
-												paramValues.push(0);
+												paramValues.push("");
 											}
 
 											$.updateGridView("termekek-grid' . $grid_id . '", paramKeys, paramValues);
@@ -154,7 +154,7 @@
 	</div>
 
 	<div class="row">
-		<br /> Árkalkulációban megjelenik <?php echo CHtml::checkBox('arkalkulacioban_megjelenik',true); ?>
+		<br /> Árkalkulációban megjelenik szűrése <?php echo CHtml::checkBox('arkalkulacioban_megjelenik',true); ?>
 	</div>
 	
 	<div style="clear:both;">

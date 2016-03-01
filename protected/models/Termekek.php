@@ -153,7 +153,7 @@ class Termekek extends CActiveRecord
 			'datum' => 'Dátum',
 			'torolt' => 'Törölt',
 			'belesnyomott' => 'Bélésnyomott',
-			'arkalkulacioban_megjelenik' =>'Árkalkulációban megjelenik',
+			'arkalkulacioban_megjelenik' =>'Árkalkulációban megjelenik szűrése',
 			
 			'DisplayTermekTeljesNev' => 'Termék',
 			'zaras_search' => 'Zárásmód',
