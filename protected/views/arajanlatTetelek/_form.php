@@ -20,6 +20,8 @@
 	<?php echo $form->hiddenField($model, 'arajanlat_id'); ?>
 	<?php echo $form->hiddenField($model, 'termek_id'); ?>
 	<?php echo $form->hiddenField($model, 'szorzo_tetel_arhoz'); ?>
+	<?php echo "<input type='hidden' name = 'arkalkulacioban_megjelenik' />"; ?>
+	
 	<?php
 //		$ablakhelyek = CHtml::listData(TermekAblakHelyek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
 //		$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
@@ -86,7 +88,8 @@
 											var valasztott_ablakmeret = $("#boritek_ablakmeret").val() ;
 											var valasztott_termekcsoport = $("#termekcsoport").val() ;
 											var valasztott_legparnas = $("#legparnas").prop("checked") ;
-											
+											var valasztott_arkalkulacioban_megjelenik = $("#arkalkulacioban_megjelenik").prop("checked") ;
+
 											var paramKeys = [];
 											var paramValues = [];
 											
@@ -122,6 +125,15 @@
 												paramValues.push($("#termek_kereso").val());
 											}
 											
+											if (valasztott_arkalkulacioban_megjelenik) {
+												paramKeys.push("Termekek[arkalkulacioban_megjelenik]") ;
+												paramValues.push(1);
+											}
+											else
+											{
+												paramKeys.push("Termekek[arkalkulacioban_megjelenik]");
+												paramValues.push(0);
+											}
 
 											$.updateGridView("termekek-grid' . $grid_id . '", paramKeys, paramValues);
 											
@@ -141,6 +153,10 @@
 		<?php echo $form->error($model,'termek_id'); ?>
 	</div>
 
+	<div class="row">
+		<br /> Árkalkulációban megjelenik <?php echo CHtml::checkBox('arkalkulacioban_megjelenik',true); ?>
+	</div>
+	
 	<div style="clear:both;">
 	</div>
 	
@@ -352,6 +368,13 @@
 									'value' => '$data->ablakmeret == null ? "" : $data->ablakmeret->nev',
 								),
 								array(
+									'name' => 'termek.arkalkulacioban_megjelenik',
+									'header' => '',
+									'filter' => CHtml::activeTextField($termek, 'arkalkulacioban_megjelenik'),
+									'htmlOptions' => array('style' => 'display:none'),
+									'value' => '$data == null ? "" : $data->arkalkulacioban_megjelenik',
+								),
+								array(
 								  'header'=>'',
 								  'type'=>'raw',
 								  'value'=>'CHtml::Button("+", 
@@ -366,6 +389,7 @@
 																			 "))',
 															),
 								   ),
+								   'afterAjaxUpdate'=>'function(id, data){hideCol();}',
 				));
 
 		$this->endWidget('zii.widgets.jui.CJuiDialog');
@@ -373,5 +397,18 @@
 	<!-- CJUIDIALOG END -->
 	
 <?php $this->endWidget(); ?>
+
+<script>
+
+	// LI: kicsit hack megoldás, de mivel ez egyetlen helyen szükséges egyedi igény, ezért szerintem megfelelő így, amúgy is csak vizuális hack
+	function hideCol() {
+		grid = $('#termekek-grid<?php echo $grid_id; ?>');
+		$('tr', grid).each(function() {
+			$('td:eq(8), th:eq(8)',this).hide();
+		});
+	}
+	$(hideCol());
+	
+</script>
 
 </div><!-- form -->

@@ -34,6 +34,7 @@
  * @property string $datum
  * @property integer $torolt
  * @property integer $belesnyomott
+ * @property integer $arkalkulacioban_megjelenik
  *
  * virtual property string displayTermeknev (kódszám + terméknév)
  */
@@ -79,7 +80,7 @@ class Termekek extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('nev, tipus, kodszam, cikkszam, afakulcs_id, gyarto_id, csom_egys, doboz_suly, felveteli_datum, termekcsoport_id', 'required'),
-			array('meret_id, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, torolt, belesnyomott', 'numerical', 'integerOnly'=>true),
+			array('meret_id, zaras_id, ablakmeret_id, ablakhely_id, papir_id, afakulcs_id, torolt, belesnyomott, arkalkulacioban_megjelenik', 'numerical', 'integerOnly'=>true),
 			array('doboz_suly, suly, doboz_hossz, doboz_szelesseg, doboz_magassag', 'numerical'),
 			array('nev', 'length', 'max'=>127),
 			array('kodszam', 'length', 'max'=>15),
@@ -90,7 +91,7 @@ class Termekek extends CActiveRecord
 			array('felveteli_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, termekcsoport_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott', 'safe', 'on'=>'search'),
+			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, termekcsoport_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott, arkalkulacioban_megjelenik', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -152,6 +153,7 @@ class Termekek extends CActiveRecord
 			'datum' => 'Dátum',
 			'torolt' => 'Törölt',
 			'belesnyomott' => 'Bélésnyomott',
+			'arkalkulacioban_megjelenik' =>'Árkalkulációban megjelenik',
 			
 			'DisplayTermekTeljesNev' => 'Termék',
 			'zaras_search' => 'Zárásmód',
@@ -224,7 +226,8 @@ class Termekek extends CActiveRecord
 		$criteria->compare('megjegyzes',$this->megjegyzes,true);
 		$criteria->compare('felveteli_datum',$this->felveteli_datum,true);
 		$criteria->compare('datum',$this->datum,true);
-		$criteria->compare('belesnyomott',$this->belesnyomott, true) ;
+		$criteria->compare('belesnyomott',$this->belesnyomott, true);
+		$criteria->compare('arkalkulacioban_megjelenik',$this->arkalkulacioban_megjelenik, true);
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))
@@ -241,7 +244,7 @@ class Termekek extends CActiveRecord
 
 	protected function afterFind(){
 		parent::afterFind();
-		
+
 		//$this -> megjelenes_mettol = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_mettol)));
 		//$this -> megjelenes_meddig = date('Y-m-d', strtotime(str_replace("-", "", $this->megjelenes_meddig)));
 		$this -> felveteli_datum = date('Y-m-d', strtotime(str_replace("-", "", $this->felveteli_datum)));

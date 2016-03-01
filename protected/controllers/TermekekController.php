@@ -45,6 +45,9 @@ class TermekekController extends Controller
 			if($model->save())
 				$this->redirect(array('index'));
 		} else {
+			// új termék felvétele esetén az 'Árkalkulációban megjelenik' checkbox alapértelmezettkén be van pipálva
+			$model -> arkalkulacioban_megjelenik = 1;
+			
 			// LI : új termék létrehozásánál beállítjuk az alapértelmezettnek beállított ÁFA kulcsot és a felvételi dátumot mostra
 			$afaKulcs = AfaKulcsok::model()->findByAttributes(array('alapertelmezett'=> 1));
 
