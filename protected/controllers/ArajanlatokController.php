@@ -353,10 +353,10 @@ class ArajanlatokController extends Controller
 			'status'=>isset($ugyfelId) ? 'success' : 'failed',
 
 			'autocomplete_arajanlat_osszes_darabszam' => $autocomplete_arajanlat_osszes_darabszam,
-			'autocomplete_arajanlat_osszes_ertek' => $autocomplete_arajanlat_osszes_ertek,
+			'autocomplete_arajanlat_osszes_ertek' => Utils::OsszegFormazas ($autocomplete_arajanlat_osszes_ertek, 0),
 			'autocomplete_arajanlat_osszes_tetel' => $autocomplete_arajanlat_osszes_tetel,
 			'autocomplete_megrendeles_osszes_darabszam' => $autocomplete_megrendeles_osszes_darabszam,
-			'autocomplete_megrendeles_osszes_ertek' => $autocomplete_megrendeles_osszes_ertek,
+			'autocomplete_megrendeles_osszes_ertek' => Utils::OsszegFormazas ($autocomplete_megrendeles_osszes_ertek, 0),
 			'autocomplete_megrendeles_osszes_tetel' => $autocomplete_megrendeles_osszes_tetel,
 			'autocomplete_arajanlat_megrendeles_elfogadas' => $autocomplete_arajanlat_megrendeles_elfogadas,
 			));

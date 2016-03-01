@@ -898,12 +898,7 @@
 		function getUgyfelOsszesArajanlatDarab ($ugyfel_id ) {
 			$sql = "
 				SELECT COUNT(*) AS darab FROM dom_arajanlatok AS arajanlatok
-				INNER JOIN dom_arajanlat_tetelek AS tetelek ON
-				tetelek.arajanlat_id = arajanlatok.id
-
-				WHERE arajanlatok.torolt = 0 AND
-						tetelek.torolt = 0 AND
-						ugyfel_id = :ugyfel_id
+				WHERE arajanlatok.torolt = 0 AND ugyfel_id = :ugyfel_id
 			";
 
 			$command = Yii::app()->db->createCommand($sql);
@@ -924,12 +919,7 @@
 		function getUgyfelOsszesMegrendelesDarab ($ugyfel_id ) {
 			$sql = "
 				SELECT COUNT(*) AS darab FROM dom_megrendelesek AS megrendeles
-				INNER JOIN dom_megrendeles_tetelek AS tetelek ON
-				tetelek.megrendeles_id = megrendeles.id
-
-				WHERE megrendeles.torolt = 0 AND
-						tetelek.torolt = 0 AND
-						ugyfel_id = :ugyfel_id
+				WHERE megrendeles.torolt = 0 AND ugyfel_id = :ugyfel_id
 			";
 
 			$command = Yii::app()->db->createCommand($sql);

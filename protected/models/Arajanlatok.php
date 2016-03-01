@@ -288,14 +288,15 @@ class Arajanlatok extends CActiveRecord
 			
 			// árajánlat és megrendelés statisztikák kiszámolása
 			$osszesArajanlat = Utils::getUgyfelOsszesArajanlatErteke($this -> ugyfel -> id);
-			$this -> autocomplete_arajanlat_osszes_darabszam = $osszesArajanlat != null ? count($this->tetelek) : 0;
-			$this -> autocomplete_arajanlat_osszes_ertek = $osszesArajanlat != null ? $osszesArajanlat['arajanlat_netto_osszeg'] : 0;
+			$osszesArajanlatDarab = Utils::getUgyfelOsszesArajanlatDarab($this -> ugyfel -> id);
+			$this -> autocomplete_arajanlat_osszes_darabszam = $osszesArajanlatDarab != null ? $osszesArajanlatDarab : 0;
+			$this -> autocomplete_arajanlat_osszes_ertek = Utils::OsszegFormazas ($osszesArajanlat != null ? $osszesArajanlat['arajanlat_netto_osszeg'] : 0, 0);
 			$this -> autocomplete_arajanlat_osszes_tetel = $osszesArajanlat != null ? $osszesArajanlat['tetel_darabszam'] : 0;
 
 			$osszesMegrendeles = Utils::getUgyfelOsszesMegrendelesErteke($this -> ugyfel -> id);
 			$osszesMegrendelesDarab = Utils::getUgyfelOsszesMegrendelesDarab($this -> ugyfel -> id);
 			$this -> autocomplete_megrendeles_osszes_darabszam = $osszesMegrendeles != null ? $osszesMegrendelesDarab : 0;
-			$this -> autocomplete_megrendeles_osszes_ertek = $osszesMegrendeles != null ? $osszesMegrendeles['megrendeles_netto_osszeg'] : 0;
+			$this -> autocomplete_megrendeles_osszes_ertek = Utils::OsszegFormazas ($osszesMegrendeles != null ? $osszesMegrendeles['megrendeles_netto_osszeg'] : 0, 0);
 			$this -> autocomplete_megrendeles_osszes_tetel = $osszesMegrendeles != null ? $osszesMegrendeles['tetel_darabszam'] : 0;
 			
 			$this -> autocomplete_arajanlat_megrendeles_elfogadas = ($this -> autocomplete_megrendeles_osszes_tetel != 0 && $this -> autocomplete_arajanlat_osszes_tetel != 0) ?
