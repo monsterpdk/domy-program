@@ -7,6 +7,7 @@ class NyomdakonyvBeallitasokForm extends CFormModel
 {
         public $NyomDbfPath;
         public $WorkflowDbfPath;
+        public $MunkataskaXmlExportPath;
 		
         /**
          * Declares the validation rules.
@@ -30,6 +31,7 @@ class NyomdakonyvBeallitasokForm extends CFormModel
                 return array(
 					'NyomDbfPath' => 'NYOM.dbf elérési út (géptermi programhoz)',
 					'WorkflowDbfPath' => 'WORKFLOW.dbf elérési út (géptermi programhoz)',
+					'MunkataskaXmlExportPath' => 'Munkatáskák XML exportjának elérési útja (másik géptermi programhoz)',
                 );
         }
         public function save() {
@@ -37,6 +39,8 @@ class NyomdakonyvBeallitasokForm extends CFormModel
 				
                 Yii::app()->config->set('WorkflowDbfPath', $this->WorkflowDbfPath);
 
+                Yii::app()->config->set('MunkataskaXmlExportPath', $this->MunkataskaXmlExportPath);
+                
                 return true;
         }
 }

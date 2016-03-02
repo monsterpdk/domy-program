@@ -115,8 +115,9 @@ class Megrendelesek extends CActiveRecord
 			'rendelest_lezaro_user'    	=> array(self::BELONGS_TO, 'User', 'rendelest_lezaro_user_id'),
 			'megrendeles_forras'    	=> array(self::BELONGS_TO, 'Aruhazak', 'megrendeles_forras_id'),
 			'fizetesi_mod'				=> array(self::BELONGS_TO, 'FizetesiModok', 'proforma_fizetesi_mod'),
-			
-			'tetelek' => array(self::HAS_MANY, 'MegrendelesTetelek', 'megrendeles_id'),
+
+			'szallitolevel'				=> array(self::HAS_MANY, 'Szallitolevelek', 'megrendeles_id'),						
+			'tetelek' 					=> array(self::HAS_MANY, 'MegrendelesTetelek', 'megrendeles_id'),
 		);
 	}
 

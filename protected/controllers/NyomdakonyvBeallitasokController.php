@@ -19,11 +19,14 @@ class NyomdakonyvBeallitasokController extends Controller
 		
 		$NyomDbfPath = Yii::app()->config->get('NyomDbfPath');
 		$WorkflowDbfPath = Yii::app()->config->get('WorkflowDbfPath');
+		$MunkataskaXmlExportPath = Yii::app()->config->get('MunkataskaXmlExportPath');
 		
 		if ($NyomDbfPath != null)
 			$model -> NyomDbfPath = $NyomDbfPath;
 		if ($WorkflowDbfPath != null)
 			$model -> WorkflowDbfPath = $WorkflowDbfPath;
+		if ($MunkataskaXmlExportPath != null)
+			$model -> MunkataskaXmlExportPath = $MunkataskaXmlExportPath;
 		
 		// if it is ajax validation request
 		if(isset($_POST['ajax']) && $_POST['ajax'] === 'Nyomdakonyv-beallitasok-form')
@@ -38,6 +41,7 @@ class NyomdakonyvBeallitasokController extends Controller
 //			$model -> attributes=$_POST['NyomdakonyvBeallitasokForm'];
 			$model -> NyomDbfPath = $_POST['NyomdakonyvBeallitasokForm']["NyomDbfPath"] ;
 			$model -> WorkflowDbfPath = $_POST['NyomdakonyvBeallitasokForm']["WorkflowDbfPath"] ;
+			$model -> MunkataskaXmlExportPath = $_POST['NyomdakonyvBeallitasokForm']["MunkataskaXmlExportPath"] ;
 						
 			// validate user input and redirect to the previous page if valid
 			if ($model->validate())

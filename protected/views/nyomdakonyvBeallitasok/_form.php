@@ -33,6 +33,12 @@
 		<?php echo $form->textField($model,'WorkflowDbfPath', array('size'=>100,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'WorkflowDbfPath'); ?>
 	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'MunkataskaXmlExportPath'); ?>
+		<?php echo $form->textField($model,'MunkataskaXmlExportPath', array('size'=>100,'maxlength'=>255)); ?>
+		<?php echo $form->error($model,'MunkataskaXmlExportPath'); ?>
+	</div>
 	
 	<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 

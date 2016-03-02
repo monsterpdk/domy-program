@@ -102,7 +102,9 @@ class NyomdakonyvController extends Controller
 			if($model->save()) {
 				// szükség esetén firssítjük az űrlapon a csatolt képet
 				if ($model->hatarido != "0000-00-00 00:00:00" && $model->taska_kiadasi_datum != "0000-00-00 00:00:00") {
-					$this->actionGepteremHivas($model->id, false, true) ;	//A géptermi program adatbázisában létrehozzuk a bejegyzést, ha a szükséges mezők ki lettek töltve
+					$this->actionGepteremHivas($model->id, false, true) ;	//A géptermi program adatbázisában létrehozzuk a bejegyzést, ha a szükséges mezők ki lettek töltve										
+					Utils::munkaTaskaXMLGeneralas($model) ;	// A nyomdakönyvbe kerülő munkákról legenerálunk egy xml-t egy külső program számára
+
 				}
 				if(!empty($uploadedFile))
                 {

@@ -231,10 +231,10 @@
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_felul szegely_alul szegely_balra">Összesen</td>
-		<td class="cim_cella szegely_felul szegely_alul" style="padding-left: 60px;">38 db</td>
-		<td class="cim_cella szegely_felul szegely_alul">3 672 237 Ft</td>
-		<td class="cim_cella szegely_felul szegely_alul" style="padding-left: 60px;">24 db</td>
-		<td class="cim_cella szegely_felul szegely_alul szegely_jobbra">944 753 Ft</td>
+		<td class="cim_cella szegely_felul szegely_alul" style="padding-left: 60px;"><?php echo $stat_adatok["kiadott_ajanlatok_szama_osszesen"];?> db</td>
+		<td class="cim_cella szegely_felul szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["kiadott_ajanlatok_erteke_osszesen"],0);?> Ft</td>
+		<td class="cim_cella szegely_felul szegely_alul" style="padding-left: 60px;"><?php echo $stat_adatok["megrendelesek_szama_osszesen"];?> db</td>
+		<td class="cim_cella szegely_felul szegely_alul szegely_jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_erteke_osszesen"],0);?> Ft</td>
 	</tr>
 </table>
 
@@ -246,24 +246,24 @@
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb">Boríték eladás</td>
-		<td class="adat_cella szegely_alul jobbra">10 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">187 052 Ft</td>
-		<td class="adat_cella szegely_alul jobbra">10 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">187 052 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_kiemeltek_nelkul"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_kiemeltek_nelkul"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb">Boríték nyomás</td>
-		<td class="adat_cella szegely_alul jobbra">0 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">0 Ft</td>
-		<td class="adat_cella szegely_alul jobbra">0 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">0 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_kiemeltek_nelkul"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_jobb">Összesen</td>
-		<td class="cim_cella jobbra">10 db</td>
-		<td class="cim_cella jobbra szegely_jobb">187 052 Ft</td>
-		<td class="cim_cella jobbra">10 db</td>
-		<td class="cim_cella jobbra szegely_jobb">187 052 Ft</td>
+		<td class="cim_cella jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszesen_kiemeltek_nelkul"];?> db</td>
+		<td class="cim_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszesen_osszeg_kiemeltek_nelkul"],0);?> Ft</td>
+		<td class="cim_cella jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszesen"];?> db</td>
+		<td class="cim_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszeg_osszesen"],0);?> Ft</td>
 	</tr>
 </table>
 
@@ -275,24 +275,24 @@
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb">Boríték eladás</td>
-		<td class="adat_cella szegely_alul jobbra">12 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">217 109 Ft</td>
-		<td class="adat_cella szegely_alul jobbra">12 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">217 109 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_eladas_kiemeltek_nelkul"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_eladas_osszeg_kiemeltek_nelkul"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_eladas_osszesen"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_eladas_osszeg_osszesen"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb">Boríték nyomás</td>
-		<td class="adat_cella szegely_alul jobbra">1 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">47 387 Ft</td>
-		<td class="adat_cella szegely_alul jobbra">1 db</td>
-		<td class="adat_cella szegely_alul jobbra szegely_jobb">47 387 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_nyomas_kiemeltek_nelkul"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_nyomas_osszeg_kiemeltek_nelkul"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_nyomas_osszesen"];?> db</td>
+		<td class="adat_cella szegely_alul jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_nyomas_osszeg_osszesen"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_jobb">Összesen</td>
-		<td class="cim_cella jobbra">13 db</td>
-		<td class="cim_cella jobbra szegely_jobb">264 496 Ft</td>
-		<td class="cim_cella jobbra">13 db</td>
-		<td class="cim_cella jobbra szegely_jobb">264 496 Ft</td>
+		<td class="cim_cella jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_osszesen_kiemeltek_nelkul"];?> db</td>
+		<td class="cim_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_osszesen_osszeg_kiemeltek_nelkul"],0);?> Ft</td>
+		<td class="cim_cella jobbra"><?php echo $stat_adatok["szamlazott_megrendelesek_osszesen"];?> db</td>
+		<td class="cim_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["szamlazott_megrendelesek_osszeg_osszesen"],0);?> Ft</td>
 	</tr>
 </table>
 

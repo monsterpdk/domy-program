@@ -99,17 +99,25 @@ class StatisztikakController extends Controller
 		return $dataProvider ;
 	}
 	*/
-	public function getMegrendelesTetelekStatisztika($model, $kiemeltek) {
+//A megrendeléseket és azok tételeit adja vissza a lekérdezés paramétereinek megfelelően	
+	public function getMegrendelesTetelekStatisztika($model, $kiemeltek, $elozmeny = "mind") {
 		if ($model->statisztika_mettol == "") {
 			$model->statisztika_mettol = date("Y-m-d") ;	
 		}
 		if ($model->statisztika_meddig == "") {
 			$model->statisztika_meddig = date("Y-m-d") ;	
 		}
+		switch ($elozmeny) {
+			case 'mind': $elozmeny_query = "" ;
+				break ;
+			case 'ajanlatbol': $elozmeny_query = " and t.arajanlat_id > 0 " ;
+				break ;
+			case 'ajanlat_nelkul': $elozmeny_query = " and t.arajanlat_id = 0 " ;			
+		}
 		$dataProvider=new CActiveDataProvider('Megrendelesek', array(
 			'criteria'=>array(
 				'select'=>'tetelek.*',
-				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'',
+				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'' . $elozmeny_query ,
 //				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
 				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel'),
 //				'with'=>array('tetelek', 'ugyfel', 'termek', 'termekar'),
@@ -117,7 +125,7 @@ class StatisztikakController extends Controller
 			),
 			'countCriteria'=>array(
 				'select'=>'tetelek.*',
-				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'',
+				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'' . $elozmeny_query ,
 //				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
 				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel'),
 				'together'=>true,
@@ -128,6 +136,44 @@ class StatisztikakController extends Controller
 		));		
 		return $dataProvider ;
 	}	
+	
+//A számlázott (van hozzá szállítólevél) megrendeléseket és azok tételeit adja vissza a lekérdezés paramétereinek megfelelően	
+	public function getMegrendelesTetelekStatisztikaSzamlazott($model, $elozmeny = "mind") {
+		if ($model->statisztika_mettol == "") {
+			$model->statisztika_mettol = date("Y-m-d") ;	
+		}
+		if ($model->statisztika_meddig == "") {
+			$model->statisztika_meddig = date("Y-m-d") ;	
+		}
+		switch ($elozmeny) {
+			case 'mind': $elozmeny_query = "" ;
+				break ;
+			case 'ajanlatbol': $elozmeny_query = " and t.arajanlat_id > 0 " ;
+				break ;
+			case 'ajanlat_nelkul': $elozmeny_query = " and t.arajanlat_id = 0 " ;			
+		}
+		$dataProvider=new CActiveDataProvider('Megrendelesek', array(
+			'criteria'=>array(
+				'select'=>'tetelek.*',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\' and szallitolevel.id IS NOT NULL' . $elozmeny_query,
+//				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
+				'with'=>array('szallitolevel', 'tetelek' => array('termek' => array('termekar')), 'ugyfel'),
+//				'with'=>array('tetelek', 'ugyfel', 'termek', 'termekar'),
+				'together'=>true,
+			),
+			'countCriteria'=>array(
+				'select'=>'tetelek.*',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\' and szallitolevel.id IS NOT NULL' . $elozmeny_query,
+//				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
+				'with'=>array('szallitolevel', 'tetelek' => array('termek' => array('termekar')), 'ugyfel'),
+				'together'=>true,
+				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'sort'=> false,
+			'pagination'=>false,
+		));		
+		return $dataProvider ;
+	}		
 	
 	public function actionNapiKombinaltStatisztika()
 	{
@@ -195,6 +241,54 @@ class StatisztikakController extends Controller
 		$stat_adatok["arajanlatOsszegNyomas_kiemeltek_nelkul"] = $arajanlatOsszegNyomas ;
 		$stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul"] = $arajanlatTetelekLegparnas ;		
 		$stat_adatok["arajanlatOsszegLegparnas_kiemeltek_nelkul"] = $arajanlatOsszegLegparnas ;
+		
+
+//Árajánlattal kapcsolatos statisztikák	kiemelt cégek	
+		$arajanlatTetelekStatisztika_csak_kiemeltek = $this->getArajanlatTetelekStatisztika($model, 1) ;
+		$arajanlatokEladas = 0 ;
+		$arajanlatTetelekEladas = 0 ;
+		$arajanlatOsszegEladas_csak_kiemeltek = 0 ;
+		$arajanlatTetelekLegparnas = 0 ;
+		$arajanlatOsszegLegparnas = 0 ;
+		$arajanlatokNyomas = 0 ;
+		$arajanlatTetelekNyomas = 0 ;
+		$arajanlatOsszegNyomas = 0 ;
+		if ($arajanlatTetelekStatisztika_csak_kiemeltek->totalItemCount > 0) {
+			foreach ($arajanlatTetelekStatisztika_csak_kiemeltek->getData() as $sor) {
+				$nyomas = false ;
+				foreach ($sor->tetelek as $tetel_sor) {
+					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
+						$arajanlatTetelekLegparnas++ ;
+						$arajanlatOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+					}
+					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
+						$nyomas = true ;
+						$arajanlatTetelekNyomas++ ;
+						$arajanlatOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+					}
+					else
+					{
+						$arajanlatTetelekEladas++ ;
+						$arajanlatOsszegEladas_csak_kiemeltek += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;						
+					}
+				}
+				if ($nyomas) {
+					$arajanlatokNyomas++ ;
+				}
+				else
+				{
+					$arajanlatokEladas++ ;
+				}
+			}
+		}
+		$stat_adatok["arajanlatStatisztika_csak_kiemeltek"] = $arajanlatokEladas ;
+		$stat_adatok["arajanlatTetelekStatisztika_csak_kiemeltek"] = $arajanlatTetelekEladas ;		
+		$stat_adatok["arajanlatOsszegEladas_csak_kiemeltek"] = $arajanlatOsszegEladas_csak_kiemeltek ;
+		$stat_adatok["arajanlatNyomasStatisztika_csak_kiemeltek"] = $arajanlatokNyomas ;
+		$stat_adatok["arajanlatNyomasTetelekStatisztika_csak_kiemeltek"] = $arajanlatTetelekNyomas ;		
+		$stat_adatok["arajanlatOsszegNyomas_csak_kiemeltek"] = $arajanlatOsszegNyomas ;
+		$stat_adatok["arajanlatLegparnasTetelekStatisztika_csak_kiemeltek"] = $arajanlatTetelekLegparnas ;		
+		$stat_adatok["arajanlatOsszegLegparnas_csak_kiemeltek"] = $arajanlatOsszegLegparnas ;		
 		
 //Megrendeléssel kapcsolatos statisztikák nem kiemelt cégek		
 		$megrendelesTetelekStatisztika_kiemeltek_nelkul = $this->getMegrendelesTetelekStatisztika($model, 0) ;
@@ -450,6 +544,171 @@ class StatisztikakController extends Controller
 		$stat_adatok["cegek_kiemeltek"] = $cegek_kiemeltek ;
 		$stat_adatok["cegek_megrendelesszam_osszesen_csak_kiemeltek"] = $cegek_megrendelesszam_osszesen_csak_kiemeltek ;
 		$stat_adatok["cegek_megrendelesosszeg_csak_kiemeltek"] = $cegek_megrendelesosszeg_csak_kiemeltek ;
+		$stat_adatok["kiadott_ajanlatok_szama_osszesen"] = $stat_adatok["arajanlatStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatNyomasStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatStatisztika_csak_kiemeltek"] + $stat_adatok["arajanlatNyomasStatisztika_csak_kiemeltek"] ;
+		$stat_adatok["kiadott_ajanlatok_erteke_osszesen"] = $stat_adatok["arajanlatOsszegEladas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegNyomas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegLegparnas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegEladas_csak_kiemeltek"] + $stat_adatok["arajanlatOsszegNyomas_csak_kiemeltek"] + $stat_adatok["arajanlatOsszegLegparnas_csak_kiemeltek"] ;
+		$stat_adatok["megrendelesek_szama_osszesen"] = $stat_adatok["megrendelesStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesStatisztika_csak_kiemeltek"] + $stat_adatok["megrendelesNyomasStatisztika_csak_kiemeltek"] ;
+		$stat_adatok["megrendelesek_erteke_osszesen"] = $stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegEladas_csak_kiemeltek"] + $stat_adatok["megrendelesOsszegNyomas_csak_kiemeltek"] + $stat_adatok["megrendelesOsszegLegparnas_csak_kiemeltek"] ;
+		
+		//Számlázás adatok, csak megrendelt (árajánlat kérés nélküli)
+		$szamlazott_megrendelesek = $this->getMegrendelesTetelekStatisztikaSzamlazott($model, "ajanlat_nelkul") ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_eladas_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_osszesen_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_osszesen_osszeg_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_osszesen = 0 ;
+		$szamlazott_megrendelesek_ajanlat_nelkul_osszeg_osszesen = 0 ;
+		if ($szamlazott_megrendelesek->totalItemCount > 0) {
+			foreach ($szamlazott_megrendelesek->getData() as $sor) {
+				$nyomas = false ;				
+				foreach ($sor->tetelek as $tetel_sor) {
+					$termek = $tetel_sor->termek ;
+					if ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
+						$nyomas = true ;
+						if ($sor->ugyfel->kiemelt == 1) {
+							$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else {
+							$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+					}
+					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
+					{
+						if ($sor->ugyfel->kiemelt == 1) {
+							$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else {
+							$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+					}
+				}					
+				if ($nyomas) {
+					if ($sor->ugyfel->kiemelt == 1) {
+						$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen++ ;
+					}
+					else
+					{
+						$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen++ ;
+						$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul++ ;
+					}
+				}
+				else
+				{
+					if ($sor->ugyfel->kiemelt == 1) {
+						$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen++ ;
+					}
+					else
+					{
+						$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen++ ;
+						$szamlazott_megrendelesek_ajanlat_nelkul_eladas_kiemeltek_nelkul++ ;
+					}
+				}
+			}		
+			$szamlazott_megrendelesek_ajanlat_nelkul_osszesen_kiemeltek_nelkul = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul + $szamlazott_megrendelesek_ajanlat_nelkul_eladas_kiemeltek_nelkul ;
+			$szamlazott_megrendelesek_ajanlat_nelkul_osszesen_osszeg_kiemeltek_nelkul = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_kiemeltek_nelkul + $szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_kiemeltek_nelkul ;
+			$szamlazott_megrendelesek_ajanlat_nelkul_osszesen = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen + $szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen ;
+			$szamlazott_megrendelesek_ajanlat_nelkul_osszeg_osszesen = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen + $szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen ;			
+		}
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_kiemeltek_nelkul"] = $szamlazott_megrendelesek_ajanlat_nelkul_eladas_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_kiemeltek_nelkul"] = $szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul"] = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_kiemeltek_nelkul"] = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen"] = $szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen"] = $szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen"] = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen"] = $szamlazott_megrendelesek_ajanlat_nelkul_nyomas_osszeg_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszesen_kiemeltek_nelkul"] = $szamlazott_megrendelesek_ajanlat_nelkul_osszesen_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszesen_osszeg_kiemeltek_nelkul"] = $szamlazott_megrendelesek_ajanlat_nelkul_osszesen_osszeg_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszesen"] = $szamlazott_megrendelesek_ajanlat_nelkul_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_ajanlat_nelkul_osszeg_osszesen"] = $szamlazott_megrendelesek_ajanlat_nelkul_osszeg_osszesen ;
+		
+		//Számlázás adatok összes
+		$szamlazott_megrendelesek = $this->getMegrendelesTetelekStatisztikaSzamlazott($model) ;
+		$szamlazott_megrendelesek_eladas_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_eladas_osszeg_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_nyomas_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_nyomas_osszeg_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_eladas_osszesen = 0 ;
+		$szamlazott_megrendelesek_eladas_osszeg_osszesen = 0 ;
+		$szamlazott_megrendelesek_nyomas_osszesen = 0 ;
+		$szamlazott_megrendelesek_nyomas_osszeg_osszesen = 0 ;
+		$szamlazott_megrendelesek_osszesen_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_osszesen_osszeg_kiemeltek_nelkul = 0 ;
+		$szamlazott_megrendelesek_osszesen = 0 ;
+		$szamlazott_megrendelesek_osszeg_osszesen = 0 ;
+		if ($szamlazott_megrendelesek->totalItemCount > 0) {
+			foreach ($szamlazott_megrendelesek->getData() as $sor) {
+				$nyomas = false ;				
+				foreach ($sor->tetelek as $tetel_sor) {
+					$termek = $tetel_sor->termek ;
+					if ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
+						$nyomas = true ;
+						if ($sor->ugyfel->kiemelt == 1) {
+							$szamlazott_megrendelesek_nyomas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else {
+							$szamlazott_megrendelesek_nyomas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							$szamlazott_megrendelesek_nyomas_osszeg_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+					}
+					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
+					{
+						if ($sor->ugyfel->kiemelt == 1) {
+							$szamlazott_megrendelesek_eladas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else {
+							$szamlazott_megrendelesek_eladas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							$szamlazott_megrendelesek_eladas_osszeg_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+					}
+				}					
+				if ($nyomas) {
+					if ($sor->ugyfel->kiemelt == 1) {
+						$szamlazott_megrendelesek_nyomas_osszesen++ ;
+					}
+					else
+					{
+						$szamlazott_megrendelesek_nyomas_osszesen++ ;
+						$szamlazott_megrendelesek_nyomas_kiemeltek_nelkul++ ;
+					}
+				}
+				else
+				{
+					if ($sor->ugyfel->kiemelt == 1) {
+						$szamlazott_megrendelesek_eladas_osszesen++ ;
+					}
+					else
+					{
+						$szamlazott_megrendelesek_eladas_osszesen++ ;
+						$szamlazott_megrendelesek_eladas_kiemeltek_nelkul++ ;
+					}
+				}
+			}		
+			$szamlazott_megrendelesek_osszesen_kiemeltek_nelkul = $szamlazott_megrendelesek_nyomas_kiemeltek_nelkul + $szamlazott_megrendelesek_eladas_kiemeltek_nelkul ;
+			$szamlazott_megrendelesek_osszesen_osszeg_kiemeltek_nelkul = $szamlazott_megrendelesek_nyomas_osszeg_kiemeltek_nelkul + $szamlazott_megrendelesek_eladas_osszeg_kiemeltek_nelkul ;
+			$szamlazott_megrendelesek_osszesen = $szamlazott_megrendelesek_nyomas_osszesen + $szamlazott_megrendelesek_eladas_osszesen ;
+			$szamlazott_megrendelesek_osszeg_osszesen = $szamlazott_megrendelesek_nyomas_osszeg_osszesen + $szamlazott_megrendelesek_eladas_osszeg_osszesen ;			
+		}
+		$stat_adatok["szamlazott_megrendelesek_eladas_kiemeltek_nelkul"] = $szamlazott_megrendelesek_eladas_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_eladas_osszeg_kiemeltek_nelkul"] = $szamlazott_megrendelesek_eladas_osszeg_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_nyomas_kiemeltek_nelkul"] = $szamlazott_megrendelesek_nyomas_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_nyomas_osszeg_kiemeltek_nelkul"] = $szamlazott_megrendelesek_nyomas_osszeg_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_eladas_osszesen"] = $szamlazott_megrendelesek_eladas_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_eladas_osszeg_osszesen"] = $szamlazott_megrendelesek_eladas_osszeg_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_nyomas_osszesen"] = $szamlazott_megrendelesek_nyomas_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_nyomas_osszeg_osszesen"] = $szamlazott_megrendelesek_nyomas_osszeg_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_osszesen_kiemeltek_nelkul"] = $szamlazott_megrendelesek_osszesen_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_osszesen_osszeg_kiemeltek_nelkul"] = $szamlazott_megrendelesek_osszesen_osszeg_kiemeltek_nelkul ;
+		$stat_adatok["szamlazott_megrendelesek_osszesen"] = $szamlazott_megrendelesek_osszesen ;
+		$stat_adatok["szamlazott_megrendelesek_osszeg_osszesen"] = $szamlazott_megrendelesek_osszeg_osszesen ;		
+		
 		
 		# mPDF
 		$mPDF1 = Yii::app()->ePdf->mpdf();

@@ -1344,6 +1344,134 @@
 			
 			return $pagination;
 		}
+		
+		// TÁ: Legenerál egy XML filet egy konkrét nyomdakönyvbe kerülő munka részleteiről
+		function munkaTaskaXMLGeneralas($nyomdakonyv) {
+			$megrendeles_tetel = MegrendelesTetelek::model()->findbyPk($nyomdakonyv->megrendeles_tetel_id) ;
+			$gepTipusNev = "" ;
+			$sql = "
+						SELECT gep_tipusok.tipusnev FROM dom_nyomdagepek AS gepek
+						INNER JOIN dom_nyomdagep_tipusok AS gep_tipusok ON
+						gepek.id = gep_tipusok.gep_id
+		
+						WHERE (:szinszam >= szinszam_tol AND :szinszam <= szinszam_ig) AND (gep_tipusok.gep_id = :gep_id)
+					";
+		
+			$osszSzin = $megrendeles_tetel->szinek_szama1 + $megrendeles_tetel->szinek_szama2;
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':szinszam', $osszSzin);
+			$command->bindParam(':gep_id', $nyomdakonyv->gep_id);
+			
+			$result = $command->queryRow();
+			
+			if ($result) {
+				$gepTipusNev = $result['tipusnev'];
+			}
+			
+			$termek = Termekek::model()->findbyPk($megrendeles_tetel->termek_id);
+			$termek_meret = TermekMeretek::model()->findByPk($termek -> meret_id);
+			
+			if ($termek_meret == null)
+				$termek_meret = new TermekMeretek();
+				
+			$zarasmod = TermekZarasiModok::model()->findByPk($termek -> zaras_id);
+			if ($zarasmod == null)
+				$zarasmod = new TermekZarasiModok();
+						
+			$ablakmeret = TermekAblakMeretek::model()->findByPk($termek -> ablakmeret_id);
+			if ($ablakmeret == null)
+				$ablakmeret = new TermekAblakMeretek();
+						
+			$ablakhely = TermekAblakhelyek::model()->findByPk($termek -> ablakhely_id);
+			if ($ablakhely == null)
+				$ablakhely = new TermekAblakhelyek();
+						
+			$papirtipus = PapirTipusok::model()->findByPk($termek -> papir_id);
+			if ($papirtipus == null)
+				$papirtipus = new PapirTipusok();
+						
+			// ez csak egy évszám, ami nem tudom pontosan honnan jön, de kb. ez jó lehet ide, még pontosítani kell
+			$fejlecDatum = "" ;
+			if ($nyomdakonyv->hatarido != "0000-00-00 00:00:00") {
+				$fejlecDatum = date('Y', strtotime(str_replace("-", "", $nyomdakonyv->hatarido)));
+			}	
+			
+			$actualUserName = '';
+			$actualUser = User::model()->findByPk(Yii::app()->user->getId());
+			if ($actualUser != null) {
+				$actualUserName	= $actualUser->fullname;
+			}
+			
+			$gyartasIdeje = '';
+			$normaAdat = Utils::getNormaadat($megrendeles_tetel->id, $nyomdakonyv->gep_id, $nyomdakonyv->munkatipus_id, $nyomdakonyv->max_fordulat);
+			if ($normaAdat != null) {
+				$gyartasIdeje = $normaAdat['normaido'];
+			}
+			
+			$elooldal_szinek = "" ;
+			if ($nyomdakonyv->szin_c_elo == 1) {
+				$elooldal_szinek .= "C," ;	
+			}
+			if ($nyomdakonyv->szin_m_elo == 1) {
+				$elooldal_szinek .= "M," ;	
+			}
+			if ($nyomdakonyv->szin_y_elo == 1) {
+				$elooldal_szinek .= "Y," ;	
+			}
+			if ($nyomdakonyv->szin_k_elo == 1) {
+				$elooldal_szinek .= "K," ;	
+			}
+			$elooldali_szinek = rtrim($elooldali_szinek, ",") ;
+		
+			$hatoldal_szinek = "" ;
+			if ($nyomdakonyv->szin_c_hat == 1) {
+				$hatoldal_szinek .= "C," ;	
+			}
+			if ($nyomdakonyv->szin_m_hat == 1) {
+				$hatoldal_szinek .= "M," ;	
+			}
+			if ($nyomdakonyv->szin_y_hat == 1) {
+				$hatoldal_szinek .= "Y," ;	
+			}
+			if ($nyomdakonyv->szin_k_hat == 1) {
+				$hatoldal_szinek .= "K," ;	
+			}
+			$hatoldal_szinek = rtrim($hatoldal_szinek, ",") ;			
+			$munkataska = array() ;
+			$munkataska["Taskaszam"] = $nyomdakonyv->taskaszam ;
+			$munkataska["Hatarido"] = $nyomdakonyv->hatarido ;
+			$munkataska["GepTipusNev"] = $gepTipusNev;
+			$munkataska["SOS"] = $nyomdakonyv->sos ;
+			$munkataska["Munkanev"] = $megrendeles_tetel->munka_neve ;
+			$munkataska["GyartasIdeje"] = $gyartasIdeje ;
+			$munkataska["LemezSzam"] = $osszSzin ;
+			$munkataska["TermekNev"] = $megrendeles_tetel->getTetelnevHozottNemHozott() . $termek->getDisplayTermekTeljesNev() ;
+			$munkataska["Darabszam"] = $megrendeles_tetel->darabszam ;
+			$munkataska["Pantone"] = $nyomdakonyv->szin_pantone ;
+			$munkataska["ElooldalSzinek"] = $elooldal_szinek ;
+			$munkataska["HatoldalSzinek"] = $hatoldal_szinek ;
+			$munkataska["UtasitasGepmesternek"] = $nyomdakonyv->utasitas_gepmesternek ;
+			$munkataska["UtasitasCTPnek"] = $nyomdakonyv->utasitas_ctp_nek ;
+			$munkataska["MagasSzinterhelesNagyFeluleten"] = $nyomdakonyv->magas_szinterheles_nagy_feluleten ;
+			$munkataska["MagasSzinterhelesSzovegben"] = $nyomdakonyv->magas_szinterheles_szovegben ;
+			$munkataska["NyomasTipus"] = $nyomdakonyv->nyomas_tipus ;
+			$munkataska["NyomasMintaSzerint"] = $nyomdakonyv->nyomas_minta_szerint ;
+			$munkataska["NyomasVagojelSzerint"] = $nyomdakonyv->nyomas_vagojel_szerint ;
+			$munkataska["NyomasDomySzerint"] = $nyomdakonyv->nyomas_domy_szerint ;
+			$munkataska["NyomasSpecialis"] = $nyomdakonyv->nyomas_specialis ;
+			$munkataska["MegrendelesKelte"] = $megrendeles_tetel->megrendeles->rendeles_idopont ;
+			$munkataska["MunkaBeerkezett"] = $nyomdakonyv->munka_beerkezes_datum ;
+			$munkataska["TaskaKiadasDatum"] = $nyomdakonyv->taska_kiadasi_datum ;
+			$munkataska["UgyfelKapcsolattartoNev"] = $megrendeles_tetel->megrendeles->ugyfel->kapcsolattarto_nev;
+			$munkataska["UgyfelKapcsolattartoTelefon"] = $megrendeles_tetel->megrendeles->ugyfel->kapcsolattarto_telefon;						
+			
+			$munkataska_kesz["Munkataska"] = $munkataska ; 
+			$xml_munkataska = new SimpleXMLElement('<?xml version="1.0" encoding="ISO-8859-2"?><Munkataska/>');
+			Utils::array_to_xml($munkataska, $xml_munkataska) ;
+			$MunkataskaXmlExportPath = Yii::app()->config->get('MunkataskaXmlExportPath');		//Ennek a beállítási lehetőségét betenni a nyomdakönyvi beállítások oldalra
+			$xml_munkataska->asXML($MunkataskaXmlExportPath . "/" . $nyomdakonyv->taskaszam . ".xml");			
+			
+		}
 
 	}
 
