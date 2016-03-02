@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'dom_nyomda_munka_feladatok':
  * @property integer $id
  * @property string $taskaszam
- * @property integer $user_id
+ * @property integer $gepterem_dolgkod
  * @property integer $muvelet_id
  * @property datetime $muvelet_kezd_idopont
  * @property datetime $muvelet_vege_idopont
@@ -40,14 +40,14 @@ class NyomdaFeladatok extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('taskaszam, user_id, muvelet_id, muvelet_kezd_idopont, gep_id, mennyiseg, torolt', 'required'),
-			array('user_id, muvelet_id, gep_id, mennyiseg, selejt_mennyiseg, torolt', 'numerical', 'integerOnly'=>true),
+			array('taskaszam, gepterem_dolgkod, muvelet_id, muvelet_kezd_idopont, gep_id, mennyiseg, torolt', 'required'),
+			array('gepterem_dolgkod, muvelet_id, gep_id, mennyiseg, selejt_mennyiseg, torolt', 'numerical', 'integerOnly'=>true),
 			array('dijo', 'numerical'),
 			array('megjegyzes', 'length', 'max'=>255),
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, taskaszam, user_id, muvelet_id, muvelet_kezd_idopont, muvelet_vege_idopont, gep_id, mennyiseg, selejt_mennyiseg, megjegyzes, dijo, torolt', 'safe', 'on'=>'search'),
+			array('id, taskaszam, gepterem_dolgkod, muvelet_id, muvelet_kezd_idopont, muvelet_vege_idopont, gep_id, mennyiseg, selejt_mennyiseg, megjegyzes, dijo, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -61,7 +61,7 @@ class NyomdaFeladatok extends CActiveRecord
 		return array(
 			'gep' => array(self::BELONGS_TO, 'Nyomdakonyv', 'taskaszam'),
 			'muvelet' => array(self::HAS_ONE, 'NyomdaMuveletek', 'muvelet_id'),
-			'user' => array(self::HAS_ONE, 'User', 'user_id'),
+			'user' => array(self::HAS_ONE, 'User', 'gepterem_dolgkod'),
 			'gep' => array(self::HAS_ONE, 'Nyomdagepek', 'gep_id'),
 		);
 	}
@@ -78,7 +78,7 @@ class NyomdaFeladatok extends CActiveRecord
 		return array(
 			'id' => 'Nyomdakönyvi művelet ID',
 			'taskaszam' => 'Táskaszám',
-			'user_id' => 'Dolgozó ID',
+			'gepterem_dolgkod' => 'Dolgozó kódja a géptermi programban',
 			'muvelet_id' => 'Művelet ID',
 			'muvelet_kezd_idopont' => 'Kezdés időpont',
 			'muvelet_vege_idopont' => 'Befejezés időpont',
@@ -111,7 +111,7 @@ class NyomdaFeladatok extends CActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('taskaszam',$this->taskaszam,true);
-		$criteria->compare('user_id',$this->user_id,true);
+		$criteria->compare('gepterem_dolgkod',$this->gepterem_dolgkod,true);
 		$criteria->compare('muvelet_id',$this->muvelet_id,true);
 		$criteria->compare('gep_id',$this->gep_id,true);
 		$criteria->compare('muvelet_kezd_idopont',$this->muvelet_kezd_idopont,true);

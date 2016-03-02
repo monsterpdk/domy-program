@@ -401,6 +401,7 @@ class NyomdakonyvController extends Controller
 			if (count($this->aktualis_workflow_dbf_tartalom) > 0) {
 				foreach ($this->aktualis_workflow_dbf_tartalom as $aktualis_muvelet) {
 					if ($aktualis_muvelet["TSZAM"] == $model->taskaszam) {
+//						print_r($aktualis_muvelet) ;
 						$muveletek[] = $aktualis_muvelet ;	
 					}
 				}
@@ -411,26 +412,39 @@ class NyomdakonyvController extends Controller
 			$elso_kezd_idopont = "0000-00-00 00:00:00" ;
 			$utolso_vege_idopont = "0000-00-00 00:00:00" ;
 			if (count($muveletek) > 0) {
-//				print_r($muveletek) ;
-//				die("aaaa: " . count($muveletek)) ;
 				foreach ($muveletek as $muvelet) {
+					$muvelet["KEZD"] = substr($muvelet["KEZDDATE"], 0, 4) . "-" . substr($muvelet["KEZDDATE"], 4, 2) . "-" . substr($muvelet["KEZDDATE"], 6, 2) ;
+					$kezdido = explode(".", $muvelet["KEZDIDO"]) ;					
+					$muvelet["KEZD"] .= " " . str_pad($kezdido[0], 2, "0", STR_PAD_LEFT) . ":" . str_pad($kezdido[1], 2, "0", STR_PAD_LEFT) . ":00" ;
+					if ($muvelet["VEGEDATE"] > "") {
+						$muvelet["VEGE"] = substr($muvelet["VEGEDATE"], 0, 4) . "-" . substr($muvelet["VEGEDATE"], 4, 2) . "-" . substr($muvelet["VEGEDATE"], 6, 2) ;
+						$vegeido = explode(".", $muvelet["VEGEIDO"]) ;					
+						$muvelet["VEGE"] .= " " . str_pad($vegeido[0], 2, "0", STR_PAD_LEFT) . ":" . str_pad($vegeido[1], 2, "0", STR_PAD_LEFT) . ":00" ;
+					}
+					else
+					{
+						$muvelet["VEGE"] = "" ;
+					}
+//					print_r($muvelet) ;
+//					die() ;			
 					if ($elso_kezd_idopont == "0000-00-00 00:00:00" || $muvelet["KEZD"] < $elso_kezd_idopont) {
 						$elso_kezd_idopont = Utils::w1250_to_utf8($muvelet["KEZD"]);
 					}
 					if ($muvelet["VEGE"] == "" || $muvelet["VEGE"] > $utolso_vege_idopont) {
 						$utolso_vege_idopont = Utils::w1250_to_utf8($muvelet["VEGE"]);
 					}		
+					
 					$nyomda_feladat = NyomdaFeladatok::model()->findByAttributes(array('taskaszam'=>$model->taskaszam, 'muvelet_id'=>$muvelet["WFKOD"], 'muvelet_kezd_idopont'=>$muvelet["KEZD"])) ;
 					if ($nyomda_feladat == null) {
 						//felvesszük a műveletet a nyomda_feladatokhoz
-						$domy_user = User::model()->findByAttributes(array('gepterem_dolgkod'=>Utils::w1250_to_utf8($muvelet["DOLGKOD"])));
+/*						$domy_user = User::model()->findByAttributes(array('gepterem_dolgkod'=>Utils::w1250_to_utf8($muvelet["DOLGKOD"])));
 						$domy_dolgkod = "" ;
 						if ($domy_user != null)
-							$domy_dolgkod = $domy_user->id ;
-						$kezd_idopont = substr($muvelet["KEZDDATE"], 0, 4) . "-" . substr($muvelet["KEZDDATE"], 4, 2) . "-" . substr($muvelet["KEZDDATE"], 6, 2) . " " . substr($muvelet["KEZDIDO"], 0, 2) . ":" . substr($muvelet["KEZDIDO"], 3, 2) . ":00" ;
+							$domy_dolgkod = $domy_user->id ;*/
+						$kezd_idopont = $muvelet["KEZD"] ;
 						$vege_idopont = "0000-00-00 00:00:00" ;
 						if ($muvelet["VEGEDATE"] > "") {
-							$vege_idopont = substr($muvelet["VEGEDATE"], 0, 4) . "-" . substr($muvelet["VEGEDATE"], 4, 2) . "-" . substr($muvelet["VEGEDATE"], 6, 2) . " " . substr($muvelet["VEGEIDO"], 0, 2) . ":" . substr($muvelet["VEGEIDO"], 3, 2) . ":00" ;
+							$vege_idopont = $muvelet["VEGE"] ;
 						}
 						if ($muvelet["MENNY"] == "") {
 							$muvelet["MENNY"] = 0 ;	
@@ -438,13 +452,13 @@ class NyomdakonyvController extends Controller
 						$muvelet["MENNY"] = intval($muvelet["MENNY"]) ;
 						$nyomda_feladat = new NyomdaFeladatok() ;
 						$nyomda_feladat->taskaszam = Utils::w1250_to_utf8($muvelet["TSZAM"]);
-						$nyomda_feladat->user_id = $domy_dolgkod ;
+						$nyomda_feladat->gepterem_dolgkod = Utils::w1250_to_utf8($muvelet["DOLGKOD"]) ;
 						$nyomda_feladat->muvelet_id = Utils::w1250_to_utf8($muvelet["WFKOD"]);
 						$nyomda_feladat->muvelet_kezd_idopont = $kezd_idopont;
 						$nyomda_feladat->muvelet_vege_idopont = $vege_idopont;
 						$nyomda_feladat->gep_id = Utils::w1250_to_utf8($muvelet["GEPKOD"]);
 						$nyomda_feladat->mennyiseg = $muvelet["MENNY"];
-						$nyomda_feladat->selejt_mennyiseg = Utils::w1250_to_utf8($muvelet["SMENNY"]);
+						$nyomda_feladat->selejt_mennyiseg = intval(Utils::w1250_to_utf8($muvelet["SMENNY"]));
 						$nyomda_feladat->megjegyzes = Utils::w1250_to_utf8($muvelet["MEGJ"]);
 						$nyomda_feladat->dijo = Utils::w1250_to_utf8($muvelet["DIJO"]);
 						$nyomda_feladat->torolt = 0 ;
