@@ -224,6 +224,65 @@ class AnyagbeszallitasokController extends Controller
 		Yii::app()->end();
 	}
 	
+	// AJAX-os híváshoz: létrehozza egy anyagbeszállításhoz a tételeket egy kapcsolódó anyagrendelés tételeiből
+	public function actionSynchronizeTetel($anyagbeszallitas_id, $anyagrendeles_id) {
+		$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk ($anyagbeszallitas_id);
+		$anyagrendeles = Anyagrendelesek::model()->findByPk ($anyagrendeles_id);
+
+		if ($anyagbeszallitas != null && $anyagrendeles != null) {
+			// töröljük az anyagbeszállításhoz jelenleg felvett tételeket (iroda és raktár nézetekből is)
+			AnyagbeszallitasTermekek::model()->deleteAll(
+				'anyagbeszallitas_id = :anyagbeszallitas_id',
+				array('anyagbeszallitas_id' => $anyagbeszallitas->id)
+			);
+			AnyagbeszallitasTermekekIroda::model()->deleteAll(
+				'anyagbeszallitas_id = :anyagbeszallitas_id',
+				array('anyagbeszallitas_id' => $anyagbeszallitas->id)
+			);
+			
+			// végigmegyünk a kiválasztott anyagrendelés termékein is hozzáadjuk az anyagbeszállítás mindkét táblázatába őket (iroda / raktár)
+			foreach ($anyagrendeles->termekek as $anyagrendeles_termek) {
+				// raktár
+				$ujAnyagbeszallitasTermek = new AnyagbeszallitasTermekek;
+				$ujAnyagbeszallitasTermek->anyagbeszallitas_id = $anyagbeszallitas->id;
+				$ujAnyagbeszallitasTermek->termek_id = $anyagrendeles_termek->termek_id;
+				$ujAnyagbeszallitasTermek->netto_darabar = $anyagrendeles_termek->rendeleskor_netto_darabar;
+				$ujAnyagbeszallitasTermek->save(false);
+				
+				// iroda
+				$ujAnyagbeszallitasTermekIroda = new AnyagbeszallitasTermekekIroda;
+				$ujAnyagbeszallitasTermekIroda->anyagbeszallitas_id = $anyagbeszallitas->id;
+				$ujAnyagbeszallitasTermekIroda->termek_id = $anyagrendeles_termek->termek_id;
+				$ujAnyagbeszallitasTermekIroda->netto_darabar = $anyagrendeles_termek->rendeleskor_netto_darabar;
+				$ujAnyagbeszallitasTermekIroda->save(false);
+			}
+		}
+	}
+	
+	// egy irodai termék darabszámát inline edit segítségével módosították, így mentenünk kell DB-be
+	public function actionUpdateDarabszamIroda () {
+		if ( isset($_POST['pk']) && isset($_POST['value']) && is_numeric($_POST['value'])) {
+			$anyagbeszallitasTermekIroda = AnyagbeszallitasTermekekIroda::model()->findByPk($_POST['pk']);
+			
+			if ($anyagbeszallitasTermekIroda != null) {
+				$anyagbeszallitasTermekIroda->darabszam = $_POST['value'];
+				$anyagbeszallitasTermekIroda->save(false);
+			}
+		}
+	}
+	
+	// egy raktári termék darabszámát inline edit segítségével módosították, így mentenünk kell DB-be
+	public function actionUpdateDarabszamRaktar () {
+		if ( isset($_POST['pk']) && isset($_POST['value']) && is_numeric($_POST['value'])) {
+			$anyagbeszallitasTermek = AnyagbeszallitasTermekek::model()->findByPk($_POST['pk']);
+			
+			if ($anyagbeszallitasTermek != null) {
+				$anyagbeszallitasTermek->darabszam = $_POST['value'];
+				$anyagbeszallitasTermek->save(false);
+			}
+		}
+	}
+	
 	/**
 	 * Manages all models.
 	 */

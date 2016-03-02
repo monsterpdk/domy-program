@@ -71,7 +71,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 			
 				<?php echo CHtml::activeDropDownList($model, 'anyagrendeles_id',
 					($model->lezarva != 1) ? CHtml::listData(Anyagrendelesek::model()->findAll(array("condition"=>"lezarva=0", 'order'=>'bizonylatszam DESC')), 'id', 'displayBizonylatszamDatum') : CHtml::listData(Anyagrendelesek::model()->findAll(), 'id', 'displayBizonylatszamDatum'),
-					array('empty'=>'', 'disabled'=>(!$model->anyagrendeles_id == null) || !$canEditBeszallitasData )
+					((!$model->anyagrendeles_id == null) || !$canEditBeszallitasData) ? array('empty'=>'', 'disabled'=>'true', 'onChange'=>'javascript:tetelekFrissitese();') : array('empty'=>'', 'onChange'=>'javascript:tetelekFrissitese();')
 				); ?>
 				
 			<?php echo $form->error($model,'anyagrendeles_id'); ?>
@@ -320,7 +320,27 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 				'columns'=>array(
 					'termek.kodszam',
 					'termek.nev',
-					'darabszam',
+					
+					// a darabszám szerkeszthető a gyorsabb ügyintézés érdekében
+					array(
+						'class' => 'editable.EditableColumn',
+						'name'  => 'darabszam',
+						'value' => function($data, $row) use ($model){
+							return $data->darabszam;
+						},
+						'header' => 'Darabszám',
+						'editable' => array(
+ 						   'placement' => 'right',
+						   'url'       => $this->createUrl('anyagbeszallitasok/updateDarabszamRaktar'),
+						   'validate' => 'js: function(value) {
+								if ( ($.trim(value) == "") || !(value % 1 === 0) || !($.isNumeric(value) && parseInt(value) >= 0) ) return "Csak 0, vagy annál nagyobb érték írható be !";
+							}',
+							'onSave' => 'js: function(e, params) {
+								// sikeres mentés után frissítjük az összérték mezőket
+								  refreshOsszertek ();
+							}',
+					)),
+					
 					'netto_darabar',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -476,7 +496,27 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 				'columns'=>array(
 					'termek.kodszam',
 					'termek.nev',
-					'darabszam',
+
+					// a darabszám szerkeszthető a gyorsabb ügyintézés érdekében
+					array(
+						'class' => 'editable.EditableColumn',
+						'name'  => 'darabszam',
+						'value' => function($data, $row) use ($model){
+							return $data->darabszam;
+						},
+						'header' => 'Darabszám',
+						'editable' => array(
+ 						   'placement' => 'right',
+						   'url'       => $this->createUrl('anyagbeszallitasok/updateDarabszamIroda'),
+						   'validate' => 'js: function(value) {
+								if ( ($.trim(value) == "") || !(value % 1 === 0) || !($.isNumeric(value) && parseInt(value) >= 0) ) return "Csak 0, vagy annál nagyobb érték írható be !";
+							}',
+							'onSave' => 'js: function(e, params) {
+								// sikeres mentés után frissítjük az összérték mezőket
+								  refreshOsszertek ();
+							}',
+					)),
+
 					'netto_darabar',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -621,22 +661,98 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
     ?>
 <?php endif; ?>
 
-<script>
-	function refreshOsszertek () {
-		$.ajax({
-			type: 'GET',
-			dataType: 'JSON',
-			url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/refreshOsszertek") . "/anyagbeszallitas_id/" . $model->id; ?>',
-			success:function(data){
-				if (data !== null) {
-					$('#Anyagbeszallitasok_displayOsszertekIroda').val(data.osszertekIroda);
-					$('#Anyagbeszallitasok_displayOsszertekRaktar').val(data.osszertekRaktar);
+<?php
+	// a dialógus ablak inicializálása
+	$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+		'id'=>'dialogSynchronizeProgresss',
+		'options'=>array(
+			'title'=>'Szinkronizálás',
+			'autoOpen'=>false,
+			'modal'=>true,
+			'width'=>300,
+			'height'=>300,
+		),
+	));?>
+	
+	<div class="divForForm">
+		<p align='center' style='margin:50px'>
+			<img src='../../../images/ajax-loader.gif' />
+		</p>
 
-					return false;
+		<p align='center'>
+			Tételek szinkronizálása ...
+		</p>
+	</div>
+	 
+<?php $this->endWidget();?>
+
+<script>
+
+		function refreshOsszertek () {
+			$.ajax({
+				type: 'GET',
+				dataType: 'JSON',
+				url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/refreshOsszertek") . "/anyagbeszallitas_id/" . $model->id; ?>',
+				success:function(data){
+					if (data !== null) {
+						$('#Anyagbeszallitasok_displayOsszertekIroda').val(data.osszertekIroda);
+						$('#Anyagbeszallitasok_displayOsszertekRaktar').val(data.osszertekRaktar);
+
+						return false;
+					}
+				},
+			});
+
+			return false;
+		}
+		
+		// LI : itt adjuk hozzá a kapcsolódó anyagrendelés kiválasztása után a tételeket az irodai részhez, vagy a raktári részhez
+		function tetelekFrissitese () {
+			var anyagrendeles_id = $('#Anyagbeszallitasok_anyagrendeles_id').val();
+			
+			if (anyagrendeles_id != '') {
+				if (confirm('A termékek szinkronizálva lesznek a kiválasztott anyagrendelés termékeivel. A jelenleg felvett termékek törlődni fognak. Biztosan folytatja?')) {
+					$.ajax({
+						type: 'GET',
+						dataType: 'JSON',
+						url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/synchronizeTetel") . "/anyagbeszallitas_id/" . $model->id . "/anyagrendeles_id/" ; ?>' + anyagrendeles_id,
+						success:function(data){
+							if (data !== null) {
+								$('#Anyagbeszallitasok_displayOsszertekIroda').val(data.osszertekIroda);
+								$('#Anyagbeszallitasok_displayOsszertekRaktar').val(data.osszertekRaktar);
+
+								return false;
+							}
+						},
+						beforeSend: function() {
+							// feldobjuk a felhasználónak a progress dialog-ot
+							$("#dialogSynchronizeProgresss").dialog("open");
+						},
+						complete: function() {
+							// frissítjük a termékraktár listákat (a gridview-ek önmaguk firssítése után frissíték az összérték mezőket is)
+							$.fn.yiiGridView.update("AnyagbeszallitasTermekek-grid");
+							$.fn.yiiGridView.update("AnyagbeszallitasTermekekIroda-grid");
+
+							// bezárjuk a progress dialog-ot
+							$("#dialogSynchronizeProgresss").dialog("close");
+						},
+					});
+				} else {
+					// ha a felhasználó a nem gombot választotta, akkor a lenyíló listába vissza kell állítanunk az előző elemet
+					$('#Anyagbeszallitasok_anyagrendeles_id').val( ($('#Anyagbeszallitasok_anyagrendeles_id').data("oldData")) );	
 				}
-			},
+			}
+			
+			return false;
+		}
+		
+		// hogy el tudjuk menteni az anyagrendelés előzőleg kiválasztott értékét
+		var anyagrendeles = $("#Anyagbeszallitasok_anyagrendeles_id");
+		anyagrendeles.data("oldData", anyagrendeles.val());
+
+		anyagrendeles.change (function(data){
+			var obj = $(this);
+			obj.data("oldData", obj.val());
 		});
 
-		return false;
-	}
 </script>

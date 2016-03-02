@@ -248,11 +248,11 @@ class Anyagbeszallitasok extends DomyModel
 	}
 	
 	public function getDisplayOsszertekIroda () {
-		return $this->displayOsszertekIroda;
+		return Utils::OsszegFormazas($this->displayOsszertekIroda);
 	}
 	
 	public function getDisplayOsszertekRaktar () {
-		return $this->displayOsszertekRaktar;
+		return Utils::OsszegFormazas($this->displayOsszertekRaktar);
 	}
 	
 }
