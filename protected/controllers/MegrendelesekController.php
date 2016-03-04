@@ -94,6 +94,9 @@ class MegrendelesekController extends Controller
 		if(isset($_POST['Megrendelesek']))
 		{
 			$model->attributes=$_POST['Megrendelesek'];
+			if ($model->szamla_fizetve == 1) {
+				$model->rendelest_lezaro_user_id = Yii::app()->user->getId();
+			}
 			if($model->save())
 				Utils::goToPrevPage("megrendelesekIndex");
 		}
@@ -414,6 +417,11 @@ class MegrendelesekController extends Controller
 		$dataProvider=new CActiveDataProvider('Megrendelesek',
 			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
+		
+		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
+/*		foreach ($dataProvider->getData() as $sor) {
+			$this->checkSzamlaSorszam($sor->id) ;	
+		}*/
 		
 		//send model object for search
 		$this->render('index',array(

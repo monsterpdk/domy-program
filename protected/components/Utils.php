@@ -363,7 +363,7 @@
 					if ($ugyfel != null) {
 						
 						// megkeresük az ügyfélhez tartozó összes kiegyenlítetlen megrendelést (ID-kat kapunk első körben)
-						$kiegyenlitetlenMegrendelesek = Yii::app() -> db -> createCommand  ("SELECT id FROM dom_megrendelesek WHERE sztornozva = 0 AND torolt = 0 AND rendelest_lezaro_user_id = 0 AND ugyfel_id = " . $ugyfel->id) -> queryAll();
+						$kiegyenlitetlenMegrendelesek = Yii::app() -> db -> createCommand  ("SELECT id FROM dom_megrendelesek WHERE sztornozva = 0 AND torolt = 0 AND szamla_fizetve = 0 AND rendelest_lezaro_user_id = 0 AND ugyfel_id = " . $ugyfel->id) -> queryAll();
 
 						// végigmegyünk a kapott ID-kon, megkeressük a hozzájuk tartozó tételeket és összeadjuk a tételekt értékét
 						$sumMegrendelesek = 0;
@@ -655,7 +655,11 @@
 		function szamla_sorszam_beolvas($megrendeles_id) {
 			$return = 0 ;
 			$sql = "select BSorszam from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
-			$szamla_fej = null; //Yii::app()->db_actual->createCommand($sql)->queryRow();
+			$fp = fopen('szamla_sorszamok_queryk.txt', 'a');
+			fwrite($fp, $sql . "\n");
+			fclose($fp);			
+//			$szamla_fej = null; //Yii::app()->db_actual->createCommand($sql)->queryRow();
+			$szamla_fej = Yii::app()->db_actual->createCommand($sql)->queryRow();
 			if (is_array($szamla_fej)) {
 				$return = $szamla_fej["BSorszam"] ;	
 			}

@@ -400,6 +400,12 @@
 		</div>
 
 		<div class="row active">
+			<?php echo $form->checkBox($model,'szamla_fizetve'); ?>
+			<?php echo $form->label($model,'szamla_fizetve'); ?>
+			<?php echo $form->error($model,'szamla_fizetve'); ?>
+		</div>		
+		
+		<div class="row active">
 			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
 			<?php echo $form->label($model,'sztornozva'); ?>
 			<?php echo $form->error($model,'sztornozva'); ?>
