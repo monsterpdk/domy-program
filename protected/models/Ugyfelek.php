@@ -141,7 +141,7 @@ class Ugyfelek extends DomyModel
 	public function checkAdoszam ($attribute)
 	{
 		$adoszam = $this->adoszam;
-		if ($adoszam != "") {
+		if ($this->cegnev != "" && $adoszam != "") {
 			$pattern = "/^(\d{7})(\d)\-([1-5])\-(0[2-9]|[13][0-9]|2[02-9]|4[0-4]|51)$/";
 	
 			$result = preg_match ($pattern, $adoszam, $matches);
