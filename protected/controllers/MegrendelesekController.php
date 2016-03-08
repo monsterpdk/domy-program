@@ -408,6 +408,7 @@ class MegrendelesekController extends Controller
 	{
 		Utils::saveCurrentPage("megrendelesekIndex");
 		
+		Utils::szamla_kiegyenlitettseg_szinkron() ;		
 		$this->webaruhazMegrendelesekBegyujt() ;
 		$model=new Megrendelesek('search');
 		$model->unsetAttributes();
@@ -415,11 +416,13 @@ class MegrendelesekController extends Controller
 			$model->attributes=$_GET['Megrendelesek'];
 	 	
 		$dataProvider=new CActiveDataProvider('Megrendelesek',
+//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
+//			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),'pagination'=>false) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
 		
-		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
-/*		foreach ($dataProvider->getData() as $sor) {
+/*		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
+		foreach ($dataProvider->getData() as $sor) {
 			$this->checkSzamlaSorszam($sor->id) ;	
 		}*/
 		
@@ -795,9 +798,12 @@ class MegrendelesekController extends Controller
 	public function checkSzamlaSorszam($id) {
 		$megrendeles = $this->loadModel($id);
 		if ($megrendeles != null && (empty($megrendeles->szamla_sorszam) || $megrendeles->szamla_sorszam == 0)) {			
-			$szamla_sorszam = Utils::szamla_sorszam_beolvas($id) ;
+			$szamla_adatok = Utils::szamla_sorszam_beolvas($id) ;
+			$szamla_sorszam = $szamla_adatok["BSorszam"] ;
+			$szamla_hatarido = substr($szamla_adatok["Esedekes"], 0, 10) ;
 			if (!is_numeric($szamla_sorszam) || $szamla_sorszam > 0) {
 				$megrendeles->setAttribute("szamla_sorszam", $szamla_sorszam);
+				$megrendeles->setAttribute("szamla_fizetesi_hatarido", $szamla_hatarido) ;
 				$megrendeles->save();
 				
 				// átbillentjük a megrendeléshez tartozó ügyfél típusát 'vasarlo'-ra
@@ -807,7 +813,7 @@ class MegrendelesekController extends Controller
 					$ugyfel->save();
 				}
 			}
-		}
+		}		
 	}
 	
 }

@@ -22,7 +22,9 @@
  * @property string $proforma_fizetesi_hatarido
  * @property integer $proforma_fizetesi_mod
  * @property string $szamla_sorszam
+ * @property string $szamla_fizetesi_hatarido
  * @property integer $szamla_fizetve
+ * @property string $szamla_kiegyenlites_datum
  * @property string $ugyfel_tel
  * @property string $ugyfel_fax
  * @property string $visszahivas_jegyzet
@@ -90,7 +92,7 @@ class Megrendelesek extends CActiveRecord
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_fizetve, szamla_sorszam, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, megrendeles_forras_megrendeles_id, nyomdakonyv_munka_id, sztornozva, cegnev_search, proforma_kiallitas_datum, proforma_teljesites_datum, proforma_fizetesi_hatarido, proforma_fizetesi_mod, torolt', 'safe', 'on'=>'search'),
+			array('id, sorszam, ugyfel_id, cimzett, arkategoria_id, egyedi_ar, rendeles_idopont, rendelest_rogzito_user_id, rendelest_lezaro_user_id, afakulcs_id, arajanlat_id, proforma_szamla_sorszam, proforma_szamla_fizetve, szamla_fizetesi_hatarido, szamla_fizetve, szamla_sorszam, szamla_kiegyenlites_datum, ugyfel_tel, ugyfel_fax, visszahivas_jegyzet, jegyzet, reklamszoveg, egyeb_megjegyzes, sztornozas_oka, megrendeles_forras_id, megrendeles_forras_megrendeles_id, nyomdakonyv_munka_id, sztornozva, cegnev_search, proforma_kiallitas_datum, proforma_teljesites_datum, proforma_fizetesi_hatarido, proforma_fizetesi_mod, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -155,6 +157,8 @@ class Megrendelesek extends CActiveRecord
 			'proforma_fizetesi_mod' => 'Proforma fizetési mód',
 			'szamla_sorszam' => 'Számla sorszáma',
 			'szamla_fizetve' => 'Számla kiegyenlítve',
+			'szamla_kiegyenlites_datum' => 'Számla kiegyenlítés dátuma',
+			'szamla_fizetesi_hatarido' => 'Számla fizetési határidő',
 			'ugyfel_tel' => 'Ügyfél telefon',
 			'ugyfel_fax' => 'Ügyfél fax',
 			'visszahivas_jegyzet' => 'Visszahívás jegyzet',

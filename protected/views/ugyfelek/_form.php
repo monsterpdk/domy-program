@@ -628,13 +628,13 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'max_fizetesi_keses'); ?>
-		<?php echo $form->textField($model,'max_fizetesi_keses'); ?>
+		<?php echo $form->textField($model,'max_fizetesi_keses', array('readonly'=>true)); ?>
 		<?php echo $form->error($model,'max_fizetesi_keses'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'atlagos_fizetesi_keses'); ?>
-		<?php echo $form->textField($model,'atlagos_fizetesi_keses'); ?>
+		<?php echo $form->textField($model,'atlagos_fizetesi_keses', array('readonly'=>true)); ?>
 		<?php echo $form->error($model,'atlagos_fizetesi_keses'); ?>
 	</div>
 
@@ -650,7 +650,7 @@
 		<?php //echo $form->dropDownList($model, 'fizetesi_moral',array("0"=>"0","1"=>"1","2"=>"2","3"=>"3","4"=>"4","5"=>"5"), array());
 		?>
 		
-		<?php echo $form->textField($model,'fizetesi_moral',array('size'=>10,'maxlength'=>10, 'readonly'=>false)); ?>
+		<?php echo $form->textField($model,'fizetesi_moral',array('size'=>10,'maxlength'=>10, 'readonly'=>true)); ?>
 		
 		<?php echo $form->error($model,'fizetesi_moral'); ?>
 	</div>

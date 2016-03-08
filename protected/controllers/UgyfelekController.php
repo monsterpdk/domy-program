@@ -166,8 +166,15 @@ class UgyfelekController extends Controller
 			$model->attributes=$_GET['Ugyfelek'];
 	 	
 		$dataProvider=new CActiveDataProvider('Ugyfelek',
+//Fizetési késés és morál újra kalkulálásához			Yii::app()->user->checkAccess('Admin') ? array('pagination'=>false) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
+
+/*		//Ha újra kell kalkulálni az összes ügyfél fizetési késés és morál adatait		
+		foreach ($dataProvider->getData() as $sor) {
+			$sor->updateAtlagosFizetesiKeses() ;	
+		}*/
+		
 		
 		// LI : exporthoz kell ez a blokk
 		 if ($this->isExportRequest()) {

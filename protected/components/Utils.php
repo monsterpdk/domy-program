@@ -654,18 +654,56 @@
 		/* Az ACTUAL adatbázisából beolvassa a $megrendeles_id azonosítójú megrendeléshez tartozó számla sorszámot és visszaadja */
 		function szamla_sorszam_beolvas($megrendeles_id) {
 			$return = 0 ;
-			$sql = "select BSorszam from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
+			$sql = "select BSorszam, Esedekes from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
 			$fp = fopen('szamla_sorszamok_queryk.txt', 'a');
 			fwrite($fp, $sql . "\n");
 			fclose($fp);			
 //			$szamla_fej = null; //Yii::app()->db_actual->createCommand($sql)->queryRow();
 			$szamla_fej = Yii::app()->db_actual->createCommand($sql)->queryRow();
 			if (is_array($szamla_fej)) {
-				$return = $szamla_fej["BSorszam"] ;	
+				$return = $szamla_fej ;	
 			}
 			return $return ;
 		}
 
+		/* Az ACTUAL adatbázisából beolvassa azon megrendelésekhez az átutalási adatokat, amelyeknél még nincs jelölve, hogy fizetve van, de van számla sorszám hozzá. Ahol megtalálja az átutalást, ott automatikusan beállítja, hogy fizetve, és a fizetés dátumát */
+		function szamla_kiegyenlitettseg_szinkron() {
+			$nyitott_szamlak = Yii::app()->db->createCommand()
+													->select('id, szamla_sorszam')
+													->from('dom_megrendelesek')
+													->where("szamla_sorszam != '' and szamla_fizetve = 0") 
+													->queryAll();
+			if (count($nyitott_szamlak) > 0) {
+				foreach ($nyitott_szamlak as $szamla) {
+					$sql = "select Osszeg, Created from penBSor where BSorszam = '" . $szamla["szamla_sorszam"] . "'" ;		
+	//				echo $sql . "<br />" ;
+					$kiegyenlites_adatok = Yii::app()->db_actual->createCommand($sql)->queryRow();
+					if (is_array($kiegyenlites_adatok)) {
+//						echo "Találat: " .	$kiegyenlites_adatok["Osszeg"] . " Ft, " . substr($kiegyenlites_adatok["Created"], 0, 10) . "<br />" ; 					
+						$megrendeles = Megrendelesek::model() -> findByPk ($szamla["id"]);
+						$kiegyenlitve = 1 ;
+/*						$megrendeles_brutto_osszeg = $megrendeles->getBruttoOsszeg() ;
+						if ($kiegyenlites_adatok["Osszeg"] == $megrendeles_brutto_osszeg)
+							$kiegyenlitve = 1 ;*/
+						$megrendeles->setAttribute("szamla_fizetve", $kiegyenlitve);
+						$megrendeles->setAttribute("szamla_kiegyenlites_datum", substr($kiegyenlites_adatok["Created"], 0, 10)) ;
+						$megrendeles->save();
+						Utils::SetUgyfelFizetesiMoralMegrendelesAlapjan($megrendeles) ;
+					}
+				}
+			}
+		}
+		
+		/* Egy megrendelés ügyfelének frissíti a fizetési morálját és késés adatait */
+		function SetUgyfelFizetesiMoralMegrendelesAlapjan($megrendeles) {
+			$ugyfel = Ugyfelek::model()->findByPk($megrendeles->ugyfel_id) ;
+			if ($ugyfel != null) {
+				if ($megrendeles->szamla_fizetesi_hatarido != "0000-00-00" && $megrendeles->szamla_kiegyenlites_datum != "0000-00-00") {
+					$ugyfel->updateAtlagosFizetesiKeses() ;
+				}					
+			}
+		}
+		
 		/** Egy selectből a munka típusát is ki kell választania az adminnak egy nyomdakönyvhöz.
 		 *  A selectbe a munkához már meglévő termék_id, darabszám és színszám paraméterekkel megszűrt típusokat ajánljuk fel.
 		 *  Az alapértelmezett munkatípus az, amelyikhez a legkevesebb művelet tartozik, ezek közül pedig az, amely a legkevesebb normaórát adja (a műveletek összideje a legkisebb).

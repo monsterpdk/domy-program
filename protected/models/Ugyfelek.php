@@ -637,6 +637,61 @@ class Ugyfelek extends DomyModel
 	 	return $ugyfel_id ;
 	 }
 	
+	 /**
+	  * TÁ
+	  * Ügyfél átlagos fizetési késés értékét számolja újra és rögzíti
+	  */
+	 public function updateAtlagosFizetesiKeses() {
+	 	$ugyfel_megrendelesek = Megrendelesek::model()->findAllByAttributes(array("ugyfel_id" => $this->id)) ;
+	 	$megrendelesszam = 0 ;
+	 	$kesett_napok_szama = 0 ;
+	 	$atlagos_keses = 0 ;
+	 	$max_keses = 0;
+	 	if ($ugyfel_megrendelesek != null) {
+	 		foreach ($ugyfel_megrendelesek as $megrendeles) {
+				if ($megrendeles->szamla_fizetesi_hatarido != "0000-00-00" && $megrendeles->szamla_kiegyenlites_datum != "0000-00-00") {
+					$ts1 = strtotime($megrendeles->szamla_fizetesi_hatarido);
+					$ts2 = strtotime($megrendeles->szamla_kiegyenlites_datum);
+					
+					$seconds_diff = $ts2 - $ts1;
+					$days_diff =  $seconds_diff / 86400 ;
+					
+					if ($days_diff > $max_keses) {
+						$max_keses = $days_diff ;	
+					}
+					
+					$megrendelesszam++ ;
+					$kesett_napok_szama += $days_diff ;
+				}
+	 		}
+	 		if ($megrendelesszam > 0) {
+				$atlagos_keses = round($kesett_napok_szama / $megrendelesszam) ;
+	
+				if ($max_keses < 3) {
+					$moral = 5 ;
+				}
+				else if ($max_keses < 8) {
+					$moral = 4 ;	
+				}
+				else if ($max_keses < 13) {
+					$moral = 3 ;	
+				}
+				else if ($max_keses < 23) {
+					$moral = 2 ;	
+				}
+				else { 
+					$moral = 1 ;
+				}
+				
+				
+				$this->atlagos_fizetesi_keses = $atlagos_keses ;
+				$this->fizetesi_moral = $moral ;
+				$this->max_fizetesi_keses = $max_keses ;
+				$this->save() ;
+			}
+	 	}
+	 }
+	 
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
