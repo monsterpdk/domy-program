@@ -683,12 +683,17 @@ class Ugyfelek extends DomyModel
 					$moral = 1 ;
 				}
 				
-				
 				$this->atlagos_fizetesi_keses = $atlagos_keses ;
 				$this->fizetesi_moral = $moral ;
 				$this->max_fizetesi_keses = $max_keses ;
 				$this->save() ;
 			}
+				
+			if ($this->ugyvedi_felszolitas_volt == 1) {
+				$this->fizetesi_moral = 1 ;
+				$this->save() ;
+			}
+			
 	 	}
 	 }
 	 
