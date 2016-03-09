@@ -216,8 +216,9 @@
 	<tr>
 		<td colspan='2'>
 			Aláírás nélkül érvényes. <br />
-			<strong>ÁFA visszaigénylésére nem használható.<br />
-			A végösszeg beérkezését követően ÁFA - visszaigénylésre alkalmas számlát állítunk ki.</strong>
+			<strong>
+				<?php echo nl2br(Yii::app()->config->get('MegrendelesekProforma')); ?>
+			</strong>
 		</td>
 	</tr>
 	

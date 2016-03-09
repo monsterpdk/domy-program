@@ -108,6 +108,7 @@
 	                            	array ('label'=>'Fizetési módok', 'url'=> Yii::app()->createUrl('/fizetesiModok/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SzamlazasBeallitasok.FizetesiModok')),
 															), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.SzamlazasBeallitasok'))),
 									array ('label'=>'Nyomtató beállítások', 'url'=> Yii::app()->createUrl('/nyomtatoBeallitasok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.NyomtatoBeallitasok') || Yii::app()->user->checkAccess('admin'))),
+									array ('label'=>'Nyomtatványok', 'url'=> Yii::app()->createUrl('/nyomtatvanyok/index'), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok.Nyomtatvanyok') || Yii::app()->user->checkAccess('admin'))),
 							), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.AltalanosBeallitasok')) ),
                         array ('label'=>'Adminisztráció <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                         'items'=>array (

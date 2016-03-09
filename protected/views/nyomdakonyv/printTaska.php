@@ -407,6 +407,10 @@
 </table>
 
 <htmlpagefooter name="myFooter2" style="display:none">
+<p style='font-family:arial; font-size: 10pt'>
+	<?php echo nl2br(Yii::app()->config->get('NyomdakonyvMunkataska')); ?>
+</p>
+
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
 	<tr>
 		<td width="40%"> <span> <?php echo "Táska nyomtatva: " . date('Y-m-d h:m:s'); ?> </span> </td>

@@ -277,10 +277,7 @@
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
 	<tr>
 		<td colspan='2'>
-		Tisztelt Partnerünk! Megrendeléséhez tegyen egy X-et a megfelelő sorhoz és juttassa vissza részünkre faxon vagy e-mailben. Ha tud nyomdai grafikát biztosítani (kompozit PDF) nagyon köszönjük, ha nincsi lyen Önnek, akkor AJÁNDÉKBA elkészítjük! <br />
-		Áraink tartalmazzák a boríték és felülnyomás költségét, ajándék grafikai módosításokkal.
-		<br /> <br />
-		Átlagos elkészülési határidő anyagleadástól számított 1-3 nap. Termékeinkre <?php echo $afakulcs -> afa_szazalek; ?>% ÁFA vonatkozik.
+			<?php echo nl2br(Yii::app()->config->get('Arajanlat')); ?>
 		</td>
 	</tr>
 	

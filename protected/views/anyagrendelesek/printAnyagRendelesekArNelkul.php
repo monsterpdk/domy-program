@@ -223,6 +223,10 @@ Ha ez bizonyos tételeknél nem lehetséges, jelezzék felénk.
 </div>
 
 <htmlpagefooter name="myFooter2" style="display:none">
+<p style='font-family:arial; font-size: 10pt'>
+	<?php echo nl2br(Yii::app()->config->get('AnyagrendelesekArNelkul')); ?>
+</p>
+
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
 	<tr>
 		<td width="50%"> <span> <?php echo "Nyomtatva: " . date('Y.m.d h:m:s'); ?> </span> </td>

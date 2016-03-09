@@ -235,7 +235,7 @@
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
 	<tr>
 		<td align='center' colspan='2'>
-			<h2>Az áru elszállításáról a vevő gondoskodik.</h2>
+			<h2><?php echo nl2br(Yii::app()->config->get('MegrendelesekVisszaigazolas')); ?></h2>
 		</td>
 	</tr>
 	
