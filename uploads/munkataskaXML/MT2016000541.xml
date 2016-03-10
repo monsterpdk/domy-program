@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-2"?>
+<Munkataska>
+  <Taskaszam>MT2016000541</Taskaszam>
+  <Hatarido>2016-03-08 00:00:00</Hatarido>
+  <GepTipusNev>alap típus</GepTipusNev>
+  <SOS>0</SOS>
+  <Munkanev>UNIPOLSAI+CÍM</Munkanev>
+  <GyartasIdeje>55</GyartasIdeje>
+  <LemezSzam>4</LemezSzam>
+  <TermekNev>Hozott TB/4 szilikonos szilikonos - ofszet 100gr</TermekNev>
+  <Darabszam>4050</Darabszam>
+  <PantoneElooldal>
+    <szin1>302 U</szin1>
+    <szin2>1805 U</szin2>
+  </PantoneElooldal>
+  <PantoneHatoldal>
+    <szin1>302</szin1>
+    <szin2>1805</szin2>
+  </PantoneHatoldal>
+  <ElooldalSzinek>
+    <szin1>C</szin1>
+    <szin2>M</szin2>
+  </ElooldalSzinek>
+  <HatoldalSzinek>
+    <szin1>Y</szin1>
+    <szin2>K</szin2>
+  </HatoldalSzinek>
+  <UtasitasGepmesternek>Ide valami szöveg jön, ha jön</UtasitasGepmesternek>
+  <UtasitasCTPnek>476</UtasitasCTPnek>
+  <MagasSzinterhelesNagyFeluleten>0</MagasSzinterhelesNagyFeluleten>
+  <MagasSzinterhelesSzovegben>0</MagasSzinterhelesSzovegben>
+  <NyomasTipus>változatlan utánnyomás</NyomasTipus>
+  <NyomasMintaSzerint>0</NyomasMintaSzerint>
+  <NyomasVagojelSzerint>1</NyomasVagojelSzerint>
+  <NyomasDomySzerint>0</NyomasDomySzerint>
+  <NyomasSpecialis>Ide valami szöveg jön, ha jön</NyomasSpecialis>
+  <MegrendelesKelte>2016-03-07 15:18:31</MegrendelesKelte>
+  <MunkaBeerkezett>2016-03-07 15:25:21</MunkaBeerkezett>
+  <TaskaKiadasDatum>2016-03-07 15:25:22</TaskaKiadasDatum>
+  <UgyfelKapcsolattartoNev>Gál Orsolya</UgyfelKapcsolattartoNev>
+  <UgyfelKapcsolattartoTelefon>+361234567</UgyfelKapcsolattartoTelefon>
+</Munkataska>

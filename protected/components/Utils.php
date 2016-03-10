@@ -1078,6 +1078,10 @@
 			return html_entity_decode(mb_convert_encoding(strtr($text, $map), 'UTF-8', 'ISO-8859-2'), ENT_QUOTES, 'UTF-8');
 		}		 
 
+		function DarabszamFormazas($darabszam) {
+			return number_format($darabszam, 0, '.', ' ') ;	
+		}
+		
 		function OsszegFormazas($osszeg, $tizedes = 2) {
 			return number_format($osszeg, $tizedes, '.', ' ');		
 		}
@@ -1450,35 +1454,73 @@
 				$gyartasIdeje = $normaAdat['normaido'];
 			}
 			
-			$elooldal_szinek = "" ;
+			$elooldal_szinek = array() ;
+			$i = 1 ;
 			if ($nyomdakonyv->szin_c_elo == 1) {
-				$elooldal_szinek .= "C," ;	
+				$elooldal_szinek["szin$i"] = "C" ;	
+				$i++ ;
 			}
 			if ($nyomdakonyv->szin_m_elo == 1) {
-				$elooldal_szinek .= "M," ;	
+				$elooldal_szinek["szin$i"] = "M" ;	
+				$i++ ;
 			}
 			if ($nyomdakonyv->szin_y_elo == 1) {
-				$elooldal_szinek .= "Y," ;	
+				$elooldal_szinek["szin$i"] = "Y" ;	
+				$i++ ;
 			}
 			if ($nyomdakonyv->szin_k_elo == 1) {
-				$elooldal_szinek .= "K," ;	
+				$elooldal_szinek["szin$i"] = "K" ;	
+				$i++ ;
 			}
-			$elooldali_szinek = rtrim($elooldali_szinek, ",") ;
 		
-			$hatoldal_szinek = "" ;
+			$hatoldal_szinek = array() ;
+			$i = 1 ;
 			if ($nyomdakonyv->szin_c_hat == 1) {
-				$hatoldal_szinek .= "C," ;	
+				$hatoldal_szinek["szin$i"] = "C" ;	
+				$i++ ;
 			}
 			if ($nyomdakonyv->szin_m_hat == 1) {
-				$hatoldal_szinek .= "M," ;	
+				$hatoldal_szinek["szin$i"] = "M" ;	
+				$i++ ;
 			}
 			if ($nyomdakonyv->szin_y_hat == 1) {
-				$hatoldal_szinek .= "Y," ;	
+				$hatoldal_szinek["szin$i"] = "Y" ;	
+				$i++ ;
 			}
 			if ($nyomdakonyv->szin_k_hat == 1) {
-				$hatoldal_szinek .= "K," ;	
+				$hatoldal_szinek["szin$i"] = "K" ;	
+				$i++ ;
 			}
-			$hatoldal_szinek = rtrim($hatoldal_szinek, ",") ;			
+			$pantone_elooldal_szinek = array() ;
+			$pantone_hatoldal_szinek = array() ;
+			if ($nyomdakonyv->szin_pantone != "") {
+				$pantone_elol_hatul = explode("+", $nyomdakonyv->szin_pantone) ;
+				if($pantone_elol_hatul[0] != "") {
+					$pantone_elol = explode(",", $pantone_elol_hatul[0]) ;
+					if (count($pantone_elol) > 0) {
+						$i = 0 ;
+						foreach ($pantone_elol as $szin) {
+							$i++ ;
+							if (trim($szin) != "") {
+								$pantone_elooldal_szinek["szin$i"] = trim($szin) ;
+							}
+						}
+					}
+				}
+				if($pantone_elol_hatul[1] != "") {
+					$pantone_hatul = explode(",", $pantone_elol_hatul[1]) ;
+					if (count($pantone_hatul) > 0) {
+						$i = 0 ;
+						foreach ($pantone_hatul as $szin) {
+							$i++ ;
+							if (trim($szin) != "") {
+								$pantone_hatoldal_szinek["szin$i"] = trim($szin) ;
+							}
+						}
+					}
+				}
+			}
+			
 			$munkataska = array() ;
 			$munkataska["Taskaszam"] = $nyomdakonyv->taskaszam ;
 			$munkataska["Hatarido"] = $nyomdakonyv->hatarido ;
@@ -1489,7 +1531,8 @@
 			$munkataska["LemezSzam"] = $osszSzin ;
 			$munkataska["TermekNev"] = $megrendeles_tetel->getTetelnevHozottNemHozott() . $termek->getDisplayTermekTeljesNev() ;
 			$munkataska["Darabszam"] = $megrendeles_tetel->darabszam ;
-			$munkataska["Pantone"] = $nyomdakonyv->szin_pantone ;
+			$munkataska["PantoneElooldal"] = $pantone_elooldal_szinek ;
+			$munkataska["PantoneHatoldal"] = $pantone_hatoldal_szinek ;
 			$munkataska["ElooldalSzinek"] = $elooldal_szinek ;
 			$munkataska["HatoldalSzinek"] = $hatoldal_szinek ;
 			$munkataska["UtasitasGepmesternek"] = $nyomdakonyv->utasitas_gepmesternek ;

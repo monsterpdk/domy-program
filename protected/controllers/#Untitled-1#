@@ -1,1 +1,4 @@
-INSERT INTO `domy`.`authitem` (`name`, `type`, `description`, `bizrule`, `data`) VALUES ('TermekSavosCsomagarak.Create', '0', NULL, NULL, 'termeksavoscsomagarak.create'), ('TermekSavosCsomagarak.Update', '0', NULL, NULL, 'termeksavoscsomagarak.update'), ('TermekSavosCsomagarak.Delete', '0', NULL, NULL, 'termeksavoscsomagarak.delete');
+Munkatáska XML-ben a színeket collection-ként megjeleníteni
+Megírni, hogy hová teszi a progi az xml-eket
+Megírni, hogy milyen dátum formátumot és decimális jelet használunk az xml-ben.
+

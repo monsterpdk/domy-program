@@ -22,7 +22,7 @@ $this->breadcrumbs=array(
 						'name' => 'anyagbeszallitas.displayBizonylatszamDatum',
 						'header' => 'Anyagbeszállítas (bizonylatszám - beszállítás dátuma)',
 					),
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					'rendeleskor_leadott_db:number',
 					array(
 						'name' => 'iroda_altal_atvett_db',

@@ -10,13 +10,24 @@ $this->breadcrumbs=array(
 
 <h1>Raktárkészletek</h1>
 
+<?php	
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name'=>'button_print_raktarkeszlet',
+		'caption'=>'Lista nyomtatás',
+		'buttonType'=>'link',
+//		'onclick'=>'openPrintDialog()',
+		'url'=>Yii::app()->createUrl("raktarTermekek/printRaktarkeszlet"),
+		'htmlOptions'=>array('class'=>'btn btn-success','target'=>'_blank'),
+	));
+?>
+
 <?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
 					'raktar.nev',
 					'raktar.tipus',
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					'osszes_db:number',
 					'foglalt_db:number',
 					'elerheto_db:number',

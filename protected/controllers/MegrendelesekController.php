@@ -471,9 +471,9 @@ class MegrendelesekController extends Controller
 				$model -> proforma_kiallitas_datum = new CDbExpression('NOW()');
 				$model -> proforma_teljesites_datum = new CDbExpression('NOW()');
 				$model -> proforma_fizetesi_hatarido = new CDbExpression('NOW() + INTERVAL ' . $fizetesiHatarido . ' DAY');
-				if ($alapertelmezettFizetesiModId != null) {
+/*				if ($alapertelmezettFizetesiModId != null) {
 					$model -> proforma_fizetesi_mod = $alapertelmezettFizetesiMod->id;
-				}
+				}*/
 				
 				$model -> save(false);
 				$model -> refresh() ;

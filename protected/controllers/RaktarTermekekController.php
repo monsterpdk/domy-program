@@ -23,6 +23,23 @@ class RaktarTermekekController extends Controller
 		));
 	}
 
+	public function actionPrintRaktarkeszlet()
+	{
+		$dataProvider=new CActiveDataProvider('RaktarTermekek', array());
+		if ($dataProvider != null) {			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+	
+			$mPDF1->SetHtmlHeader("Raktárkészlet");
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszlet", array('dataProvider' => $dataProvider), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}		
+	}	
+	
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()
