@@ -319,7 +319,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 				}',
 				'columns'=>array(
 					'termek.kodszam',
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					
 					// a darabszám szerkeszthető a gyorsabb ügyintézés érdekében
 					array(
@@ -495,7 +495,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 				}',
 				'columns'=>array(
 					'termek.kodszam',
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 
 					// a darabszám szerkeszthető a gyorsabb ügyintézés érdekében
 					array(
