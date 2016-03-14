@@ -166,7 +166,7 @@ class UgyfelekController extends Controller
 			$model->attributes=$_GET['Ugyfelek'];
 	 	
 		$dataProvider=new CActiveDataProvider('Ugyfelek',
-//Fizetési késés és morál újra kalkulálásához			Yii::app()->user->checkAccess('Admin') ? array('pagination'=>false) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
+//			Yii::app()->user->checkAccess('Admin') ? array('pagination'=>false) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),) //Fizetési késés és morál újra kalkulálásához
 			Yii::app()->user->checkAccess('Admin') ? array() : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
 

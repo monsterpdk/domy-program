@@ -642,11 +642,20 @@ class Ugyfelek extends DomyModel
 	  * Ügyfél átlagos fizetési késés értékét számolja újra és rögzíti
 	  */
 	 public function updateAtlagosFizetesiKeses() {
-	 	$ugyfel_megrendelesek = Megrendelesek::model()->findAllByAttributes(array("ugyfel_id" => $this->id)) ;
-	 	$megrendelesszam = 0 ;
-	 	$kesett_napok_szama = 0 ;
-	 	$atlagos_keses = 0 ;
-	 	$max_keses = 0;
+	 	$ugyfel_megrendelesek = Megrendelesek::model()->findAllByAttributes(array("ugyfel_id" => $this->id, "torolt" => "0", "sztornozva" => "0")) ;
+	 	if ($this->max_fizetesi_keses > 0) {
+			$megrendelesszam = 1 ;
+			$kesett_napok_szama = $this->max_fizetesi_keses ;
+			$atlagos_keses = $this->max_fizetesi_keses ;
+			$max_keses = $this->max_fizetesi_keses;	 		
+	 	}
+	 	else
+	 	{
+			$megrendelesszam = 0 ;
+			$kesett_napok_szama = 0 ;
+			$atlagos_keses = 0 ;
+			$max_keses = 0;
+		}
 	 	if ($ugyfel_megrendelesek != null) {
 	 		foreach ($ugyfel_megrendelesek as $megrendeles) {
 				if ($megrendeles->szamla_fizetesi_hatarido != "0000-00-00" && $megrendeles->szamla_kiegyenlites_datum != "0000-00-00") {

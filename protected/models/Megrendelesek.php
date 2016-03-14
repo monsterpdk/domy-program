@@ -336,4 +336,18 @@ class Megrendelesek extends CActiveRecord
         return $class;
         
     }	
+    
+    // TÁ: Visszaadja a megrendelés nettó és bruttó összegét
+    public function getMegrendelesOsszeg() {
+    	$netto_osszeg = 0;
+    	$brutto_osszeg = 0;
+    	$tetelek = MegrendelesTetelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id)) ;
+    	if (count($tetelek) > 0) {
+    		foreach ($tetelek as $tetel) {
+    			$netto_osszeg += $tetel->getNettoAr() ;
+    			$brutto_osszeg += $tetel->getBruttoAr() ;
+    		}
+    	}
+    	return array("netto_osszeg" => $netto_osszeg, "brutto_osszeg" => $brutto_osszeg) ;
+    }
 }

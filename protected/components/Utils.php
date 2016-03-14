@@ -675,20 +675,62 @@
 													->queryAll();
 			if (count($nyitott_szamlak) > 0) {
 				foreach ($nyitott_szamlak as $szamla) {
-					$sql = "select Osszeg, Created from penBSor where BSorszam = '" . $szamla["szamla_sorszam"] . "'" ;		
+					$sql = "select penBFejlec.Sorszam, penBFejlec.OsszegBevHUF, penBFejlec.BizonylatDatum, penBSor.Bizonylatszam from penBSor join penBFejlec on penBSor.BFejlecID = penBFejlec.BFejlecID where penBSor.BSorszam = '" . $szamla["szamla_sorszam"] . "'" ;		
 	//				echo $sql . "<br />" ;
 					$kiegyenlites_adatok = Yii::app()->db_actual->createCommand($sql)->queryRow();
-					if (is_array($kiegyenlites_adatok)) {
-//						echo "Találat: " .	$kiegyenlites_adatok["Osszeg"] . " Ft, " . substr($kiegyenlites_adatok["Created"], 0, 10) . "<br />" ; 					
+					if (is_array($kiegyenlites_adatok)) {						
+//						echo "Találat: " .	$kiegyenlites_adatok["OsszegBevHUF"] . " Ft, " . substr($kiegyenlites_adatok["BizonylatDatum"], 0, 10) . "<br />" ; 	
 						$megrendeles = Megrendelesek::model() -> findByPk ($szamla["id"]);
-						$kiegyenlitve = 1 ;
-/*						$megrendeles_brutto_osszeg = $megrendeles->getBruttoOsszeg() ;
-						if ($kiegyenlites_adatok["Osszeg"] == $megrendeles_brutto_osszeg)
-							$kiegyenlitve = 1 ;*/
-						$megrendeles->setAttribute("szamla_fizetve", $kiegyenlitve);
-						$megrendeles->setAttribute("szamla_kiegyenlites_datum", substr($kiegyenlites_adatok["Created"], 0, 10)) ;
-						$megrendeles->save();
-						Utils::SetUgyfelFizetesiMoralMegrendelesAlapjan($megrendeles) ;
+
+						$tranzakciok = PenzugyiTranzakciok::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles->id));
+						$tranzakciok_osszeg = 0 ;
+						$mar_rogzitett = false ;
+						$kiegyenlitve = 0 ;
+						if (count($tranzakciok) > 0) {
+							foreach ($tranzakciok as $tranzakcio) {
+								$tranzakciok_osszeg += $tranzakcio->osszeg ;
+								if ($tranzakcio->bizonylatszam == $kiegyenlites_adatok["Bizonylatszam"]) {
+									$mar_rogzitett = true ;	
+								}
+							}
+							if (!$mar_rogzitett) {
+								$tranzakcio_mod = "Bank" ;
+								if (strpos($kiegyenlites_adatok["Bizonylatszam"], "PENZT") !== false) {
+									$tranzakcio_mod = "Pénztár" ;	
+								}
+								$uj_tranzakcio = new PenzugyiTranzakciok() ;
+								$uj_tranzakcio->setAttribute("megrendeles_id", $megrendeles->id) ;
+								$uj_tranzakcio->setAttribute("bizonylatszam", $kiegyenlites_adatok["Bizonylatszam"]) ;
+								$uj_tranzakcio->setAttribute("mode", $tranzakcio_mod) ;
+								$uj_tranzakcio->setAttribute("osszeg", $kiegyenlites_adatok["OsszegBevHUF"]) ;
+								$uj_tranzakcio->setAttribute("datum", $kiegyenlites_adatok["BizonylatDatum"]) ;
+								$uj_tranzakcio->save() ;
+								$tranzakciok_osszeg += $uj_tranzakcio->osszeg ;								
+							}
+						}
+						else
+						{
+							$tranzakcio_mod = "Bank" ;
+							if (strpos($kiegyenlites_adatok["Bizonylatszam"], "PENZT") !== false) {
+								$tranzakcio_mod = "Pénztár" ;	
+							}
+							$uj_tranzakcio = new PenzugyiTranzakciok() ;
+							$uj_tranzakcio->setAttribute("megrendeles_id", $megrendeles->id) ;
+							$uj_tranzakcio->setAttribute("bizonylatszam", $kiegyenlites_adatok["Bizonylatszam"]) ;
+							$uj_tranzakcio->setAttribute("mode", $tranzakcio_mod) ;
+							$uj_tranzakcio->setAttribute("osszeg", $kiegyenlites_adatok["OsszegBevHUF"]) ;
+							$uj_tranzakcio->setAttribute("datum", $kiegyenlites_adatok["BizonylatDatum"]) ;
+							$uj_tranzakcio->save() ;
+							$tranzakciok_osszeg += $uj_tranzakcio->osszeg ;							
+						}
+						$megrendeles_ertek = $megrendeles->getMegrendelesOsszeg() ;
+						if (round($megrendeles_ertek["brutto_osszeg"]) <= $tranzakciok_osszeg) {
+							$kiegyenlitve = 1 ;
+							$megrendeles->setAttribute("szamla_fizetve", $kiegyenlitve);
+							$megrendeles->setAttribute("szamla_kiegyenlites_datum", substr($kiegyenlites_adatok["BizonylatDatum"], 0, 10)) ;
+							$megrendeles->save();
+							Utils::SetUgyfelFizetesiMoralMegrendelesAlapjan($megrendeles) ;
+						}
 					}
 				}
 			}
