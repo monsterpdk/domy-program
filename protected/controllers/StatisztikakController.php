@@ -173,6 +173,49 @@ class StatisztikakController extends Controller
 			'pagination'=>false,
 		));		
 		return $dataProvider ;
+	}	
+
+//A pénzügyi tranzakciókat adja vissza a megadott időintervallumon belül a hozzá tartozó megrendelés adatokkal
+	public function getPenzugyiTranzakciok($model) {
+		if ($model->statisztika_mettol == "") {
+			$model->statisztika_mettol = date("Y-m-d") ;	
+		}
+		if ($model->statisztika_meddig == "") {
+			$model->statisztika_meddig = date("Y-m-d") ;	
+		}
+		$dataProvider=new CActiveDataProvider('PenzugyiTranzakciok', array(
+			'criteria'=>array(
+				'select'=>'tetelek.*',
+				'condition'=>'t.torolt=0 and t.datum >=\'' . $model->statisztika_mettol . '\' and t.datum <= \'' . $model->statisztika_meddig . '\'',
+				'with'=>array('megrendeles' => array('tetelek')),
+				'order'=>'megrendeles.id',
+				'together'=>true,
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and t.datum >=\'' . $model->statisztika_mettol . '\' and t.datum <= \'' . $model->statisztika_meddig . '\'',
+				'with'=>array('megrendeles' => array('tetelek')),
+				'together'=>true,
+			),
+			'sort'=> false,
+			'pagination'=>false,
+		));		
+		return $dataProvider ;
+	}	
+
+//Az összes nem kiegyenlített számlával rendelkező (és nem sztornózott, vagy törölt) megrendelést adja vissza
+	public function getTartozasok($model) {
+		$dataProvider=new CActiveDataProvider('Megrendelesek', array(
+			'criteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and szamla_sorszam != \'\' and szamla_fizetve = 0',
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and szamla_sorszam != \'\' and szamla_fizetve = 0',
+				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'sort'=> false,
+			'pagination'=>false,
+		));		
+		return $dataProvider ;
 	}		
 	
 	public function actionNapiKombinaltStatisztika()
@@ -191,8 +234,8 @@ class StatisztikakController extends Controller
 			$model -> statisztika_mettol = $_POST['Statisztikak']["statisztika_mettol"] ;
 			$model -> statisztika_meddig = $_POST['Statisztikak']["statisztika_meddig"] ;
 		}
-		$model -> statisztika_mettol = "2016-01-07" ;
-		$model -> statisztika_meddig = "2016-01-14" ;
+		$model -> statisztika_mettol = "2016-03-01" ;
+		$model -> statisztika_meddig = "2016-03-07" ;
 
 		$stat_adatok = array() ;
 //Árajánlattal kapcsolatos statisztikák	nem kiemelt cégek	
@@ -350,7 +393,7 @@ class StatisztikakController extends Controller
 						$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
 						$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
 					}
-					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
+					elseif ($tetel_sor->termek->tipus != "Szolgáltatás" && $tetel_sor->termek->nev != "Kuponfelhasználás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás, nem kuponfelhasználás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
 						$megrendelesTetelekEladas++ ;
 						$megrendelesOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;	
@@ -709,6 +752,214 @@ class StatisztikakController extends Controller
 		$stat_adatok["szamlazott_megrendelesek_osszesen"] = $szamlazott_megrendelesek_osszesen ;
 		$stat_adatok["szamlazott_megrendelesek_osszeg_osszesen"] = $szamlazott_megrendelesek_osszeg_osszesen ;		
 		
+		//Pénzügyi tranzakciók
+		$penzugyi_tranzakciok = $this->getPenzugyiTranzakciok($model) ;
+		$termek_eladas_penztar_db = 0 ;
+		$termek_eladas_penztar_netto = 0 ;
+		$termek_eladas_penztar_brutto = 0 ;
+		$termek_eladas_utalas_db = 0 ;
+		$termek_eladas_utalas_netto = 0 ;
+		$termek_eladas_utalas_brutto = 0 ;
+		$termek_eladas_osszesen_netto = 0 ;
+		$termek_eladas_osszesen_brutto = 0 ;
+		$boritek_nyomas_penztar_db = 0 ;
+		$boritek_nyomas_penztar_netto = 0 ;
+		$boritek_nyomas_penztar_brutto = 0 ;
+		$boritek_nyomas_utalas_db = 0 ;
+		$boritek_nyomas_utalas_netto = 0 ;
+		$boritek_nyomas_utalas_brutto = 0 ;
+		$boritek_nyomas_osszesen_netto = 0 ;
+		$boritek_nyomas_osszesen_brutto = 0 ;
+		$penztar_tranzakcio_db_osszesen = 0 ;
+		$penztar_tranzakcio_netto_osszesen = 0 ;
+		$penztar_tranzakcio_brutto_osszesen = 0 ;
+		$utalas_tranzakcio_db_osszesen = 0 ;
+		$utalas_tranzakcio_netto_osszesen = 0 ;
+		$utalas_tranzakcio_brutto_osszesen = 0 ;
+		$tranzakciok_netto_osszesen = 0 ;
+		$tranzakciok_brutto_osszesen = 0 ;
+		$alap_afa_szazalek = Utils::getAlapertelmezettAFASzazalek() ;
+		if ($penzugyi_tranzakciok->totalItemCount > 0) {
+			$elozo_megrendeles_id = 0 ;
+			foreach ($penzugyi_tranzakciok->getData() as $sor) {
+				$szinek_szama = 0 ;
+				foreach($sor->megrendeles->tetelek as $tetel) {
+					$szinek_szama = $szinek_szama + $tetel->szinek_szama1 + $tetel->szinek_szama2 ;	
+				}
+				
+				if ($szinek_szama == 0) {
+					//Eladás volt
+					if ($sor->mode == "Bank") {
+						if ($elozo_megrendeles_id != $sor->megrendeles_id) {
+							$termek_eladas_utalas_db++ ;
+							$utalas_tranzakcio_db_osszesen++ ;
+							$elozo_megrendeles_id = $sor->megrendeles_id ;
+						}
+						$termek_eladas_utalas_netto += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$termek_eladas_utalas_brutto += $sor->osszeg;
+						$utalas_tranzakcio_netto_osszesen += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$utalas_tranzakcio_brutto_osszesen += $sor->osszeg;
+					}
+					else
+					{
+						if ($elozo_megrendeles_id != $sor->megrendeles_id) {
+							$termek_eladas_penztar_db++ ;
+							$penztar_tranzakcio_db_osszesen++ ;
+							$elozo_megrendeles_id = $sor->megrendeles_id ;
+						}
+						$termek_eladas_penztar_netto += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$termek_eladas_penztar_brutto += $sor->osszeg;
+						$penztar_tranzakcio_netto_osszesen += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$penztar_tranzakcio_brutto_osszesen += $sor->osszeg;
+					}
+					$termek_eladas_osszesen_netto += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+					$termek_eladas_osszesen_brutto += $sor->osszeg;
+				}
+				else
+				{
+					//Nyomás volt
+					if ($sor->mode == "Bank") {
+						if ($elozo_megrendeles_id != $sor->megrendeles_id) {
+							$boritek_nyomas_utalas_db++ ;
+							$utalas_tranzakcio_db_osszesen++ ;
+							$elozo_megrendeles_id = $sor->megrendeles_id ;
+						}
+						$boritek_nyomas_utalas_netto += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$boritek_nyomas_utalas_brutto += $sor->osszeg;
+						$utalas_tranzakcio_netto_osszesen += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$utalas_tranzakcio_brutto_osszesen += $sor->osszeg;
+					}
+					else
+					{
+						if ($elozo_megrendeles_id != $sor->megrendeles_id) {
+							$boritek_nyomas_penztar_db++ ;
+							$penztar_tranzakcio_db_osszesen++ ;
+							$elozo_megrendeles_id = $sor->megrendeles_id ;
+						}
+						$boritek_nyomas_penztar_netto += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$boritek_nyomas_penztar_brutto += $sor->osszeg;
+						$penztar_tranzakcio_netto_osszesen += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+						$penztar_tranzakcio_brutto_osszesen += $sor->osszeg;						
+					}		
+					$boritek_nyomas_osszesen_netto += ($sor->osszeg / (100 + $alap_afa_szazalek) * 100) ;
+					$boritek_nyomas_osszesen_brutto += $sor->osszeg;
+				}
+			}
+			$tranzakciok_netto_osszesen = $penztar_tranzakcio_netto_osszesen + $utalas_tranzakcio_netto_osszesen ;
+			$tranzakciok_brutto_osszesen = $penztar_tranzakcio_brutto_osszesen + $utalas_tranzakcio_brutto_osszesen ;
+		}
+		$stat_adatok["termek_eladas_penztar_db"] = $termek_eladas_penztar_db ;
+		$stat_adatok["termek_eladas_penztar_netto"] = $termek_eladas_penztar_netto ;
+		$stat_adatok["termek_eladas_penztar_brutto"] = $termek_eladas_penztar_brutto ;
+		$stat_adatok["termek_eladas_utalas_db"] = $termek_eladas_utalas_db ;
+		$stat_adatok["termek_eladas_utalas_netto"] = $termek_eladas_utalas_netto ;
+		$stat_adatok["termek_eladas_utalas_brutto"] = $termek_eladas_utalas_brutto ;
+		$stat_adatok["termek_eladas_osszesen_netto"] = $termek_eladas_osszesen_netto ;
+		$stat_adatok["termek_eladas_osszesen_brutto"] = $termek_eladas_osszesen_brutto ;
+		$stat_adatok["boritek_nyomas_penztar_db"] = $boritek_nyomas_penztar_db ;
+		$stat_adatok["boritek_nyomas_penztar_netto"] = $boritek_nyomas_penztar_netto ;
+		$stat_adatok["boritek_nyomas_penztar_brutto"] = $boritek_nyomas_penztar_brutto ;
+		$stat_adatok["boritek_nyomas_utalas_db"] = $boritek_nyomas_utalas_db ;
+		$stat_adatok["boritek_nyomas_utalas_netto"] = $boritek_nyomas_utalas_netto ;
+		$stat_adatok["boritek_nyomas_utalas_brutto"] = $boritek_nyomas_utalas_brutto ;
+		$stat_adatok["boritek_nyomas_osszesen_netto"] = $boritek_nyomas_osszesen_netto ;
+		$stat_adatok["boritek_nyomas_osszesen_brutto"] = $boritek_nyomas_osszesen_brutto ;
+		$stat_adatok["penztar_tranzakcio_db_osszesen"] = $penztar_tranzakcio_db_osszesen ;
+		$stat_adatok["penztar_tranzakcio_netto_osszesen"] = $penztar_tranzakcio_netto_osszesen ;
+		$stat_adatok["penztar_tranzakcio_brutto_osszesen"] = $penztar_tranzakcio_brutto_osszesen ;
+		$stat_adatok["utalas_tranzakcio_db_osszesen"] = $utalas_tranzakcio_db_osszesen ;
+		$stat_adatok["utalas_tranzakcio_netto_osszesen"] = $utalas_tranzakcio_netto_osszesen ;
+		$stat_adatok["utalas_tranzakcio_brutto_osszesen"] = $utalas_tranzakcio_brutto_osszesen ;
+		$stat_adatok["tranzakciok_netto_osszesen"] = $tranzakciok_netto_osszesen ;
+		$stat_adatok["tranzakciok_brutto_osszesen"] = $tranzakciok_brutto_osszesen ;
+		
+		//Időszaktól független statisztikák
+		$osszes_nyitott_megrendeles["db"] = 0 ;
+		$osszes_nyitott_megrendeles["netto"] = 0 ;
+		$osszes_nyitott_megrendeles["brutto"] = 0 ;		
+		$mult_honapban_lejartak["db"] = 0 ;
+		$mult_honapban_lejartak["netto"] = 0 ;
+		$mult_honapban_lejartak["brutto"] = 0 ;		
+		$mult_evben_lejartak["db"] = 0 ;
+		$mult_evben_lejartak["netto"] = 0 ;
+		$mult_evben_lejartak["brutto"] = 0 ;		
+		$lejartak["db"] = 0 ;
+		$lejartak["netto"] = 0 ;
+		$lejartak["brutto"] = 0 ;		
+		$nem_lejartak["db"] = 0 ;
+		$nem_lejartak["netto"] = 0 ;
+		$nem_lejartak["brutto"] = 0 ;		
+		$lejarnak_ebben_a_honapban["db"] = 0 ;
+		$lejarnak_ebben_a_honapban["netto"] = 0 ;
+		$lejarnak_ebben_a_honapban["brutto"] = 0 ;		
+		$behajto_cegnek_atadva["db"] = 0 ;
+		$behajto_cegnek_atadva["netto"] = 0 ;
+		$behajto_cegnek_atadva["brutto"] = 0 ;		
+		$ugyvednek_atadva["db"] = 0 ;
+		$ugyvednek_atadva["netto"] = 0 ;
+		$ugyvednek_atadva["brutto"] = 0 ;		
+		
+		$nyitott_megrendelesek = $this->getTartozasok($model) ;
+		$elozo_honap = mktime(0, 0, 0, date("m")-1, date("d"), date("Y"));
+		$elozo_ev = mktime(0, 0, 0, date("m"), date("d"), date("Y")-1);
+		if ($nyitott_megrendelesek->totalItemCount > 0) {
+			foreach ($nyitott_megrendelesek->getData() as $sor) {
+				$megrendeles_ertek = $sor->getMegrendelesOsszeg() ;			
+				if ($sor->szamla_fizetesi_hatarido != '0000-00-00' && $sor->szamla_fizetesi_hatarido < date("Y-m-d")) {
+					//Lejárt
+					if ($sor->ugyvednek_atadva == 0) {
+						$lejartak["db"]++ ;
+						$lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+					}
+					else
+					{
+						if ($sor->behajto_cegnek_atadva == 1) {
+							$behajto_cegnek_atadva["db"]++ ;
+							$behajto_cegnek_atadva["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$behajto_cegnek_atadva["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
+						$ugyvednek_atadva["db"]++ ;
+						$ugyvednek_atadva["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$ugyvednek_atadva["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;						
+					}
+					if (substr($sor->szamla_fizetesi_hatarido, 0, 7) == date("Y-m", $elozo_honap)) {
+						$mult_honapban_lejartak["db"]++ ;
+						$mult_honapban_lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$mult_honapban_lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+					}
+					elseif (substr($sor->szamla_fizetesi_hatarido, 0, 4) == date("Y", $elozo_ev)) {
+						$mult_evben_lejartak["db"]++ ;
+						$mult_evben_lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$mult_evben_lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+					}
+				}
+				else
+				{
+					//Nem lejárt	
+					$nem_lejartak["db"]++ ;
+					$nem_lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+					$nem_lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+					if (substr($sor->szamla_fizetesi_hatarido, 0, 7) == date("Y-m")) {
+						$lejarnak_ebben_a_honapban["db"]++ ;
+						$lejarnak_ebben_a_honapban["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$lejarnak_ebben_a_honapban["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+					}
+				}
+			}
+			$osszes_nyitott_megrendeles["db"] = $lejartak["db"] + $nem_lejartak["db"] + $ugyvednek_atadva["db"] ;
+			$osszes_nyitott_megrendeles["netto"] = $lejartak["netto"] + $nem_lejartak["netto"] + $ugyvednek_atadva["netto"] ;
+			$osszes_nyitott_megrendeles["brutto"] = $lejartak["brutto"] + $nem_lejartak["brutto"] + $ugyvednek_atadva["brutto"] ;
+		}
+		$stat_adatok["osszes_nyitott_megrendeles"] = $osszes_nyitott_megrendeles ;
+		$stat_adatok["mult_honapban_lejartak"] = $mult_honapban_lejartak ;
+		$stat_adatok["mult_evben_lejartak"] = $mult_evben_lejartak ;
+		$stat_adatok["lejartak"] = $lejartak ;
+		$stat_adatok["nem_lejartak"] = $nem_lejartak ;
+		$stat_adatok["lejarnak_ebben_a_honapban"] = $lejarnak_ebben_a_honapban ;
+		$stat_adatok["behajto_cegnek_atadva"] = $behajto_cegnek_atadva ;
+		$stat_adatok["ugyvednek_atadva"] = $ugyvednek_atadva ;
+
 		
 		# mPDF
 		$mPDF1 = Yii::app()->ePdf->mpdf();

@@ -711,7 +711,7 @@
 						else
 						{
 							$tranzakcio_mod = "Bank" ;
-							if (strpos($kiegyenlites_adatok["Bizonylatszam"], "PENZT") !== false) {
+							if (strpos($kiegyenlites_adatok["Sorszam"], "PENZT") !== false) {
 								$tranzakcio_mod = "Pénztár" ;	
 							}
 							$uj_tranzakcio = new PenzugyiTranzakciok() ;
@@ -1431,6 +1431,17 @@
 			}
 			
 			return $pagination;
+		}
+		
+		//Visszaadja az alapértelemeztt ÁFA kulcs százalékos értékét
+		function getAlapertelmezettAFASzazalek() {
+			$afakulcsSzazalek = 0 ;
+			$afaKulcs = AfaKulcsok::model()->findByAttributes(array("alapertelmezett"=>"1"));
+			
+			if ($afaKulcs != null){
+				$afakulcsSzazalek = $afaKulcs->afa_szazalek;
+			}			
+			return $afakulcsSzazalek ;
 		}
 		
 		// TÁ: Legenerál egy XML filet egy konkrét nyomdakönyvbe kerülő munka részleteiről

@@ -398,12 +398,6 @@
 			<?php echo $form->label($model,'proforma_szamla_fizetve'); ?>
 			<?php echo $form->error($model,'proforma_szamla_fizetve'); ?>
 		</div>
-
-		<div class="row active">
-			<?php echo $form->checkBox($model,'szamla_fizetve'); ?>
-			<?php echo $form->label($model,'szamla_fizetve'); ?>
-			<?php echo $form->error($model,'szamla_fizetve'); ?>
-		</div>		
 		
 		<div class="row active">
 			<input id = "sztornozva_dsp" type="checkbox" value="<?php echo $model->sztornozva; ?>" <?php if ($model->sztornozva == 1) echo " checked "; ?> name="sztornozva_dsp" disabled >
@@ -420,6 +414,51 @@
 		<?php endif; ?>	
 	<?php $this->endWidget(); ?>
 		
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Megrendelés adatai #4</strong>",
+			'htmlOptions'=>array('class'=>"portlet"),
+		));
+	?>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'szamla_sorszam'); ?>
+			<?php echo $form->textField($model,'szamla_sorszam',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'szamla_sorszam'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'szamla_fizetesi_hatarido'); ?>
+			<?php echo $form->textField($model,'szamla_fizetesi_hatarido',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'szamla_fizetesi_hatarido'); ?>
+		</div>
+
+		<div class="row">
+			<?php echo $form->labelEx($model,'szamla_kiegyenlites_datum'); ?>
+			<?php echo $form->textField($model,'szamla_kiegyenlites_datum',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'szamla_kiegyenlites_datum'); ?>
+		</div>
+		
+		<div class="row active">
+			<?php echo $form->checkBox($model,'szamla_fizetve'); ?>
+			<?php echo $form->label($model,'szamla_fizetve',array('disabled'=>true)); ?>
+			<?php echo $form->error($model,'szamla_fizetve'); ?>
+		</div>
+
+		<div class="row active">
+			<?php echo $form->checkBox($model,'ugyvednek_atadva'); ?>
+			<?php echo $form->label($model,'ugyvednek_atadva'); ?>
+			<?php echo $form->error($model,'ugyvednek_atadva'); ?>
+		</div>		
+
+		<div class="row active">
+			<?php echo $form->checkBox($model,'behajto_cegnek_atadva'); ?>
+			<?php echo $form->label($model,'behajto_cegnek_atadva'); ?>
+			<?php echo $form->error($model,'behajto_cegnek_atadva'); ?>
+		</div>		
+		
+	<?php $this->endWidget(); ?>	
+	
 	<?php
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Megrendelt tételek</strong>",

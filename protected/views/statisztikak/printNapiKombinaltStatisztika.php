@@ -305,48 +305,48 @@
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb" rowspan="2" style="vertical-align:top;">Boríték eladás</td>
-		<td class="adat_cella jobbra" style="width: 80px;">3 db</td>
-		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;">39 276 Ft</td>
-		<td class="adat_cella jobbra" style="width: 80px;">1 db</td>
-		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;">14 060 Ft</td>
-		<td class="adat_cella jobbra szegely_jobb">58 658 Ft</td>
+		<td class="adat_cella jobbra" style="width: 80px;"><?php echo $stat_adatok["termek_eladas_penztar_db"];?> db</td>
+		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;"><?php echo Utils::OsszegFormazas($stat_adatok["termek_eladas_penztar_netto"],0);?> Ft</td>
+		<td class="adat_cella jobbra" style="width: 80px;"><?php echo $stat_adatok["termek_eladas_utalas_db"];?> db</td>
+		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;"><?php echo Utils::OsszegFormazas($stat_adatok["termek_eladas_utalas_netto"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["termek_eladas_osszesen_netto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="adat_cella kozepre szegely_alul">bruttó -></td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">49 880 Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["termek_eladas_penztar_brutto"],0);?> Ft</td>
 		<td class="adat_cella kozepre szegely_alul">&nbsp;</td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">17 856 Ft</td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">74 495 Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["termek_eladas_utalas_brutto"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["termek_eladas_osszesen_brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb" rowspan="2" style="vertical-align:top;">Boríték nyomás</td>
-		<td class="adat_cella jobbra" style="width: 80px;">0 db</td>
-		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;">0 Ft</td>
-		<td class="adat_cella jobbra" style="width: 80px;">0 db</td>
-		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;">0 Ft</td>
-		<td class="adat_cella jobbra szegely_jobb">0 Ft</td>
+		<td class="adat_cella jobbra" style="width: 80px;"><?php echo $stat_adatok["boritek_nyomas_penztar_db"];?> db</td>
+		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;"><?php echo Utils::OsszegFormazas($stat_adatok["boritek_nyomas_penztar_netto"],0);?> Ft</td>
+		<td class="adat_cella jobbra" style="width: 80px;"><?php echo $stat_adatok["boritek_nyomas_utalas_db"];?> db</td>
+		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;"><?php echo Utils::OsszegFormazas($stat_adatok["boritek_nyomas_utalas_netto"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["boritek_nyomas_osszesen_netto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="adat_cella kozepre szegely_alul">bruttó -></td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">0 Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["boritek_nyomas_penztar_brutto"],0);?> Ft</td>
 		<td class="adat_cella kozepre szegely_alul">&nbsp;</td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">0 Ft</td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">0 Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["boritek_nyomas_utalas_brutto"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["boritek_nyomas_osszesen_brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_alul szegely_jobb" rowspan="2" style="vertical-align:top;">Összesen</td>
-		<td class="adat_cella jobbra" style="width: 80px;">3 db</td>
-		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;">39 276 Ft</td>
-		<td class="adat_cella jobbra" style="width: 80px;">1 db</td>
-		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;">14 060 Ft</td>
-		<td class="cim_cella jobbra szegely_jobb">58 658 Ft</td>
+		<td class="adat_cella jobbra" style="width: 80px;"><?php echo $stat_adatok["penztar_tranzakcio_db_osszesen"];?> db</td>
+		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;"><?php echo Utils::OsszegFormazas($stat_adatok["penztar_tranzakcio_netto_osszesen"],0);?> Ft</td>
+		<td class="adat_cella jobbra" style="width: 80px;"><?php echo $stat_adatok["utalas_tranzakcio_db_osszesen"];?> db</td>
+		<td class="adat_cella jobbra szegely_jobb" style="width: 140px;"><?php echo Utils::OsszegFormazas($stat_adatok["utalas_tranzakcio_netto_osszesen"],0);?> Ft</td>
+		<td class="cim_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["tranzakciok_netto_osszesen"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="adat_cella kozepre szegely_alul">bruttó -></td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">49 880 Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["penztar_tranzakcio_brutto_osszesen"],0);?> Ft</td>
 		<td class="adat_cella kozepre szegely_alul">&nbsp;</td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">17 856 Ft</td>
-		<td class="adat_cella jobbra szegely_alul szegely_jobb">74 495 Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["utalas_tranzakcio_brutto_osszesen"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["tranzakciok_brutto_osszesen"],0);?> Ft</td>
 	</tr>
 </table>
 
@@ -357,51 +357,51 @@
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_felul szegely_bal szegely_alul szegely_jobb">Összes (lejárt + nem lejárt)</td>
-		<td class="adat_cella szegely_felul szegely_alul jobbra">1 542 db</td>
-		<td class="adat_cella szegely_felul szegely_alul jobbra">12 331 159 Ft</td>
-		<td class="adat_cella szegely_felul szegely_alul szegely_jobb jobbra">15 660 572 Ft</td>
+		<td class="adat_cella szegely_felul szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["osszes_nyitott_megrendeles"]["db"]);?> db</td>
+		<td class="adat_cella szegely_felul szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["osszes_nyitott_megrendeles"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_felul szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["osszes_nyitott_megrendeles"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Előző hónapban lejárt</td>
-		<td class="adat_cella szegely_alul jobbra">51 db</td>
-		<td class="adat_cella szegely_alul jobbra">457 778 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">581 379 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["mult_honapban_lejartak"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["mult_honapban_lejartak"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["mult_honapban_lejartak"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Előző évben lejárt</td>
-		<td class="adat_cella szegely_alul jobbra">518 db</td>
-		<td class="adat_cella szegely_alul jobbra">685 631 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">870 752 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["mult_evben_lejartak"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["mult_evben_lejartak"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["mult_evben_lejartak"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Lejárt (ügyvédnél lévők nélkül)</td>
-		<td class="adat_cella szegely_alul jobbra">1 443 db</td>
-		<td class="adat_cella szegely_alul jobbra">7 759 812 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">9 854 952 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["lejartak"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["lejartak"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["lejartak"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Nem lejárt</td>
-		<td class="adat_cella szegely_alul jobbra">96 db</td>
-		<td class="adat_cella szegely_alul jobbra">4 476 836 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">5 685 582 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["nem_lejartak"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["nem_lejartak"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["nem_lejartak"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
-		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Lejárók szeptember hónapban</td>
-		<td class="adat_cella szegely_alul jobbra">267 db</td>
-		<td class="adat_cella szegely_alul jobbra">7 773 573 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">9 872 438 Ft</td>
+		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Lejárók <?php echo Yii::app()->dateFormatter->format("MMMM", mktime());?> hónapban</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["lejarnak_ebben_a_honapban"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["lejarnak_ebben_a_honapban"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["lejarnak_ebben_a_honapban"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Behajtó cégnek átadva</td>
-		<td class="adat_cella szegely_alul jobbra">0 db</td>
-		<td class="adat_cella szegely_alul jobbra">0 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">0 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["behajto_cegnek_atadva"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["behajto_cegnek_atadva"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["behajto_cegnek_atadva"]["brutto"],0);?> Ft</td>
 	</tr>
 	<tr>
 		<td class="cim_cella szegely_bal szegely_alul szegely_jobb">Ügyvédnek átadva</td>
-		<td class="adat_cella szegely_alul jobbra">3 db</td>
-		<td class="adat_cella szegely_alul jobbra">94 509 Ft</td>
-		<td class="adat_cella szegely_alul szegely_jobb jobbra">120 027 Ft</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ugyvednek_atadva"]["db"]);?> db</td>
+		<td class="adat_cella szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ugyvednek_atadva"]["netto"],0);?> Ft</td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ugyvednek_atadva"]["brutto"],0);?> Ft</td>
 	</tr>
 </table>
 
