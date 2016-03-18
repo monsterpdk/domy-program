@@ -428,6 +428,12 @@
 		</div>
 
 		<div class="row">
+			<?php echo $form->labelEx($model,'szamla_kiallitas_datum'); ?>
+			<?php echo $form->textField($model,'szamla_kiallitas_datum',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
+			<?php echo $form->error($model,'szamla_kiallitas_datum'); ?>
+		</div>		
+		
+		<div class="row">
 			<?php echo $form->labelEx($model,'szamla_fizetesi_hatarido'); ?>
 			<?php echo $form->textField($model,'szamla_fizetesi_hatarido',array('size'=>10, 'maxlength'=>10, 'readonly'=>true)); ?>
 			<?php echo $form->error($model,'szamla_fizetesi_hatarido'); ?>

@@ -638,6 +638,9 @@
 					if ($tetel->termek->tipus == "Szolgáltatás") {
 						$sor["CikkTipus"] = 6 ;	
 					}
+					if ($tetel->munka_neve != "") {
+						$sor["SorMegjegyzes"] = $tetel->szinek_szama1 . "+" . $tetel->szinek_szama2 . " " . $tetel->munka_neve;	
+					}
 					$sor["Jegyzekszam"] = $tetel->termek->ksh_kod ;
 					$sor["Mennyiseg"] = $tetel->darabszam ;
 					$sor["EgysegAr"] = $tetel->netto_darabar ;	
@@ -654,7 +657,7 @@
 		/* Az ACTUAL adatbázisából beolvassa a $megrendeles_id azonosítójú megrendeléshez tartozó számla sorszámot és visszaadja */
 		function szamla_sorszam_beolvas($megrendeles_id) {
 			$return = 0 ;
-			$sql = "select BSorszam, Esedekes from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
+			$sql = "select BSorszam, Esedekes, Kiallitas from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
 			$fp = fopen('szamla_sorszamok_queryk.txt', 'a');
 			fwrite($fp, $sql . "\n");
 			fclose($fp);			

@@ -521,12 +521,15 @@ class NyomdakonyvController extends Controller
 
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
 			'criteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
 				'order'=>'hatarido, ugyfel_id',
 				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+				'together'=>true,
 			),
 			'countCriteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,
@@ -542,12 +545,15 @@ class NyomdakonyvController extends Controller
 	{
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
 			'criteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
 				'order'=>'hatarido, ugyfel_id',
 				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+				'together'=>true,
 			),
 			'countCriteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,

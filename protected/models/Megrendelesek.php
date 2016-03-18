@@ -22,6 +22,7 @@
  * @property string $proforma_fizetesi_hatarido
  * @property integer $proforma_fizetesi_mod
  * @property string $szamla_sorszam
+ * @property string $szamla_kiallitas_datum
  * @property string $szamla_fizetesi_hatarido
  * @property integer $szamla_fizetve
  * @property string $szamla_kiegyenlites_datum
@@ -158,6 +159,7 @@ class Megrendelesek extends CActiveRecord
 			'proforma_fizetesi_hatarido' => 'Proforma fizetési határidő',
 			'proforma_fizetesi_mod' => 'Proforma fizetési mód',
 			'szamla_sorszam' => 'Számla sorszáma',
+			'szamla_kiallitas_datum' => 'Számla kiállítás dátuma',
 			'szamla_fizetve' => 'Számla kiegyenlítve',
 			'szamla_kiegyenlites_datum' => 'Számla kiegyenlítés dátuma',
 			'szamla_fizetesi_hatarido' => 'Számla fizetési határidő',

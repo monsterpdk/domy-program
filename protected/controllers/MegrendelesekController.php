@@ -801,9 +801,11 @@ class MegrendelesekController extends Controller
 			$szamla_adatok = Utils::szamla_sorszam_beolvas($id) ;
 			$szamla_sorszam = $szamla_adatok["BSorszam"] ;
 			$szamla_hatarido = substr($szamla_adatok["Esedekes"], 0, 10) ;
+			$szamla_kiallitas_datum = substr($szamla_adatok["Kiallitas"], 0, 10) ;
 			if (!is_numeric($szamla_sorszam) || $szamla_sorszam > 0) {
 				$megrendeles->setAttribute("szamla_sorszam", $szamla_sorszam);
 				$megrendeles->setAttribute("szamla_fizetesi_hatarido", $szamla_hatarido) ;
+				$megrendeles->setAttribute("szamla_kiallitas_datum", $szamla_kiallitas_datum) ;
 				$megrendeles->save();
 				
 				// átbillentjük a megrendeléshez tartozó ügyfél típusát 'vasarlo'-ra

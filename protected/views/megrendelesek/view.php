@@ -57,6 +57,7 @@
 			'proforma_fizetesi_hatarido',
 			'fizetesi_mod.nev',
 			'szamla_sorszam',
+			'szamla_kiallitas_datum',
 			'szamla_fizetve',
 			'szamla_fizetesi_hatarido',
 			'szamla_kiegyenlites_datum',

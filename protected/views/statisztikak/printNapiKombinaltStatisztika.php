@@ -411,24 +411,361 @@ Boríték eladás: nincs színszám, Nyomás (saját+bér): van színszám. A k�
 <table class="statisztika_tablazat" style="border:none;">
 	<tr>
 		<td class="cim_cella jobbra" style="width: 200px;">Folyamatban lévő munkák:</td>
-		<td class="adat_cella jobbra" style="width: 100px;">34 db</td>
-		<td class="adat_cella jobbra" style="width: 200px;">1 853 286 Ft</td>
+		<td class="adat_cella jobbra" style="width: 100px;"><?php echo $stat_adatok["nyitott_munkak_db"];?> db</td>
+		<td class="adat_cella jobbra" style="width: 200px;"><?php echo Utils::OsszegFormazas($stat_adatok["nyitott_munkak_netto"],0);?> Ft</td>
 		<td class="adat_cella jobbra szegely_bal szegely_fent szegely_jobb" style="width: 200px;">Munkadíj bevétel</td>
 	</tr>
 	<tr>
 		<td class="cim_cella jobbra">Kiszámlázva:</td>
-		<td class="adat_cella jobbra">0 db</td>
-		<td class="adat_cella jobbra">0 Ft</td>
-		<td class="adat_cella jobbra szegely_bal szegely_jobb">100 379 Ft</td>	
+		<td class="adat_cella jobbra"><?php echo $stat_adatok["nyitott_munkak_kiszamlazva_db"];?> db</td>
+		<td class="adat_cella jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["nyitott_munkak_kiszamlazva_netto"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_bal szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["nyitott_munkak_munkadij_netto"],0);?> Ft</td>	
 	</tr> 
 	<tr>
 		<td class="cim_cella jobbra">Kiszámlázva adott időszakban:</td>
-		<td class="adat_cella jobbra">0 db</td>
-		<td class="adat_cella jobbra">0 Ft</td>
-		<td class="adat_cella jobbra szegely_bal szegely_alul szegely_jobb">4 182 Ft/ó</td>	
+		<td class="adat_cella jobbra"><?php echo $stat_adatok["nyitott_munkak_kiszamlazva_adott_idoszakban_db"];?> db</td>
+		<td class="adat_cella jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["nyitott_munkak_kiszamlazva_adott_idoszakban_netto"],0);?> Ft</td>
+		<td class="adat_cella jobbra szegely_bal szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["nyitott_munkak_munkadij_netto_orankent"],0);?> Ft/ó</td>	
 	</tr> 
 </table>
+</div>
+<pagebreak />
+<!-- Statisztika 2. oldal -->
+<div class='wide form'>
+<table class='fejlec1'>
+	<tr>
+		<td class="statisztika_fejlec_cim"> <strong> Statisztika </strong> </td>
+		<td class="statisztika_fejlec_idoszak">Időszak: <?php echo $model->statisztika_mettol . " - " . $model->statisztika_meddig; ?></td>
+	</tr>
+</table>
 
+<table class="statisztika_tablazat">
+	<tr>
+		<td class="szegely_alul" style="width: 85px;">bevétel-beszerzés</td>
+		<td class="cim_cella szegely_alul szegely_jobb">Elkészített ajánlatok</td>
+		<td class="cim_cella szegely_alul szegely_jobb">Megrendelések száma</td>
+		<td class="kozepre szegely_alul" style="width:80px;">% cég / % db</td>
+	</tr>
+	<tr>
+		<td class="cim_cella szegely_jobb" colspan="2">
+			<table class="statisztika_belso_tablazat_fel_szelesseg">
+				<tr>
+					<td class="szegely_jobb" style="width: 85px;">
+						Termék eladás
+					</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 14 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 14 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 247 497 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">99 975 Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 31 tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="szegely_jobb">Nyomás</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 12 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 12 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 1 077 949 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">100 379 Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 27 tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>				
+				<tr class="osszesen_sor">
+					<td class="szegely_jobb">Összesen</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 26 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 26 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"] + $stat_adatok["aaa"],0);?> 1 325 446 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_jobb">200 354 Ft</td>
+					<td colspan="2" class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 56 tétel</td>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+				</tr>				
+			</table>
+		</td>
+		<td colspan="2">
+			<table class="statisztika_belso_tablazat_fel_szelesseg">
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 12 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 13 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 234 918 Ft</td>
+					<td class="adat_cella jobbra" style="width:80px;"><?php echo $stat_adatok["aaa"];?> 85,71 &nbsp;&nbsp;&nbsp;92,85</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 30 tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 5 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 5 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 241 445 Ft</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 41,66 &nbsp;&nbsp;&nbsp;41,66</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 7 tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr class="osszesen_sor">
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 17 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 18 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"] + $stat_adatok["aaa"],0);?> 1 325 446 Ft</td>
+					<td class="adat_cella jobbra"><?php echo $stat_adatok["aaa"];?> 65,38 &nbsp;&nbsp;&nbsp;69,23</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 37 tétel</td>
+					<td class="adat_cella jobbra szegely_jobb">&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		</td>		
+	</tr>
+</table>
+<br />
+Darabszám 10 000 alatt <span class="cim_cella_kisbetu">kiemelt cégek nélkül</span><br />
+<table class="statisztika_tablazat">
+	<tr>
+		<td class="szegely_alul" style="width: 85px;">bevétel-beszerzés</td>
+		<td class="cim_cella szegely_alul szegely_jobb">Elkészített ajánlatok</td>
+		<td class="cim_cella szegely_alul szegely_jobb">Megrendelések száma</td>
+		<td class="kozepre szegely_alul" style="width:80px;">% cég / % db</td>
+	</tr>
+	<tr>
+		<td class="cim_cella szegely_jobb" colspan="2">
+			<table class="statisztika_belso_tablazat_fel_szelesseg">
+				<tr>
+					<td class="szegely_jobb" style="width: 85px;">
+						Termék eladás
+					</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 14 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 14 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 247 497 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">99 975 Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 37 tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="szegely_jobb">Nyomás</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 9 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 9 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 585 249 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">62 507 Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 21 tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>				
+				<tr class="osszesen_sor">
+					<td class="szegely_jobb">Összesen</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 23 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 23 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"] + $stat_adatok["aaa"],0);?> 837 906 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_jobb">162 482 Ft</td>
+					<td colspan="2" class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 58 tétel</td>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+				</tr>				
+			</table>
+		</td>
+		<td colspan="2">
+			<table class="statisztika_belso_tablazat_fel_szelesseg">
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 12 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 13 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 241 608 Ft</td>
+					<td class="adat_cella jobbra" style="width:80px;"><?php echo $stat_adatok["aaa"];?> 85,71 &nbsp;&nbsp;&nbsp;92,85</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 37 tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 3 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 3 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 150 845 Ft</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 33,33 &nbsp;&nbsp;&nbsp;33,33</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 5 tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr class="osszesen_sor">
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 15 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 16 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"] + $stat_adatok["aaa"],0);?> 392 453 Ft</td>
+					<td class="adat_cella jobbra"><?php echo $stat_adatok["aaa"];?> 65,21 &nbsp;&nbsp;&nbsp;69,56</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 42 tétel</td>
+					<td class="adat_cella jobbra szegely_jobb">&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		</td>		
+	</tr>
+</table>
+<br />
+Darabszám 10 000, vagy felette <span class="cim_cella_kisbetu">kiemelt cégek nélkül</span><br />
+<table class="statisztika_tablazat">
+	<tr>
+		<td class="szegely_alul" style="width: 85px;">bevétel-beszerzés</td>
+		<td class="cim_cella szegely_alul szegely_jobb">Elkészített ajánlatok</td>
+		<td class="cim_cella szegely_alul szegely_jobb">Megrendelések száma</td>
+		<td class="kozepre szegely_alul" style="width:80px;">% cég / % db</td>
+	</tr>
+	<tr>
+		<td class="cim_cella szegely_jobb" colspan="2">
+			<table class="statisztika_belso_tablazat_fel_szelesseg">
+				<tr>
+					<td class="szegely_jobb" style="width: 85px;">
+						Termék eladás
+					</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 0 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 0 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">0 Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 0 tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="szegely_jobb">Nyomás</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 3 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 3 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 492 700 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">37 872 Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 6 tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>				
+				<tr class="osszesen_sor">
+					<td class="szegely_jobb">Összesen</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 3 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 3 db</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"] + $stat_adatok["aaa"],0);?> 492 700 Ft</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_jobb">37 872 Ft</td>
+					<td colspan="2" class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 5 tétel</td>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+				</tr>				
+			</table>
+		</td>
+		<td colspan="2">
+			<table class="statisztika_belso_tablazat_fel_szelesseg">
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 0 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 0 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> Ft</td>
+					<td class="adat_cella jobbra" style="width:80px;"><?php echo $stat_adatok["aaa"];?> 0,00 &nbsp;&nbsp;&nbsp;0,00</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 0 tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 2 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 2 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"],0);?> 90 600 Ft</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 66,66 &nbsp;&nbsp;&nbsp;66,66</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["aaa"];?> 2 tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr class="osszesen_sor">
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 2 cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"] + $stat_adatok["aaa"];?> 2 db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["aaa"] + $stat_adatok["aaa"],0);?> 90 600 Ft</td>
+					<td class="adat_cella jobbra"><?php echo $stat_adatok["aaa"];?> 66,66 &nbsp;&nbsp;&nbsp;66,66</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["aaa"];?> 2 tétel</td>
+					<td class="adat_cella jobbra szegely_jobb">&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+		</td>		
+	</tr>
+</table>
+<span class="cim_cella_kisbetu">Lehet olyan ajánlat / megrendelés, amely tartalmaz 10 000 alatti és 10 000 feletti tételt is!<br />
+Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehát mindkét táblázatban megjelennek.</span><br />
+<br />
+<hr>
+	<strong>Gépmester statisztika</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cim_cella_kisbetu">Csak szabályosan lezárt rögzítések 2014.09.24 05:30-tól 2014.09.25 06:30-ig</span>
+<hr>
+<table class="statisztika_tablazat nincs_szegely" style="border: none;">
+	<tr>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td><span class="cim_cella_kisbetu">műszak 12 ó</span></td>
+		<td><span class="cim_cella_kisbetu">műszak 12 ó</span></td>
+	</tr>
+	<tr>
+		<td style="width:90px;border-bottom:solid 2px black;" class="cim_cella">Gépmester</td>
+		<td style="width:60px;border-bottom:solid 2px black;" class="cim_cella szegely_jobb jobbra">Műszakok száma</td>
+		<td style="width:60px;border-bottom:solid 2px black;" class="cim_cella szegely_jobb jobbra">Munkák száma rész / össz</td>
+		<td style="width:70px;border-bottom:solid 2px black;" class="cim_cella szegely_jobb jobbra">Boríték / levélpapír darabszám</td>
+		<td style="width:60px;border-bottom:solid 2px black;" class="cim_cella szegely_jobb jobbra">Színek száma átlagos / súlyozott</td>
+		<td style="width:70px;border-bottom:solid 2px black;" class="cim_cella szegely_jobb">Levezetés</td>
+		<td style="width:40px;border-bottom:solid 2px black;" class="cim_cella nincs_szegely jobbra">Kifutó</td>
+		<td style="width:70px;border-bottom:solid 2px black;" class="cim_cella nincs_szegely jobbra"><strong>Átlagos munkán- kénti teljesítés</strong></td>
+		<td style="width:70px;border-bottom:solid 2px black;" class="cim_cella nincs_szegely jobbra"><strong>Átlagos tényleges műszak teljesítés</strong></td>
+		<td style="width:70px;border-bottom:solid 2px black;" class="cim_cella szegely_jobb jobbra"><strong>Átlagos tervezett műszak teljesítés</strong></td>
+	</tr>
+<!-- Egy gépmester rekord egy kétsoros táblázatsorból áll! -->	
+	<tr>
+		<td class="adat_cella">Kulik Iosif Attila</td>
+		<td class="adat_cella szegely_jobb jobbra">1</td>
+		<td class="adat_cella szegely_jobb jobbra">5,0</td>
+		<td class="adat_cella szegely_jobb jobbra">18 000</td>
+		<td class="adat_cella szegely_jobb jobbra">3,00<br />3.05</td>
+		<td class="adat_cella szegely_jobb jobbra">Fordított&nbsp;&nbsp;&nbsp;0</td>
+		<td class="adat_cella nincs_szegely jobbra">1</td>
+		<td class="adat_cella szegely_jobb" colspan="3">->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1x=0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2x=1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3x=0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4x=0</td>
+	</tr>
+	<tr>
+		<td class="adat_cella szegely_alul">&nbsp;</td>
+		<td class="adat_cella szegely_jobb szegely_alul jobbra">&nbsp;</td>
+		<td class="adat_cella szegely_jobb szegely_alul jobbra">5</td>
+		<td class="adat_cella szegely_jobb szegely_alul jobbra">&nbsp;</td>
+		<td class="adat_cella szegely_jobb szegely_alul jobbra">3.05</td>
+		<td class="adat_cella szegely_jobb szegely_alul jobbra">Hosszi.&nbsp;&nbsp;&nbsp;0</td>
+		<td class="adat_cella szegely_alul jobbra">&nbsp;</td>
+		<td class="adat_cella szegely_alul jobbra"><strong>86,83 %</strong></td>
+		<td class="adat_cella szegely_alul jobbra"><strong>59,16 %</strong></td>
+		<td class="adat_cella szegely_alul szegely_jobb jobbra"><strong>48,88 %</strong></td>
+	</tr>
+<!-- Gépmester rekord eddig -->	
+</table>
 </div>
 
 <htmlpagefooter name="myFooter2" style="display:none">

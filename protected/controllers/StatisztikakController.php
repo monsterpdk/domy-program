@@ -203,7 +203,7 @@ class StatisztikakController extends Controller
 	}	
 
 //Az összes nem kiegyenlített számlával rendelkező (és nem sztornózott, vagy törölt) megrendelést adja vissza
-	public function getTartozasok($model) {
+	public function getTartozasok() {
 		$dataProvider=new CActiveDataProvider('Megrendelesek', array(
 			'criteria'=>array(
 				'condition'=>'t.torolt=0 and t.sztornozva=0 and szamla_sorszam != \'\' and szamla_fizetve = 0',
@@ -211,6 +211,26 @@ class StatisztikakController extends Controller
 			'countCriteria'=>array(
 				'condition'=>'t.torolt=0 and t.sztornozva=0 and szamla_sorszam != \'\' and szamla_fizetve = 0',
 				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'sort'=> false,
+			'pagination'=>false,
+		));		
+		return $dataProvider ;
+	}	
+
+//Az összes folyamatban lévő munka, ami a nem befejezett nyomdakönyvi munkákat takarja
+	public function getMunkakFolyamatban() {
+		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
+			'criteria'=>array(
+				'condition'=>'t.torolt=0 and megrendeles_tetel.megrendeles_id IS NOT NULL and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'with'=>array('megrendeles_tetel' => array('termek' => array('termekar')), 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+				'together'=>true,
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and megrendeles_tetel.megrendeles_id IS NOT NULL and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'with'=>array('megrendeles_tetel' => array('termek' => array('termekar')), 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+				'together'=>true,
+				// 'order' and 'with' clauses have no meaning for the count query				
 			),
 			'sort'=> false,
 			'pagination'=>false,
@@ -899,7 +919,7 @@ class StatisztikakController extends Controller
 		$ugyvednek_atadva["netto"] = 0 ;
 		$ugyvednek_atadva["brutto"] = 0 ;		
 		
-		$nyitott_megrendelesek = $this->getTartozasok($model) ;
+		$nyitott_megrendelesek = $this->getTartozasok() ;
 		$elozo_honap = mktime(0, 0, 0, date("m")-1, date("d"), date("Y"));
 		$elozo_ev = mktime(0, 0, 0, date("m"), date("d"), date("Y")-1);
 		if ($nyitott_megrendelesek->totalItemCount > 0) {
@@ -960,6 +980,72 @@ class StatisztikakController extends Controller
 		$stat_adatok["behajto_cegnek_atadva"] = $behajto_cegnek_atadva ;
 		$stat_adatok["ugyvednek_atadva"] = $ugyvednek_atadva ;
 
+		//Folyamatban lévő munkák
+		$munkak_folyamatban = $this->getMunkakFolyamatban() ;
+		$nyitott_munkak_db = $munkak_folyamatban->totalItemCount ;
+		$nyitott_munkak_netto = 0 ;
+		$nyitott_munkak_kiszamlazva_db = 0 ;
+		$nyitott_munkak_kiszamlazva_netto = 0 ;
+		$nyitott_munkak_kiszamlazva_adott_idoszakban_db = 0 ;
+		$nyitott_munkak_kiszamlazva_adott_idoszakban_netto = 0 ;
+		$nyitott_munkak_munkadij_netto = 0 ;
+		$nyitott_munkak_normaido = 0 ;
+		$nyitott_munkak_munkadij_netto_orankent = 0 ;
+		if ($munkak_folyamatban->totalItemCount > 0) {
+			foreach ($munkak_folyamatban->getData() as $sor) {
+				$tetel_netto_osszeg = 0 ;
+				$tetel_anyagkoltseg = 0 ;
+				$tetel_kalkulalt_munkadij = 0 ;
+				$tetel_netto_osszeg = $sor->megrendeles_tetel->darabszam * $sor->megrendeles_tetel->netto_darabar ;
+				$tetel_norma = Utils::getNormaadat($sor->megrendeles_tetel_id, $sor->gep_id, $sor->munkatipus_id, $sor->max_fordulat) ;
+				$tetel_beszerzesi_darabar = 0 ;	
+				$i = 0 ;
+				while ($i < count($sor->megrendeles_tetel->termek->termekar) && $tetel_beszerzesi_darabar == 0) {
+					$tetel_termekar = $sor->megrendeles_tetel->termek->termekar[$i] ;
+					if ($tetel_termekar->datum_mettol <= $sor->megrendeles_tetel->megrendeles->rendeles_idopont && 	$tetel_termekar->datum_meddig >= $sor->megrendeles_tetel->megrendeles->rendeles_idopont)
+					{
+						$tetel_beszerzesi_darabar = $tetel_termekar->darab_ar_szamolashoz ;
+					}
+					$i++ ;
+				}
+				$tetel_anyagkoltseg = $tetel_beszerzesi_darabar * $sor->megrendeles_tetel->darabszam ;
+				$tetel_kalkulalt_munkadij = $tetel_netto_osszeg - $tetel_anyagkoltseg ;
+//				print_r($sor) ;
+//				print_r($tetel_norma) ;
+//				die() ;
+				$nyitott_munkak_netto += $tetel_netto_osszeg ;
+				if ($sor->megrendeles_tetel->megrendeles->szamla_sorszam != "") {
+					$nyitott_munkak_kiszamlazva_db++ ;
+					$nyitott_munkak_kiszamlazva_netto += $tetel_netto_osszeg ;
+					if ($sor->megrendeles_tetel->megrendeles->szamla_kiallitas_datum >= $model->statisztika_mettol && $sor->megrendeles_tetel->megrendeles->szamla_kiallitas_datum <= $model->statisztika_meddig) {
+						$nyitott_munkak_kiszamlazva_adott_idoszakban_db++;
+						$nyitott_munkak_kiszamlazva_adott_idoszakban_netto += $tetel_netto_osszeg ;
+					}
+				}	
+				if (is_numeric($tetel_norma["normaar"])) {
+					$nyitott_munkak_munkadij_netto += $tetel_norma["normaar"] ;
+				}
+				else
+				{
+					$nyitott_munkak_munkadij_netto += $tetel_kalkulalt_munkadij ;
+				}
+				if (is_numeric($tetel_norma["normaido"])) {
+					$nyitott_munkak_normaido += $tetel_norma["normaido"] ;
+				}
+			}
+			if ($nyitott_munkak_normaido > 0) {
+				$nyitott_munkak_munkadij_netto_orankent = round($nyitott_munkak_munkadij_netto / ($nyitott_munkak_normaido / 60)) ;
+			}
+		}
+		$stat_adatok["nyitott_munkak_db"] = $nyitott_munkak_db ;
+		$stat_adatok["nyitott_munkak_netto"] = $nyitott_munkak_netto ;
+		$stat_adatok["nyitott_munkak_kiszamlazva_db"] = $nyitott_munkak_kiszamlazva_db ;
+		$stat_adatok["nyitott_munkak_kiszamlazva_netto"] = $nyitott_munkak_kiszamlazva_netto ;
+		$stat_adatok["nyitott_munkak_kiszamlazva_adott_idoszakban_db"] = $nyitott_munkak_kiszamlazva_adott_idoszakban_db ;
+		$stat_adatok["nyitott_munkak_kiszamlazva_adott_idoszakban_netto"] = $nyitott_munkak_kiszamlazva_adott_idoszakban_netto ;
+		$stat_adatok["nyitott_munkak_munkadij_netto"] = $nyitott_munkak_munkadij_netto ;
+		$stat_adatok["nyitott_munkak_munkadij_netto_orankent"] = $nyitott_munkak_munkadij_netto_orankent ;
+			
 		
 		# mPDF
 		$mPDF1 = Yii::app()->ePdf->mpdf();
