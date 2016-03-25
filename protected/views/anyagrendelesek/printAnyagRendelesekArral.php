@@ -170,16 +170,20 @@
 				$ossz_afa += number_format(round((round($tetel->rendeleskor_netto_darabar, 2) * $tetel->rendelt_darabszam * ($afakulcs->afa_szazalek)) / 100, 0), 2, '.', '');
 				
 				// tételek kiírása
+				$ablakhely_szoveg = "" ;
+				if ($ablakhely->hely != "") {
+					$ablakhely_szoveg = "$ablakhely->hely $ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm" ;
+				}				
 				echo "
 					<tr>
 						<td>$termek->nev <br /> $zarasmod->nev <br /> $termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm</td>
 						<td>$ablakmeret->magassag x $ablakmeret->szelesseg mm <br /> $papirtipus->nev</td>
-						<td align=right>$ablakhely->hely $ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm <br /> $papirtipus->suly gr</td>
+						<td align=right>$ablakhely_szoveg <br /> $papirtipus->suly gr</td>
 						<td align=right>$termek->kodszam</td>
-						<td align=right>$tetel->rendelt_darabszam</td>
-						<td align=right>" . number_format((float)$tetel->rendeleskor_netto_darabar, 2) . "</td>
-						<td align=right>" .  number_format((float)$tetel->rendeleskor_netto_darabar * $tetel->rendelt_darabszam, 2, '.', '') . "</td>
-						<td align=right>". number_format(round((round($tetel->rendeleskor_netto_darabar, 2) * $tetel->rendelt_darabszam * ($afakulcs->afa_szazalek + 100)) / 100, 0), 2, '.', '') . "</td>
+						<td align=right>" . Utils::DarabszamFormazas($tetel->rendelt_darabszam) . "</td>
+						<td align=right>" . Utils::OsszegFormazas((float)$tetel->rendeleskor_netto_darabar, 2) . "</td>
+						<td align=right>" .  Utils::OsszegFormazas((float)$tetel->rendeleskor_netto_darabar * $tetel->rendelt_darabszam, 2) . "</td>
+						<td align=right>". Utils::OsszegFormazas(round((round($tetel->rendeleskor_netto_darabar, 2) * $tetel->rendelt_darabszam * ($afakulcs->afa_szazalek + 100)) / 100, 0), 2) . "</td>
 					</tr>
 				";
 			}
@@ -191,7 +195,7 @@
 				<table class='table_afa_osszegzo'>
 					<tr>
 						<td align=left><strong>$afakulcs->afa_szazalek%-os adóalap: <br /> $afakulcs->afa_szazalek%-os ÁFA: </strong></td>
-						<td align=right>" . number_format($ossz_netto, 2) . "<br />" . number_format($ossz_afa, 2) . "</td>
+						<td align=right>" . Utils::OsszegFormazas($ossz_netto, 2) . "<br />" . Utils::OsszegFormazas($ossz_afa, 2) . "</td>
 					</tr>
 				</table>
 			";
@@ -201,7 +205,7 @@
 				<table class='table_osszegzo'>
 					<tr>
 						<td align=left><strong>Fizetendő: <br /> azaz:</strong></td>
-						<td align=right><strong>" . number_format(round($ossz_netto + $ossz_afa), 2) . "</strong><br /> - " . mb_strtoupper (Utils::num2text(round($ossz_netto + $ossz_afa)), "UTF-8") . " Forint - </td>
+						<td align=right><strong>" . Utils::OsszegFormazas(round($ossz_netto + $ossz_afa), 2) . "</strong><br /> - " . mb_strtoupper (Utils::num2text(round($ossz_netto + $ossz_afa)), "UTF-8") . " Forint - </td>
 					</tr>
 				</table>
 			";
@@ -223,7 +227,7 @@
 
 <htmlpagefooter name="myFooter2" style="display:none">
 <p style='font-family:arial; font-size: 10pt'>
-	<?php echo nl2br((Yii::app()->config->get('AnyagrendelesekArral')); ?>
+	<?php echo nl2br((Yii::app()->config->get('AnyagrendelesekArral'))); ?>
 </p>
 
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">

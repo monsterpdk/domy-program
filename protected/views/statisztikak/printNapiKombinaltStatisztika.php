@@ -92,7 +92,7 @@
 <table class='fejlec1'>
 	<tr>
 		<td class="statisztika_fejlec_cim"> <strong> Statisztika </strong> </td>
-		<td class="statisztika_fejlec_idoszak">Időszak: <?php echo $model->statisztika_mettol . " - " . $model->statisztika_meddig; ?></td>
+		<td class="statisztika_fejlec_idoszak">Időszak: <?php echo substr($model->statisztika_mettol, 0, 10) . " - " . substr($model->statisztika_meddig, 0, 10); ?></td>
 	</tr>
 </table>
 

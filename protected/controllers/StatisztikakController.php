@@ -117,7 +117,7 @@ class StatisztikakController extends Controller
 		$dataProvider=new CActiveDataProvider('Megrendelesek', array(
 			'criteria'=>array(
 				'select'=>'tetelek.*',
-				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'' . $elozmeny_query ,
+				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont >=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'' . $elozmeny_query ,
 //				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
 				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel'),
 //				'with'=>array('tetelek', 'ugyfel', 'termek', 'termekar'),
@@ -125,7 +125,7 @@ class StatisztikakController extends Controller
 			),
 			'countCriteria'=>array(
 				'select'=>'tetelek.*',
-				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont>=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'' . $elozmeny_query ,
+				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont >=\'' . $model->statisztika_mettol . '\' and t.rendeles_idopont <= \'' . $model->statisztika_meddig . '\'' . $elozmeny_query ,
 //				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
 				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel'),
 				'together'=>true,
@@ -254,8 +254,25 @@ class StatisztikakController extends Controller
 			$model -> statisztika_mettol = $_POST['Statisztikak']["statisztika_mettol"] ;
 			$model -> statisztika_meddig = $_POST['Statisztikak']["statisztika_meddig"] ;
 		}
-		$model -> statisztika_mettol = "2016-03-01" ;
-		$model -> statisztika_meddig = "2016-03-07" ;
+		else
+		{
+			$tegnap  = mktime(0, 0, 0, date("m")  , date("d")-1, date("Y"));
+			if (date("w", $tegnap) == 6) {
+				$tegnap  = mktime(0, 0, 0, date("m")  , date("d")-2, date("Y"));
+			}
+			elseif (date("w", $tegnap) == 0) {
+				$tegnap  = mktime(0, 0, 0, date("m")  , date("d")-3, date("Y"));
+			} 
+			
+			$model -> statisztika_mettol = date("Y-m-d", $tegnap) ;
+			$model -> statisztika_meddig = date("Y-m-d", $tegnap) ;			
+		}
+		$model -> statisztika_mettol .= " 00:00:00" ;
+		$model -> statisztika_meddig .= " 23:59:59" ;	
+//		die($model -> statisztika_mettol . ' - ' . 	$model -> statisztika_meddig) ;
+/*		$model -> statisztika_mettol = "2016-03-01" ;
+		$model -> statisztika_meddig = "2016-03-07" ;*/
+
 
 		$stat_adatok = array() ;
 //Árajánlattal kapcsolatos statisztikák	nem kiemelt cégek	

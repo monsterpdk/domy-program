@@ -29,6 +29,7 @@ class MegrendelesTetelek extends CActiveRecord
 	public $netto_ar;
 	public $brutto_ar;
 	public $darabszam_szallitora;
+	public $megrendelt_termek_nev;
 	
 	// LI a termék színeinek számát írja ki 'szinek_szama1+szinek_szama2' formátumban
 	private $displayTermekSzinekSzama;
@@ -158,8 +159,9 @@ class MegrendelesTetelek extends CActiveRecord
 		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
 		// terméknevet kézzel kell kitöltenünk
 		$this -> autocomplete_termek_name = $this -> termek -> nev;
-		if ($this -> hozott_boritek == true) {
-			$this -> termek -> nev = "Hozott " . $this -> termek -> nev ;
+		$this -> megrendelt_termek_nev = $this -> termek -> DisplayTermekTeljesNev ;
+		if ($this -> hozott_boritek == 1) {
+			$this -> megrendelt_termek_nev = "Hozott " . $this -> termek -> DisplayTermekTeljesNev ;
 		}		
 	}	
 	

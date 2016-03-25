@@ -149,7 +149,7 @@
 				$termek = Termekek::model()->findByPk($tetel -> termek_id);
 				if ($termek == null)
 					$termek = new Termekek();
-				$termek_teljes_nev = $tetel->getTetelnevHozottNemHozott() . $termek->getDisplayTermekTeljesNev() ;
+				$termek_teljes_nev = $tetel->megrendelt_termek_nev ;
 				
 				$nyomdakonyvi_munka = Nyomdakonyv::model() -> findByAttributes( array('megrendeles_tetel_id' => $tetel -> id,) );
 				if ($nyomdakonyvi_munka == null)

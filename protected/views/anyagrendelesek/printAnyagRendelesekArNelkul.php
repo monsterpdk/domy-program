@@ -1,4 +1,4 @@
- n<html>
+<html>
 <head></head>
 
 <?php
@@ -71,7 +71,6 @@
 <div class='wide form'>
 
 <div style='text-align:center'>
-	<h1>CSAK BELSŐ HASZNÁLATRA</h1>
 	<h3><span class='under'>Termék megrendelés</span></h3>
 </div>
 
@@ -172,14 +171,18 @@ Ha ez bizonyos tételeknél nem lehetséges, jelezzék felénk.
 					$papirtipus = new PapirTipusok();
 					
 				// tételek kiírása
+				$ablakhely_szoveg = "" ;
+				if ($ablakhely->hely != "") {
+					$ablakhely_szoveg = "$ablakhely->hely $ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm" ;
+				}
 				echo "
 					<tr>
 						<td style='border-left:0px;border-right:0px'>$termek->nev <br /> $zarasmod->nev </td>
 						<td style='border-left:0px;border-right:0px'>$termek_meret->magassag x $termek_meret->szelesseg x $termek_meret->vastagsag mm</td>
 						<td style='border-left:0px;border-right:0px'>$ablakmeret->magassag x $ablakmeret->szelesseg mm <br /> $papirtipus->nev</td>
-						<td  style='border-left:0px;border-right:0px' align=right>$ablakhely->hely $ablakhely->x_pozicio_honnan$ablakhely->x_pozicio_mm$ablakhely->y_pozicio_honnan$ablakhely->y_pozicio_mm <br /> $papirtipus->suly gr</td>
+						<td  style='border-left:0px;border-right:0px' align=right>$ablakhely_szoveg <br /> $papirtipus->suly gr</td>
 						<td align=right>$termek->kodszam</td>
-						<td align=right>$tetel->rendelt_darabszam</td>
+						<td align=right>" . Utils::DarabszamFormazas($tetel->rendelt_darabszam) . "</td>
 					</tr>
 				";
 			}

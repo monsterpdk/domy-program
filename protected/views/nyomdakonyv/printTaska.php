@@ -95,6 +95,11 @@
 	}
 	$hatoldal_szinek = rtrim($hatoldal_szinek, ",") ;
 	
+	$pantone_elol_hatul = array() ;
+	if ($model->szin_pantone != "") {
+		$pantone_elol_hatul = explode("+", $model->szin_pantone) ;
+	}
+	
 ?>
 
 <style>
@@ -228,8 +233,8 @@
 		<td align='center' width='110'> <?php echo $megrendeles_tetel->displayTermekSzinekSzama; ?> </td>
 	</tr>
 	<tr>
-		<td width='115'> <strong> PANTONE (szín): <?php echo $model->szin_pantone;?></strong> </td>
-		<td colspan='4'> <strong> ELŐOLDAL: <?php echo $elooldal_szinek;?> <br /> HÁTOLDAL: <?php echo $hatoldal_szinek;?></strong> </td>
+		<td width='115'> <strong> PANTONE (szín): </strong> </td>
+		<td colspan='4'> <strong> ELŐOLDAL: <?php echo $elooldal_szinek . $pantone_elol_hatul[0];?> <br /> HÁTOLDAL: <?php echo $hatoldal_szinek . $pantone_elol_hatul[1];?></strong> </td>
 	</tr>
 	<tr>
 		<td> <strong> UTASÍTÁS GÉP- <br/> MESTER-nek</strong> </td>
@@ -319,7 +324,23 @@
 
 	<div style='float:right; margin-left:50px; margin-top:10px'>
 		<strong> Kifutás iránya </strong>
-		<img src='images/kifutas_iranya.jpg' />
+		<table>
+			<tr>
+				<td>&nbsp;</td>
+				<td style="margin: auto; text-align:center;"><?php echo (($model->kifuto_fent == 1) ? "<img src='images/checkbox_checked.jpg' />" : "<img style='margin: auto;' src='images/checkbox_unchecked.jpg' />")?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo (($model->kifuto_bal == 1) ? "<img src='images/checkbox_checked.jpg' />" : "<img src='images/checkbox_unchecked.jpg' />")?></td>
+				<td><img src='images/boritek_kifuto.jpg' /></td>
+				<td align="center"><?php echo (($model->kifuto_jobb == 1) ? "<img src='images/checkbox_checked.jpg' />" : "<img src='images/checkbox_unchecked.jpg' />")?></td>
+				</tr>		
+			<tr>
+				<td>&nbsp;</td>
+				<td style="margin: auto; text-align:center;"><?php echo (($model->kifuto_lent == 1) ? "<img src='images/checkbox_checked.jpg' />" : "<img src='images/checkbox_unchecked.jpg' />")?></td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
 	</div>
 </div>
 
