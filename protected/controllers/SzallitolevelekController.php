@@ -60,7 +60,7 @@ class SzallitolevelekController extends Controller
 				
 				$minuszosTermekek = '';
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
-					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
+					if ( ($tetelekASzallitolevelen[$i] >= 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
 						
 						$tetelASzalliton -> szallitolevel_id = $model -> id;
@@ -151,7 +151,7 @@ class SzallitolevelekController extends Controller
 				
 				$minuszosTermekek = '';
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
-					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
+					if ( ($tetelekASzallitolevelen[$i] >= 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
 						
 						$tetelASzalliton -> szallitolevel_id = $model -> id;
