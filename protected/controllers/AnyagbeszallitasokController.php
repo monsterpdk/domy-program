@@ -94,8 +94,7 @@ class AnyagbeszallitasokController extends Controller
 							$anyagbeszallitas = $model;
 							$anyagrendeles = Anyagrendelesek::model()->findByPk($model -> anyagrendeles_id);
 							
-							// lezárjuk az anyagrendelést és a hozzá tartozó anyagbeszállítást
-							
+							// lezárjuk az anyagrendelést és a hozzá tartozó anyagbeszállítást					
 							$anyagbeszallitas->lezarva = 1;
 							$anyagbeszallitas->save();
 
@@ -110,7 +109,7 @@ class AnyagbeszallitasokController extends Controller
 							$termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array("anyagrendeles_id" => $anyagrendeles -> id));
 							
 							foreach ($termekek as $termek) {
-								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'raktar_id' => $raktar -> id) );
+								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'anyagbeszallitas_id' => $anyagbeszallitas->id, 'raktar_id' => $raktar -> id) );
 								
 								// ha van már a raktárban ilyen termék, akkor frissítjük a darabszámát
 								if ($raktarTermek != null) {
@@ -121,12 +120,22 @@ class AnyagbeszallitasokController extends Controller
 									$raktarTermek = new RaktarTermekek;
 									$raktarTermek -> termek_id = $termek -> termek_id;
 									$raktarTermek -> raktar_id = $raktar -> id;
+									$raktarTermek -> anyagbeszallitas_id = $anyagbeszallitas -> id;
 									
 									$raktarTermek -> elerheto_db = $termek -> rendelt_darabszam;
 									$raktarTermek -> osszes_db = $termek -> rendelt_darabszam;
 								}
 								
 								$raktarTermek -> save ();
+								
+								// a tranzakció adatait külön menjtük (jelenleg csak a statisztikákhoz szükséges)
+								$raktarTermekekTranzakciok = new RaktarTermekekTranzakciok;
+								$raktarTermekekTranzakciok->termek_id = $raktarTermek->termek_id;
+								$raktarTermekekTranzakciok->anyagbeszallitas_id = $raktarTermek->anyagbeszallitas_id;
+								$raktarTermekekTranzakciok->raktar_id = $raktarTermek->raktar_id;
+								$raktarTermekekTranzakciok->tranzakcio_datum = date("Y-m-d H:i:s");
+								$raktarTermekekTranzakciok->betesz_kivesz_darabszam = $termek -> rendelt_darabszam;
+								$raktarTermekekTranzakciok->save(false);
 								
 								// itt vizsgáljuk, hogy túlléptük-e a termék megadott maximum raktárkészletét,
 								// ha igen e-mailt küldünk azoknak felhasználóknak, akik jogosultat megkapni ezt az infót

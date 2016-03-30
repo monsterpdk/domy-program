@@ -70,7 +70,7 @@ class SzallitolevelekController extends Controller
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam)) {
+						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id)) {
 							$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 						}
 						
@@ -142,7 +142,7 @@ class SzallitolevelekController extends Controller
 				// LI: a raktárból sztornózzuk a szállítólevél egyes tételeit, majd újra felvesszük őket az új darabszámmal
 				foreach ($model->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
-					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam);
+					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id);
 				}
 				
 				// töröljük a szállítólevélhez már felvett tételeket, majd újra létrehozzuk őket az új darabszámmal
@@ -161,7 +161,7 @@ class SzallitolevelekController extends Controller
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam)) {
+						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id)) {
 							$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 						}
 						
@@ -321,7 +321,7 @@ class SzallitolevelekController extends Controller
 				// a raktárban növeljük a foglalt és az összes mennyiségeket
 				foreach ($szallitolevel->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
-					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam);
+					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $szallitolevel->id);
 				}
 				
 				$szallitolevel -> save(false);

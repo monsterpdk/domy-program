@@ -144,12 +144,12 @@ class NyomdakonyvController extends Controller
 				
 				$megrendelesTetel = MegrendelesTetelek::model()->findByPk($nyomdakonyv->megrendeles_tetel_id);
 				
+				$nyomdakonyv -> save(false);
+
 				if ($megrendelesTetel != null) {
 					// a raktárban töröljük az ide vonatkozó foglalást
-					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam);
+					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam, $nyomdakonyv->id);
 				}
-				
-				$nyomdakonyv -> save(false);
 			}
 		}
 		

@@ -165,11 +165,10 @@ class MegrendelesekController extends Controller
 					
 //					print_r($nyomdakonyv) ;
 					
-					// a raktárban foglaljuk a megfelelő mennyiséget
-					Utils::raktarbanFoglal($termek_id, $darabszam);
-										
 					$nyomdakonyv -> save(false);
-										
+					
+					// a raktárban foglaljuk a megfelelő mennyiséget
+					Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
 				}
 			}
 //			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
