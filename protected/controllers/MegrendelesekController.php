@@ -168,7 +168,10 @@ class MegrendelesekController extends Controller
 					$nyomdakonyv -> save(false);
 					
 					// a raktárban foglaljuk a megfelelő mennyiséget
-					Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+					// LI: csak akkor, ha nem hozott borítékról van szó
+					if ($tetel -> hozott_boritek != 1) {
+						Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+					}
 				}
 			}
 //			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;

@@ -146,7 +146,8 @@ class NyomdakonyvController extends Controller
 				
 				$nyomdakonyv -> save(false);
 
-				if ($megrendelesTetel != null) {
+				// LI: csak akkor, ha nem hozott borítékról van szó
+				if ($megrendelesTetel != null && $megrendelesTetel -> hozott_boritek != 1) {
 					// a raktárban töröljük az ide vonatkozó foglalást
 					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam, $nyomdakonyv->id);
 				}
