@@ -24,6 +24,18 @@ class EditableColumn extends CDataColumn
     */
     public $editable = array();
 
+	protected function fetchKeys($dataProvider) {
+    	$keys = array();
+    	$data = $dataProvider->getData();
+		
+    	if(isset($data) && !empty($data)) {
+			foreach($data[0] as $i=>$data)
+				$keys[]=$i;
+		}
+		
+    	return $keys;
+    }
+
     public function init()
     {
         if (!$this->name) {
@@ -32,6 +44,30 @@ class EditableColumn extends CDataColumn
 
         parent::init();
 
+		/**
+         * hozzáadunk egy üres elemet a dataprovider-hez és meghívjuk a renderDataCellContent funkciót,
+		 * így akkor is regisztrálódnak a szükséges script-ek, ha alapból üresek a gridview-k
+         */
+        if(empty($this->grid->dataProvider->data)) {
+	        if ($this->grid->dataProvider instanceof CActiveDataProvider)
+	        	$dummy = new $this->grid->dataProvider->modelClass();
+			else if ($this->grid->dataProvider instanceof CArrayDataProvider) {
+				$keys = $this->fetchKeys($this->grid->dataProvider);
+				$dummy = array();
+				
+				foreach ($keys as $key) {
+					$dummy[$key] = $key;
+				}
+			} else {
+				$dummy = null;			
+			}
+			
+			$this->grid->dataProvider->data = array($dummy);
+			$this->editable['htmlOptions'] = array('style' => 'display: none;');
+			$this->renderDataCellContent(0, $dummy);
+			$this->grid->dataProvider->data = array();
+        }
+		
         //need to attach ajaxUpdate handler to refresh editables on pagination and sort
         Editable::attachAjaxUpdateEvent($this->grid);
     }

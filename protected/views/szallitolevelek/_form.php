@@ -54,7 +54,16 @@
 				  'class' => 'editable.EditableColumn',
 				  'name'  => 'darabszam',
 				  'value' => function($data, $row) use ($model){
-						return ($model->tetelek != null && count($model->tetelek) > 0) ? $model->tetelek[$row]->darabszam : $data->darabszam;
+						if ($model->tetelek != null && count($model->tetelek) > 0) {
+							foreach ($model->tetelek as $tetel) {
+									if ($tetel->megrendeles_tetel_id == $data->id) {
+										return $tetel->darabszam;
+									}
+							}
+							
+							return 0;
+						} else
+							return $data->darabszam;
 				  },
 				  'header' => 'Szállítólevélre rakva (db)',
 				  'editable' => array(

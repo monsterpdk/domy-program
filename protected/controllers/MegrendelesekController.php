@@ -129,54 +129,71 @@ class MegrendelesekController extends Controller
 	*/
 	public function actionMunkakGeneralasaMegrendelesbol($id) {
 		$megrendeles = $this->loadModel($id);
-
+		$hasError = false;
+		
 		// ha létezik a megrendelés és még nincsenek a tételei a nyomdakönyvbe rakva
 		if ($megrendeles != null && $megrendeles->nyomdakonyv_munka_id == 0) {
 			foreach ($megrendeles -> tetelek as $tetel) {
-				if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
-					$nyomdakonyv = new Nyomdakonyv;
-					$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
-					$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
-					
-					// a választható CTP vagy Film közül a deault a CTP
-					$nyomdakonyv->ctp = 1;
-					
-					// az ofszet festék és a vágójel szerinti pipáló mezők automatikusan legyenek pipálva
-					$nyomdakonyv->ofszet_festek = 1;
-					$nyomdakonyv->nyomas_vagojel_szerint = 1;
-					
-					// beállítjuk az alapértelmezett gépet a munkához, ha van
-					$gep = Nyomdagepek::model()->findByAttributes(array('alapertelmezett'=> 1));
-					if ($gep != null) {
-						$nyomdakonyv -> gep_id = $gep -> id;
-					}
-	
-					// beállítjuk az alapértelmezett munkatípust a munkához, ha van
-					$darabszam = $tetel->darabszam;
-					$szinek_szama1 = $tetel->szinek_szama1;
-					$szinek_szama2 = $tetel->szinek_szama2;		
-					$termek_id = $tetel->termek_id;
-					
-					$defaultMunkatipus = Utils::getDefaultMunkatipusToNyomdakonyv ($darabszam, $szinek_szama1, $szinek_szama2, $termek_id );
-	
-					if ($defaultMunkatipus != null) {
-						$nyomdakonyv -> munkatipus_id = $defaultMunkatipus;
-					}
-					
-//					print_r($nyomdakonyv) ;
-					
-					// a raktárban foglaljuk a megfelelő mennyiséget
-					Utils::raktarbanFoglal($termek_id, $darabszam);
-										
-					$nyomdakonyv -> save(false);
-										
+				// leellenőrizzük még minden előtt, hogy tudunk-e megfelelő mennyiségeket foglalni, ha nem, neki se állunk
+				// nem engedünk mínuszba menni, mert az eléggé megbonyolítaná a raktárkezelés további részeit
+				$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
+				if ( $elerheto_db < $tetel -> darabszam) {
+					$termek = Termekek::model()->findByPk($tetel->termek_id);
+					$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
+					$termek_info = $termek->nev . ', jelenleg foglalható raktármennyiség:  <strong>' . $elerheto_db . ' db</strong>, foglalni kívánt darabszám: <strong>' . $tetel -> darabszam . '</strong>';
+					$email_body = Yii::app()->controller->renderPartial('application.views.szallitolevelek.ertesites_nincs_eleg_raktarkeszlet', array('termek_info'=>$termek_info), true);
+						
+					Utils::sendEmail ($recipients, 'Figyelmeztetés! Termék elérhető mennyisége túl alacsony!', $email_body);
+					$hasError = true;
 				}
 			}
-//			$megrendeles->nyomdakonyv_munka_id = $nyomdakonyv->id;
-			$megrendeles->nyomdakonyv_munka_id = 1;	//Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
-			$megrendeles->save(false);
 			
-			Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
+			if ($hasError) {
+				Yii::app()->user->setFlash('error', "Valamely termék készlete túl alacsony, a foglalás nem lehetséges! E-mailben értesítést kaptak az arra jogosultak.");
+			} else {
+				foreach ($megrendeles -> tetelek as $tetel) {
+					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
+						$nyomdakonyv = new Nyomdakonyv;
+						$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
+						$nyomdakonyv->megrendeles_tetel_id = $tetel->id;
+						
+						// a választható CTP vagy Film közül a deault a CTP
+						$nyomdakonyv->ctp = 1;
+						
+						// az ofszet festék és a vágójel szerinti pipáló mezők automatikusan legyenek pipálva
+						$nyomdakonyv->ofszet_festek = 1;
+						$nyomdakonyv->nyomas_vagojel_szerint = 1;
+						
+						// beállítjuk az alapértelmezett gépet a munkához, ha van
+						$gep = Nyomdagepek::model()->findByAttributes(array('alapertelmezett'=> 1));
+						if ($gep != null) {
+							$nyomdakonyv -> gep_id = $gep -> id;
+						}
+		
+						// beállítjuk az alapértelmezett munkatípust a munkához, ha van
+						$darabszam = $tetel->darabszam;
+						$szinek_szama1 = $tetel->szinek_szama1;
+						$szinek_szama2 = $tetel->szinek_szama2;		
+						$termek_id = $tetel->termek_id;
+						
+						$defaultMunkatipus = Utils::getDefaultMunkatipusToNyomdakonyv ($darabszam, $szinek_szama1, $szinek_szama2, $termek_id );
+		
+						if ($defaultMunkatipus != null) {
+							$nyomdakonyv -> munkatipus_id = $defaultMunkatipus;
+						}
+						
+	//					print_r($nyomdakonyv) ;
+						
+						$nyomdakonyv -> save(false);
+						
+						// a raktárban foglaljuk a megfelelő mennyiséget
+						Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+					}
+					$megrendeles->nyomdakonyv_munka_id = 1;	//Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
+					$megrendeles->save(false);
+				}
+				Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");
+			}
 		}
 		
 		Utils::goToPrevPage("megrendelesekIndex");

@@ -198,7 +198,7 @@ return array(
 			'configTableName' => 'dom_settings',
 			'strictMode' => false,
 		),
-		// LI: X-editable beállítások (jelenleg grdivewi oszlopok inline edit-álására használom)
+		// LI: X-editable beállítások (jelenleg gridview oszlopok inline edit-álására használom)
         'editable' => array(
             'class'     => 'editable.EditableConfig',
             'form'      => 'bootstrap',        //form style: 'bootstrap', 'jqueryui', 'plain' 

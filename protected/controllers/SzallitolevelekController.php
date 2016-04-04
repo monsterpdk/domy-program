@@ -60,7 +60,7 @@ class SzallitolevelekController extends Controller
 				
 				$minuszosTermekek = '';
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
-					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
+					if ( ($tetelekASzallitolevelen[$i] >= 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
 						
 						$tetelASzalliton -> szallitolevel_id = $model -> id;
@@ -70,8 +70,11 @@ class SzallitolevelekController extends Controller
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam)) {
-							$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
+						// LI: csak akkor, ha nem hozott borítékról van szó
+						if ($megrendelesTetel -> hozott_boritek != 1) {
+							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id)) {
+								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
+							}
 						}
 						
 						$tetelASzalliton -> save();
@@ -142,7 +145,11 @@ class SzallitolevelekController extends Controller
 				// LI: a raktárból sztornózzuk a szállítólevél egyes tételeit, majd újra felvesszük őket az új darabszámmal
 				foreach ($model->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
-					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam);
+
+					// LI: csak akkor, ha nem hozott borítékról van szó
+					if ($megrendelesTetel -> hozott_boritek != 1) {
+						Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id);
+					}
 				}
 				
 				// töröljük a szállítólevélhez már felvett tételeket, majd újra létrehozzuk őket az új darabszámmal
@@ -151,7 +158,7 @@ class SzallitolevelekController extends Controller
 				
 				$minuszosTermekek = '';
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
-					if ( ($tetelekASzallitolevelen[$i] != 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
+					if ( ($tetelekASzallitolevelen[$i] >= 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
 						
 						$tetelASzalliton -> szallitolevel_id = $model -> id;
@@ -161,8 +168,11 @@ class SzallitolevelekController extends Controller
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam)) {
-							$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
+						// LI: csak akkor, ha nem hozott borítékról van szó
+						if ($megrendelesTetel -> hozott_boritek != 1) {
+							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id)) {
+								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
+							}
 						}
 						
 						$tetelASzalliton -> save();
@@ -319,9 +329,13 @@ class SzallitolevelekController extends Controller
 				$szallitolevel -> sztornozva = 1;
 				
 				// a raktárban növeljük a foglalt és az összes mennyiségeket
+				// LI: csak akkor, ha nem hozott borítékról van szó
 				foreach ($szallitolevel->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
-					Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam);
+					
+					if ($megrendelesTetel -> hozott_boritek != 1) {
+						Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $szallitolevel->id);
+					}
 				}
 				
 				$szallitolevel -> save(false);

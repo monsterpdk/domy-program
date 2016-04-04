@@ -337,7 +337,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 							}',
 							'onSave' => 'js: function(e, params) {
 								// sikeres mentés után frissítjük az összérték mezőket
-								  refreshOsszertek ();
+								refreshOsszertek ();
 							}',
 					)),
 					
@@ -473,7 +473,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 	<?php
 		if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View')) {
 			$config = array();
-			$dataProvider=new CActiveDataProvider('AnyagbeszallitasTermekek',
+			$dataProvider=new CActiveDataProvider('AnyagbeszallitasTermekekIroda',
 				array( 'data' => $model->termekekIroda,
 						'sort'=>array(
 							'attributes'=>array(

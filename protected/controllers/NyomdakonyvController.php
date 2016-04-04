@@ -144,12 +144,13 @@ class NyomdakonyvController extends Controller
 				
 				$megrendelesTetel = MegrendelesTetelek::model()->findByPk($nyomdakonyv->megrendeles_tetel_id);
 				
-				if ($megrendelesTetel != null) {
-					// a raktárban töröljük az ide vonatkozó foglalást
-					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam);
-				}
-				
 				$nyomdakonyv -> save(false);
+
+				// LI: csak akkor, ha nem hozott borítékról van szó
+				if ($megrendelesTetel != null && $megrendelesTetel -> hozott_boritek != 1) {
+					// a raktárban töröljük az ide vonatkozó foglalást
+					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam, $nyomdakonyv->id);
+				}
 			}
 		}
 		

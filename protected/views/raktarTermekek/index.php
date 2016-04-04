@@ -15,7 +15,6 @@ $this->breadcrumbs=array(
 		'name'=>'button_print_raktarkeszlet',
 		'caption'=>'Lista nyomtatás',
 		'buttonType'=>'link',
-//		'onclick'=>'openPrintDialog()',
 		'url'=>Yii::app()->createUrl("raktarTermekek/printRaktarkeszlet"),
 		'htmlOptions'=>array('class'=>'btn btn-success','target'=>'_blank'),
 	));
@@ -26,7 +25,7 @@ $this->breadcrumbs=array(
 	'template' => '{items} {summary} {pager}',
 	'columns'=>array(
 					'raktar.nev',
-					'raktar.tipus',
+					'anyagbeszallitas.bizonylatszam',
 					'termek.DisplayTermekTeljesNev',
 					'osszes_db:number',
 					'foglalt_db:number',
