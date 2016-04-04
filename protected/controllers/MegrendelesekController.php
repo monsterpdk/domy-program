@@ -421,10 +421,10 @@ class MegrendelesekController extends Controller
 			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
 		);
 		
-/*		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
+		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
 		foreach ($dataProvider->getData() as $sor) {
 			$this->checkSzamlaSorszam($sor->id) ;	
-		}*/
+		}
 		
 		//send model object for search
 		$this->render('index',array(
