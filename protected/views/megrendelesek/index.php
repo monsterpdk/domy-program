@@ -90,6 +90,7 @@
 
 						'buttons' => array(
 							'print' => array(
+								'url' => '',
 								'label' => 'Nyomtatás',
 								'icon'=>'icon-white icon-print',
 								'options'=>array(

@@ -33,6 +33,7 @@ $this->menu=array(
 
 					'buttons' => array(
 						'print' => array(
+							'url' => '',
 							'label' => 'Nyomtatás',
 							'icon'=>'icon-white icon-print',
 							'options'=>array(
@@ -65,7 +66,10 @@ $this->menu=array(
                 ),
                 'megrendeles_tetel.megrendeles.sorszam',
 				'taskaszam',
-				'hatarido',
+				array(
+					'header' => 'Határidő',
+					'value' => 'Yii::app()->dateFormatter->format("yyyy-MM-dd",strtotime($data->hatarido))'
+				),
 				array(
 					'header' => 'Munka neve',
 					'value' => 'mb_strtoupper($data->megrendeles_tetel->munka_neve, "UTF-8")',

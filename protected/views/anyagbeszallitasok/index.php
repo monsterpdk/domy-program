@@ -74,11 +74,12 @@ $this->breadcrumbs=array(
 							
 						),
                 ),
+                'id',
                 'bizonylatszam',
 				'gyarto.cegnev',
 				'beszallitas_datum',
 				'kifizetes_datum',
-				'displayOsszertek:number',
+				'DisplayOsszertekIroda:number',
 				'megjegyzes',
 				'user.username',
 				'anyagrendeles.displayBizonylatszamDatum',

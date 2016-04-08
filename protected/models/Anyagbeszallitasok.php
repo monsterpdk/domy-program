@@ -136,6 +136,7 @@ class Anyagbeszallitasok extends DomyModel
 			'lezarva' => 'Lezárva',
 			'displayOsszertekIroda' => 'Összérték, iroda (Ft)',
 			'displayOsszertekRaktar' => 'Összérték, raktár (Ft)',
+			'DisplayOsszertekIroda' => 'Összérték (Ft)',
 		);
 	}
 

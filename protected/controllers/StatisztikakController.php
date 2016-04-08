@@ -253,7 +253,7 @@ class StatisztikakController extends Controller
 	{
 		$model = new Statisztikak;
 
-		if (isset($_POST['Statisztikak']))
+		if ($_POST['Statisztikak']["statisztika_mettol"] != "" && $_POST['Statisztikak']["statisztika_meddig"] != "")
 		{
 			$model -> statisztika_mettol = $_POST['Statisztikak']["statisztika_mettol"] ;
 			$model -> statisztika_meddig = $_POST['Statisztikak']["statisztika_meddig"] ;
@@ -495,6 +495,12 @@ class StatisztikakController extends Controller
 		$megrendelesekNyomas = 0 ;
 		$megrendelesTetelekNyomas = 0 ;
 		$megrendelesOsszegNyomas = 0 ;
+		$megrendelesekEladasAjanlatNelkul = 0 ;
+		$megrendelesTetelekEladasAjanlatNelkul = 0 ;
+		$megrendelesOsszegEladasAjanlatNelkul = 0 ;
+		$megrendelesekNyomasAjanlatNelkul = 0 ;
+		$megrendelesTetelekNyomasAjanlatNelkul = 0 ;
+		$megrendelesOsszegNyomasAjanlatNelkul = 0 ;
 		$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul = 0 ;
 		$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul = 0 ;
 		$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul = 0 ;
@@ -538,8 +544,14 @@ class StatisztikakController extends Controller
 					}					
 //					print_r($termek->termekar) ;
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
-						$megrendelesTetelekLegparnas++ ;
-						$megrendelesOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesTetelekEladasAjanlatNelkul++ ;
+							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
+						}
+						else {
+							$megrendelesTetelekLegparnas++ ;
+							$megrendelesOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+						}
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
 							$db_eladasi_ar = $ervenyes_termekar_rekord->csomag_eladasi_ar / $termek->csom_egys ;	
 						}
@@ -571,8 +583,14 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
 						$nyomas = true ;
-						$megrendelesTetelekNyomas++ ;
-						$megrendelesOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesTetelekNyomasAjanlatNelkul++ ;
+							$megrendelesOsszegNyomasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
+						}
+						else {
+							$megrendelesTetelekNyomas++ ;
+							$megrendelesOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+						}
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
 							$db_eladasi_ar = $ervenyes_termekar_rekord->db_ar_nyomashoz / $termek->csom_egys ;	
 						}
@@ -608,8 +626,14 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->termek->tipus != "Szolgáltatás" && $tetel_sor->termek->nev != "Kuponfelhasználás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás, nem kuponfelhasználás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
-						$megrendelesTetelekEladas++ ;
-						$megrendelesOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;	
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesTetelekEladasAjanlatNelkul++ ;
+							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
+						}
+						else {
+							$megrendelesTetelekEladas++ ;
+							$megrendelesOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+						}
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
 							$db_eladasi_ar = $ervenyes_termekar_rekord->csomag_eladasi_ar / $termek->csom_egys ;	
 						}
@@ -641,7 +665,14 @@ class StatisztikakController extends Controller
 					}					
 				}
 				if ($nyomas) {
-					$megrendelesekNyomas++ ;
+					
+					if ($sor->arajanlat_id == 0) {
+						$megrendelesekNyomasAjanlatNelkul++ ;
+					}
+					else
+					{
+						$megrendelesekNyomas++ ;
+					}
 					if (!isset($megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id])) {
 						$megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id] = 1 ;
 					}
@@ -661,7 +692,14 @@ class StatisztikakController extends Controller
 				}
 				else
 				{
-					$megrendelesekEladas++ ;
+					if ($sor->arajanlat_id == 0) {
+						$megrendelesekEladasAjanlatNelkul++ ;
+					}
+					else
+					{
+						$megrendelesekEladas++ ;
+					}
+					
 					if (!isset($megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id])) {
 						$megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id] = 1 ;
 					}
@@ -690,6 +728,15 @@ class StatisztikakController extends Controller
 		$stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkul"] = $megrendelesOsszegNyomas ;
 		$stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul"] = $megrendelesTetelekLegparnas ;		
 		$stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkul"] = $megrendelesOsszegLegparnas ;
+
+		$stat_adatok["megrendelesStatisztikaAjanlatNelkul_kiemeltek_nelkul"] = $megrendelesekEladasAjanlatNelkul ;
+		$stat_adatok["megrendelesTetelekStatisztikaAjanlatNelkul_kiemeltek_nelkul"] = $megrendelesTetelekEladasAjanlatNelkul ;		
+		$stat_adatok["megrendelesOsszegEladasAjanlatNelkul_kiemeltek_nelkul"] = $megrendelesOsszegEladasAjanlatNelkul ;
+		$stat_adatok["megrendelesNyomasStatisztikaAjanlatNelkul_kiemeltek_nelkul"] = $megrendelesekNyomasAjanlatNelkul ;
+		$stat_adatok["megrendelesNyomasTetelekStatisztikaAjanlatNelkul_kiemeltek_nelkul"] = $megrendelesTetelekNyomasAjanlatNelkul ;		
+		$stat_adatok["megrendelesOsszegNyomasAjanlatNelkul_kiemeltek_nelkul"] = $megrendelesOsszegNyomasAjanlatNelkul ;
+		
+		
 		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkul"] = count($megrendelesCegek_kiemeltek_nelkul["eladás"]) ;
 		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkul"] = count($megrendelesCegek_kiemeltek_nelkul["nyomás"]) ;
 
@@ -803,7 +850,7 @@ class StatisztikakController extends Controller
 		$stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_alatt"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_alatt - $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_alatt;
 		$stat_adatok["haszon_osszesen_kiemeltek_nelkul_10000_alatt"] = $stat_adatok["haszon_eladas_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_alatt"];
 			
-		if ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul_10000_felett"] > 0)
+		if ($stat_adatok["arajanlatStatisztika_kiemeltek_nelkul_10000_felett"] > 0)
 //			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalek_10000_felett"] = round((($stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_felett"]) / ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_felett"])) * 100, 2) ;
 			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalek_10000_felett"] = round(($stat_adatok["megrendelesStatisztika_kiemeltek_nelkul_10000_felett"] / $stat_adatok["arajanlatStatisztika_kiemeltek_nelkul_10000_felett"]) * 100, 2) ;
 		else

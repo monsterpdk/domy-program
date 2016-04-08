@@ -26,6 +26,16 @@
 			<?php echo $form->label($model,'cegnev'); ?>
 			<?php echo $form->textField($model,'cegnev',array('size'=>10,'maxlength'=>30)); ?>
 		</div>
+
+		<div class="row">
+			<?php echo $form->label($model,'adoszam'); ?>
+			<?php echo $form->textField($model,'adoszam',array('size'=>10,'maxlength'=>30)); ?>
+		</div>
+		
+		<div class="row">
+			<?php echo $form->label($model,'kapcsolattarto_nev'); ?>
+			<?php echo $form->textField($model,'kapcsolattarto_nev',array('size'=>10,'maxlength'=>50)); ?>
+		</div>
 		
 		<div class="row active">
 			<?php echo $form->label($model,'archiv'); ?>

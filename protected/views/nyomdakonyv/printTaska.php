@@ -228,7 +228,7 @@
 		<td align='center'> <strong> Színek száma</strong> </td>
 	</tr>
 	<tr>
-		<td colspan='3'> <?php print $megrendeles_tetel->getTetelnevHozottNemHozott() . $termek->getDisplayTermekTeljesNev(); ?> </td>
+		<td colspan='3'> <?php print $megrendeles_tetel->megrendelt_termek_nev; ?> </td>
 		<td align='center' width='80'> <?php echo $megrendeles_tetel->getDarabszamFormazott(); ?> </td>
 		<td align='center' width='110'> <?php echo $megrendeles_tetel->displayTermekSzinekSzama; ?> </td>
 	</tr>

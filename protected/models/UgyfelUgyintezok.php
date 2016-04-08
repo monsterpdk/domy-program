@@ -122,4 +122,16 @@ class UgyfelUgyintezok extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function afterSave() {
+//			print_r($this) ;
+//			die() ;
+		if ($this->alapertelmezett_kapcsolattarto == 1) {
+			$ugyfel = Ugyfelek::model()->findByPk($this -> ugyfel_id);
+			$ugyfel->kapcsolattarto_nev = $this -> nev ;
+			$ugyfel->kapcsolattarto_telefon = $this -> telefon ;
+			$ugyfel->kapcsolattarto_email = $this -> email ;
+			$ugyfel->save() ;
+		}
+	}
 }

@@ -117,7 +117,7 @@ class UgyfelekController extends Controller
                 		$kapcsolattarto = $i ;
                 	}
                 }
-                if ($kapcsolattarto != "") {
+                if ($kapcsolattarto !== "") {
                 	$model->kapcsolattarto_nev = $_POST['UgyfelUgyintezok'][$kapcsolattarto]["nev"] ;
                 	$model->kapcsolattarto_telefon = $_POST['UgyfelUgyintezok'][$kapcsolattarto]["telefon"] ;
                 	$model->kapcsolattarto_email = $_POST['UgyfelUgyintezok'][$kapcsolattarto]["email"] ;

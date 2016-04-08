@@ -298,6 +298,8 @@ class Ugyfelek extends DomyModel
 		$criteria->compare('ugyfel_tipus', $this->ugyfel_tipus, true);
 		$criteria->compare('archiv', $this->archiv);
 		$criteria->compare('cegnev', $this->cegnev, true);
+		$criteria->compare('adoszam', $this->adoszam, true);
+		$criteria->compare('kapcsolattarto_nev', $this->kapcsolattarto_nev, true);
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))

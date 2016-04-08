@@ -37,7 +37,7 @@ $this->menu=array(
 						'DisplayKifutok',
 						'megrendeles_tetel.munka_neve',
 						'megrendeles_tetel.megrendeles.ugyfel.cegnev',
-						'megrendeles_tetel.termek.DisplayTermekTeljesNev',
+						'megrendeles_tetel.megrendelt_termek_nev',
 						'megrendeles_tetel.displayTermekSzinekSzama',
 						'SzinErtekek',
 						'megrendeles_tetel.DarabszamFormazott',
