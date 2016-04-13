@@ -82,7 +82,7 @@
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 210px; text-align: left;'),
-                        'template' => '{print} {view} {update} {deliveryNote} {delete} {storno}',
+                        'template' => '{print} {view} {update} {deliveryNote} {deliveryNotePrinted} {delete} {storno}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
 						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
@@ -116,7 +116,16 @@
 								'options'=>array(
 												'class'=>'btn btn-inverse btn-mini',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1',
+								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1 && $data->SzallitoNyomtatva != 1',
+							),
+							'deliveryNotePrinted' => array(
+								'label' => 'Szállítólevél volt nyomtatva',
+								'icon'=>'icon-white icon-briefcase',
+								'url'=>'Yii::app()->createUrl("szallitolevelek/index", array("id"=>$data->id))',
+								'options'=>array(
+												'class'=>'btn btn-inverse btn-mini',
+											),
+								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1 && $data->SzallitoNyomtatva == 1',
 							),
 							'delete' => array(
 								'label' => 'Töröl',

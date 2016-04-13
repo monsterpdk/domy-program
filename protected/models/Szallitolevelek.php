@@ -11,6 +11,7 @@
  * @property string $megjegyzes
  * @property string $egyeb
  * @property integer $sztornozva
+ * @property integer $nyomtatva
  * @property integer $torolt
 */
 class Szallitolevelek extends CActiveRecord
@@ -40,7 +41,7 @@ class Szallitolevelek extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('szallito_darabszamok, sorszam, megrendeles_id', 'required'),
-			array('sztornozva, torolt', 'numerical', 'integerOnly'=>true),
+			array('sztornozva, nyomtatva, torolt', 'numerical', 'integerOnly'=>true),
 			array('sorszam, megrendeles_id', 'length', 'max'=>12),
 			array('megjegyzes, egyeb', 'length', 'max'=>127),
 			
@@ -49,7 +50,7 @@ class Szallitolevelek extends CActiveRecord
 			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sorszam, megrendeles_id, datum, sztornozva, torolt, szallito_darabszamok', 'safe', 'on'=>'search'),
+			array('id, sorszam, megrendeles_id, datum, sztornozva, nyomtatva, torolt, szallito_darabszamok', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -115,6 +116,7 @@ class Szallitolevelek extends CActiveRecord
 			'szallito_darabszamok' => 'Szállítón lévő darabszám (db)',
 			'egyeb' => 'Egyéb',
 			'sztornozva' => 'Sztornózva',
+			'nyomtatva' => 'Nyomtatva',
 			'torolt' => 'Törölt',
 		);
 	}
@@ -146,6 +148,7 @@ class Szallitolevelek extends CActiveRecord
 		$criteria->compare('megrendeles_id',$this->megrendeles_id,true);
 		$criteria->compare('datum',$this->datum,true);
 		$criteria->compare('sztornozva',$this->sztornozva);
+		$criteria->compare('nyomtatva',$this->nyomtatva);
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
 		if (!Yii::app()->user->checkAccess('Admin'))

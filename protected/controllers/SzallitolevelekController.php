@@ -259,6 +259,9 @@ class SzallitolevelekController extends Controller
 		}
 		
 		if ($model != null) {
+			$model->setAttributes(array('nyomtatva' => 1)) ;
+			$model->save(false) ;
+
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 			$mPDF1->SetHtmlHeader("SZÁLLÍTÓLEVÉL #" . $model->sorszam);
@@ -285,6 +288,7 @@ class SzallitolevelekController extends Controller
 			
 			// kinyomtatjuk annyiszor, ahányat beállítottunk
 			$this->printPdf($model->id, $print_copies);
+			
 		}
 	}
 	

@@ -48,6 +48,7 @@ $this->breadcrumbs=array(
                 'sorszam',
 				'datum',
 				'megjegyzes',
+				'nyomtatva:boolean',
 				'sztornozva:boolean',
 				array(
 						'header' => 'Törölt',

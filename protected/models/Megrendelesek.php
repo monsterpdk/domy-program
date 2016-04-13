@@ -347,6 +347,18 @@ class Megrendelesek extends CActiveRecord
         
     }	
     
+    // TÁ: A megrendelések listázásánál ha már van nyomtatva szállítólevél a megrendeléshez, másik ikont kell megjeleníteni, ezt dönti el ez a függvény, és visszaadja az eredményt
+    public function getSzallitoNyomtatva() {
+    	$return = 0 ;	
+    	$szallitolevelek = Szallitolevelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id));
+    	foreach ($szallitolevelek as $szallito) {
+    		if ($szallito->nyomtatva == 1) {
+    			$return = 1 ;	
+    		}
+    	}
+    	return $return ;
+    }
+    
     // TÁ: Visszaadja a megrendelés nettó és bruttó összegét
     public function getMegrendelesOsszeg() {
     	$netto_osszeg = 0;
