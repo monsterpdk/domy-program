@@ -110,9 +110,20 @@ class TermekArakController extends Controller
 		if(isset($_GET['TermekArak']))
 			$model->attributes=$_GET['TermekArak'];
 	 	
+		$non_admin_criteria=new CDbCriteria;
+
+		$non_admin_criteria->together = true;
+		$non_admin_criteria->with = array('termek', 'termek.gyarto', 'termek.meret', 'termek.zaras');
+		$non_admin_criteria->compare('t.torolt', 0, false);
+		$non_admin_criteria->compare('termek.torolt', 0, false);
+		
 		$dataProvider=new CActiveDataProvider('TermekArak',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'id DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'id DESC',),)
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'id DESC',),) : array('criteria'=>$non_admin_criteria)
 		);
+
+/*		$dataProvider=new CActiveDataProvider('TermekArak',
+			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'id DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'id DESC',),)
+		);*/
 		
 		
 		// LI : exporthoz kell ez a blokk

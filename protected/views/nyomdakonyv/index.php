@@ -68,7 +68,7 @@ $this->menu=array(
 				'taskaszam',
 				array(
 					'header' => 'Határidő',
-					'value' => 'Yii::app()->dateFormatter->format("yyyy-MM-dd",strtotime($data->hatarido))'
+					'value' => 'substr($data->hatarido, 0, 10)'
 				),
 				array(
 					'header' => 'Munka neve',

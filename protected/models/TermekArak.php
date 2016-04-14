@@ -157,9 +157,11 @@ class TermekArak extends CActiveRecord
 		$criteria->compare('termek.kodszam', $this->kodszam_search, true );
 
 		// LI: logikailag törölt sorok ne jelenjenek meg, ha a belépett user nem az 'Admin'
-		if (!Yii::app()->user->checkAccess('Admin'))
+		if (!Yii::app()->user->checkAccess('Admin')) {
 			$criteria->compare('t.torolt', 0, false);
-		
+			$criteria->compare('termek.torolt', 0, false);
+		}
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
