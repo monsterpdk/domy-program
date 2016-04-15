@@ -39,9 +39,9 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 
 		<?php echo $form->hiddenField($model, 'id'); ?>
 		<?php echo $form->hiddenField($model, 'user_id'); ?>
-		<?php echo $form->hiddenField($model,'anyagbeszallitas_id'); ?>
+		<?php echo $form->hiddenField($model, 'anyagbeszallitas_id'); ?>
 		
-		<?php echo CHtml::hiddenField('raktar_id' , '', array('id' => 'raktar_id')); ?>
+		<?php echo CHtml::hiddenField('raktarhely_id' , '', array('id' => 'raktarhely_id')); ?>
 		
 		<?php if (!$model->isNewRecord): ?>
 			<?php echo $form->hiddenField($model, 'gyarto_id'); ?>
@@ -318,7 +318,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 								// az anyagbeszállításhoz tartozó anyagrendelés
 								
 								if ( $('#dialogSuccesfullCheck').html().indexOf('a rendszerben') == -1 ) {
-									$('#dialogSuccesfullCheck').html('Az anyagrendeléshez található beszállítás a rendszerben. Mentést követően lezárásra kerül az anyagrendelés és az anyagbeszállítás, a tételek pedig a kiválasztott raktárba kerülnek. <br /><br /> Raktár kiválasztása: <br /><br />' + $('#dialogSuccesfullCheck').html());
+									$('#dialogSuccesfullCheck').html('Az anyagrendeléshez található beszállítás a rendszerben. Mentést követően lezárásra kerül az anyagrendelés és az anyagbeszállítás, a tételek pedig a kiválasztott raktárba kerülnek. <br /><br /> Raktár+raktárhely kiválasztása: <br /><br />' + $('#dialogSuccesfullCheck').html());
 								}
 								
 								$('#dialogSuccesfullCheck').dialog('open');
@@ -353,14 +353,14 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 					'width'=>'450px',
 					'modal' => true,
 					'buttons' => array(
-						'Mentés, lezárás és elhelyezés'=>'js:function(){$(this).dialog("close");  $("#raktar_id").val( $("#raktar").val()); $("#anyagrendelesek-form").submit();}',
+						'Mentés, lezárás és elhelyezés'=>'js:function(){$(this).dialog("close");  $("#raktarhely_id").val( $("#raktarHelyek").val()); $("#anyagrendelesek-form").submit();}',
 						'Mégse'=>'js:function(){ $(this).dialog("close" );}',),
 					'autoOpen'=>false,
 			)));
-			
-			$list = CHtml::listData(Raktarak::model()->findAll(array("condition"=>"torolt=0 AND tipus='alap' AND nev LIKE '%nyag%'")), 'id', 'nev');
-			echo CHtml::dropDownList('raktar', '', $list, array());
-			
+
+			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'displayTeljesNev');
+			echo CHtml::dropDownList('raktarHelyek', '', $list, array());
+
 			$this->endWidget();
 	
     ?>

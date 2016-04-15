@@ -141,10 +141,10 @@ class AnyagrendelesekController extends Controller
 				
 					// ha választottunk ki raktárat és létezik is (nem kamu id-t hackeltek a POST-ba), akkor lezárjuk a rendelést és beszállítást
 					// és eltároljuk a kiválasztott raktárba a tételeket
-					if (isset($_POST['raktar_id'])) {
-						$raktar = Raktarak::model() -> findByPk ($_POST['raktar_id']);
+					if (isset($_POST['raktarhely_id'])) {
+						$raktarHely = RaktarHelyek::model() -> findByPk ($_POST['raktarhely_id']);
 						
-						if ($raktar != null) {
+						if ($raktarHely != null) {
 							$anyagrendeles = $model;
 							
 							// lezárjuk az anyagrendelést és a hozzá tartozó anyagbeszállítást
@@ -163,7 +163,7 @@ class AnyagrendelesekController extends Controller
 							$termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array("anyagrendeles_id" => $anyagrendeles -> id));
 							
 							foreach ($termekek as $termek) {
-								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'anyagbeszallitas_id' => $anyagbeszallitas->id, 'raktar_id' => $raktar -> id) );
+								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'anyagbeszallitas_id' => $anyagbeszallitas->id, 'raktarhely_id' => $raktarHely -> id) );
 								
 								// ha van már a raktárban ilyen termék, akkor frissítjük a darabszámát
 								if ($raktarTermek != null) {
@@ -173,7 +173,7 @@ class AnyagrendelesekController extends Controller
 									// ha nincs, akkor létrehozunk egy új bejegyzést
 									$raktarTermek = new RaktarTermekek;
 									$raktarTermek -> termek_id = $termek -> termek_id;
-									$raktarTermek -> raktar_id = $raktar -> id;
+									$raktarTermek -> raktarhely_id = $raktarHely -> id;
 									$raktarTermek -> anyagbeszallitas_id = $anyagbeszallitas -> id;
 									
 									$raktarTermek -> elerheto_db = $termek -> rendelt_darabszam;
@@ -186,7 +186,7 @@ class AnyagrendelesekController extends Controller
 								$raktarTermekekTranzakciok = new RaktarTermekekTranzakciok;
 								$raktarTermekekTranzakciok->termek_id = $raktarTermek->termek_id;
 								$raktarTermekekTranzakciok->anyagbeszallitas_id = $raktarTermek->anyagbeszallitas_id;
-								$raktarTermekekTranzakciok->raktar_id = $raktarTermek->raktar_id;
+								$raktarTermekekTranzakciok->raktarhely_id = $raktarHely->id;
 								$raktarTermekekTranzakciok->tranzakcio_datum = date("Y-m-d H:i:s");
 								$raktarTermekekTranzakciok->betesz_kivesz_darabszam = $termek -> rendelt_darabszam;
 								$raktarTermekekTranzakciok->save(false);

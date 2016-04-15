@@ -1,28 +1,32 @@
 <?php
 
 /**
- * This is the model class for table "dom_raktar_termekek_tranzakciok".
+ * This is the model class for table "dom_raktarkiadasok".
  *
- * The followings are the available columns in table 'dom_raktar_termekek_tranzakciok':
+ * The followings are the available columns in table 'dom_raktarkiadasok':
  * @property string $id
  * @property string $termek_id
- * @property string $anyagbeszallitas_id
- * @property string $raktarhely_id
- * @property strin szallitolevel_nyomdakonyv_id
- * @property integer $foglal_darabszam
- * @property integer $betesz_kivesz_darabszam
- * @property string $tranzakcio_datum
+ * @property string $darabszam
+ * @property string $nyomdakonyv_id
+ * @property integer $sztornozva
  */
-class RaktarTermekekTranzakciok extends CActiveRecord
+class RaktarKiadasok extends CActiveRecord
 {
+	public $autocomplete_termek_name;
+	
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dom_raktar_termekek_tranzakciok';
+		return 'dom_raktarkiadasok';
 	}
 
+	public function getClassName ()
+	{
+		return "Raktár kiadás";
+	}
+	
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -31,12 +35,12 @@ class RaktarTermekekTranzakciok extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('termek_id, anyagbeszallitas_id, raktarhely_id, szallitolevel_nyomdakonyv_id, foglal_darabszam, betesz_kivesz_darabszam, tranzakcio_datum', 'required'),
-			array('foglal_darabszam, betesz_kivesz_darabszam', 'numerical', 'integerOnly'=>true),
-			array('termek_id, anyagbeszallitas_id, raktarhely_id, szallitolevel_nyomdakonyv_id', 'length', 'max'=>10),
+			array('termek_id, darabszam, nyomdakonyv_id', 'required'),
+			array('darabszam, sztornozva', 'numerical', 'integerOnly'=>true),
+			array('termek_id, darabszam, nyomdakonyv_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, termek_id, anyagbeszallitas_id, raktarhely_id, szallitolevel_nyomdakonyv_id, foglal_darabszam, betesz_kivesz_darabszam, tranzakcio_datum', 'safe', 'on'=>'search'),
+			array('id, termek_id, darabszam, nyomdakonyv_id, sztornozva', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +52,8 @@ class RaktarTermekekTranzakciok extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'termek'    => array(self::BELONGS_TO, 'Termekek', 'termek_id'),
+			'nyomdakonyv'    => array(self::BELONGS_TO, 'Nyomdakonyv', 'nyomdakonyv_id'),
 		);
 	}
 
@@ -57,14 +63,13 @@ class RaktarTermekekTranzakciok extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'termek_id' => 'Termek',
-			'anyagbeszallitas_id' => 'Anyagbeszállítás',
-			'raktarhely_id' => 'Raktárhely ID',
-			'szallitolevel_nyomdakonyv_id' => 'Kapcsolódó szállítólevél/nyomdakönyv ID',
-			'foglal_darabszam' => 'Foglal darabszám',
-			'betesz_kivesz_darabszam' => 'Betesz/kivesz darabszám',
-			'tranzakcio_datum' => 'Tranzakció dátuma',
+			'id' => 'Raktár kiadás ID',
+			'termek_id' => 'Termék',
+			'darabszam' => 'Darabszám',
+			'nyomdakonyv_id' => 'Nyomdakönyv',
+			'sztornozva' => 'Sztornózva',
+			
+			'autocomplete_termek_name' => 'Termék neve',
 		);
 	}
 
@@ -88,23 +93,27 @@ class RaktarTermekekTranzakciok extends CActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('termek_id',$this->termek_id,true);
-		$criteria->compare('anyagbeszallitas_id',$this->anyagbeszallitas_id,true);
-		$criteria->compare('raktarhely_id',$this->raktarhely_id,true);
-		$criteria->compare('szallitolevel_nyomdakonyv_id',$this->szallitolevel_nyomdakonyv_id,true);
-		$criteria->compare('foglal_darabszam',$this->foglal_darabszam);
-		$criteria->compare('betesz_kivesz_darabszam',$this->betesz_kivesz_darabszam);
-		$criteria->compare('tranzakcio_datum',$this->tranzakcio_datum,true);
+		$criteria->compare('darabszam',$this->darabszam,true);
+		$criteria->compare('nyomdakonyv_id',$this->nyomdakonyv_id,true);
+		$criteria->compare('sztornozva',$this->sztornozva);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
 
+	protected function afterFind(){
+		parent::afterFind();
+
+		// autocomplete mező esetn cska a termék ID van tárolva, így ki kel keresnünk a hozzá kapcsolódó terméknevet
+		$this -> autocomplete_termek_name = $this -> termek -> DisplayTermekTeljesNev;
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return RaktarTermekekTranzakciok the static model class
+	 * @return RaktarKiadasok the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

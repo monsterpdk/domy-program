@@ -29,7 +29,12 @@
                             array ('label'=>'Termékek árazása', 'url'=> Yii::app()->createUrl('/termekarak/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekekArazasa')),
                             array ('label'=>'Nyomási árak', 'url'=> Yii::app()->createUrl('/nyomasiarak/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.NyomasiArak')),
 //							array ('label'=>'Nyomási termékárak %', 'url'=> Yii::app()->createUrl('/nyomasiarakszazalek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.NyomasiTermekarak')),
-                            array ('label'=>'Raktárkészletek', 'url'=> Yii::app()->createUrl('/raktartermekek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.Raktarkeszletek')),
+							array ('label'=>'Raktárkezelés <span class="caret"></span>', 'url'=> Yii::app()->createUrl('#'), 'itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.TermekRendeleseBeszallitasa'),
+								'items'=>array (
+										array ('label'=>'Raktárkészletek', 'url'=> Yii::app()->createUrl('/raktartermekek/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.RaktarKezeles.RaktarKeszletek')),
+										array ('label'=>'Kiadás', 'url'=> Yii::app()->createUrl('/raktarKiadasok/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.RaktarKezeles.RaktarKiadasok')),
+									)
+							),
                             array ('label'=>'ZUH beállítások', 'url'=> Yii::app()->createUrl('/zuh/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.ZUHBeallitasok')),
 							array ('label'=>'Áruházak', 'url'=> Yii::app()->createUrl('/aruhazak/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.Aruhazak')),
                             array ('label'=>'Gyártók', 'url'=> Yii::app()->createUrl('/gyartok/index'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Termekek.Gyartok')),

@@ -3,7 +3,7 @@
 /* @var $model Anyagbeszallitasok */
 /* @var $form CActiveForm */
 
-// pl. raktáro munkakörhöz kellhez, csak a raktárba érkezett anyagmennyiséget tudja szerkeszteni,
+// pl. raktáros munkakörhöz kellhet, csak a raktárba érkezett anyagmennyiséget tudja szerkeszteni,
 // a beszállítás adatait ne
 $canEditBeszallitasData = Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.Update') || Yii::app()->user->checkAccess('Admin');
 
@@ -45,7 +45,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 		<?php echo $form->hiddenField($model, 'id'); ?>
 		<?php echo $form->hiddenField($model, 'user_id'); ?>
 
-		<?php echo CHtml::hiddenField('raktar_id' , '', array('id' => 'raktar_id')); ?>
+		<?php echo CHtml::hiddenField('raktarhely_id' , '', array('id' => 'raktarhely_id')); ?>
 		
 		<?php if (!$model->gyarto_id == null): ?>
 			<?php echo $form->hiddenField($model, 'gyarto_id'); ?>
@@ -556,6 +556,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 <?php if ((Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.Create') || Yii::app()->user->checkAccess('Admin')) && $model -> lezarva != 1): ?>
 	<!-- A form elküldése előtt leellenőrzöm a rendelt és beérkezett darabszámok egyezését. Ha eltérést találok figyelmeztetem a felhasználót. -->
 	<!-- Csak akkor vizsgáljuk, ha a user ADMIN, vagy raktáros, aki az anyagbeszállítást veszi fel. Aki az anyagrendeléseket kezeli, ott nem ellenőrzünk. -->
+	
 	<script>
 		$(document).ready(function() {
 			$('#anyagbeszallitasok_form_submit').click(function(ev) {
@@ -563,44 +564,43 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 
 				// ha nincs kitöltve az anyagrendelés nem csinálunk raktárellenőrzést, nem zavarjuk vele a felhasználót, de
 				// ha hozzárendelte már az anyagbeszállítást egy anyagrendeléshez, akkor ellenőrzünk
-				
-				if (anyagrendeles_js_value != "") {
-					ev.preventDefault();
 
-					$.ajax({
-						type: 'GET',
-						dataType: 'JSON',
-						url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/checkProductDifference") . "/anyagbeszallitas_id/" . $model->id . "/anyagrendeles_id/"; ?>' + anyagrendeles_js_value,
-						success:function(data){
-							if (data !==  null) {
-								// a tételek ellenőrzés során eltérést találtunk
-								if (data != "") {
-									
-									// LI: egy új kérés szerint nem dobunk fel dialog-ot az eltérésről, hagyjuk menteni
-									$("#anyagbeszallitasok-form").submit()
-									
-									// $('#dialogUnSuccesfullCheck').html(data);
-									// $('#dialogUnSuccesfullCheck').dialog('open');
-								} else if (data == "") {
-									// a tételek ellenőrzés során megegyeztek a tételek az anyagrendelés és beszállítás során, lezárható
-									// az anyagbeszállításhoz tartozó anyagrendelés
-									
-									if ( $('#dialogSuccesfullCheck').html().indexOf('a rendszerben') == -1 ) {
-										$('#dialogSuccesfullCheck').html('Az anyagbeszállításhoz található megrendelés a rendszerben. Mentést követően lezárásra kerül az anyagrendelés és az anyagbeszállítás, a tételek pedig a kiválasztott raktárba kerülnek. <br /><br /> Raktár kiválasztása: <br /><br />' + $('#dialogSuccesfullCheck').html());
-									}
-									
-									$('#dialogSuccesfullCheck').dialog('open');
+				// UPDATE: felmerült egy igény, mely szerint lehessen raktárba bevételezni anyagrendelés nélkül is, ilyenkor csak az irodai és raktár mennyiségeket hasonlítjuk össze
+				ev.preventDefault();
+
+				$.ajax({
+					type: 'GET',
+					dataType: 'JSON',
+					url: '<?php echo Yii::app()->createUrl("anyagbeszallitasok/checkProductDifference") . "/anyagbeszallitas_id/" . $model->id . "/anyagrendeles_id/"; ?>' + anyagrendeles_js_value,
+					success:function(data){
+						if (data !==  null) {
+							// a tételek ellenőrzés során eltérést találtunk
+							if (data != "") {
+								
+								// LI: egy új kérés szerint nem dobunk fel dialog-ot az eltérésről, hagyjuk menteni
+								$("#anyagbeszallitasok-form").submit()
+								
+								//$('#dialogUnSuccesfullCheck').html(data);
+								//$('#dialogUnSuccesfullCheck').dialog('open');
+							} else if (data == "") {
+								// a tételek ellenőrzés során megegyeztek a tételek az anyagrendelés és beszállítás során, lezárható
+								// az anyagbeszállításhoz tartozó anyagrendelés
+								
+								if ( $('#dialogSuccesfullCheck').html().indexOf('a rendszerben') == -1 ) {
+									$('#dialogSuccesfullCheck').html('Az anyagbeszállításhoz található megrendelés a rendszerben. Mentést követően lezárásra kerül az anyagrendelés és az anyagbeszállítás, a tételek pedig a kiválasztott raktárba kerülnek. <br /><br /> Raktár+raktárhely kiválasztása: <br /><br />' + $('#dialogSuccesfullCheck').html());
 								}
+								
+								$('#dialogSuccesfullCheck').dialog('open');
 							}
-						},
-						error: function() {
-							$('#dialogShowError').html('Lejárt a munkamenet. Jelentkezzen be újra!');
-							$('#dialogShowError').dialog('open');
-						},
-					});
+						}
+					},
+					error: function() {
+						$('#dialogShowError').html('Lejárt a munkamenet. Jelentkezzen be újra!');
+						$('#dialogShowError').dialog('open');
+					},
+				});
 
-					return false;
-				}
+				return false;
 			});
 		});
 	</script>
@@ -616,13 +616,13 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 					'width'=>'450px',
 					'modal' => true,
 					'buttons' => array(
-						'Mentés, lezárás és elhelyezés'=>'js:function(){$(this).dialog("close");  $("#raktar_id").val( $("#raktar").val()); $("#anyagbeszallitasok-form").submit();}',
+						'Mentés, lezárás és elhelyezés'=>'js:function(){$(this).dialog("close");  $("#raktarhely_id").val( $("#raktarHelyek").val()); $("#anyagbeszallitasok-form").submit();}',
 						'Mégse'=>'js:function(){ $(this).dialog("close" );}',),
 					'autoOpen'=>false,
 			)));
 
-			$list = CHtml::listData(Raktarak::model()->findAll(array("condition"=>"torolt=0 AND tipus='alap' AND nev LIKE '%nyag%'")), 'id', 'nev');
-			echo CHtml::dropDownList('raktar', '', $list, array());
+			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"torolt=0", 'order'=>'nev')), 'id', 'displayTeljesNev');
+			echo CHtml::dropDownList('raktarHelyek', '', $list, array());
 			
 			$this->endWidget();
 			

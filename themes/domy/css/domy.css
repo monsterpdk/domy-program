@@ -925,6 +925,15 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-right: 20px;
 }
+#raktarak-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#raktarak-form .row {
+	float: left;
+	margin-left: 20px;
+}
 .search-form .portlet {
 	float: left;
 	width : 100%;

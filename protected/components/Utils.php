@@ -52,37 +52,58 @@
 			$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk($anyagbeszallitas_id);
 
 			// ha az anyagrendelés ID hibás volt, akkor hibaüzenettel kilépek
-			if ($anyagrendeles == null) return "Hibás anyagrendelés azonosító!";
-			
-			// ha az anyagbeszállítás ID üres, akkor megnézem, hogy tartozik-e a megrendeléshez beszállítás,
-			// ha igen, akkor dolgozom tovább azzal, ha nem, akkor hibaüzenettel kilépek
-			if ($anyagbeszallitas == null) {
-				$anyagbeszallitas = Anyagbeszallitasok::model() -> findByAttributes(array('anyagrendeles_id' => $anyagrendeles->id));
-				
-				if ($anyagbeszallitas == null) {
-					return "Hibás anyagbeszállítás azonosító!";
-				}
-			}
-			
-			// anyagrendelés tételeinek lekérdezése
-			$anyagrendeles_termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array('anyagrendeles_id' => $anyagrendeles->id));
-			
-			// anyagbeszállítás tételeinek lekérdezése
-			// iroda
-			$anyagbeszallitas_iroda_termekek = AnyagbeszallitasTermekekIroda::model()->findAllByAttributes(array('anyagbeszallitas_id' => $anyagbeszallitas->id));
-			// raktár
-			$anyagbeszallitas_raktar_termekek = AnyagbeszallitasTermekek::model()->findAllByAttributes(array('anyagbeszallitas_id' => $anyagbeszallitas->id));
+			// LI: új igény: ha nincs anyagrendelés megadva akkor csak az iroda és raktár által átvetteket hasonlítjuk egymáshoz
+			//if ($anyagrendeles == null) return "Hibás anyagrendelés azonosító!";
 
-			// először ellenőrzöm, hogy a tételek száma egyáltalán egyezik-e a rendelésen és beérkezett termékek listáján, ha nem, akkor hibaüzenettel kilépek
-			if ( (count($anyagrendeles_termekek) == count($anyagbeszallitas_iroda_termekek)) && (count($anyagbeszallitas_iroda_termekek) == count($anyagbeszallitas_raktar_termekek)) ) {
-				// végigmegyek az anyagrendelés tételein és ha bármi eltérést találok, hibaüzenettel kilépek
-				foreach ($anyagrendeles_termekek as $anyagrendeles_termek) {
-					$res = Utils::searchAnyagbeszallitasIrodaRaktarTetel ($anyagrendeles_termek, $anyagbeszallitas_iroda_termekek, $anyagbeszallitas_raktar_termekek);
-					if ($res != "") return $res;
+			if ($anyagbeszallitas != null) {
+				// anyagbeszállítás tételeinek lekérdezése
+				// iroda
+				$anyagbeszallitas_iroda_termekek = AnyagbeszallitasTermekekIroda::model()->findAllByAttributes(array('anyagbeszallitas_id' => $anyagbeszallitas->id));
+				// raktár
+				$anyagbeszallitas_raktar_termekek = AnyagbeszallitasTermekek::model()->findAllByAttributes(array('anyagbeszallitas_id' => $anyagbeszallitas->id));
+
+				if ($anyagrendeles != null) {
+					// ha az anyagbeszállítás ID üres, akkor megnézem, hogy tartozik-e a megrendeléshez beszállítás,
+					// ha igen, akkor dolgozom tovább azzal, ha nem, akkor hibaüzenettel kilépek
+					if ($anyagbeszallitas == null) {
+						$anyagbeszallitas = Anyagbeszallitasok::model() -> findByAttributes(array('anyagrendeles_id' => $anyagrendeles->id));
+						
+						if ($anyagbeszallitas == null) {
+							return "Hibás anyagbeszállítás azonosító!";
+						}
+					}
+				
+					// anyagrendelés tételeinek lekérdezése
+					$anyagrendeles_termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array('anyagrendeles_id' => $anyagrendeles->id));
 					
+					// először ellenőrzöm, hogy a tételek száma egyáltalán egyezik-e a rendelésen és beérkezett termékek listáján, ha nem, akkor hibaüzenettel kilépek
+					if ( (count($anyagrendeles_termekek) == count($anyagbeszallitas_iroda_termekek)) && (count($anyagbeszallitas_iroda_termekek) == count($anyagbeszallitas_raktar_termekek)) ) {
+						// végigmegyek az anyagrendelés tételein és ha bármi eltérést találok, hibaüzenettel kilépek
+						foreach ($anyagrendeles_termekek as $anyagrendeles_termek) {
+							$res = Utils::searchAnyagbeszallitasIrodaRaktarTetel ($anyagrendeles_termek, $anyagbeszallitas_iroda_termekek, $anyagbeszallitas_raktar_termekek);
+							if ($res != "") return $res;
+							
+						}
+					} else return "Eltérés található a megrendelt és az iroda vagy a raktár által átvett rendelési tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+				} else {
+					// nem lett megadva anyagrendelés, így csak az iroda és raktár által átvetteket hasonlítjuk egymáshoz
+					// először ellenőrzöm, hogy a tételek száma egyáltalán egyezik-e az irodai és raktáros listán, ha nem, akkor hibaüzenettel kilépek
+					if ( count($anyagbeszallitas_iroda_termekek) == count($anyagbeszallitas_raktar_termekek) ) {
+						// végigmegyek az anyagbeszállítás irodás listáján és ha bármi eltérést találok a raktáros listában, hibaüzenettel kilépek
+						foreach ($anyagbeszallitas_iroda_termekek as $anyagbeszallitas_iroda_termek) {
+							$foundMatch = false;
+							foreach ($anyagbeszallitas_raktar_termekek as $anyagbeszallitas_raktar_termek) {
+								if ($anyagbeszallitas_iroda_termek->termek_id == $anyagbeszallitas_raktar_termek->termek_id && $anyagbeszallitas_iroda_termek->darabszam == $anyagbeszallitas_raktar_termek -> darabszam) {
+									$foundMatch = true;
+									break;
+								}
+							}
+							if (!$foundMatch) return "Eltérés található az iroda és a raktár által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+						}
+					} else return "Eltérés található a megrendelt és az iroda vagy a raktár által átvett rendelési tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
 				}
-			} else return "Eltérés található a megrendelt és az iroda vagy a raktár által átvett rendelési tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
-			
+			} else return "Anyagrendelés.";
+		
 			return "";
 		}
 		
@@ -1327,12 +1348,12 @@
 		}
 
 		// LI: bejegzést készít egy raktármozgásról (ezek lehetnek: lásd a lenti függvényt)
-		private function createRaktarMozgasTranzakció ($termekId, $anyagbeszallitas_id, $raktar_id, $foglal_darabszam, $betesz_kivesz_darabszam, $szallitolevel_nyomdakonyv_id) {
+		private function createRaktarMozgasTranzakció ($termekId, $anyagbeszallitas_id, $raktarhely_id, $foglal_darabszam, $betesz_kivesz_darabszam, $szallitolevel_nyomdakonyv_id) {
 			$raktarTermekekTranzakciok = new RaktarTermekekTranzakciok;
 			
 			$raktarTermekekTranzakciok->termek_id = $termekId;
 			$raktarTermekekTranzakciok->anyagbeszallitas_id = $anyagbeszallitas_id;
-			$raktarTermekekTranzakciok->raktar_id = $raktar_id;
+			$raktarTermekekTranzakciok->raktarhely_id = $raktarhely_id;
 			$raktarTermekekTranzakciok->tranzakcio_datum = date("Y-m-d H:i:s");
 			$raktarTermekekTranzakciok->foglal_darabszam = $foglal_darabszam;
 			$raktarTermekekTranzakciok->betesz_kivesz_darabszam = $betesz_kivesz_darabszam;
@@ -1347,7 +1368,7 @@
 		//		muvelet		- BERAK, FOGLAL, SZTORNOZ, KIVESZ, KIVESZ_SZTORNOZ értékek lehetnek itt
 		//
 		// LI: ha hozott borítékos, akkor nem foglalkozunk a raktárműveletekkel, mert nem saját borítékot használunk
-		private function raktarMozgas ($tetelId, $darabszam, $muvelet, $szallitolevel_nyomdakonyv_id) {
+		private function raktarMozgas ($tetelId, $darabszam, $muvelet, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
 			$result = true;
 			
 			if ($tetelId != null && $darabszam != null && $muvelet != null && $muvelet != "") {
@@ -1416,7 +1437,9 @@
 										$raktarTermek->save(false);
 										
 										// elmentjük a tranzakciót a statisztika készítéséhez
-										Utils::createRaktarMozgasTranzakció ($termek->id, $raktarTermek->anyagbeszallitas_id, $raktarTermek->raktar_id, $mentendoDarabszam * -1, 0, $szallitolevel_nyomdakonyv_id);
+										if ($tranzakcioMentese) {
+											Utils::createRaktarMozgasTranzakció ($termek->id, $raktarTermek->anyagbeszallitas_id, $raktarTermek->raktarhely_id, $mentendoDarabszam * -1, 0, $szallitolevel_nyomdakonyv_id);
+										}
 										
 										// ha sikeresen le tudtuk vonni a kívánt darabszámot a készletből, akkor megállhatunk, nem kell további anyagbeszállításokból levonni
 										if ($darabszam == 0) {
@@ -1451,7 +1474,9 @@
 
 								$raktarTermek ->save(false);
 
-								$raktarTermekekTranzakcio->delete();							
+								if ($tranzakcioMentese) {
+									$raktarTermekekTranzakcio->delete();							
+								}
 							}
 						}
 						
@@ -1480,7 +1505,9 @@
 									$raktarTermek->save(false);
 									
 									// elmentjük a tranzakciót a statisztika készítéséhez
-									Utils::createRaktarMozgasTranzakció ($termek->id, $raktarTermek->anyagbeszallitas_id, $raktarTermek->raktar_id, 0, $mentendoDarabszam * -1, $szallitolevel_nyomdakonyv_id);
+									if ($tranzakcioMentese) {
+										Utils::createRaktarMozgasTranzakció ($termek->id, $raktarTermek->anyagbeszallitas_id, $raktarTermek->raktarhely_id, 0, $mentendoDarabszam * -1, $szallitolevel_nyomdakonyv_id);
+									}
 
 									// itt vizsgáljuk, hogy a termék minimum raktárkészlete alá mentünk-e,
 									// ha igen e-mailt küldünk azoknak felhasználóknak, akik jogosultat megkapni ezt az infót
@@ -1512,27 +1539,27 @@
 		}
 		
 		// LI: tétel raktárba történő bevétele
-		function raktarbaBerak ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id=null) {
+		function raktarbaBerak ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id=null, $tranzakcioMentese=true) {
 			return Utils::raktarMozgas ($tetelId, $darabszam, 'BERAK', $szallitolevel_nyomdakonyv_id);
 		}
 		
 		// LI: tétel raktárban történő lefoglalása
-		function raktarbanFoglal ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id) {
+		function raktarbanFoglal ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
 			return Utils::raktarMozgas ($tetelId, $darabszam, 'FOGLAL', $szallitolevel_nyomdakonyv_id);
 		}
 
 		// LI: tétel raktárban történő sztornózás
-		function raktarbanSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id) {
+		function raktarbanSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
 			return Utils::raktarMozgas ($tetelId, $darabszam, 'SZTORNOZ', $szallitolevel_nyomdakonyv_id);
 		}
 		
 		// LI: tétel raktárból történő kivétele
-		function raktarbolKivesz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id) {
+		function raktarbolKivesz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
 			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ', $szallitolevel_nyomdakonyv_id);
 		}
 		
 		// LI: tétel raktárból történő kivétel sztornózása
-		function raktarbolKiveszSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id) {
+		function raktarbolKiveszSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
 			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ_SZTORNOZ', $szallitolevel_nyomdakonyv_id);
 		}
 		

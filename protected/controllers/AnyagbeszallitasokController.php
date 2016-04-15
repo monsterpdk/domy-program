@@ -87,10 +87,10 @@ class AnyagbeszallitasokController extends Controller
 				
 					// ha választottunk ki raktárat és létezik is (nem kamu id-t hackeltek a POST-ba), akkor lezárjuk a rendelést és beszállítást
 					// és eltároljuk a kiválasztott raktárba a tételeket
-					if (isset($_POST['raktar_id'])) {
-						$raktar = Raktarak::model() -> findByPk ($_POST['raktar_id']);
+					if (isset($_POST['raktarhely_id'])) {
+						$raktarHely = RaktarHelyek::model() -> findByPk ($_POST['raktarhely_id']);
 						
-						if ($raktar != null) {
+						if ($raktarHely != null) {
 							$anyagbeszallitas = $model;
 							$anyagrendeles = Anyagrendelesek::model()->findByPk($model -> anyagrendeles_id);
 							
@@ -98,32 +98,34 @@ class AnyagbeszallitasokController extends Controller
 							$anyagbeszallitas->lezarva = 1;
 							$anyagbeszallitas->save();
 
-							$anyagrendeles->lezarva = 1;
-							$anyagrendeles->save();
+							if ($anyagrendeles != null) {
+								$anyagrendeles->lezarva = 1;
+								$anyagrendeles->save();
+							}
 							
 							// végigmegyünk az anyaglistán és eltároljuk a megrendelt termékeket a kiválasztott raktárba
 							//
 							// TODO: ez így nem túl szép, mert minden elemet egyesével mentek, az mindig egy SQL update/insert.
 							//		 Szebb lenne egy tömbben kezelni az elemeket és a végén egyszer menteni mindegyiket, de most idő hiányában
 							//		 így csináltam, talán egy rendelésen nem lesz több 100 termék, úgyhogy nem lesz érezhető performancia romlás.
-							$termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array("anyagrendeles_id" => $anyagrendeles -> id));
+							$termekek = AnyagbeszallitasTermekek::model()->findAllByAttributes(array("anyagbeszallitas_id" => $anyagbeszallitas -> id));
 							
 							foreach ($termekek as $termek) {
-								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'anyagbeszallitas_id' => $anyagbeszallitas->id, 'raktar_id' => $raktar -> id) );
+								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'anyagbeszallitas_id' => $anyagbeszallitas->id, 'raktarhely_id' => $raktarHely -> id) );
 								
 								// ha van már a raktárban ilyen termék, akkor frissítjük a darabszámát
 								if ($raktarTermek != null) {
-									$raktarTermek -> elerheto_db += $termek -> rendelt_darabszam;
-									$raktarTermek -> osszes_db += $termek -> rendelt_darabszam;
+									$raktarTermek -> elerheto_db += $termek -> darabszam;
+									$raktarTermek -> osszes_db += $termek -> darabszam;
 								} else {
 									// ha nincs, akkor létrehozunk egy új bejegyzést
 									$raktarTermek = new RaktarTermekek;
 									$raktarTermek -> termek_id = $termek -> termek_id;
-									$raktarTermek -> raktar_id = $raktar -> id;
+									$raktarTermek -> raktarhely_id = $raktarHely -> id;
 									$raktarTermek -> anyagbeszallitas_id = $anyagbeszallitas -> id;
 									
-									$raktarTermek -> elerheto_db = $termek -> rendelt_darabszam;
-									$raktarTermek -> osszes_db = $termek -> rendelt_darabszam;
+									$raktarTermek -> elerheto_db = $termek -> darabszam;
+									$raktarTermek -> osszes_db = $termek -> darabszam;
 								}
 								
 								$raktarTermek -> save ();
@@ -132,9 +134,9 @@ class AnyagbeszallitasokController extends Controller
 								$raktarTermekekTranzakciok = new RaktarTermekekTranzakciok;
 								$raktarTermekekTranzakciok->termek_id = $raktarTermek->termek_id;
 								$raktarTermekekTranzakciok->anyagbeszallitas_id = $raktarTermek->anyagbeszallitas_id;
-								$raktarTermekekTranzakciok->raktar_id = $raktarTermek->raktar_id;
+								$raktarTermekekTranzakciok->raktarhely_id = $raktarHely->id;
 								$raktarTermekekTranzakciok->tranzakcio_datum = date("Y-m-d H:i:s");
-								$raktarTermekekTranzakciok->betesz_kivesz_darabszam = $termek -> rendelt_darabszam;
+								$raktarTermekekTranzakciok->betesz_kivesz_darabszam = $termek -> darabszam;
 								$raktarTermekekTranzakciok->save(false);
 								
 								// itt vizsgáljuk, hogy túlléptük-e a termék megadott maximum raktárkészletét,

@@ -1,28 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "dom_raktarak".
+ * This is the model class for table "dom_raktarhelyek".
  *
- * The followings are the available columns in table 'dom_raktarak':
+ * The followings are the available columns in table 'dom_raktarhelyek':
  * @property string $id
+ * @property string $raktar_id
  * @property string $nev
- * @property string $tipus
  * @property string $leiras
- * @property integer $torolt
  */
-class Raktarak extends CActiveRecord
+class RaktarHelyek extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'dom_raktarak';
+		return 'dom_raktarhelyek';
 	}
 
 	public function getClassName ()
 	{
-		return "Raktár";
+		return "Raktárhely";
 	}
 	
 	/**
@@ -33,14 +32,13 @@ class Raktarak extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nev, tipus, leiras', 'required'),
-			array('torolt', 'numerical', 'integerOnly'=>true),
+			array('raktar_id, nev', 'required'),
+			array('raktar_id', 'length', 'max'=>10),
 			array('nev', 'length', 'max'=>50),
-			array('tipus', 'length', 'max'=>7),
-			array('leiras', 'length', 'max'=>255),
+			array('leiras', 'length', 'max'=>255),			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, tipus, leiras, torolt', 'safe', 'on'=>'search'),
+			array('id, raktar_id, nev, leiras', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -52,25 +50,20 @@ class Raktarak extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'raktarHelyek' => array(self::HAS_MANY, 'RaktarHelyek', 'raktar_id'),
+			'raktar'    => array(self::BELONGS_TO, 'Raktarak', 'raktar_id'),
 		);
 	}
 
-	public function behaviors() {
-		return array( 'LoggableBehavior'=> 'application.modules.auditTrail.behaviors.LoggableBehavior', );
-	}
-	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Raktár ID',
-			'nev' => 'Raktárnév',
-			'tipus' => 'Típus',
+			'id' => 'ID',
+			'raktar_id' => 'Raktár ID',
+			'nev' => 'Raktárhely neve',
 			'leiras' => 'Leírás',
-			'torolt' => 'Törölt',
 		);
 	}
 
@@ -93,16 +86,15 @@ class Raktarak extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
+		$criteria->compare('raktar_id',$this->raktar_id,true);
 		$criteria->compare('nev',$this->nev,true);
-		$criteria->compare('tipus',$this->tipus,true);
-		//$criteria->compare('leiras',$this->leiras,true);
+		$criteria->compare('leiras',$this->leiras,true);
 
-		// LI: logikailag törölt sorok ne jelenjenek meg
-		if (!Yii::app()->user->checkAccess('Admin'))
-			$criteria->compare('torolt', 0, false);
-			
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+                        'defaultOrder'=>'nev ASC',
+                    ),
 		));
 	}
 
@@ -110,10 +102,16 @@ class Raktarak extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Raktarak the static model class
+	 * @return RaktarHelyek the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
+	
+	public function getDisplayTeljesNev()
+	{
+		return $this->raktar['nev'] . ' - ' . $this->nev;
+	}
+	
 }

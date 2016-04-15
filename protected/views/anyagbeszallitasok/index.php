@@ -79,7 +79,7 @@ $this->breadcrumbs=array(
 				'gyarto.cegnev',
 				'beszallitas_datum',
 				'kifizetes_datum',
-				'DisplayOsszertekIroda:number',
+				'DisplayOsszertekIroda',
 				'megjegyzes',
 				'user.username',
 				'anyagrendeles.displayBizonylatszamDatum',

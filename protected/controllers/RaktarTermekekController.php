@@ -15,12 +15,19 @@ class RaktarTermekekController extends Controller
 	
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('RaktarTermekek', array());
-				
+		$model=new RaktarTermekek('search');
+		$model->unsetAttributes();
+		if(isset($_GET['RaktarTermekek']))
+			$model->attributes=$_GET['RaktarTermekek'];
+	 	
+		$dataProvider=new CActiveDataProvider('RaktarTermekek',
+			array('criteria'=>array('order'=>'raktarhely_id ASC',),)
+		);
+		
+		//send model object for search
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)
-		));
+			'model'=>$model,)
+		);
 	}
 
 	public function actionPrintRaktarkeszlet()
