@@ -358,7 +358,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 					'autoOpen'=>false,
 			)));
 
-			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'displayTeljesNev');
+			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"")), 'id', 'displayTeljesNev');
 			echo CHtml::dropDownList('raktarHelyek', '', $list, array());
 
 			$this->endWidget();

@@ -1,11 +1,8 @@
 <?php
-/* @var $this TermekArakController */
-/* @var $dataProvider CActiveDataProvider */
+	/* @var $this TermekArakController */
+	/* @var $dataProvider CActiveDataProvider */
 
-$this->breadcrumbs=array(
-	'Raktárkészletek',
-);
-
+	$grid_id = round(microtime(true) * 1000);
 ?>
 
 <h1>Raktárkészletek</h1>
@@ -41,14 +38,13 @@ $this->breadcrumbs=array(
 							
 							'buttons' => array(
 								'relocate' => array(
-									'url' => '',
+									'url' => '$data->id',
 									'label' => 'Átmozgat',
 									'icon'=>'icon-white icon-move',
 									'options'=>array(
 												'class'=>'btn btn-info btn-mini',
-												'onclick' => 'js: openPrintDialog($(this))',
+												'onclick' => 'js: openRelocateDialog ( $(this).attr("href"), event ); return false;',
 												),
-									'visible' => "Yii::app()->user->checkAccess('Megrendelesek.PrintProforma') || Yii::app()->user->checkAccess('Megrendelesek.PrintVisszaigazolas')",
 								),
 							),
 						),
@@ -65,3 +61,59 @@ $this->breadcrumbs=array(
     ));
 
 ?>
+
+<!-- CJUIDIALOG BEGIN -->
+<?php 
+  $this->beginWidget('zii.widgets.jui.CJuiDialog', 
+	   array(   'id'=>'termek_athelyez_dialog' . $grid_id,
+				'options'=>array(
+								'title'=>'Termék áthelyezése',
+								'modal'=>true,
+								'width'=>1100,
+								'height'=>500,
+								'autoOpen'=>false,
+								),
+						));
+?>
+
+	<div class="divForForm"></div>
+
+<?php $this->endWidget(); ?>
+<!-- CJUIDIALOG END -->
+	
+<script type="text/javascript">
+
+		// LI: áthelyező dialog összerakása
+		function openRelocateDialog (row_id, event) {
+			event.preventDefault();
+			
+			grid_id = <?php echo $grid_id; ?>;
+
+			<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/raktarTermekek/termekAthelyez/id/' + row_id + '/grid_id/' + grid_id",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'send-link-'.uniqid(),
+				'replace' => '',
+				'dataType'=>'json',
+				'success'=>"function(data)
+					{
+						if (data.status == 'failure')
+						{
+							$('#termek_athelyez_dialog' + grid_id + ' div.divForForm').html(data.div);
+						}
+						else
+						{
+							$('#termek_athelyez_dialog' + grid_id + ' div.divForForm').html(data.div);
+							$('#termek_athelyez_dialog' + grid_id).dialog('close');
+						}
+		 
+					} "
+			)); ?>
+
+			$("#termek_athelyez_dialog" + grid_id).dialog("open");
+			
+			return false;
+		}
+		
+</script>
