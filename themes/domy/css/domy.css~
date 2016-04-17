@@ -1112,7 +1112,3 @@ table tr td.red {
 .search-form {
 	margin-top: 10px;
 }
-
-tr.updated-row {
-	background-color: #ccff99 ;
-}

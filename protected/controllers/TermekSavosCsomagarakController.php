@@ -150,7 +150,8 @@ class TermekSavosCsomagarakController extends Controller
 	{
 		$model = $this->loadModel($id);
 //		$termek_id = $model->termek_id;
-		$model->delete();
+		$model->torolt = 1;
+		$model->save(false);
 				
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax'])) {

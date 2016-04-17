@@ -109,7 +109,7 @@ class AfaKulcsokController extends Controller
 		$model=$this->loadModel($id);
 		
 		$model->torolt = 1;
-		$model->save();
+		$model->save(false);
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

@@ -1157,8 +1157,34 @@
 		}
 
 		// LI: egy sessionváltozóban tárolt url-re irányít át (az oldal nevét paraméterben várja)
-		function gotoPrevPage ($pageName) {
-			$this->redirect(Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL']);
+		function gotoPrevPage ($pageName, $args = array()) {
+			$link = Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL'] ;
+			if (count($args) > 0) {
+				$args_string = "?" ;
+				$link_args_string = substr($link, strpos($link, "?") + 1) ;
+				$link_args = array() ;
+				if ($link_args_string != "") {
+					$link_args = explode("&", $link_args_string) ;	
+				}
+				$link = substr($link, 0, strpos($link, "?")) ;
+				if (count($link_args) > 0) {
+					foreach($link_args as $arg) {
+						$arg_array = explode("=", $arg) ;
+						if (isset($args[$arg_array[0]])) {
+							$arg_array[1] = $args[$arg_array[0]] ;
+							$args[$arg_array[0]] = "" ;
+						}
+						$args_string .= $arg_array[0] . "=" . $arg_array[1] . "&" ;
+					}
+					foreach ($args as $arg_name => $arg_value) {
+						if ($arg_value != "") {
+							$args_string .= $arg_name . "=" . $arg_value . "&" ;
+						}
+					}
+					$args_string = rtrim($args_string, "&") ;
+				}				
+			}
+			$this->redirect($link . $args_string);
 		}
 		
 		// LI: egy sessionváltozóba menti a jelenlegi url-t (paraméterben várja, hogy milyen kulccsal mentse)

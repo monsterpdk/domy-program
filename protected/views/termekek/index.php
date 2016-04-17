@@ -38,12 +38,13 @@ $this->breadcrumbs=array(
                               'acceptFileTypes'=>'js:/(\.|\/)(csv)$/i',
 							  ),
 	));
-	
 ?>
 
 <?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$model -> search(),
 	'template' => '{items} {summary} {pager}',
+    'rowCssClassExpression'=>'$data->id == ' . $updated . '?"updated-row":""',
+    'rowHtmlOptionsExpression' => 'array("id"=>$data->id)',
 	'enableHistory' => true,
 	'columns'=>array(
 				array(
@@ -98,4 +99,16 @@ $this->breadcrumbs=array(
 <?php
 	// export gomb megjelenítése
 	$this->renderExportGridButton($gridWidget,'Exportálás', array('class'=>'btn btn-info ui-button ui-widget ui-button-text-only pull-right'));
+?>
+
+<?php
+	if (is_numeric($updated)) {
+?>
+	<script>
+		$(document).ready(function() {
+			window.scrollTo(0, $("#<?php echo $updated;?>").offset().top - 200);	
+		}) ;
+	</script>
+<?php
+	}
 ?>

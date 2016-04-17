@@ -94,7 +94,7 @@ class TermekekController extends Controller
 		{
 			$model->attributes=$_POST['Termekek'];
 			if($model->save())
-				Utils::goToPrevPage("termekekIndex");
+				Utils::goToPrevPage("termekekIndex", array("updated"=>$id));
 		}
 
 		$this->render('update',array(
@@ -113,7 +113,7 @@ class TermekekController extends Controller
 		$model=$this->loadModel($id);
 		
 		$model->torolt = 1;
-		$model->save();
+		$model->save(false);
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -126,6 +126,9 @@ class TermekekController extends Controller
 	public function actionIndex()
 	{
 		Utils::saveCurrentPage("termekekIndex");
+		$updated = "0" ;
+		if (is_numeric($_GET["updated"]))
+			$updated = $_GET["updated"] ;
 		
 		$model=new Termekek('search');
 		$model->unsetAttributes();
@@ -152,7 +155,8 @@ class TermekekController extends Controller
 		
 		$this->render('index',array(
 			'importModel' => $importMmodel,
-			'model' => $model
+			'model' => $model,
+			'updated' => $updated
 		));
 	}
 
