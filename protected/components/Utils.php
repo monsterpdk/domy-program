@@ -1495,11 +1495,13 @@
 							foreach ($raktarTermekekTranzakciok as $raktarTermekekTranzakcio) {
 								$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $termek->id, 'anyagbeszallitas_id' => $raktarTermekekTranzakcio->anyagbeszallitas_id));
 								
-								$raktarTermek -> foglalt_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
-								$raktarTermek -> osszes_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
+								if ($raktarTermek != null) {
+									$raktarTermek -> foglalt_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
+									$raktarTermek -> osszes_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
 
-								$raktarTermek ->save(false);
-
+									$raktarTermek -> save(false);
+								}
+								
 								if ($tranzakcioMentese) {
 									$raktarTermekekTranzakcio->delete();							
 								}
