@@ -18,8 +18,9 @@
  * @property integer $torolt
  * @property integer $anyag_foglalva
  * @property integer $egyedi_ar 
- * @property integer arajanlatbol_letrehozva
- * @property integer arajanlat_tetel_id
+ * @property integer $arajanlatbol_letrehozva
+ * @property integer $negativ_raktar_termek 
+ * @property integer $arajanlat_tetel_id
  */
 class MegrendelesTetelek extends CActiveRecord
 {

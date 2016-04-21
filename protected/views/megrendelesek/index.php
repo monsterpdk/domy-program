@@ -82,11 +82,10 @@
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 210px; text-align: left;'),
-                        'template' => '{print} {view} {update} {deliveryNote} {deliveryNotePrinted} {delete} {storno}',
+                        'template' => '{print} {view} {update} {deliveryNote} {deliveryNotePrinted} {storno}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
 						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
-						'deleteButtonOptions'=>array('class'=>'btn btn-danger btn-mini'),
 
 						'buttons' => array(
 							'print' => array(
@@ -127,11 +126,6 @@
 											),
 								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1 && $data->SzallitoNyomtatva == 1',
 							),
-							'delete' => array(
-								'label' => 'Töröl',
-								'icon'=>'icon-white icon-remove-sign',
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Delete") && $data->torolt != 1',
-							),
 							'storno' => array(
 								'label' => 'Sztornózás',
 								'icon'=>'icon-white icon-minus-sign',
@@ -140,7 +134,7 @@
 											'style'=>'margin-left: 15px',
 											'onclick' => 'js: openStornoSelectDialog ($(this))',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Storno") && $data->sztornozva != 1',
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Storno") && $data->sztornozva != 1 && $data->nyomdakonyv_munka_id != 1',
 							),
 						),
                 ),

@@ -133,23 +133,27 @@ class MegrendelesekController extends Controller
 		
 		// ha létezik a megrendelés és még nincsenek a tételei a nyomdakönyvbe rakva
 		if ($megrendeles != null && $megrendeles->nyomdakonyv_munka_id == 0) {
-			foreach ($megrendeles -> tetelek as $tetel) {
+			
+			
+		//	foreach ($megrendeles -> tetelek as $tetel) {
 				// leellenőrizzük még minden előtt, hogy tudunk-e megfelelő mennyiségeket foglalni, ha nem, neki se állunk
 				// nem engedünk mínuszba menni, mert az eléggé megbonyolítaná a raktárkezelés további részeit
-				$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
-				if ( $elerheto_db < $tetel -> darabszam) {
-					$termek = Termekek::model()->findByPk($tetel->termek_id);
-					$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
-					$termek_info = $termek->nev . ', jelenleg foglalható raktármennyiség:  <strong>' . $elerheto_db . ' db</strong>, foglalni kívánt darabszám: <strong>' . $tetel -> darabszam . '</strong>';
-					$email_body = Yii::app()->controller->renderPartial('application.views.szallitolevelek.ertesites_nincs_eleg_raktarkeszlet', array('termek_info'=>$termek_info), true);
-						
-					Utils::sendEmail ($recipients, 'Figyelmeztetés! Termék elérhető mennyisége túl alacsony!', $email_body);
-					$hasError = true;
-				}
-			}
+				//
+				
+				/*
+				$termek = Termekek::model()->findByPk($tetel->termek_id);
+				$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
+				$termek_info = $termek->nev . ', jelenleg foglalható raktármennyiség:  <strong>' . $elerheto_db . ' db</strong>, foglalni kívánt darabszám: <strong>' . $tetel -> darabszam . '</strong>';
+				$email_body = Yii::app()->controller->renderPartial('application.views.szallitolevelek.ertesites_nincs_eleg_raktarkeszlet', array('termek_info'=>$termek_info), true);
+					
+				Utils::sendEmail ($recipients, 'Figyelmeztetés! Termék elérhető mennyisége túl alacsony!', $email_body);
+				$hasError = true;
+				*/
+		//	}
 			
 			if ($hasError) {
-				Yii::app()->user->setFlash('error', "Valamely termék készlete túl alacsony, a foglalás nem lehetséges! E-mailben értesítést kaptak az arra jogosultak.");
+				// LI : kikommentezve, mert az új igény szerint negatívba is foglalhatunk, így ilyen üzenetet nem küldünk egyelőre
+				// Yii::app()->user->setFlash('error', "Valamely termék készlete túl alacsony, a foglalás nem lehetséges! E-mailben értesítést kaptak az arra jogosultak.");
 			} else {
 				foreach ($megrendeles -> tetelek as $tetel) {
 					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
@@ -186,10 +190,28 @@ class MegrendelesekController extends Controller
 						
 						$nyomdakonyv -> save(false);
 						
-						// a raktárban foglaljuk a megfelelő mennyiséget
-						Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+						// UPDATE: ÚJ IGÉNY: ha nincs elég darabszám a raktárban, akkor egy 'negativ' táblába mentjük az adott darabszámot és terméket,
+						//					 és akkor foglaljuk később, ha felszabadul a megfelelő mennyiség
+						$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
+						if ( $elerheto_db < $tetel -> darabszam) {
+							$raktarTermekNegativ = new RaktarTermekekNegativ;
+							$raktarTermekNegativ -> termek_id = $tetel -> termek_id;
+							$raktarTermekNegativ -> darabszam = $tetel -> darabszam;
+							$raktarTermekNegativ -> megrendeles_id = $megrendeles -> id;
+							$raktarTermekNegativ -> nyomdakonyv_id = $nyomdakonyv -> id;
+							$raktarTermekNegativ -> hatarido = $nyomdakonyv -> hatarido;
+							$raktarTermekNegativ -> save (false);
+							
+							// rámentjük a megrendelés tételre is, hogy ő egy negatív raktártermék tétel lett, így könnyebb később kezelnünk a lekérdezésekben
+							$tetel -> negativ_raktar_termek = 1;
+							$tetel -> save (false);
+						} else {
+							// a raktárban foglaljuk a megfelelő mennyiséget
+							Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+						}
 					}
-					$megrendeles->nyomdakonyv_munka_id = 1;	//Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
+					
+					$megrendeles->nyomdakonyv_munka_id = 1;	// Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
 					$megrendeles->save(false);
 				}
 				Yii::app()->user->setFlash('success', "A tételek a nyomdakönyvbe kerültek!");

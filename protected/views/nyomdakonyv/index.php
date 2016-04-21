@@ -26,10 +26,9 @@ $this->menu=array(
 				array(
 					'class' => 'bootstrap.widgets.TbButtonColumn',
 					'htmlOptions'=>array('style'=>'width: 140px; text-align: left;'),
-					'template' => '{print} {update} {delete} {storno}',
+					'template' => '{print} {update} {storno}',
 					
 					'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
-					'deleteButtonOptions'=>array('class'=>'btn btn-danger btn-mini'),
 
 					'buttons' => array(
 						'print' => array(
@@ -47,17 +46,11 @@ $this->menu=array(
 							'icon'=>'icon-white icon-pencil',
 							'visible' => "Yii::app()->user->checkAccess('Nyomdakonyv.Update')",
 						),
-						'delete' => array(
-							'label' => 'Töröl',
-							'icon'=>'icon-white icon-remove-sign',
-							'visible' => 'Yii::app()->user->checkAccess("Nyomdakonyv.Delete") && $data->torolt != 1',
-						),
 						'storno' => array(
 							'label' => 'Sztornózás',
 							'icon'=>'icon-white icon-minus-sign',
 							'options'=>array(
 										'class'=>'btn btn-storno btn-mini',
-										'style'=>'margin-left: 15px',
 										'onclick' => 'js: openStornoSelectDialog ($(this))',
 										),
 							'visible' => 'Yii::app()->user->checkAccess("Nyomdakonyv.Storno") && $data->sztornozva != 1',
