@@ -115,11 +115,7 @@
 								'options'=>array(
 												'class'=>'btn btn-inverse btn-mini',
 											),
-<<<<<<< HEAD
-								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1 && $data->SzallitoNyomtatva != 1',
-=======
-								'visible' => '(Yii::app()->user->checkAccess("Szallitolevelek.Create") || Yii::app()->user->checkAccess("Admin")) && $data->sztornozva != 1 && $data->SzallitoNyomtatva != 1 && $data->nyomdakonyv_munka_id == 1',
->>>>>>> e6cbc4675086178c8f340cd929605fbd1f5356a4
+								'visible' => '(Yii::app()->user->checkAccess("Szallitolevelek.Create") || Yii::app()->user->checkAccess("Admin")) && $data->sztornozva != 1 && $data->SzallitoNyomtatva != 1',
 							),
 							'deliveryNotePrinted' => array(
 								'label' => 'Szállítólevél volt nyomtatva',
