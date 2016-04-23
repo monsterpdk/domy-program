@@ -116,7 +116,7 @@
 								'options'=>array(
 												'class'=>'btn btn-inverse btn-mini',
 											),
-								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1 && $data->SzallitoNyomtatva != 1 && data->nyomdakonyv_munka_id == 1',
+								'visible' => 'Yii::app()->user->checkAccess("Szallitolevelek.Create") && $data->sztornozva != 1 && $data->SzallitoNyomtatva != 1',
 							),
 							'deliveryNotePrinted' => array(
 								'label' => 'Szállítólevél volt nyomtatva',

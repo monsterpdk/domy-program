@@ -505,25 +505,43 @@ class StatisztikakController extends Controller
 		$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul = 0 ;
 		$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul = 0 ;
 		$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul = 0 ;
-		$megrendelesCegek_kiemeltek_nelkul = array("eladás"=>array(), "nyomás"=>array()) ;
-		$megrendelesCegek_kiemeltek_nelkul_10000_alatt = array("eladás"=>array(), "nyomás"=>array()) ;
-		$megrendelesCegek_kiemeltek_nelkul_10000_felett = array("eladás"=>array(), "nyomás"=>array()) ;
-		$megrendelesokEladas_10000_alatt = 0 ;
+		$megrendelesCegek_kiemeltek_nelkul = array("eladás"=>array(), "nyomás"=>array(),"eladás_ajánlat_nélkül"=>array(), "nyomás_ajánlat_nélkül"=>array()) ;
+		$megrendelesCegek_kiemeltek_nelkul_10000_alatt = array("eladás"=>array(), "nyomás"=>array(),"eladás_ajánlat_nélkül"=>array(), "nyomás_ajánlat_nélkül"=>array()) ;
+		$megrendelesCegek_kiemeltek_nelkul_10000_felett = array("eladás"=>array(), "nyomás"=>array(),"eladás_ajánlat_nélkül"=>array(), "nyomás_ajánlat_nélkül"=>array()) ;
+		$megrendelesekEladas_10000_alatt = 0 ;
 		$megrendelesTetelekEladas_10000_alatt = 0 ;
 		$megrendelesOsszegEladas_kiemeltek_nelkul_10000_alatt = 0 ;
 		$megrendelesTetelekLegparnas_10000_alatt = 0 ;
 		$megrendelesOsszegLegparnas_10000_alatt = 0 ;
-		$megrendelesokNyomas_10000_alatt = 0 ;
+		$megrendelesekNyomas_10000_alatt = 0 ;
 		$megrendelesTetelekNyomas_10000_alatt = 0 ;
 		$megrendelesOsszegNyomas_10000_felett = 0 ;
-		$megrendelesokEladas_10000_felett = 0 ;
+		$megrendelesekEladas_10000_felett = 0 ;
 		$megrendelesTetelekEladas_10000_felett = 0 ;
 		$megrendelesOsszegEladas_kiemeltek_nelkul_10000_felett = 0 ;
 		$megrendelesTetelekLegparnas_10000_felett = 0 ;
 		$megrendelesOsszegLegparnas_10000_felett = 0 ;
-		$megrendelesokNyomas_10000_felett = 0 ;
+		$megrendelesekNyomas_10000_felett = 0 ;
 		$megrendelesTetelekNyomas_10000_felett = 0 ;
 		$megrendelesOsszegNyomas_10000_felett = 0 ;
+
+		$megrendelesekEladasAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesTetelekEladasAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesTetelekLegparnasAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesOsszegLegparnasAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesekNyomasAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesTetelekNyomasAjanlatNelkul_10000_alatt = 0 ;
+		$megrendelesOsszegNyomasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesekEladasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesTetelekEladasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesTetelekLegparnasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesOsszegLegparnasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesekNyomasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesTetelekNyomasAjanlatNelkul_10000_felett = 0 ;
+		$megrendelesOsszegNyomasAjanlatNelkul_10000_felett = 0 ;
+		
 		
 		if ($megrendelesTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($megrendelesTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {
@@ -565,19 +583,39 @@ class StatisztikakController extends Controller
 							$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
 						}
 						if ($tetel_sor->darabszam < 10000) {
-							$megrendelesTetelekLegparnas_10000_alatt++ ;
-							$megrendelesOsszegEladas_kiemeltek_nelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
-							$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
-							$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($db_eladasi_ar * $tetel_sor->darabszam) ;
-							$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							if ($sor->arajanlat_id == 0) {
+								$megrendelesTetelekLegparnasAjanlatNelkul_10000_alatt++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+								$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt += ($db_eladasi_ar * $tetel_sor->darabszam) ;
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;								
+							}
+							else
+							{
+								$megrendelesTetelekLegparnas_10000_alatt++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+								$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($db_eladasi_ar * $tetel_sor->darabszam) ;
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
 						}
 						else
 						{
-							$megrendelesTetelekLegparnas_10000_felett++ ;
-							$megrendelesOsszegEladas_kiemeltek_nelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
-							$megrendeles_darabszamok["tizezer_felett"] = 1 ;
-							$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($db_eladasi_ar * $tetel_sor->darabszam) ;
-							$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							if ($sor->arajanlat_id == 0) {
+								$megrendelesTetelekLegparnasAjanlatNelkul_10000_felett++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+								$megrendeles_darabszamok["tizezer_felett"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett += ($db_eladasi_ar * $tetel_sor->darabszam) ;
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;								
+							}
+							else
+							{
+								$megrendelesTetelekLegparnas_10000_felett++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+								$megrendeles_darabszamok["tizezer_felett"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($db_eladasi_ar * $tetel_sor->darabszam) ;
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
 						}
 						
 					}
@@ -604,22 +642,46 @@ class StatisztikakController extends Controller
 							$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
 						}
 						if ($tetel_sor->darabszam < 10000) {
-							$megrendelesTetelekNyomas_10000_alatt++ ;
-							$megrendelesOsszegNyomas_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
-							$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
-							$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_alatt += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
-							if ($tetel_sor->hozott_boritek == 0) {
-								$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							if ($sor->arajanlat_id == 0) {
+								$megrendelesTetelekNyomasAjanlatNelkul_10000_alatt++ ;
+								$megrendelesOsszegNyomasAjanlatNelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+								$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
+								$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
+								if ($tetel_sor->hozott_boritek == 0) {
+									$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}								
+							}
+							else
+							{
+								$megrendelesTetelekNyomas_10000_alatt++ ;
+								$megrendelesOsszegNyomas_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+								$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
+								$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_alatt += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
+								if ($tetel_sor->hozott_boritek == 0) {
+									$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
 							}
 						}
 						else
 						{
-							$megrendelesTetelekNyomas_10000_felett++ ;
-							$megrendelesOsszegNyomas_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
-							$megrendeles_darabszamok["tizezer_felett"] = 1 ;
-							$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_felett += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
-							if ($tetel_sor->hozott_boritek == 0) {
-								$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							if ($sor->arajanlat_id == 0) {
+								$megrendelesTetelekNyomasAjanlatNelkul_10000_felett++ ;
+								$megrendelesOsszegNyomasAjanlatNelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+								$megrendeles_darabszamok["tizezer_felett"] = 1 ;
+								$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
+								if ($tetel_sor->hozott_boritek == 0) {
+									$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+							}
+							else
+							{
+								$megrendelesTetelekNyomas_10000_felett++ ;
+								$megrendelesOsszegNyomas_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+								$megrendeles_darabszamok["tizezer_felett"] = 1 ;
+								$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_felett += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
+								if ($tetel_sor->hozott_boritek == 0) {
+									$anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
 							}
 						}
 						
@@ -647,19 +709,39 @@ class StatisztikakController extends Controller
 							$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
 						}
 						if ($tetel_sor->darabszam < 10000) {
-							$megrendelesTetelekEladas_10000_alatt++ ;
-							$megrendelesOsszegEladas_kiemeltek_nelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
-							$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
-							$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
-							$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							if ($sor->arajanlat_id == 0) {
+								$megrendelesTetelekEladasAjanlatNelkul_10000_alatt++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+								$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+							else
+							{
+								$megrendelesTetelekEladas_10000_alatt++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+								$megrendeles_darabszamok["tizezer_alatt"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_alatt += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
 						}
 						else
 						{
-							$megrendelesTetelekEladas_10000_felett++ ;
-							$megrendelesOsszegEladas_kiemeltek_nelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
-							$megrendeles_darabszamok["tizezer_felett"] = 1 ;
-							$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
-							$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							if ($sor->arajanlat_id == 0) {							
+								$megrendelesTetelekEladasAjanlatNelkul_10000_felett++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+								$megrendeles_darabszamok["tizezer_felett"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+							else
+							{
+								$megrendelesTetelekEladas_10000_felett++ ;
+								$megrendelesOsszegEladas_kiemeltek_nelkul_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+								$megrendeles_darabszamok["tizezer_felett"] = 1 ;
+								$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
+								$anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkul_10000_felett += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;								
+							}
 						}
 						
 					}					
@@ -673,22 +755,43 @@ class StatisztikakController extends Controller
 					{
 						$megrendelesekNyomas++ ;
 					}
-					if (!isset($megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id])) {
-						$megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id] = 1 ;
+					if ($sor->arajanlat_id == 0) {
+						if (!isset($megrendelesCegek_kiemeltek_nelkul["nyomás_ajánlat_nélkül"][$sor->ugyfel_id])) {
+							$megrendelesCegek_kiemeltek_nelkul["nyomás_ajánlat_nélkül"][$sor->ugyfel_id] = 1 ;
+						}
+						else
+						{
+							$megrendelesCegek_kiemeltek_nelkul["nyomás_ajánlat_nélkül"][$sor->ugyfel_id]++ ;	
+						}
+						if ($megrendeles_darabszamok["tizezer_alatt"] == 1) {
+							$megrendelesekNyomasAjanlatNelkul_10000_alatt++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_alatt["nyomás_ajánlat_nélkül"][$sor->ugyfel_id]++ ;
+						}
+						if ($megrendeles_darabszamok["tizezer_felett"] == 1)
+						{
+							$megrendelesekNyomasAjanlatNelkul_10000_felett++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_felett["nyomás_ajánlat_nélkül"][$sor->ugyfel_id]++ ;						
+						}						
 					}
 					else
 					{
-						$megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id]++ ;	
+						if (!isset($megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id])) {
+							$megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id] = 1 ;
+						}
+						else
+						{
+							$megrendelesCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id]++ ;	
+						}
+						if ($megrendeles_darabszamok["tizezer_alatt"] == 1) {
+							$megrendelesekNyomas_10000_alatt++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_alatt["nyomás"][$sor->ugyfel_id]++ ;
+						}
+						if ($megrendeles_darabszamok["tizezer_felett"] == 1)
+						{
+							$megrendelesekNyomas_10000_felett++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_felett["nyomás"][$sor->ugyfel_id]++ ;						
+						}
 					}
-					if ($megrendeles_darabszamok["tizezer_alatt"] == 1) {
-						$megrendelesekNyomas_10000_alatt++ ;
-						$megrendelesCegek_kiemeltek_nelkul_10000_alatt["nyomás"][$sor->ugyfel_id]++ ;
-					}
-					if ($megrendeles_darabszamok["tizezer_felett"] == 1)
-					{
-						$megrendelesekNyomas_10000_felett++ ;
-						$megrendelesCegek_kiemeltek_nelkul_10000_felett["nyomás"][$sor->ugyfel_id]++ ;						
-					}					
 				}
 				else
 				{
@@ -700,22 +803,43 @@ class StatisztikakController extends Controller
 						$megrendelesekEladas++ ;
 					}
 					
-					if (!isset($megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id])) {
-						$megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id] = 1 ;
+					if ($sor->arajanlat_id == 0) {
+						if (!isset($megrendelesCegek_kiemeltek_nelkul["eladás_ajánlat_nélkül"][$sor->ugyfel_id])) {
+							$megrendelesCegek_kiemeltek_nelkul["eladás_ajánlat_nélkül"][$sor->ugyfel_id] = 1 ;
+						}
+						else
+						{
+							$megrendelesCegek_kiemeltek_nelkul["eladás_ajánlat_nélkül"][$sor->ugyfel_id]++ ;	
+						}
+						if ($megrendeles_darabszamok["tizezer_alatt"] == 1) {
+							$megrendelesekEladasAjanlatNelkul_10000_alatt++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_alatt["eladás_ajánlat_nélkül"][$sor->ugyfel_id]++ ;
+						}
+						if ($megrendeles_darabszamok["tizezer_felett"] == 1)
+						{
+							$megrendelesekEladasAjanlatNelkul_10000_felett++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_felett["eladás_ajánlat_nélkül"][$sor->ugyfel_id]++ ;						
+						}						
 					}
 					else
 					{
-						$megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id]++ ;	
+						if (!isset($megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id])) {
+							$megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id] = 1 ;
+						}
+						else
+						{
+							$megrendelesCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id]++ ;	
+						}
+						if ($megrendeles_darabszamok["tizezer_alatt"] == 1) {
+							$megrendelesekEladas_10000_alatt++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_alatt["eladás"][$sor->ugyfel_id]++ ;
+						}
+						if ($megrendeles_darabszamok["tizezer_felett"] == 1)
+						{
+							$megrendelesekEladas_10000_felett++ ;
+							$megrendelesCegek_kiemeltek_nelkul_10000_felett["eladás"][$sor->ugyfel_id]++ ;						
+						}
 					}
-					if ($megrendeles_darabszamok["tizezer_alatt"] == 1) {
-						$megrendelesekEladas_10000_alatt++ ;
-						$megrendelesCegek_kiemeltek_nelkul_10000_alatt["eladás"][$sor->ugyfel_id]++ ;
-					}
-					if ($megrendeles_darabszamok["tizezer_felett"] == 1)
-					{
-						$megrendelesekEladas_10000_felett++ ;
-						$megrendelesCegek_kiemeltek_nelkul_10000_felett["eladás"][$sor->ugyfel_id]++ ;						
-					}					
 				}
 			}
 		}
@@ -739,6 +863,8 @@ class StatisztikakController extends Controller
 		
 		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkul"] = count($megrendelesCegek_kiemeltek_nelkul["eladás"]) ;
 		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkul"] = count($megrendelesCegek_kiemeltek_nelkul["nyomás"]) ;
+		$stat_adatok["megrendelesCegekEladasAjanlatNelkul_kiemeltek_nelkul"] = count($megrendelesCegek_kiemeltek_nelkul["eladás_ajánlat_nélkül"]) ;
+		$stat_adatok["megrendelesCegekNyomasAjanlatNelkul_kiemeltek_nelkul"] = count($megrendelesCegek_kiemeltek_nelkul["nyomás_ajánlat_nélkül"]) ;
 
 		$stat_adatok["megrendelesStatisztika_kiemeltek_nelkul_10000_alatt"] = $megrendelesekEladas_10000_alatt ;
 		$stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] = $megrendelesTetelekEladas_10000_alatt ;		
@@ -761,6 +887,29 @@ class StatisztikakController extends Controller
 		$stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkul_10000_felett"] = $megrendelesOsszegLegparnas_10000_felett ;
 		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkul_10000_felett["eladás"]) ;
 		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkul_10000_felett["nyomás"]) ;		
+
+		$stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesekEladasAjanlatNelkul_10000_alatt ;
+		$stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesTetelekEladasAjanlatNelkul_10000_alatt ;		
+		$stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesekNyomasAjanlatNelkul_10000_alatt ;
+		$stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesTetelekNyomasAjanlatNelkul_10000_alatt ;		
+		$stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesOsszegNyomasAjanlatNelkul_10000_alatt ;
+		$stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesTetelekLegparnasAjanlatNelkul_10000_alatt ;		
+		$stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesOsszegLegparnasAjanlatNelkul_10000_alatt ;
+		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_alatt["eladás"]) ;
+		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_alatt["nyomás"]) ;
+		
+		$stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesekEladasAjanlatNelkul_10000_felett ;
+		$stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesTetelekEladasAjanlatNelkul_10000_felett ;		
+		$stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesekNyomasAjanlatNelkul_10000_felett ;
+		$stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesTetelekNyomasAjanlatNelkul_10000_felett ;		
+		$stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesOsszegNyomasAjanlatNelkul_10000_felett ;
+		$stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesTetelekLegparnasAjanlatNelkul_10000_felett ;		
+		$stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesOsszegLegparnasAjanlatNelkul_10000_felett ;
+		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_felett["eladás"]) ;
+		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_felett["nyomás"]) ;		
+
 		
 		if ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul"] > 0)
 //			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalek"] = round((($stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul"]) / ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul"])) * 100, 2) ;
@@ -888,6 +1037,82 @@ class StatisztikakController extends Controller
 		$stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_felett"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_felett - $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkul_10000_felett;
 		$stat_adatok["haszon_osszesen_kiemeltek_nelkul_10000_felett"] = $stat_adatok["haszon_eladas_kiemeltek_nelkul_10000_felett"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_felett"];
 
+		if ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] > 0)
+//			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = round((($stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) / ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"])) * 100, 2) ;
+			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = round(($stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] / $stat_adatok["arajanlatStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) * 100, 2) ;
+		else
+			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = 0 ;
+		if ($stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] > 0)
+//			$stat_adatok["nyomas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = round(($stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] / $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) * 100, 2) ;
+			$stat_adatok["nyomas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = round(($stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] / $stat_adatok["arajanlatNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) * 100, 2) ;
+		else
+			$stat_adatok["nyomas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = 0 ;
+		if ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] > 0)
+//			$stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = round((($stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) / ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"])) * 100, 2) ;
+			$stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = round((($stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) / ($stat_adatok["arajanlatStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"])) * 100, 2) ;
+		else
+			$stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_alatt"] = 0 ;
+		if ($stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] > 0) 
+			$stat_adatok["eladas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_alatt"] = round(($stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] / $stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) * 100, 2) ;
+		else
+			$stat_adatok["eladas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_alatt"] = 0 ;
+		if ($stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] > 0) 
+			$stat_adatok["nyomas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_alatt"] = round(($stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] / $stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) * 100, 2) ;
+		else
+			$stat_adatok["nyomas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_alatt"] = 0 ;
+		if ($stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] > 0) 
+			$stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_alatt"] = round((($stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"]) / ($stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"])) * 100, 2) ;
+		else
+			$stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_alatt"] = 0 ;
+			
+		$stat_adatok["anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["anyagkoltseg_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt + $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["bevetel_termekeken_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt + $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt ;
+		$stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt - $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt;
+		$stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt - $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt;
+		$stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];
+			
+		if ($stat_adatok["arajanlatStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] > 0)
+//			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = round((($stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) / ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"])) * 100, 2) ;
+			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = round(($stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] / $stat_adatok["arajanlatStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) * 100, 2) ;
+		else
+			$stat_adatok["eladas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = 0 ;
+		if ($stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] > 0)
+//			$stat_adatok["nyomas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = round(($stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] / $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) * 100, 2) ;
+			$stat_adatok["nyomas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = round(($stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] / $stat_adatok["arajanlatNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) * 100, 2) ;
+		else
+			$stat_adatok["nyomas_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = 0 ;
+		if ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] > 0)
+//			$stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = round((($stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) / ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"])) * 100, 2) ;
+			$stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = round((($stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) / ($stat_adatok["arajanlatStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"])) * 100, 2) ;
+		else
+			$stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalekAjanlatNelkul_10000_felett"] = 0 ;
+		if ($stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] > 0) 
+			$stat_adatok["eladas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_felett"] = round(($stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] / $stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) * 100, 2) ;
+		else
+			$stat_adatok["eladas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_felett"] = 0 ;
+		if ($stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] > 0) 
+			$stat_adatok["nyomas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_felett"] = round(($stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] / $stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) * 100, 2) ;
+		else
+			$stat_adatok["nyomas_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_felett"] = 0 ;
+		if ($stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] > 0) 
+			$stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_felett"] = round((($stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"]) / ($stat_adatok["arajanlatCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["arajanlatCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"])) * 100, 2) ;
+		else
+			$stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalekAjanlatNelkul_10000_felett"] = 0 ;
+			
+		$stat_adatok["anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["anyagkoltseg_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett + $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["bevetel_termekeken_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett + $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett ;
+		$stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett - $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett;
+		$stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett - $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett;
+		$stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];
+		
 		unset($megrendelesTetelekStatisztika_kiemeltek_nelkul) ;
 		
 //Megrendeléssel kapcsolatos statisztikák kiemelt cégek		

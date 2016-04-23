@@ -138,13 +138,15 @@ class MegrendelesekController extends Controller
 				// nem engedünk mínuszba menni, mert az eléggé megbonyolítaná a raktárkezelés további részeit
 				$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
 				if ( $elerheto_db < $tetel -> darabszam) {
+					if ($tetel -> hozott_boritek != 1) {
+//						$hasError = true;	//Átmenetileg kikapcsolva az ellenőrzés
+					}
 					$termek = Termekek::model()->findByPk($tetel->termek_id);
-					$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
 					$termek_info = $termek->nev . ', jelenleg foglalható raktármennyiség:  <strong>' . $elerheto_db . ' db</strong>, foglalni kívánt darabszám: <strong>' . $tetel -> darabszam . '</strong>';
+					$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
 					$email_body = Yii::app()->controller->renderPartial('application.views.szallitolevelek.ertesites_nincs_eleg_raktarkeszlet', array('termek_info'=>$termek_info), true);
 						
 					Utils::sendEmail ($recipients, 'Figyelmeztetés! Termék elérhető mennyisége túl alacsony!', $email_body);
-					$hasError = true;
 				}
 			}
 			

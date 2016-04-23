@@ -629,7 +629,7 @@
 
 		<div class="row buttons">		
 	<?php
-		if ($model->ugyfel_id > 0 && count($model->tetelek) > 0 &&  $model->nyomdakonyv_munka_id == 1) {
+		if ($model->ugyfel_id > 0 && count($model->tetelek) > 0) {
 			if (Yii::app()->user->checkAccess('Szallitolevelek.Create')) {
 				
 				$this->widget('zii.widgets.jui.CJuiButton', array(
