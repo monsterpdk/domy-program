@@ -149,7 +149,18 @@ class NyomdakonyvController extends Controller
 				// LI: csak akkor, ha nem hozott borítékról van szó
 				if ($megrendelesTetel != null && $megrendelesTetel -> hozott_boritek != 1) {
 					// a raktárban töröljük az ide vonatkozó foglalást
-					Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam, $nyomdakonyv->id);
+					
+					if (!Utils::isMunkaInNegativRaktar($nyomdakonyv -> id)) {
+						// ha NEM mínuszos a darabszám
+						Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam, $nyomdakonyv->id);
+					} else {
+						// ha mínuszos a darabszám
+						Utils::negativRaktarbanSztornoz($nyomdakonyv->id);
+					
+						// töröljük a megrendelés tételről is, hogy ő egy negatív raktártermék tétel
+						$megrendelesTetel -> negativ_raktar_termek = 0;
+						$megrendelesTetel -> save (false);
+					}
 				}
 			}
 		}

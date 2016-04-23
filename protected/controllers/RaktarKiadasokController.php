@@ -41,8 +41,8 @@ class RaktarKiadasokController extends Controller
 			
 			if($model->save()) {
 				// kivesszük a raktárból a kért darabszámot
-				Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, false);
-				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, false);
+				Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
+				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
 				
 				$this->redirect(array('index'));
 			}
@@ -72,9 +72,9 @@ class RaktarKiadasokController extends Controller
 			
 			if($model->save()) {
 				// stornozzuk az eddigi levont mennyiséget, majd kivesszük az újat
-				Utils::raktarbolKiveszSztornoz ($model->termek_id, $elozoDarabszam, $model->nyomdakonyv_id, false);
-				Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, false);
-				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, false);
+				Utils::raktarbolKiveszSztornoz ($model->termek_id, $elozoDarabszam, $model->nyomdakonyv_id, true);
+				Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
+				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
 				
 				$this->redirect(array('index'));
 			}
@@ -171,6 +171,10 @@ class RaktarKiadasokController extends Controller
 			if ($raktarKiadas != null) {
 				$raktarKiadas -> sztornozva = 1;
 				$raktarKiadas -> save(false);
+				
+				// visszarakjuk a raktárba a sztornózott darabszámot
+				Utils::raktarbolKiveszSztornoz ($raktarKiadas->termek_id, $raktarKiadas->darabszam, $raktarKiadas->nyomdakonyv_id, true);
+				Utils::raktarbanSztornoz ($raktarKiadas->termek_id, $raktarKiadas->darabszam, $raktarKiadas->nyomdakonyv_id, true);
 			}
 		}
 		

@@ -621,7 +621,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 					'autoOpen'=>false,
 			)));
 
-			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"torolt=0", 'order'=>'nev')), 'id', 'displayTeljesNev');
+			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"", 'order'=>'nev')), 'id', 'displayTeljesNev');
 			echo CHtml::dropDownList('raktarHelyek', '', $list, array());
 			
 			$this->endWidget();

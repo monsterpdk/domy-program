@@ -201,6 +201,9 @@ class AnyagrendelesekController extends Controller
 									Utils::sendEmail ($recipients, 'Figyelmeztetés! Maximum raktárkészlet túllépve', $email_body);
 								}
 							}
+							
+							// megnézzük van-e termék a negatív raktártermék táblában és ha igen, akkor kielégíthető-e valamely igény
+							Utils::checkNegativRaktarTermekek();
 						}
 					}
 					

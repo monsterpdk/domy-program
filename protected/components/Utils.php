@@ -276,25 +276,25 @@
 					switch ($szinszam1) {
 						case 1: $elooldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
 							break ;
-						case 2: $elooldali_nyomasi_ar = $nyomasiAr["szin_ketto"] * $szinszam1 ;
+						case 2: $elooldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
 							break ;
-						case 3: $elooldali_nyomasi_ar = $nyomasiAr["szin_harom"] * $szinszam1 ;
+						case 3: $elooldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
 							break ;
 						case 0: $elooldali_nyomasi_ar = 0 ;
 							break ;
-						default: $elooldali_nyomasi_ar = $nyomasiAr["szin_tobb"] * $szinszam1 ;
+						default: $elooldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
 					}
 					
 					switch ($szinszam2) {
 						case 1: $hatoldali_nyomasi_ar = $nyomasiAr["szin_egy"] ;
 							break ;
-						case 2: $hatoldali_nyomasi_ar = $nyomasiAr["szin_ketto"] * $szinszam2 ;
+						case 2: $hatoldali_nyomasi_ar = $nyomasiAr["szin_ketto"] ;
 							break ;
-						case 3: $hatoldali_nyomasi_ar = $nyomasiAr["szin_harom"] * $szinszam2 ;
+						case 3: $hatoldali_nyomasi_ar = $nyomasiAr["szin_harom"] ;
 							break ;
 						case 0: $hatoldali_nyomasi_ar = 0 ;
 							break ;
-						default: $hatoldali_nyomasi_ar = $nyomasiAr["szin_tobb"] * $szinszam2 ;
+						default: $hatoldali_nyomasi_ar = $nyomasiAr["szin_tobb"] ;
 					}
 					$nyomasi_ar = $elooldali_nyomasi_ar + $hatoldali_nyomasi_ar ;
 //					echo $nyomasi_ar ;
@@ -477,6 +477,7 @@
 		// TODO:	ezeket a kevert nyelvű függvényneveket majd egyszer lehet átírnám, nem szokásom ilyen elnevezéseket csinálni, de mivel
 		//			az adatbázisban is így tároljuk őket, valahogy így álltam neki
 		// $skipId: ha ez TRUE, akkor a lekérdezésben az adott ID-hoz tartozó szállítólevél tételeket is visszaadjuk (pl. szerkesztésnél kell)
+		//			annyival bővült a szűrés, hogy a negatív raktárban lévő elemeket kihagyjuk az eredményhalmazból
 		function getSzallitolevelTetelToMegrendeles ($id, $skipId = null) {
 			$result = array();
 
@@ -490,7 +491,7 @@
 							SELECT megrendeles_tetel_id, SUM(darabszam) AS darabszam FROM dom_szallitolevelek
 							JOIN dom_szallitolevel_tetelek
 							ON dom_szallitolevelek.id = dom_szallitolevel_tetelek.szallitolevel_id 
-							WHERE sztornozva = 0 AND dom_szallitolevelek.torolt = 0 AND megrendeles_id = :id" . $skipIDCondition . " 
+							WHERE sztornozva = 0 AND dom_szallitolevelek.torolt = 0 AND megrendeles_id = :id " . $skipIDCondition . " 
 							GROUP BY megrendeles_tetel_id
 						";
 
@@ -501,12 +502,16 @@
 						// végigmegyünk a megrendelés tételein és külön gyűjtjük azokat, amiket nem találunk a szállítóleveleken még
 						foreach ($megrendeles->tetelek as $tetel )
 						{
-							$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
-							if ($darabszamKulonbozet == -1)
-								array_push ($result, $tetel);
-							else if ($darabszamKulonbozet > 0) {
-								$tetel->darabszam = $darabszamKulonbozet;
-								array_push ($result, $tetel);
+							$nyomdakonyv = Nyomdakonyv::model()->findByAttributes(array("megrendeles_tetel_id" => $tetel -> id));
+							
+							if ($tetel -> negativ_raktar_termek == 0 && $nyomdakonyv != null && $nyomdakonyv -> sztornozva == 0) {
+								$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
+								if ($darabszamKulonbozet == -1)
+									array_push ($result, $tetel);
+								else if ($darabszamKulonbozet > 0) {
+									$tetel->darabszam = $darabszamKulonbozet;
+									array_push ($result, $tetel);
+								}
 							}
 						}
 				}
@@ -1156,9 +1161,11 @@
 			return (number_format($suly / 1000, 0, '.', ' '));
 		}
 
-		// LI: egy sessionváltozóban tárolt url-re irányít át (az oldal nevét paraméterben várja)
+		// LI: egy session változóban tárolt url-re irányít át (az oldal nevét paraméterben várja)
 		function gotoPrevPage ($pageName, $args = array()) {
 			$link = Yii::app()->session[$pageName . Yii::app()->user->id . 'returnURL'] ;
+			
+			$args_string = "";
 			if (count($args) > 0) {
 				$args_string = "?" ;
 				$link_args_string = substr($link, strpos($link, "?") + 1) ;
@@ -1389,15 +1396,15 @@
 		}
 		
 		// LI: 	egy belső függvény, ami a tételek raktárban történő helyváltoztatásait kezeli le 
-		// 		tetelId 	- a szóban forgó megrendelés tétel id-ja,
+		// 		tetelId 	- a szóban forgó megrendelésen lévő termék id-ja,
 		// 		darabszam 	- az adott tételből hány darabra vonatkozik az elvégzendő művelet
 		//		muvelet		- BERAK, FOGLAL, SZTORNOZ, KIVESZ, KIVESZ_SZTORNOZ értékek lehetnek itt
 		//
 		// LI: ha hozott borítékos, akkor nem foglalkozunk a raktárműveletekkel, mert nem saját borítékot használunk
 		private function raktarMozgas ($tetelId, $darabszam, $muvelet, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
 			$result = true;
-			//A raktárműveletek átmenetileg kikapcsolva, amíg a negatív raktár nem működik
-/*			if ($tetelId != null && $darabszam != null && $muvelet != null && $muvelet != "") {
+			
+			if ($tetelId != null && $darabszam != null && $muvelet != null && $muvelet != "") {
 				if ($muvelet != null && $muvelet != "") {
 					if ($muvelet == 'BERAK') {
 						// TODO: egyelőre ez az AnyagrendelesekController és AnyagbeszallitasokController osztályokban van kezelve
@@ -1438,7 +1445,7 @@
 								
 								$result = false;
 							} else {
-								$raktarTermekek = RaktarTermekek::model() -> findAllByAttributes(array('termek_id' => $tetelId), array('order'=>'id DESC'));
+								$raktarTermekek = RaktarTermekek::model() -> findAllByAttributes(array('termek_id' => $tetelId), array('order'=>'id ASC'));
 								$termek = Termekek::model() -> findByPk($tetelId);
 
 								if ($raktarTermekek != null && count($raktarTermekek > 0) && $termek != null) {
@@ -1495,11 +1502,13 @@
 							foreach ($raktarTermekekTranzakciok as $raktarTermekekTranzakcio) {
 								$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $termek->id, 'anyagbeszallitas_id' => $raktarTermekekTranzakcio->anyagbeszallitas_id));
 								
-								$raktarTermek -> foglalt_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
-								$raktarTermek -> osszes_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
+								if ($raktarTermek != null) {
+									$raktarTermek -> foglalt_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
+									$raktarTermek -> osszes_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
 
-								$raktarTermek -> save(false);
-
+									$raktarTermek -> save(false);
+								}
+								
 								if ($tranzakcioMentese) {
 									$raktarTermekekTranzakcio->delete();							
 								}
@@ -1559,7 +1568,13 @@
 					}
 					
 				}
-			}*/
+				
+				// megnézzük van-e termék a negatív raktártermék táblában és ha igen, akkor kielégíthető-e valamely igény
+				Utils::checkNegativRaktarTermekek();
+				
+				// töröljük az olyan raktártermék sorokat, ahol az összes, elérhető és foglalt darabszámok is 0-ák
+				Utils::removeEmptyRaktarTermekek();
+			}
 			
 			return $result;
 		}
@@ -1805,6 +1820,55 @@
 			$MunkataskaXmlExportPath = Yii::app()->config->get('MunkataskaXmlExportPath');		//Ennek a beállítási lehetőségét betenni a nyomdakönyvi beállítások oldalra
 			$xml_munkataska->asXML($MunkataskaXmlExportPath . "/" . $nyomdakonyv->taskaszam . ".xml");			
 			
+		}
+
+		// LI : az adott munka foglalása a negatív raktárban van-e (true, false)
+		function isMunkaInNegativRaktar ($nyomdakonyv_id) {
+			$nyomdakonyv = Nyomdakonyv::model()->findByPk ($nyomdakonyv_id);
+			
+			if ($nyomdakonyv != null) {
+				$negativRaktarTermek = RaktarTermekekNegativ::model() -> findByAttributes(array('nyomdakonyv_id' => $nyomdakonyv->id));
+				
+				return $negativRaktarTermek != null;
+			}
+			
+			return false;
+		}
+		
+		// LI : nyomdakönyv sztornózásakor törlésekor, sztornózásakor a negatív táblában lévő, megrendeléshez kapcsolódó termékeket kitöröljük
+		function negativRaktarbanSztornoz ($nyomdakonyv_id) {
+			$negativRaktarTermek = RaktarTermekekNegativ::model() -> findByAttributes(array('nyomdakonyv_id' => $nyomdakonyv_id));
+			
+			if ($negativRaktarTermek != null) {
+				$negativRaktarTermek -> delete ();
+			}
+		}
+		
+		// LI : végigmegy a negatív raktárban lévő termékeken és kielégít minden foglalási igényt, amit a jelenlegi raktárkészlet alapján tud
+		function checkNegativRaktarTermekek () {
+			$negativRaktarTermekek = RaktarTermekekNegativ::model() -> findAll(array('order'=>'hatarido DESC'));
+
+			foreach ($negativRaktarTermekek as $negativRaktarTermek) {
+				if (Utils::getTermekRaktarkeszlet ($negativRaktarTermek -> termek_id, 'elerheto_db') >= $negativRaktarTermek -> darabszam) {
+					// találtunk a soron következő foglalási igényhez elegendő terméket a raktárban, így elindítjuk a foglalást, majd töröljük a negatív raktártermék táblából az igényt
+					Utils::raktarbanFoglal($negativRaktarTermek -> termek_id, $negativRaktarTermek -> darabszam, $negativRaktarTermek -> nyomdakonyv_id);
+					
+					// megkeressük a megrendelés tételt és levesszük róla a flag, ami jelzi, hogy negatív raktárban van a foglalási igény
+					$nyomdakonyv = Nyomdakonyv::model() -> findByPk ($negativRaktarTermek -> nyomdakonyv_id);
+					if ($nyomdakonyv != null) {
+						$nyomdakonyv -> megrendeles_tetel -> negativ_raktar_termek = 0;
+						$nyomdakonyv -> megrendeles_tetel -> save (false);
+					}
+					
+					// töröljük a negatív raktárban lévő tételt
+					$negativRaktarTermek -> delete ();
+				}
+			}
+		}
+
+		// LI : // törli az olyan raktártermék sorokat, ahol az összes, elérhető és foglalt darabszámok is 0-ák
+		function removeEmptyRaktarTermekek () {
+			RaktarTermekek::model() ->deleteAllByAttributes (array ('osszes_db' => 0, 'foglalt_db' => 0, 'elerheto_db' => 0));
 		}
 
 	}

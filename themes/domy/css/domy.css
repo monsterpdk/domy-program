@@ -916,6 +916,15 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-right: 20px;
 }
+#termek-athelyez-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#termek-athelyez-form .row {
+	float: left;
+	margin-right: 20px;
+}
 #zuh-form .portlet {
 	float: left;
 	margin-right: 20px;

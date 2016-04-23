@@ -540,4 +540,12 @@ class Nyomdakonyv extends CActiveRecord
 		$html .= '</table>' ;
 		return $html;
 	}
+	
+	// LI: visszaadja, hogy a nyomdakönyvi munka szerepel-e a negatív raktárkészletben
+	public function isInNegativRkatarTermekek () {
+		$negativRaktarTermek = RaktarTermekekNegativ::model() -> findByAttributes(array('nyomdakonyv_id' => $this ->id));
+		
+		return $negativRaktarTermek != null;
+	}
+	
 }

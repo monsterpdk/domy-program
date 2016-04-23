@@ -33,7 +33,7 @@
 			<?php echo $form->label($model,'raktar_hely_search'); ?>
 			<?php
 				echo $form->dropDownList($model, 'raktar_hely_search',
-					CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"torolt=0", 'order'=>'nev')), 'nev', 'nev'),
+					CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"", 'order'=>'nev')), 'nev', 'nev'),
 					array(
 						'empty'=>'--Minden--',
 					)
