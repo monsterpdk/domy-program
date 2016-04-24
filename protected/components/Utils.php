@@ -508,7 +508,7 @@
 						{
 							$nyomdakonyv = Nyomdakonyv::model()->findByAttributes(array("megrendeles_tetel_id" => $tetel -> id));
 							
-							if ($tetel -> negativ_raktar_termek == 0 && $nyomdakonyv != null && $nyomdakonyv -> sztornozva == 0) {
+							if ($tetel -> negativ_raktar_termek == 0 && (($nyomdakonyv != null && $nyomdakonyv -> sztornozva == 0) || ($nyomdakonyv == null && $tetel->szinek_szama1 + $tetel->szinek_szama2 == 0)) ) {
 								$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
 								if ($darabszamKulonbozet == -1)
 									array_push ($result, $tetel);
