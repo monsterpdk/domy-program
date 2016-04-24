@@ -896,8 +896,8 @@ class StatisztikakController extends Controller
 		$stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesOsszegNyomasAjanlatNelkul_10000_alatt ;
 		$stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesTetelekLegparnasAjanlatNelkul_10000_alatt ;		
 		$stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = $megrendelesOsszegLegparnasAjanlatNelkul_10000_alatt ;
-		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_alatt["eladás"]) ;
-		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_alatt["nyomás"]) ;
+		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = count($megrendelesCegek_kiemeltek_nelkul_10000_alatt["eladás_ajánlat_nélkül"]) ;
+		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] = count($megrendelesCegek_kiemeltek_nelkul_10000_alatt["nyomás_ajánlat_nélkül"]) ;
 		
 		$stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesekEladasAjanlatNelkul_10000_felett ;
 		$stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesTetelekEladasAjanlatNelkul_10000_felett ;		
@@ -907,8 +907,8 @@ class StatisztikakController extends Controller
 		$stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesOsszegNyomasAjanlatNelkul_10000_felett ;
 		$stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesTetelekLegparnasAjanlatNelkul_10000_felett ;		
 		$stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $megrendelesOsszegLegparnasAjanlatNelkul_10000_felett ;
-		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_felett["eladás"]) ;
-		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkulAjanlatNelkul_10000_felett["nyomás"]) ;		
+		$stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkul_10000_felett["eladás_ajánlat_nélkül"]) ;
+		$stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = count($megrendelesCegek_kiemeltek_nelkul_10000_felett["nyomás_ajánlat_nélkül"]) ;		
 
 		
 		if ($stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul"] > 0)
@@ -1112,6 +1112,11 @@ class StatisztikakController extends Controller
 		$stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett - $anyagkoltseg_termekeken_eladas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett;
 		$stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett - $anyagkoltseg_termekeken_nyomas_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett;
 		$stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"] = $stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];
+
+		$stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul"] = $stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];
+		$stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul"] = $stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];
+		$stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul"] = $stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"];
+
 		
 		unset($megrendelesTetelekStatisztika_kiemeltek_nelkul) ;
 		

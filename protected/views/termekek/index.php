@@ -102,7 +102,7 @@ $this->breadcrumbs=array(
 ?>
 
 <?php
-	if (is_numeric($updated)) {
+	if (is_numeric($updated) && $updated > 0) {
 ?>
 	<script>
 		$(document).ready(function() {

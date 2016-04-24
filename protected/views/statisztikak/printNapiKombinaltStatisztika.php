@@ -513,10 +513,35 @@ Boríték eladás: nincs színszám, Nyomás (saját+bér): van színszám. A k�
 					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["arajanlatOsszegEladas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegNyomas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegLegparnas_kiemeltek_nelkul"],0);?> Ft</td>
 				</tr>
 				<tr>
-					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkul"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul"],0);?> Ft</td>
-					<td colspan="2" class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul"];?> tétel</td>
-					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkul"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul"],0);?> Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
 				</tr>				
+
+				<tr>
+					<td class="szegely_nincs" colspan="4">
+						Termék eladás ajánlat nélkül
+					</td>					
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="nincs_szegely" colspan="4">Nyomás ajánlat nélkül</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>				
+				<tr class="osszesen_sor">
+					<td class="nincs_szegely" colspan="4">Összesen ajánlat nélkül</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+				</tr>				
+				
 			</table>
 		</td>
 		<td colspan="2">
@@ -552,11 +577,48 @@ Boríték eladás: nincs színszám, Nyomás (saját+bér): van színszám. A k�
 					<td class="adat_cella jobbra"><?php echo $stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalek"];?> &nbsp;&nbsp;&nbsp;<?php echo $stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalek"];?></td>
 				</tr>
 				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekEladasAjanlatNelkul_kiemeltek_nelkul"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesStatisztikaAjanlatNelkul_kiemeltek_nelkul"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegEladasAjanlatNelkul_kiemeltek_nelkul"],0);?> Ft</td>
+					<td class="adat_cella jobbra" style="width:100px;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesTetelekStatisztikaAjanlatNelkul_kiemeltek_nelkul"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekNyomasAjanlatNelkul_kiemeltek_nelkul"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesNyomasStatisztikaAjanlatNelkul_kiemeltek_nelkul"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegNyomasAjanlatNelkul_kiemeltek_nelkul"],0);?> Ft</td>
 					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
-					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul"];?> tétel</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesNyomasTetelekStatisztikaAjanlatNelkul_kiemeltek_nelkul"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr class="osszesen_sor">
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekEladasAjanlatNelkul_kiemeltek_nelkul"] + $stat_adatok["megrendelesCegekNyomasAjanlatNelkul_kiemeltek_nelkul"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesStatisztikaAjanlatNelkul_kiemeltek_nelkul"] + $stat_adatok["megrendelesNyomasStatisztikaAjanlatNelkul_kiemeltek_nelkul"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegEladasAjanlatNelkul_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegNyomasAjanlatNelkul_kiemeltek_nelkul"],0);?> Ft</td>
+					<td class="adat_cella jobbra">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesTetelekStatisztikaAjanlatNelkul_kiemeltek_nelkul"] + $stat_adatok["megrendelesNyomasTetelekStatisztikaAjanlatNelkul_kiemeltek_nelkul"];?> tétel</td>
 					<td class="adat_cella jobbra szegely_jobb">&nbsp;</td>
 					<td>&nbsp;</td>
-				</tr>
+				</tr>				
 			</table>
 		</td>		
 	</tr>
@@ -604,10 +666,34 @@ Darabszám 10 000 alatt <span class="cim_cella_kisbetu">kiemelt cégek nélkül<
 					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["arajanlatOsszegEladas_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["arajanlatOsszegLegparnas_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["arajanlatOsszegNyomas_kiemeltek_nelkul_10000_alatt"],0);?> Ft</td>
 				</tr>
 				<tr>
-					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_alatt"],0);?> Ft</td>
-					<td colspan="2" class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"];?> tétel</td>
-					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_jobb szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_alatt"],0);?> Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>	
+				
+				<tr>
+					<td class="szegely_nincs" colspan="4">
+						Termék eladás ajánlat nélkül
+					</td>					
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="nincs_szegely" colspan="4">Nyomás ajánlat nélkül</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra szegely_alul">&nbsp;</td>
 				</tr>				
+				<tr class="osszesen_sor">
+					<td class="nincs_szegely" colspan="4">Összesen ajánlat nélkül</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_alatt"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+				</tr>					
 			</table>
 		</td>
 		<td colspan="2">
@@ -643,11 +729,49 @@ Darabszám 10 000 alatt <span class="cim_cella_kisbetu">kiemelt cégek nélkül<
 					<td class="adat_cella jobbra"><?php echo $stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalek_10000_alatt"];?> &nbsp;&nbsp;&nbsp;<?php echo $stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalek_10000_alatt"];?></td>
 				</tr>
 				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] ;?> tétel</td>
+					<td class="adat_cella jobbra szegely_jobb szegely_alul">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"],0);?> Ft</td>
+					<td class="adat_cella jobbra" style="width:100px;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"],0);?> Ft</td>
 					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
-					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkul_10000_alatt"] ;?> tétel</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr class="osszesen_sor">
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_alatt"],0);?> Ft</td>
+					<td class="adat_cella jobbra">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_alatt"];?> tétel</td>
 					<td class="adat_cella jobbra szegely_jobb">&nbsp;</td>
 					<td>&nbsp;</td>
-				</tr>
+				</tr>				
+				
 			</table>
 		</td>		
 	</tr>
@@ -695,10 +819,35 @@ Darabszám 10 000, vagy felette <span class="cim_cella_kisbetu">kiemelt cégek n
 					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["arajanlatOsszegEladas_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatOsszegLegparnas_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatOsszegNyomas_kiemeltek_nelkul_10000_felett"],0);?> Ft</td>
 				</tr>
 				<tr>
-					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkul_10000_felett"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_felett"],0);?> Ft</td>
-					<td colspan="2" class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkul_10000_felett"];?> tétel</td>
-					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_jobb szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkul_10000_felett"] + $stat_adatok["haszon_nyomas_kiemeltek_nelkul_10000_felett"],0);?> Ft</td>
+					<td colspan="2" class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["arajanlatTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["arajanlatNyomasTetelekStatisztika_kiemeltek_nelkul_10000_felett"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>	
+				
+				<tr>
+					<td class="szegely_nincs" colspan="4">
+						Termék eladás ajánlat nélkül
+					</td>					
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_eladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra szegely_alul">&nbsp;</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="nincs_szegely" colspan="4">Nyomás ajánlat nélkül</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_nyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra szegely_alul">&nbsp;</td>
 				</tr>				
+				<tr class="osszesen_sor">
+					<td class="nincs_szegely" colspan="4">Összesen ajánlat nélkül</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo Utils::OsszegFormazas($stat_adatok["haszon_osszesen_kiemeltek_nelkulAjanlatNelkul_10000_felett"],0);?> Ft</td>
+					<td colspan="3" class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+				</tr>					
+				
 			</table>
 		</td>
 		<td colspan="2">
@@ -734,11 +883,49 @@ Darabszám 10 000, vagy felette <span class="cim_cella_kisbetu">kiemelt cégek n
 					<td class="adat_cella jobbra"><?php echo $stat_adatok["osszesen_arajanlatcegek_megrendelescegek_szazalek_10000_felett"];?> &nbsp;&nbsp;&nbsp;<?php echo $stat_adatok["osszesen_arajanlatszam_megrendelesszam_szazalek_10000_felett"];?></td>
 				</tr>
 				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkul_10000_felett"] ;?> tétel</td>
+					<td class="adat_cella jobbra szegely_jobb szegely_alul">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"],0);?> Ft</td>
+					<td class="adat_cella jobbra" style="width:100px;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"],0);?> Ft</td>
 					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
-					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["megrendelesLegparnasTetelekStatisztika_kiemeltek_nelkul_10000_felett"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkul_10000_felett"] ;?> tétel</td>
+				</tr>
+				<tr style="border-bottom:solid 2px black">
+					<td class="adat_cella jobbra szegely_alul">&nbsp;</td>
+					<td class="adat_cella jobbra szegely_alul"><?php echo $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> tétel</td>
+					<td class="adat_cella jobbra szegely_alul szegely_jobb">&nbsp;</td>
+					<td class="szegely_alul">&nbsp;</td>
+				</tr>
+				<tr class="osszesen_sor">
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesCegekEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesCegekNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> cég</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> db</td>
+					<td class="adat_cella jobbra szegely_jobb"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkulAjanlatNelkul_10000_felett"],0);?> Ft</td>
+					<td class="adat_cella jobbra">&nbsp;</td>
+				</tr>
+				<tr>
+					<td class="adat_cella jobbra nincs_szegely">&nbsp;</td>
+					<td class="adat_cella jobbra nincs_szegely"><?php echo $stat_adatok["megrendelesTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"] + $stat_adatok["megrendelesNyomasTetelekStatisztika_kiemeltek_nelkulAjanlatNelkul_10000_felett"];?> tétel</td>
 					<td class="adat_cella jobbra szegely_jobb">&nbsp;</td>
 					<td>&nbsp;</td>
-				</tr>
+				</tr>				
+				
 			</table>
 		</td>		
 	</tr>
