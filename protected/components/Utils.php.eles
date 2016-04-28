@@ -657,7 +657,14 @@
 					$afakulcs = AfaKulcsok::model() -> findByAttributes(array('id'=>$tetel->termek->afakulcs_id)) ;
 					$sor = array() ;
 					$sor["Cikkszam"] = $cikkszam;
-					$sor["CikkNev"] = substr($tetel->termek->getDisplayTermekTeljesNev(),0,100) ;
+					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
+						$cikknev = $tetel->termek->getDisplayTermekTeljesNev() . " " . $tetel->szinek_szama1 . "+" . $tetel->szinek_szama2 ;
+					}
+					else
+					{
+						$cikknev = $tetel->termek->getDisplayTermekTeljesNev() ;
+					}
+					$sor["CikkNev"] = substr($cikknev,0,100) ;
 					$sor["MEgyseg"] = "db" ;
 					$sor["AfaKulcs"] = $afakulcs->afa_szazalek ;
 					if ($tetel->termek->tipus == "Szolgáltatás") {
