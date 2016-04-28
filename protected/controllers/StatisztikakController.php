@@ -211,9 +211,13 @@ class StatisztikakController extends Controller
 		$dataProvider=new CActiveDataProvider('Megrendelesek', array(
 			'criteria'=>array(
 				'condition'=>'t.torolt=0 and t.sztornozva=0 and szamla_sorszam != \'\' and szamla_fizetve = 0',
+				'with'=>array('penzugyi_tranzakciok'),
+				'together'=>true,
 			),
 			'countCriteria'=>array(
 				'condition'=>'t.torolt=0 and t.sztornozva=0 and szamla_sorszam != \'\' and szamla_fizetve = 0',
+				'with'=>array('penzugyi_tranzakciok'),
+				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,
@@ -310,10 +314,12 @@ class StatisztikakController extends Controller
 		$arajanlatOsszegNyomas_10000_felett = 0 ;
 		if ($arajanlatTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($arajanlatTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {
+				$eladas = false ;
 				$nyomas = false ;
 				$arajanlat_darabszamok = array("tizezer_alatt"=>0,"tizezer_felett"=>0) ;
 				foreach ($sor->tetelek as $tetel_sor) {
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
+						$eladas = true ;
 						$arajanlatTetelekLegparnas++ ;
 						$arajanlatOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 						if ($tetel_sor->darabszam < 10000) {
@@ -346,6 +352,7 @@ class StatisztikakController extends Controller
 					}
 					else
 					{
+						$eladas = true ;
 						$arajanlatTetelekEladas++ ;
 						$arajanlatOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;						
 						if ($tetel_sor->darabszam < 10000) {
@@ -380,7 +387,7 @@ class StatisztikakController extends Controller
 						$arajanlatCegek_kiemeltek_nelkul_10000_felett["nyomás"][$sor->ugyfel_id]++ ;						
 					}
 				}
-				else
+				if ($eladas)
 				{
 					$arajanlatokEladas++ ;
 					if (!isset($arajanlatCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id])) {
@@ -450,8 +457,10 @@ class StatisztikakController extends Controller
 		if ($arajanlatTetelekStatisztika_csak_kiemeltek->totalItemCount > 0) {
 			foreach ($arajanlatTetelekStatisztika_csak_kiemeltek->getData() as $sor) {
 				$nyomas = false ;
+				$eladas = false ;
 				foreach ($sor->tetelek as $tetel_sor) {
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
+						$eladas = true ;
 						$arajanlatTetelekLegparnas++ ;
 						$arajanlatOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 					}
@@ -462,6 +471,7 @@ class StatisztikakController extends Controller
 					}
 					else
 					{
+						$eladas = true ;
 						$arajanlatTetelekEladas++ ;
 						$arajanlatOsszegEladas_csak_kiemeltek += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;						
 					}
@@ -469,7 +479,7 @@ class StatisztikakController extends Controller
 				if ($nyomas) {
 					$arajanlatokNyomas++ ;
 				}
-				else
+				if ($eladas)
 				{
 					$arajanlatokEladas++ ;
 				}
@@ -546,6 +556,7 @@ class StatisztikakController extends Controller
 		if ($megrendelesTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($megrendelesTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {
 				$nyomas = false ;
+				$eladas = false ;
 				$megrendeles_darabszamok = array("tizezer_alatt"=>0,"tizezer_felett"=>0) ;				
 				foreach ($sor->tetelek as $tetel_sor) {
 					$db_eladasi_ar = 0 ;
@@ -562,6 +573,7 @@ class StatisztikakController extends Controller
 					}					
 //					print_r($termek->termekar) ;
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
+						$eladas = true ;
 						if ($sor->arajanlat_id == 0) {
 							$megrendelesTetelekEladasAjanlatNelkul++ ;
 							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
@@ -688,6 +700,7 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->termek->tipus != "Szolgáltatás" && $tetel_sor->termek->nev != "Kuponfelhasználás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás, nem kuponfelhasználás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
+						$eladas = true ;
 						if ($sor->arajanlat_id == 0) {
 							$megrendelesTetelekEladasAjanlatNelkul++ ;
 							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
@@ -793,7 +806,7 @@ class StatisztikakController extends Controller
 						}
 					}
 				}
-				else
+				if ($eladas)
 				{
 					if ($sor->arajanlat_id == 0) {
 						$megrendelesekEladasAjanlatNelkul++ ;
@@ -1141,7 +1154,8 @@ class StatisztikakController extends Controller
 			foreach ($megrendelesTetelekStatisztika_csak_kiemeltek->getData() as $sor) {
 				$cegek_kiemeltek[$sor->ugyfel->cegnev]["megrendelesszam"]++ ;
 				$cegek_megrendelesszam_osszesen_csak_kiemeltek++ ;
-				$nyomas = false ;				
+				$nyomas = false ;
+				$eladas = false ;				
 				foreach ($sor->tetelek as $tetel_sor) {
 					$cegek_kiemeltek[$sor->ugyfel->cegnev]["megrendeles_osszeg"] += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
 					$cegek_megrendelesosszeg_csak_kiemeltek += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
@@ -1159,6 +1173,7 @@ class StatisztikakController extends Controller
 					}					
 //					print_r($termek->termekar) ;
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
+						$eladas = true ;
 						$megrendelesTetelekLegparnas++ ;
 						$megrendelesOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
@@ -1193,6 +1208,7 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
+						$eladas = true ;
 						$megrendelesTetelekEladas++ ;
 						$megrendelesOsszegEladas_csak_kiemeltek += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;	
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
@@ -1212,7 +1228,7 @@ class StatisztikakController extends Controller
 				if ($nyomas) {
 					$megrendelesekNyomas++ ;
 				}
-				else
+				if ($eladas)
 				{
 					$megrendelesekEladas++ ;
 				}
@@ -1273,7 +1289,8 @@ class StatisztikakController extends Controller
 		$szamlazott_megrendelesek_ajanlat_nelkul_osszeg_osszesen = 0 ;
 		if ($szamlazott_megrendelesek->totalItemCount > 0) {
 			foreach ($szamlazott_megrendelesek->getData() as $sor) {
-				$nyomas = false ;				
+				$nyomas = false ;	
+				$elasas = false ;
 				foreach ($sor->tetelek as $tetel_sor) {
 					$termek = $tetel_sor->termek ;
 					if ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
@@ -1288,6 +1305,7 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
+						$eladas = true ;
 						if ($sor->ugyfel->kiemelt == 1) {
 							$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 						}
@@ -1307,7 +1325,7 @@ class StatisztikakController extends Controller
 						$szamlazott_megrendelesek_ajanlat_nelkul_nyomas_kiemeltek_nelkul++ ;
 					}
 				}
-				else
+				if ($eladas)
 				{
 					if ($sor->ugyfel->kiemelt == 1) {
 						$szamlazott_megrendelesek_ajanlat_nelkul_eladas_osszesen++ ;
@@ -1354,7 +1372,8 @@ class StatisztikakController extends Controller
 		$szamlazott_megrendelesek_osszeg_osszesen = 0 ;
 		if ($szamlazott_megrendelesek->totalItemCount > 0) {
 			foreach ($szamlazott_megrendelesek->getData() as $sor) {
-				$nyomas = false ;				
+				$nyomas = false ;	
+				$eladas = false ;
 				foreach ($sor->tetelek as $tetel_sor) {
 					$termek = $tetel_sor->termek ;
 					if ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
@@ -1369,6 +1388,7 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
+						$eladas = true ;
 						if ($sor->ugyfel->kiemelt == 1) {
 							$szamlazott_megrendelesek_eladas_osszeg_osszesen += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 						}
@@ -1388,7 +1408,7 @@ class StatisztikakController extends Controller
 						$szamlazott_megrendelesek_nyomas_kiemeltek_nelkul++ ;
 					}
 				}
-				else
+				if ($eladas)
 				{
 					if ($sor->ugyfel->kiemelt == 1) {
 						$szamlazott_megrendelesek_eladas_osszesen++ ;
@@ -1566,19 +1586,105 @@ class StatisztikakController extends Controller
 		$ugyvednek_atadva["db"] = 0 ;
 		$ugyvednek_atadva["netto"] = 0 ;
 		$ugyvednek_atadva["brutto"] = 0 ;		
+
+		$osszes_nyitott_megrendeles_kiemeltek_nelkul["db"] = 0 ;
+		$osszes_nyitott_megrendeles_kiemeltek_nelkul["netto"] = 0 ;
+		$osszes_nyitott_megrendeles_kiemeltek_nelkul["brutto"] = 0 ;		
+		$mult_honapban_lejartak_kiemeltek_nelkul["db"] = 0 ;
+		$mult_honapban_lejartak_kiemeltek_nelkul["netto"] = 0 ;
+		$mult_honapban_lejartak_kiemeltek_nelkul["brutto"] = 0 ;		
+		$mult_evben_lejartak_kiemeltek_nelkul["db"] = 0 ;
+		$mult_evben_lejartak_kiemeltek_nelkul["netto"] = 0 ;
+		$mult_evben_lejartak_kiemeltek_nelkul["brutto"] = 0 ;		
+		$lejartak_kiemeltek_nelkul["db"] = 0 ;
+		$lejartak_kiemeltek_nelkul["netto"] = 0 ;
+		$lejartak_kiemeltek_nelkul["brutto"] = 0 ;		
+		$nem_lejartak_kiemeltek_nelkul["db"] = 0 ;
+		$nem_lejartak_kiemeltek_nelkul["netto"] = 0 ;
+		$nem_lejartak_kiemeltek_nelkul["brutto"] = 0 ;		
+		$lejarnak_ebben_a_honapban_kiemeltek_nelkul["db"] = 0 ;
+		$lejarnak_ebben_a_honapban_kiemeltek_nelkul["netto"] = 0 ;
+		$lejarnak_ebben_a_honapban_kiemeltek_nelkul["brutto"] = 0 ;		
+		$behajto_cegnek_atadva_kiemeltek_nelkul["db"] = 0 ;
+		$behajto_cegnek_atadva_kiemeltek_nelkul["netto"] = 0 ;
+		$behajto_cegnek_atadva_kiemeltek_nelkul["brutto"] = 0 ;		
+		$ugyvednek_atadva_kiemeltek_nelkul["db"] = 0 ;
+		$ugyvednek_atadva_kiemeltek_nelkul["netto"] = 0 ;
+		$ugyvednek_atadva_kiemeltek_nelkul["brutto"] = 0 ;		
+
+		$osszes_nyitott_megrendeles_csak_kiemeltek["db"] = 0 ;
+		$osszes_nyitott_megrendeles_csak_kiemeltek["netto"] = 0 ;
+		$osszes_nyitott_megrendeles_csak_kiemeltek["brutto"] = 0 ;		
+		$mult_honapban_lejartak_csak_kiemeltek["db"] = 0 ;
+		$mult_honapban_lejartak_csak_kiemeltek["netto"] = 0 ;
+		$mult_honapban_lejartak_csak_kiemeltek["brutto"] = 0 ;		
+		$mult_evben_lejartak_csak_kiemeltek["db"] = 0 ;
+		$mult_evben_lejartak_csak_kiemeltek["netto"] = 0 ;
+		$mult_evben_lejartak_csak_kiemeltek["brutto"] = 0 ;		
+		$lejartak_csak_kiemeltek["db"] = 0 ;
+		$lejartak_csak_kiemeltek["netto"] = 0 ;
+		$lejartak_csak_kiemeltek["brutto"] = 0 ;		
+		$nem_lejartak_csak_kiemeltek["db"] = 0 ;
+		$nem_lejartak_csak_kiemeltek["netto"] = 0 ;
+		$nem_lejartak_csak_kiemeltek["brutto"] = 0 ;		
+		$lejarnak_ebben_a_honapban_csak_kiemeltek["db"] = 0 ;
+		$lejarnak_ebben_a_honapban_csak_kiemeltek["netto"] = 0 ;
+		$lejarnak_ebben_a_honapban_csak_kiemeltek["brutto"] = 0 ;		
+		$behajto_cegnek_atadva_csak_kiemeltek["db"] = 0 ;
+		$behajto_cegnek_atadva_csak_kiemeltek["netto"] = 0 ;
+		$behajto_cegnek_atadva_csak_kiemeltek["brutto"] = 0 ;		
+		$ugyvednek_atadva_csak_kiemeltek["db"] = 0 ;
+		$ugyvednek_atadva_csak_kiemeltek["netto"] = 0 ;
+		$ugyvednek_atadva_csak_kiemeltek["brutto"] = 0 ;		
+
+		$kiemelt_cegek_nyitott_megrendelesekkel = array() ;
 		
 		$nyitott_megrendelesek = $this->getTartozasok() ;
 		$elozo_honap = mktime(0, 0, 0, date("m")-1, date("d"), date("Y"));
 		$elozo_ev = mktime(0, 0, 0, date("m"), date("d"), date("Y")-1);
+		$tartozasok_ev_honap = array() ;
 		if ($nyitott_megrendelesek->totalItemCount > 0) {
 			foreach ($nyitott_megrendelesek->getData() as $sor) {
-				$megrendeles_ertek = $sor->getMegrendelesOsszeg() ;			
+				$megrendeles_ertek = $sor->getMegrendelesOsszeg() ;
+				$befizetett_osszeg = 0 ;				
+				if (count($sor->penzugyi_tranzakciok) > 0) {
+					foreach ($sor->penzugyi_tranzakciok as $tranzakcio) {
+						$befizetett_osszeg += $tranzakcio->osszeg ;	
+					}
+				}
+				$tartozas = $megrendeles_ertek["brutto_osszeg"] - $befizetett_osszeg ;
 				if ($sor->szamla_fizetesi_hatarido != '0000-00-00' && $sor->szamla_fizetesi_hatarido < date("Y-m-d")) {
 					//Lejárt
+					if (!isset($tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["db"])) {
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["db"] = 1 ;	
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["cegek"][$sor->ugyfel->cegnev] = 1 ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["netto"] = $megrendeles_ertek["netto_osszeg"] ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["brutto"] = $megrendeles_ertek["brutto_osszeg"] ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["tartozas"] = $tartozas ;
+					}
+					else
+					{
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["db"]++ ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["cegek"][$sor->ugyfel->cegnev] = 1 ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						$tartozasok_ev_honap[date("Y-m", strtotime($sor->szamla_fizetesi_hatarido))]["tartozas"] += $tartozas ;
+					}
 					if ($sor->ugyvednek_atadva == 0) {
 						$lejartak["db"]++ ;
 						$lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
 						$lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						if ($sor->ugyfel->kiemelt == 1) {							
+							$lejartak_csak_kiemeltek["db"]++ ;
+							$lejartak_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$lejartak_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
+						else
+						{
+							$lejartak_kiemeltek_nelkul["db"]++ ;
+							$lejartak_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$lejartak_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
 					}
 					else
 					{
@@ -1586,21 +1692,81 @@ class StatisztikakController extends Controller
 							$behajto_cegnek_atadva["db"]++ ;
 							$behajto_cegnek_atadva["netto"] += $megrendeles_ertek["netto_osszeg"] ;
 							$behajto_cegnek_atadva["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+							if ($sor->ugyfel->kiemelt == 1) {
+								$behajto_cegnek_atadva_csak_kiemeltek["db"]++ ;
+								$behajto_cegnek_atadva_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+								$behajto_cegnek_atadva_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+							}
+							else
+							{
+								$behajto_cegnek_atadva_kiemeltek_nelkul["db"]++ ;
+								$behajto_cegnek_atadva_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+								$behajto_cegnek_atadva_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+							}
 						}
 						$ugyvednek_atadva["db"]++ ;
 						$ugyvednek_atadva["netto"] += $megrendeles_ertek["netto_osszeg"] ;
-						$ugyvednek_atadva["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;						
+						$ugyvednek_atadva["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;		
+						if ($sor->ugyfel->kiemelt == 1) {
+							$ugyvednek_atadva_csak_kiemeltek["db"]++ ;
+							$ugyvednek_atadva_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$ugyvednek_atadva_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
+						else
+						{
+							$ugyvednek_atadva_kiemeltek_nelkul["db"]++ ;
+							$ugyvednek_atadva_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$ugyvednek_atadva_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}						
 					}
 					if (substr($sor->szamla_fizetesi_hatarido, 0, 7) == date("Y-m", $elozo_honap)) {
 						$mult_honapban_lejartak["db"]++ ;
 						$mult_honapban_lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
 						$mult_honapban_lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						if ($sor->ugyfel->kiemelt == 1) {
+							$mult_honapban_lejartak_csak_kiemeltek["db"]++ ;
+							$mult_honapban_lejartak_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$mult_honapban_lejartak_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
+						else
+						{
+							$mult_honapban_lejartak_kiemeltek_nelkul["db"]++ ;
+							$mult_honapban_lejartak_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$mult_honapban_lejartak_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}						
 					}
 					elseif (substr($sor->szamla_fizetesi_hatarido, 0, 4) == date("Y", $elozo_ev)) {
 						$mult_evben_lejartak["db"]++ ;
 						$mult_evben_lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
 						$mult_evben_lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						if ($sor->ugyfel->kiemelt == 1) {
+							$mult_evben_lejartak_csak_kiemeltek["db"]++ ;
+							$mult_evben_lejartak_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$mult_evben_lejartak_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
+						else
+						{
+							$mult_evben_lejartak_kiemeltek_nelkul["db"]++ ;
+							$mult_evben_lejartak_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$mult_evben_lejartak_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}												
 					}
+					if ($sor->ugyfel->kiemelt == 1) {
+						if (!isset($kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["legregebbi_datum"]) || $kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["legregebbi_datum"] > $sor->szamla_fizetesi_hatarido) {
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["legregebbi_datum"] = $sor->szamla_fizetesi_hatarido ;
+						}
+						if (!isset($kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["db"])) {
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["db"] = 1 ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["netto"] = $megrendeles_ertek["netto_osszeg"] ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["brutto"] = $megrendeles_ertek["brutto_osszeg"] ;
+						}
+						else
+						{
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["db"]++ ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["lejart"]["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						}
+					}					
 				}
 				else
 				{
@@ -1608,16 +1774,63 @@ class StatisztikakController extends Controller
 					$nem_lejartak["db"]++ ;
 					$nem_lejartak["netto"] += $megrendeles_ertek["netto_osszeg"] ;
 					$nem_lejartak["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+					if ($sor->ugyfel->kiemelt == 1) {
+						$nem_lejartak_csak_kiemeltek["db"]++ ;
+						$nem_lejartak_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$nem_lejartak_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+					}
+					else
+					{
+						$nem_lejartak_kiemeltek_nelkul["db"]++ ;
+						$nem_lejartak_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+						$nem_lejartak_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+					}												
+					
 					if (substr($sor->szamla_fizetesi_hatarido, 0, 7) == date("Y-m")) {
 						$lejarnak_ebben_a_honapban["db"]++ ;
 						$lejarnak_ebben_a_honapban["netto"] += $megrendeles_ertek["netto_osszeg"] ;
 						$lejarnak_ebben_a_honapban["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						if ($sor->ugyfel->kiemelt == 1) {
+							$lejarnak_ebben_a_honapban_csak_kiemeltek["db"]++ ;
+							$lejarnak_ebben_a_honapban_csak_kiemeltek["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$lejarnak_ebben_a_honapban_csak_kiemeltek["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}
+						else
+						{
+							$lejarnak_ebben_a_honapban_kiemeltek_nelkul["db"]++ ;
+							$lejarnak_ebben_a_honapban_kiemeltek_nelkul["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$lejarnak_ebben_a_honapban_kiemeltek_nelkul["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;							
+						}												
 					}
+					if ($sor->ugyfel->kiemelt == 1) {
+						if (!isset($kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["legregebbi_datum"]) || $kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["legregebbi_datum"] > $sor->szamla_fizetesi_hatarido) {
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["legregebbi_datum"] = $sor->szamla_fizetesi_hatarido ;
+						}
+						if (!isset($kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["db"])) {
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["db"] = 1 ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["netto"] = $megrendeles_ertek["netto_osszeg"] ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["brutto"] = $megrendeles_ertek["brutto_osszeg"] ;
+						}
+						else
+						{
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["db"]++ ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["netto"] += $megrendeles_ertek["netto_osszeg"] ;
+							$kiemelt_cegek_nyitott_megrendelesekkel[$sor->ugyfel->cegnev]["nem_lejart"]["brutto"] += $megrendeles_ertek["brutto_osszeg"] ;
+						}
+					}					
 				}
 			}
 			$osszes_nyitott_megrendeles["db"] = $lejartak["db"] + $nem_lejartak["db"] + $ugyvednek_atadva["db"] ;
 			$osszes_nyitott_megrendeles["netto"] = $lejartak["netto"] + $nem_lejartak["netto"] + $ugyvednek_atadva["netto"] ;
 			$osszes_nyitott_megrendeles["brutto"] = $lejartak["brutto"] + $nem_lejartak["brutto"] + $ugyvednek_atadva["brutto"] ;
+
+			$osszes_nyitott_megrendeles_csak_kiemeltek["db"] = $lejartak_csak_kiemeltek["db"] + $nem_lejartak_csak_kiemeltek["db"] + $ugyvednek_atadva_csak_kiemeltek["db"] ;
+			$osszes_nyitott_megrendeles_csak_kiemeltek["netto"] = $lejartak_csak_kiemeltek["netto"] + $nem_lejartak_csak_kiemeltek["netto"] + $ugyvednek_atadva_csak_kiemeltek["netto"] ;
+			$osszes_nyitott_megrendeles_csak_kiemeltek["brutto"] = $lejartak_csak_kiemeltek["brutto"] + $nem_lejartak_csak_kiemeltek["brutto"] + $ugyvednek_atadva_csak_kiemeltek["brutto"] ;
+
+			$osszes_nyitott_megrendeles_kiemeltek_nelkul["db"] = $lejartak_kiemeltek_nelkul["db"] + $nem_lejartak_kiemeltek_nelkul["db"] + $ugyvednek_atadva_kiemeltek_nelkul["db"] ;
+			$osszes_nyitott_megrendeles_kiemeltek_nelkul["netto"] = $lejartak_kiemeltek_nelkul["netto"] + $nem_lejartak_kiemeltek_nelkul["netto"] + $ugyvednek_atadva_kiemeltek_nelkul["netto"] ;
+			$osszes_nyitott_megrendeles_kiemeltek_nelkul["brutto"] = $lejartak_kiemeltek_nelkul["brutto"] + $nem_lejartak_kiemeltek_nelkul["brutto"] + $ugyvednek_atadva_kiemeltek_nelkul["brutto"] ;
 		}
 		$stat_adatok["osszes_nyitott_megrendeles"] = $osszes_nyitott_megrendeles ;
 		$stat_adatok["mult_honapban_lejartak"] = $mult_honapban_lejartak ;
@@ -1627,6 +1840,28 @@ class StatisztikakController extends Controller
 		$stat_adatok["lejarnak_ebben_a_honapban"] = $lejarnak_ebben_a_honapban ;
 		$stat_adatok["behajto_cegnek_atadva"] = $behajto_cegnek_atadva ;
 		$stat_adatok["ugyvednek_atadva"] = $ugyvednek_atadva ;
+
+		$stat_adatok["osszes_nyitott_megrendeles_csak_kiemeltek"] = $osszes_nyitott_megrendeles_csak_kiemeltek ;
+		$stat_adatok["mult_honapban_lejartak_csak_kiemeltek"] = $mult_honapban_lejartak_csak_kiemeltek ;
+		$stat_adatok["mult_evben_lejartak_csak_kiemeltek"] = $mult_evben_lejartak_csak_kiemeltek ;
+		$stat_adatok["lejartak_csak_kiemeltek"] = $lejartak_csak_kiemeltek ;
+		$stat_adatok["nem_lejartak_csak_kiemeltek"] = $nem_lejartak_csak_kiemeltek ;
+		$stat_adatok["lejarnak_ebben_a_honapban_csak_kiemeltek"] = $lejarnak_ebben_a_honapban_csak_kiemeltek ;
+		$stat_adatok["behajto_cegnek_atadva_csak_kiemeltek"] = $behajto_cegnek_atadva_csak_kiemeltek ;
+		$stat_adatok["ugyvednek_atadva_csak_kiemeltek"] = $ugyvednek_atadva_csak_kiemeltek ;
+
+		$stat_adatok["osszes_nyitott_megrendeles_kiemeltek_nelkul"] = $osszes_nyitott_megrendeles_kiemeltek_nelkul ;
+		$stat_adatok["mult_honapban_lejartak_kiemeltek_nelkul"] = $mult_honapban_lejartak_kiemeltek_nelkul ;
+		$stat_adatok["mult_evben_lejartak_kiemeltek_nelkul"] = $mult_evben_lejartak_kiemeltek_nelkul ;
+		$stat_adatok["lejartak_kiemeltek_nelkul"] = $lejartak_kiemeltek_nelkul ;
+		$stat_adatok["nem_lejartak_kiemeltek_nelkul"] = $nem_lejartak_kiemeltek_nelkul ;
+		$stat_adatok["lejarnak_ebben_a_honapban_kiemeltek_nelkul"] = $lejarnak_ebben_a_honapban_kiemeltek_nelkul ;
+		$stat_adatok["behajto_cegnek_atadva_kiemeltek_nelkul"] = $behajto_cegnek_atadva_kiemeltek_nelkul ;
+		$stat_adatok["ugyvednek_atadva_kiemeltek_nelkul"] = $ugyvednek_atadva_kiemeltek_nelkul ;
+		
+		$stat_adatok["kiemelt_cegek_nyitott_megrendelesekkel"] = $kiemelt_cegek_nyitott_megrendelesekkel ;
+		$stat_adatok["tartozasok_ev_honap"] = $tartozasok_ev_honap ;
+		
 		unset($nyitott_megrendelesek) ;
 		
 		//Folyamatban lévő munkák

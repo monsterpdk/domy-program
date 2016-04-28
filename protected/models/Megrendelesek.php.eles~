@@ -83,7 +83,7 @@ class Megrendelesek extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('sorszam, ugyfel_id, arkategoria_id, rendeles_idopont, proforma_kiallitas_datum, proforma_teljesites_datum, proforma_fizetesi_hatarido, proforma_fizetesi_mod, sztornozva, torolt', 'required'),
-			array('egyedi_ar, afakulcs_id, proforma_szamla_fizetve, szamla_fizetve, ugyvednek_atadva, behajto_cegnek_atadva, sztornozva, nyomdakonyv_munka_id, torolt', 'numerical', 'integerOnly'=>true),
+			array('egyedi_ar, afakulcs_id, proforma_szamla_fizetve, szamla_fizetve, ugyvednek_atadva, behajto_cegnek_atadva, sztornozva, torolt', 'numerical', 'integerOnly'=>true),
 			array('sorszam, ugyfel_id, arkategoria_id, rendelest_rogzito_user_id, rendelest_lezaro_user_id, arajanlat_id, megrendeles_forras_id, megrendeles_forras_megrendeles_id, nyomdakonyv_munka_id', 'length', 'max'=>12),
 			array('cimzett, jegyzet', 'length', 'max'=>255),
 			array('proforma_szamla_sorszam, szamla_sorszam', 'length', 'max'=>15),
@@ -124,8 +124,6 @@ class Megrendelesek extends CActiveRecord
 
 			'szallitolevel'				=> array(self::HAS_MANY, 'Szallitolevelek', 'megrendeles_id'),						
 			'tetelek' 					=> array(self::HAS_MANY, 'MegrendelesTetelek', 'megrendeles_id'),
-			'negativ_tetelek'			=> array(self::HAS_MANY, 'RaktarTermekekNegativ', 'megrendeles_id'),
-			'penzugyi_tranzakciok'		=> array(self::HAS_MANY, 'PenzugyiTranzakciok', 'megrendeles_id'),
 		);
 	}
 
@@ -209,7 +207,7 @@ class Megrendelesek extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->select .= "t.id, t.sorszam, arajanlat.sorszam as arajanlat_sorszam, cimzett, rendeles_idopont, sztornozva, nyomdakonyv_munka_id, t.torolt, proforma_szamla_sorszam, proforma_szamla_fizetve, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
+		$criteria->select .= "t.id, t.sorszam, arajanlat.sorszam as arajanlat_sorszam, cimzett, rendeles_idopont, sztornozva, t.torolt, proforma_szamla_sorszam, proforma_szamla_fizetve, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam)) as netto_ar, ROUND(SUM(tetelek.netto_darabar * tetelek.darabszam) * (1 + (27 / 100))) as brutto_ar" ; 
 		$criteria->together = true;
 		$criteria->with = array('ugyfel');
 		$criteria->join = "LEFT JOIN dom_arajanlatok as arajanlat ON (t.arajanlat_id = arajanlat.id)" ;
