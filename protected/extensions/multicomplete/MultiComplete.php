@@ -21,9 +21,9 @@ class MultiComplete extends CJuiAutoComplete
 			$name=$this->htmlOptions['name'];
 
 		if($this->hasModel())
-			echo CHtml::activeTextField($this->model,$this->attribute,$this->htmlOptions);
+			echo CHtml::activeTextArea($this->model,$this->attribute,$this->htmlOptions);
 		else
-			echo CHtml::textField($name,$this->value,$this->htmlOptions);
+			echo CHtml::textArea($name,$this->value,$this->htmlOptions);
 
 		if($this->sourceUrl!==null)
           {

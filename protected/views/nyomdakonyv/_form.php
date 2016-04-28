@@ -26,6 +26,7 @@
 		));
 	?>
 
+		<?php echo $form->hiddenField($model, 'id'); ?>
 		<?php echo $form->hiddenField($model, 'megrendeles_tetel_id'); ?>
 
 		<div class="row">
@@ -220,6 +221,19 @@
 			<?php echo $form->checkBox($model,'hossziranyu_levezetes'); ?>
 			<?php echo $form->labelEx($model,'hossziranyu_levezetes'); ?>
 			<?php echo $form->error($model,'hossziranyu_levezetes'); ?>
+			
+			<br />
+			
+			<?php
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_reklamacio',
+					'caption'=>'Reklamáció',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() { openReklamacio(); }'),
+					'htmlOptions'=>array('class'=>'btn btn-primary search-button', 'style'=>'margin-top:10px', 'target' => '_blank',),
+				));
+			?>
+
 		</div>
 
 		<div class='row'>
@@ -974,9 +988,61 @@
 
 <?php $this->endWidget(); ?>
 
+<?php // Reklamációs dialog-hoz szükséges kódblokk
+
+	// CJUIDIALOG BEGIN
+	  $this->beginWidget('zii.widgets.jui.CJuiDialog', 
+		   array(   'id'=>'nyomdakonyv-reklamacio-dialog',
+				'options'=>array(
+								'title'=>'Reklamáció',
+								'position'=>array('auto', 0),
+								'modal'=>true,
+								'width'=>'1120',
+								'autoOpen'=>false,
+								),
+						));
+						
+		echo "<div class='divForReklamacioForm'></div>";
+	
+	$this->endWidget('zii.widgets.jui.CJuiDialog');
+	// CJUIDIALOG END
+?>
+
 </div><!-- form -->
 
 <script type="text/javascript">
+
+	function openReklamacio ()
+	{
+		id = $("#Nyomdakonyv_id").val();
+			
+		<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/nyomdakonyvReklamaciok/reklamacio/id/' + id",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'open-reklamacio-'.uniqid(),
+				'replace' => '',
+				'dataType'=>'json',
+				'success'=>"function(data)
+				{
+					if (data.status == 'success')
+					{
+						$('#nyomdakonyv-reklamacio-dialog div.divForReklamacioForm').html(data.div);
+					}
+					else
+					{
+						$('#nyomdakonyv-reklamacio-dialog div.divForReklamacioForm').html(data.div);
+						$('#nyomdakonyv-reklamacio-dialog').dialog('close');
+					}
+				
+				} ",
+		))?>;
+		
+		$("#nyomdakonyv-reklamacio-dialog").dialog("open");
+		
+		return false; 		
+	}
+	
 	function normaSzamitas () {
 		var termek_id = $('#Nyomdakonyv_megrendeles_tetel_id').val();
 		var gep_id = $('#Nyomdakonyv_gep_id').val();

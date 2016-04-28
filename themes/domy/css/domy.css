@@ -943,6 +943,15 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-left: 20px;
 }
+#nyomdakonyv-reklamaciok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#nyomdakonyv-reklamaciok-form .row {
+	float: left;
+	margin-left: 20px;
+}
 .search-form .portlet {
 	float: left;
 	width : 100%;
