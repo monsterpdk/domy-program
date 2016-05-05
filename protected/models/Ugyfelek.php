@@ -708,6 +708,17 @@ class Ugyfelek extends DomyModel
 	 	}
 	 }
 	 
+	 /* Visszaadja az ügyfélnek adott ajánlatok számát */
+	 public function getAjanlatszam($datum) {
+	 	return Arajanlatok::model()->countByAttributes(array('ugyfel_id'=> $this->id), 'ajanlat_datum<=:date', array(':date'=>$datum));
+	 }
+
+	 /* Visszaadja az ügyfél megrendeléseinek számát */
+	 public function getMegrendelesszam($datum) {
+	 	return Megrendelesek::model()->countByAttributes(array('ugyfel_id'=> $this->id), 'rendeles_idopont<=:date', array(':date'=>$datum . " 00:00:00"));
+	 }
+
+	 
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

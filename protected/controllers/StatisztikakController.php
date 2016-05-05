@@ -312,16 +312,70 @@ class StatisztikakController extends Controller
 		$arajanlatokNyomas_10000_felett = 0 ;
 		$arajanlatTetelekNyomas_10000_felett = 0 ;
 		$arajanlatOsszegNyomas_10000_felett = 0 ;
+		$arajanlatok_napra_bontva = array() ;
+		$arajanlatok_napra_bontva_uj_ugyfelek = array() ;
 		if ($arajanlatTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($arajanlatTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {
 				$eladas = false ;
 				$nyomas = false ;
 				$arajanlat_darabszamok = array("tizezer_alatt"=>0,"tizezer_felett"=>0) ;
+				$ugyfel = Ugyfelek::model()->findByPk($sor->ugyfel_id) ;				
+				$uj_ugyfel = ($ugyfel->getAjanlatszam($sor->ajanlat_datum) + $ugyfel->getMegrendelesszam($sor->ajanlat_datum) == 0) ? true : false ;
+				if (!isset($arajanlatok_napra_bontva)) {
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_db"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_db"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_koltseg"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_koltseg"] = 0 ;	
+				}
+				if (!isset($arajanlatok_napra_bontva_uj_ugyfelek)) {
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_db"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_db"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_koltseg"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_koltseg"] = 0 ;	
+				}				
 				foreach ($sor->tetelek as $tetel_sor) {
+					$db_eladasi_ar = 0 ;
+					$termek = $tetel_sor->termek ;
+					$ervenyes_termekar_rekord = "" ;
+					$i = 0 ;
+					$l = false ;
+					while ($i < count($termek->termekar) && !$l) {
+						if ($sor->ajanlat_datum >= $termek->termekar[$i]->datum_mettol && $sor->ajanlat_datum <= $termek->termekar[$i]->datum_meddig) {
+							$l = true ;
+							$ervenyes_termekar_rekord = $termek->termekar[$i] ;
+						}
+						$i++ ;						
+					}										
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
 						$eladas = true ;
 						$arajanlatTetelekLegparnas++ ;
 						$arajanlatOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						
+						if (!$uj_ugyfel) {
+							$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else
+						{
+							$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						if ($tetel_sor->hozott_boritek == 0) {
+							if (!$uj_ugyfel) {
+								$arajanlatok_napra_bontva[substr($sor->ajanlat_datum, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+							else
+							{
+								$arajanlatok_napra_bontva_uj_ugyfelek[substr($sor->ajanlat_datum, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}						
+						
 						if ($tetel_sor->darabszam < 10000) {
 							$arajanlatTetelekLegparnas_10000_alatt++ ;
 							$arajanlatOsszegLegparnas_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
@@ -332,12 +386,30 @@ class StatisztikakController extends Controller
 							$arajanlatTetelekLegparnas_10000_felett++ ;
 							$arajanlatOsszegLegparnas_10000_felett += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
 							$arajanlat_darabszamok["tizezer_felett"] = 1 ;
-						}
+						}						
 					}
 					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
 						$nyomas = true ;
 						$arajanlatTetelekNyomas++ ;
 						$arajanlatOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						if (!$uj_ugyfel) {
+							$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else
+						{
+							$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}			
+						if ($tetel_sor->hozott_boritek == 0) {
+							if (!$uj_ugyfel) {
+								$arajanlatok_napra_bontva[substr($sor->ajanlat_datum, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+							else
+							{
+								$arajanlatok_napra_bontva_uj_ugyfelek[substr($sor->ajanlat_datum, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}						
+						
 						if ($tetel_sor->darabszam < 10000) {
 							$arajanlatTetelekNyomas_10000_alatt++ ;
 							$arajanlatOsszegNyomas_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
@@ -355,6 +427,22 @@ class StatisztikakController extends Controller
 						$eladas = true ;
 						$arajanlatTetelekEladas++ ;
 						$arajanlatOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;						
+						if (!$uj_ugyfel) {
+							$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						else
+						{
+							$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						}
+						if ($tetel_sor->hozott_boritek == 0) {
+							if (!$uj_ugyfel) {
+								$arajanlatok_napra_bontva[substr($sor->ajanlat_datum, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+							else
+							{
+								$arajanlatok_napra_bontva_uj_ugyfelek[substr($sor->ajanlat_datum, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}												
 						if ($tetel_sor->darabszam < 10000) {
 							$arajanlatTetelekEladas_10000_alatt++ ;
 							$arajanlatOsszegEladas_kiemeltek_nelkul_10000_alatt += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
@@ -370,6 +458,10 @@ class StatisztikakController extends Controller
 				}
 				if ($nyomas) {
 					$arajanlatokNyomas++ ;
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_db"]++ ;
+					if ($uj_ugyfel) {
+						$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_db"]++ ;
+					}
 					if (!isset($arajanlatCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id])) {
 						$arajanlatCegek_kiemeltek_nelkul["nyomás"][$sor->ugyfel_id] = 1 ;
 					}
@@ -390,6 +482,10 @@ class StatisztikakController extends Controller
 				if ($eladas)
 				{
 					$arajanlatokEladas++ ;
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_db"]++ ;
+					if ($uj_ugyfel) {
+						$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_db"]++ ;
+					}					
 					if (!isset($arajanlatCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id])) {
 						$arajanlatCegek_kiemeltek_nelkul["eladás"][$sor->ugyfel_id] = 1 ;
 					}
@@ -458,30 +554,57 @@ class StatisztikakController extends Controller
 			foreach ($arajanlatTetelekStatisztika_csak_kiemeltek->getData() as $sor) {
 				$nyomas = false ;
 				$eladas = false ;
+				$ugyfel = Ugyfelek::model()->findByPk($sor->ugyfel_id) ;				
+				$uj_ugyfel = ($ugyfel->getAjanlatszam($sor->ajanlat_datum) + $ugyfel->getMegrendelesszam($sor->ajanlat_datum) == 0) ? true : false ;
+				if (!isset($arajanlatok_napra_bontva)) {
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_db"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_db"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_koltseg"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_koltseg"] = 0 ;	
+				}
+				if (!isset($arajanlatok_napra_bontva_uj_ugyfelek)) {
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_db"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_db"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_osszeg"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["nyomas_koltseg"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_haszon"] = 0 ;	
+					$arajanlatok_napra_bontva_uj_ugyfelek[$sor->ajanlat_datum]["eladas_koltseg"] = 0 ;	
+				}								
 				foreach ($sor->tetelek as $tetel_sor) {
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
 						$eladas = true ;
 						$arajanlatTetelekLegparnas++ ;
 						$arajanlatOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 					}
 					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
 						$nyomas = true ;
 						$arajanlatTetelekNyomas++ ;
 						$arajanlatOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+						$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 					}
 					else
 					{
 						$eladas = true ;
 						$arajanlatTetelekEladas++ ;
 						$arajanlatOsszegEladas_csak_kiemeltek += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;						
+						$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 					}
 				}
 				if ($nyomas) {
 					$arajanlatokNyomas++ ;
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["nyomas_db"]++ ;
 				}
 				if ($eladas)
 				{
 					$arajanlatokEladas++ ;
+					$arajanlatok_napra_bontva[$sor->ajanlat_datum]["eladas_db"]++ ;
 				}
 			}
 		}
@@ -493,6 +616,35 @@ class StatisztikakController extends Controller
 		$stat_adatok["arajanlatOsszegNyomas_csak_kiemeltek"] = $arajanlatOsszegNyomas ;
 		$stat_adatok["arajanlatLegparnasTetelekStatisztika_csak_kiemeltek"] = $arajanlatTetelekLegparnas ;		
 		$stat_adatok["arajanlatOsszegLegparnas_csak_kiemeltek"] = $arajanlatOsszegLegparnas ;		
+				
+		if (count($arajanlatok_napra_bontva) > 0) {
+			$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_db_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_db_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_netto_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_netto_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_db_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_uj_ugyfel_db_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_netto_osszesen"] = 0 ;
+			$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_uj_ugyfel_netto_osszesen"] = 0 ;
+			foreach ($arajanlatok_napra_bontva as $datum => $adatok) {
+				$arajanlatok_napra_bontva[$datum]["nyomas_haszon"] = $arajanlatok_napra_bontva[$datum]["nyomas_osszeg"] - $arajanlatok_napra_bontva[$datum]["nyomas_koltseg"] ;
+				$arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_haszon"] = $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_osszeg"] - $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_koltseg"] ;
+				$arajanlatok_napra_bontva[$datum]["eladas_haszon"] = $arajanlatok_napra_bontva[$datum]["eladas_osszeg"] - $arajanlatok_napra_bontva[$datum]["eladas_koltseg"] ;
+				$arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_haszon"] = $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_osszeg"] - $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_koltseg"] ;
+				$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_db_osszesen"] += $arajanlatok_napra_bontva[$datum]["nyomas_db"] ;
+				$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_db_osszesen"] += $arajanlatok_napra_bontva[$datum]["eladas_db"] ;
+				$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_netto_osszesen"] += $arajanlatok_napra_bontva[$datum]["nyomas_osszeg"] ;
+				$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_netto_osszesen"] += $arajanlatok_napra_bontva[$datum]["eladas_osszeg"] ;
+				$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_db_osszesen"] += $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_db"] ;
+				$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_uj_ugyfel_db_osszesen"] += $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_db"] ;
+				$ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_netto_osszesen"] += $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_osszeg"] ;
+				$ajanlatok_napra_bontva_osszesites["eladas_ajanlatok_uj_ugyfel_netto_osszesen"] += $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_osszeg"] ;
+			}
+		}		
+		
+		$stat_adatok["arajanlatok_napra_bontva"] = $arajanlatok_napra_bontva ;
+		$stat_adatok["arajanlatok_napra_bontva_uj_ugyfelek"] = $arajanlatok_napra_bontva_uj_ugyfelek ;
+		$stat_adatok["ajanlatok_napra_bontva_osszesites"] = $ajanlatok_napra_bontva_osszesites ;
 		unset($arajanlatTetelekStatisztika_csak_kiemeltek) ;
 		
 //Megrendeléssel kapcsolatos statisztikák nem kiemelt cégek		
@@ -551,13 +703,58 @@ class StatisztikakController extends Controller
 		$megrendelesekNyomasAjanlatNelkul_10000_felett = 0 ;
 		$megrendelesTetelekNyomasAjanlatNelkul_10000_felett = 0 ;
 		$megrendelesOsszegNyomasAjanlatNelkul_10000_felett = 0 ;
-		
+		$megrendelesek_napra_bontva = array() ;
+		$megrendelesek_napra_bontva_uj_ugyfelek = array() ;
+		$megrendelesek_napra_bontva_ajanlat_nelkul = array() ;
+		$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul = array() ;
 		
 		if ($megrendelesTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($megrendelesTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {
 				$nyomas = false ;
 				$eladas = false ;
 				$megrendeles_darabszamok = array("tizezer_alatt"=>0,"tizezer_felett"=>0) ;				
+				$ugyfel = Ugyfelek::model()->findByPk($sor->ugyfel_id) ;				
+				$uj_ugyfel = ($ugyfel->getAjanlatszam(substr($sor->rendeles_idopont, 0, 10)) + $ugyfel->getMegrendelesszam(substr($sor->rendeles_idopont, 0, 10)) == 0) ? true : false ;
+				if (!isset($megrendelesek_napra_bontva)) {
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}
+				if (!isset($megrendelesek_napra_bontva_uj_ugyfelek)) {
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}				
+				if (!isset($megrendelesek_napra_bontva_ajanlat_nelkul)) {
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}
+				if (!isset($megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul)) {
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}				
 				foreach ($sor->tetelek as $tetel_sor) {
 					$db_eladasi_ar = 0 ;
 					$termek = $tetel_sor->termek ;
@@ -574,14 +771,6 @@ class StatisztikakController extends Controller
 //					print_r($termek->termekar) ;
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
 						$eladas = true ;
-						if ($sor->arajanlat_id == 0) {
-							$megrendelesTetelekEladasAjanlatNelkul++ ;
-							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
-						}
-						else {
-							$megrendelesTetelekLegparnas++ ;
-							$megrendelesOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
-						}
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
 							$db_eladasi_ar = $ervenyes_termekar_rekord->csomag_eladasi_ar / $termek->csom_egys ;	
 						}
@@ -589,6 +778,46 @@ class StatisztikakController extends Controller
 						{
 							$db_eladasi_ar = $ervenyes_termekar_rekord->db_eladasi_ar ;
 						}
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesTetelekEladasAjanlatNelkul++ ;
+							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if (!$uj_ugyfel) {
+								$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							else
+							{
+								$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							if ($tetel_sor->hozott_boritek == 0) {
+								if (!$uj_ugyfel) {
+									$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+								else
+								{
+									$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+							}
+						}
+						else {
+							$megrendelesTetelekLegparnas++ ;
+							$megrendelesOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if (!$uj_ugyfel) {							
+								$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							else
+							{
+								$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							if ($tetel_sor->hozott_boritek == 0) {
+								if (!$uj_ugyfel) {
+									$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+								else
+								{
+									$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+							}
+						}						
 //						echo "aaa $sor->id: $db_eladasi_ar * $tetel_sor->darabszam = " . ($db_eladasi_ar * $tetel_sor->darabszam) . "<br />" ;
 						$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul += ($db_eladasi_ar * $tetel_sor->darabszam) ;
 						if ($tetel_sor->hozott_boritek == 0) {
@@ -633,14 +862,6 @@ class StatisztikakController extends Controller
 					}
 					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
 						$nyomas = true ;
-						if ($sor->arajanlat_id == 0) {
-							$megrendelesTetelekNyomasAjanlatNelkul++ ;
-							$megrendelesOsszegNyomasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
-						}
-						else {
-							$megrendelesTetelekNyomas++ ;
-							$megrendelesOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
-						}
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
 							$db_eladasi_ar = $ervenyes_termekar_rekord->db_ar_nyomashoz / $termek->csom_egys ;	
 						}
@@ -648,6 +869,46 @@ class StatisztikakController extends Controller
 						{
 							$db_eladasi_ar = $ervenyes_termekar_rekord->csomag_ar_nyomashoz ;
 						}						
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesTetelekNyomasAjanlatNelkul++ ;
+							$megrendelesOsszegNyomasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if (!$uj_ugyfel) {
+								$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							else
+							{
+								$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							if ($tetel_sor->hozott_boritek == 0) {
+								if (!$uj_ugyfel) {
+									$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+								else
+								{
+									$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+							}
+						}
+						else {
+							$megrendelesTetelekNyomas++ ;
+							$megrendelesOsszegNyomas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;					
+							if (!$uj_ugyfel) {
+								$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							else
+							{
+								$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							if ($tetel_sor->hozott_boritek == 0) {
+								if (!$uj_ugyfel) {
+									$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+								else
+								{
+									$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+							}
+						}
 //						echo "bbb: $db_eladasi_ar * $tetel_sor->darabszam = " . ($db_eladasi_ar * $tetel_sor->darabszam) . "<br />" ;
 						$bevetel_termekeken_nyomas_osszesen_kiemeltek_nelkul += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
 						if ($tetel_sor->hozott_boritek == 0) {
@@ -701,14 +962,6 @@ class StatisztikakController extends Controller
 					elseif ($tetel_sor->termek->tipus != "Szolgáltatás" && $tetel_sor->termek->nev != "Kuponfelhasználás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás, nem kuponfelhasználás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
 						$eladas = true ;
-						if ($sor->arajanlat_id == 0) {
-							$megrendelesTetelekEladasAjanlatNelkul++ ;
-							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;														
-						}
-						else {
-							$megrendelesTetelekEladas++ ;
-							$megrendelesOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
-						}
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
 							$db_eladasi_ar = $ervenyes_termekar_rekord->csomag_eladasi_ar / $termek->csom_egys ;	
 						}
@@ -716,6 +969,37 @@ class StatisztikakController extends Controller
 						{
 							$db_eladasi_ar = $ervenyes_termekar_rekord->db_eladasi_ar ;
 						}		
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesTetelekEladasAjanlatNelkul++ ;
+							$megrendelesOsszegEladasAjanlatNelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if (!$uj_ugyfel) {
+								$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							else
+							{
+								$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+						}
+						else {
+							$megrendelesTetelekEladas++ ;
+							$megrendelesOsszegEladas_kiemeltek_nelkul += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;							
+							if (!$uj_ugyfel) {							
+								$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							else
+							{
+								$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							}
+							if ($tetel_sor->hozott_boritek == 0) {
+								if (!$uj_ugyfel) {
+									$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+								else
+								{
+									$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+								}
+							}
+						}
 //						echo "ccc $sor->id: $db_eladasi_ar * $tetel_sor->darabszam = " . ($db_eladasi_ar * $tetel_sor->darabszam) . "<br />" ;
 						$bevetel_termekeken_eladas_osszesen_kiemeltek_nelkul += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
 						if ($tetel_sor->hozott_boritek == 0) {
@@ -763,10 +1047,18 @@ class StatisztikakController extends Controller
 					
 					if ($sor->arajanlat_id == 0) {
 						$megrendelesekNyomasAjanlatNelkul++ ;
+						$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						}
 					}
 					else
 					{
 						$megrendelesekNyomas++ ;
+						$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						}
 					}
 					if ($sor->arajanlat_id == 0) {
 						if (!isset($megrendelesCegek_kiemeltek_nelkul["nyomás_ajánlat_nélkül"][$sor->ugyfel_id])) {
@@ -810,10 +1102,18 @@ class StatisztikakController extends Controller
 				{
 					if ($sor->arajanlat_id == 0) {
 						$megrendelesekEladasAjanlatNelkul++ ;
+						$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						}
 					}
 					else
 					{
 						$megrendelesekEladas++ ;
+						$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						}
 					}
 					
 					if ($sor->arajanlat_id == 0) {
@@ -1156,6 +1456,48 @@ class StatisztikakController extends Controller
 				$cegek_megrendelesszam_osszesen_csak_kiemeltek++ ;
 				$nyomas = false ;
 				$eladas = false ;				
+				$ugyfel = Ugyfelek::model()->findByPk($sor->ugyfel_id) ;				
+				$uj_ugyfel = ($ugyfel->getAjanlatszam(substr($sor->rendeles_idopont, 0, 10)) + $ugyfel->getMegrendelesszam(substr($sor->rendeles_idopont, 0, 10)) == 0) ? true : false ;
+				if (!isset($megrendelesek_napra_bontva)) {
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}
+				if (!isset($megrendelesek_napra_bontva_uj_ugyfelek)) {
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}				
+				if (!isset($megrendelesek_napra_bontva_ajanlat_nelkul)) {
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}
+				if (!isset($megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul)) {
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_haszon"] = 0 ;	
+					$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] = 0 ;	
+				}				
 				foreach ($sor->tetelek as $tetel_sor) {
 					$cegek_kiemeltek[$sor->ugyfel->cegnev]["megrendeles_osszeg"] += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
 					$cegek_megrendelesosszeg_csak_kiemeltek += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
@@ -1173,7 +1515,7 @@ class StatisztikakController extends Controller
 					}					
 //					print_r($termek->termekar) ;
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
-						$eladas = true ;
+						$eladas = true ;						
 						$megrendelesTetelekLegparnas++ ;
 						$megrendelesOsszegLegparnas += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
 						if ($tetel_sor->darabszam >= $termek->csom_egys) {
@@ -1182,6 +1524,18 @@ class StatisztikakController extends Controller
 						else
 						{
 							$db_eladasi_ar = $ervenyes_termekar_rekord->db_eladasi_ar ;
+						}
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if ($tetel_sor->hozott_boritek == 0) {
+								$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}
+						else {
+							$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if ($tetel_sor->hozott_boritek == 0) {
+								$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
 						}
 //						echo "aaa $sor->id: $db_eladasi_ar * $tetel_sor->darabszam = " . ($db_eladasi_ar * $tetel_sor->darabszam) . "<br />" ;
 						$bevetel_termekeken_eladas_osszesen_csak_kiemeltek += ($db_eladasi_ar * $tetel_sor->darabszam) ;
@@ -1200,13 +1554,25 @@ class StatisztikakController extends Controller
 						{
 							$db_eladasi_ar = $ervenyes_termekar_rekord->csomag_ar_nyomashoz ;
 						}						
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if ($tetel_sor->hozott_boritek == 0) {
+								$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}
+						else {
+							$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if ($tetel_sor->hozott_boritek == 0) {
+								$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}
 //						echo "bbb: $db_eladasi_ar * $tetel_sor->darabszam = " . ($db_eladasi_ar * $tetel_sor->darabszam) . "<br />" ;
 						$bevetel_termekeken_nyomas_osszesen_csak_kiemeltek += ($tetel_sor->netto_darabar * $tetel_sor->darabszam) ;
 						if ($tetel_sor->hozott_boritek == 0) {
 							$anyagkoltseg_termekeken_nyomas_osszesen_csak_kiemeltek += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
 						}
 					}
-					elseif ($tetel_sor->termek->tipus != "Szolgáltatás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
+					elseif ($tetel_sor->termek->tipus != "Szolgáltatás" && $tetel_sor->termek->nev != "Kuponfelhasználás")		//Ide most minden bemegy, ami nem légpárnás, nem nyomás és nem szolgáltatás, tehát ide megy a ragasztószalag, levélpapír, stb. is
 					{
 						$eladas = true ;
 						$megrendelesTetelekEladas++ ;
@@ -1218,6 +1584,18 @@ class StatisztikakController extends Controller
 						{
 							$db_eladasi_ar = $ervenyes_termekar_rekord->db_eladasi_ar ;
 						}		
+						if ($sor->arajanlat_id == 0) {
+							$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if ($tetel_sor->hozott_boritek == 0) {
+								$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}
+						else {
+							$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_osszeg"] += $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
+							if ($tetel_sor->hozott_boritek == 0) {
+								$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_koltseg"] += ($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) ;
+							}
+						}
 //						echo "ccc $sor->id: $db_eladasi_ar * $tetel_sor->darabszam = " . ($db_eladasi_ar * $tetel_sor->darabszam) . "<br />" ;
 						$bevetel_termekeken_eladas_osszesen_csak_kiemeltek += ($db_eladasi_ar * $tetel_sor->darabszam) ;						
 						if ($tetel_sor->hozott_boritek == 0) {
@@ -1226,10 +1604,37 @@ class StatisztikakController extends Controller
 					}					
 				}
 				if ($nyomas) {
+					if ($sor->arajanlat_id == 0) {
+						$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						}
+					}
+					else
+					{
+						$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["nyomas_db"]++ ;
+						}
+					}					
 					$megrendelesekNyomas++ ;
 				}
 				if ($eladas)
 				{
+					if ($sor->arajanlat_id == 0) {
+						$megrendelesek_napra_bontva_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						}
+					}
+					else
+					{
+						$megrendelesek_napra_bontva[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						if ($uj_ugyfel) {
+							$megrendelesek_napra_bontva_uj_ugyfelek[substr($sor->rendeles_idopont, 0, 10)]["eladas_db"]++ ;
+						}
+					}
+					
 					$megrendelesekEladas++ ;
 				}
 			}
@@ -1271,6 +1676,99 @@ class StatisztikakController extends Controller
 		$stat_adatok["kiadott_ajanlatok_erteke_osszesen"] = $stat_adatok["arajanlatOsszegEladas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegNyomas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegLegparnas_kiemeltek_nelkul"] + $stat_adatok["arajanlatOsszegEladas_csak_kiemeltek"] + $stat_adatok["arajanlatOsszegNyomas_csak_kiemeltek"] + $stat_adatok["arajanlatOsszegLegparnas_csak_kiemeltek"] ;
 		$stat_adatok["megrendelesek_szama_osszesen"] = $stat_adatok["megrendelesStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesNyomasStatisztika_kiemeltek_nelkul"] + $stat_adatok["megrendelesStatisztika_csak_kiemeltek"] + $stat_adatok["megrendelesNyomasStatisztika_csak_kiemeltek"] ;
 		$stat_adatok["megrendelesek_erteke_osszesen"] = $stat_adatok["megrendelesOsszegEladas_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegNyomas_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegLegparnas_kiemeltek_nelkul"] + $stat_adatok["megrendelesOsszegEladas_csak_kiemeltek"] + $stat_adatok["megrendelesOsszegNyomas_csak_kiemeltek"] + $stat_adatok["megrendelesOsszegLegparnas_csak_kiemeltek"] ;
+		
+		if (count($megrendelesek_napra_bontva) > 0) {
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_szazalek"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_uj_ugyfel_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_uj_ugyfel_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_uj_ugyfel_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_uj_ugyfel_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_uj_ugyfel_szazalek"] = 0 ;
+
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_uj_ugyfel_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_uj_ugyfel_db_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_uj_ugyfel_netto_osszesen"] = 0 ;
+			$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_uj_ugyfel_netto_osszesen"] = 0 ;
+			
+			
+			foreach ($megrendelesek_napra_bontva as $datum => $adatok) {
+				$arajanlatok_napra_bontva[$datum]["nyomas_haszon"] = $arajanlatok_napra_bontva[$datum]["nyomas_osszeg"] - $arajanlatok_napra_bontva[$datum]["nyomas_koltseg"] ;
+				$arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_haszon"] = $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_osszeg"] - $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_koltseg"] ;
+				$arajanlatok_napra_bontva[$datum]["eladas_haszon"] = $arajanlatok_napra_bontva[$datum]["eladas_osszeg"] - $arajanlatok_napra_bontva[$datum]["eladas_koltseg"] ;
+				$arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_haszon"] = $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_osszeg"] - $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["eladas_koltseg"] ;
+				$megrendelesek_napra_bontva[$datum]["nyomas_haszon"] = $megrendelesek_napra_bontva[$datum]["nyomas_osszeg"] - $megrendelesek_napra_bontva[$datum]["nyomas_koltseg"] ;
+				$megrendelesek_napra_bontva_uj_ugyfelek[$datum]["nyomas_haszon"] = $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["nyomas_osszeg"] - $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["nyomas_koltseg"] ;
+				$megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["nyomas_haszon"] = $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["nyomas_osszeg"] - $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["nyomas_koltseg"] ;
+				$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["nyomas_haszon"] = $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["nyomas_osszeg"] - $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["nyomas_koltseg"] ;
+				$megrendelesek_napra_bontva[$datum]["eladas_haszon"] = $megrendelesek_napra_bontva[$datum]["eladas_osszeg"] - $megrendelesek_napra_bontva[$datum]["eladas_koltseg"] ;
+				$megrendelesek_napra_bontva_uj_ugyfelek[$datum]["eladas_haszon"] = $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["eladas_osszeg"] - $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["eladas_koltseg"] ;
+				$megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["eladas_haszon"] = $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["eladas_osszeg"] - $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["eladas_koltseg"] ;
+				$megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["eladas_haszon"] = $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["eladas_osszeg"] - $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["eladas_koltseg"] ;				
+				if ($arajanlatok_napra_bontva[$datum]["nyomas_db"] > 0) {
+					$megrendelesek_napra_bontva[$datum]["megrendeles_szazalek"] = round(($megrendelesek_napra_bontva[$datum]["nyomas_db"] / $arajanlatok_napra_bontva[$datum]["nyomas_db"]) * 100, 2) ;					
+				}
+				else
+				{
+					$megrendelesek_napra_bontva[$datum]["megrendeles_szazalek"] = 0;
+				}
+				if ($arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_db"] > 0) {
+					$megrendelesek_napra_bontva_uj_ugyfelek[$datum]["megrendeles_szazalek"] = round(($megrendelesek_napra_bontva_uj_ugyfelek[$datum]["nyomas_db"] / $arajanlatok_napra_bontva_uj_ugyfelek[$datum]["nyomas_db"]) * 100, 2) ;
+				}
+				else
+				{
+					$megrendelesek_napra_bontva_uj_ugyfelek[$datum]["megrendeles_szazalek"] = 0;
+				}
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_db_osszesen"] += $megrendelesek_napra_bontva[$datum]["nyomas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_db_osszesen"] += $megrendelesek_napra_bontva[$datum]["eladas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_netto_osszesen"] += $megrendelesek_napra_bontva[$datum]["nyomas_osszeg"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_netto_osszesen"] += $megrendelesek_napra_bontva[$datum]["eladas_osszeg"] ;
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_uj_ugyfel_db_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["nyomas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_uj_ugyfel_db_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["eladas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_uj_ugyfel_netto_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["nyomas_osszeg"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_uj_ugyfel_netto_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek[$datum]["eladas_osszeg"] ;
+
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_db_osszesen"] += $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["nyomas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_db_osszesen"] += $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["eladas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_netto_osszesen"] += $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["nyomas_osszeg"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_netto_osszesen"] += $megrendelesek_napra_bontva_ajanlat_nelkul[$datum]["eladas_osszeg"] ;
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_uj_ugyfel_db_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["nyomas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_uj_ugyfel_db_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["eladas_db"] ;
+				$megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_ajanlat_nelkul_uj_ugyfel_netto_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["nyomas_osszeg"] ;
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_ajanlat_nelkul_uj_ugyfel_netto_osszesen"] += $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul[$datum]["eladas_osszeg"] ;
+				
+			}
+			if ($ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_db_osszesen"] > 0) {
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_szazalek"] = round(($megrendelesek_napra_bontva_osszesites["nyomas_megrendelesek_db_osszesen"] / $ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_db_osszesen"]) * 100, 2) ;
+			}
+			else
+			{
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_szazalek"] = 0;
+			}
+			if ($ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_db_osszesen"] > 0) {
+				$megrendelesek_napra_bontva_osszesites["eladas_megrendelesek_uj_ugyfel_szazalek"] = round(($megrendelesek_napra_bontva_uj_ugyfelek["nyomas_megrendelesek_db_osszesen"] / $ajanlatok_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_db_osszesen"]) * 100, 2) ;
+			}
+			else
+			{
+				$megrendelesek_napra_bontva_osszesites["nyomas_ajanlatok_uj_ugyfel_db_osszesen"] = 0 ;	
+			}
+			
+		}
+		
+		
+		$stat_adatok["megrendelesek_napra_bontva"] = $megrendelesek_napra_bontva ;
+		$stat_adatok["megrendelesek_napra_bontva_uj_ugyfelek"] = $megrendelesek_napra_bontva_uj_ugyfelek ;
+		$stat_adatok["megrendelesek_napra_bontva_ajanlat_nelkul"] = $megrendelesek_napra_bontva_ajanlat_nelkul ;
+		$stat_adatok["megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul"] = $megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul ;
+		$stat_adatok["megrendelesek_napra_bontva_osszesites"] = $megrendelesek_napra_bontva_osszesites ;
+		
 		unset($megrendelesTetelekStatisztika_csak_kiemeltek) ;
 		
 		//Számlázás adatok, csak megrendelt (árajánlat kérés nélküli)

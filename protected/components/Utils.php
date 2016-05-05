@@ -663,7 +663,7 @@
 					$sor = array() ;
 					$sor["Cikkszam"] = $cikkszam;
 					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
-						$cikknev = $tetel->termek->getDisplayTermekTeljesNev() . " " . $tetel->szinek_szama1 . "+" . $tetel->szinek_szama2 ;
+						$cikknev = "Nyomás " . $tetel->termek->getDisplayTermekTeljesNev() . " " . $tetel->szinek_szama1 . "+" . $tetel->szinek_szama2 ;
 					}
 					else
 					{

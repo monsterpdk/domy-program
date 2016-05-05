@@ -300,6 +300,7 @@
 //					echo $nyomasi_ar ;
 				}
 				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
+//				echo $db_ar ;
 
 				//Selejtszámítás a nyomáshoz
 				$sql = "SELECT * FROM dom_zuh WHERE ('" . $darabszam . "' BETWEEN db_tol AND db_ig) AND (nyomasi_kategoria = '$nyomasi_ar_kategoria_tipus' AND torolt = 0 and aktiv = 1)" ;				
@@ -330,9 +331,12 @@
 				
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
-								
+
+//				echo $darabszam_osszesen ;
+				
 				if ($darabszam >= 2000) {
-					$netto_osszeg = ($darabszam_osszesen * $db_ar) + ($nyomasi_ar * $darabszam_osszesen) ;
+//					$netto_osszeg = ($darabszam_osszesen * $db_ar) + ($nyomasi_ar * $darabszam_osszesen) ;
+					$netto_osszeg = ($darabszam_osszesen * $db_ar) ;
 				}
 				else
 				{					
@@ -653,7 +657,14 @@
 					$afakulcs = AfaKulcsok::model() -> findByAttributes(array('id'=>$tetel->termek->afakulcs_id)) ;
 					$sor = array() ;
 					$sor["Cikkszam"] = $cikkszam;
-					$sor["CikkNev"] = substr($tetel->termek->getDisplayTermekTeljesNev(),0,100) ;
+					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
+						$cikknev = $tetel->termek->getDisplayTermekTeljesNev() . " " . $tetel->szinek_szama1 . "+" . $tetel->szinek_szama2 ;
+					}
+					else
+					{
+						$cikknev = $tetel->termek->getDisplayTermekTeljesNev() ;
+					}
+					$sor["CikkNev"] = substr($cikknev,0,100) ;
 					$sor["MEgyseg"] = "db" ;
 					$sor["AfaKulcs"] = $afakulcs->afa_szazalek ;
 					if ($tetel->termek->tipus == "Szolgáltatás") {

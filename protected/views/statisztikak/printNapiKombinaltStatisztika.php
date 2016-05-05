@@ -38,7 +38,10 @@
 		font-weight: bold;		
 	}
 	.cim_cella_kisbetu {
-		font-size:8pt;	
+		font-size:7px;	
+	}
+	.adat_cella_kisbetu {
+		font-size:7px;	
 	}
 	table.statisztika_belso_tablazat_fel_szelesseg {
 		width: 350px;
@@ -1209,10 +1212,182 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 </table>
 </div>
 
+<pagebreak />
+<!-- Statisztika 6. oldal -->
+<div class='wide form'>
+<table class='fejlec1'>
+	<tr>
+		<td class="statisztika_fejlec_cim"> <strong> Ügyfél statisztika </strong> </td>
+	</tr>
+</table>
+
+<table class="statisztika_tablazat">
+	<tr>
+		<td class="cim_cella szegely_alul szegely_jobb" rowspan="4" style="width:50px;font-size:10px;">Dátum</td>
+		<td class="cim_cella szegely_alul szegely_jobb kozepre" style="width:325px;font-size:10px;" colspan="9">Összes ügyfél = régi + új</td>
+		<td class="cim_cella szegely_alul kozepre" style="width:325px;font-size:10px;" colspan="9">Új ügyfél</td>
+	</tr>
+	<tr>					
+		<td class="cim_cella_kisbetu szegely_jobb kozepre" colspan="4">Ajánlatok</td>					
+		<td class="cim_cella_kisbetu nincs_szegely kozepre" colspan="4">Megrendelések</td>	
+		<td class="cim_cella_kisbetu szegely_jobb szegely_alul" rowspan="3">nyom.<br />rend.<br />%</td>
+		<td class="cim_cella_kisbetu szegely_jobb kozepre" colspan="4">Ajánlatok</td>				
+		<td class="cim_cella_kisbetu nincs_szegely kozepre" colspan="4">Megrendelések</td>	
+		<td class="cim_cella_kisbetu szegely_alul" rowspan="3">nyom.<br />rend.<br />%</td>
+	</tr>
+	<tr>
+		<td class="cim_cella_kisbetu kozepre" colspan="2">száma</td>
+		<td class="cim_cella_kisbetu kozepre szegely_jobb" colspan="2">nettó Ft</td>
+		<td class="cim_cella_kisbetu kozepre" colspan="2">száma</td>
+		<td class="cim_cella_kisbetu kozepre" colspan="2">nettó Ft</td>
+		<td class="cim_cella_kisbetu kozepre" colspan="2">száma</td>
+		<td class="cim_cella_kisbetu kozepre szegely_jobb" colspan="2">nettó Ft</td>
+		<td class="cim_cella_kisbetu kozepre" colspan="2">száma</td>
+		<td class="cim_cella_kisbetu kozepre" colspan="2">nettó Ft</td>
+	</tr>
+	<tr>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul szegely_jobb">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul szegely_jobb">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Nyomás<br />Eladás</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Össz.</td>
+		<td class="cim_cella_kisbetu kozepre szegely_alul">Nyomás<br />Eladás</td>
+	</tr>
+<?php
+	if (count($stat_adatok["arajanlatok_napra_bontva"]) > 0) {
+		foreach ($stat_adatok["arajanlatok_napra_bontva"] as $datum => $adatok) {
+			$timestamp = strtotime($datum) ;	
+			$arajanlat_uj_ugyfelek_adatok = $stat_adatok["arajanlatok_napra_bontva_uj_ugyfelek"][$datum] ;
+			$megrendeles_adatok = $stat_adatok["megrendelesek_napra_bontva"][$datum] ;
+			$megrendeles_uj_ugyfelek_adatok = $stat_adatok["megrendelesek_napra_bontva_uj_ugyfelek"][$datum] ;
+			$megrendeles_adatok_arajanlat_nelkul = $stat_adatok["megrendelesek_napra_bontva_ajanlat_nelkul"][$datum] ;
+			$megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul = $stat_adatok["megrendelesek_napra_bontva_uj_ugyfelek_ajanlat_nelkul"][$datum] ;
+?>
+	<tr>
+		<td class="cim_cella cim_cella_kisbetu szegely_jobb szegely_alul" rowspan="2"><?php echo Yii::app()->dateFormatter->format("yyyy.MM.dd", $timestamp) ;?><br /><?php echo Yii::app()->dateFormatter->format("EEEE", $timestamp) ;?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($adatok["eladas_db"] + $adatok["nyomas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($adatok["nyomas_db"]);?><br /><?php echo Utils::DarabszamFormazas($adatok["eladas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($adatok["nyomas_osszeg"] + $adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($adatok["nyomas_osszeg"], 0);?><br /><?php echo Utils::OsszegFormazas($adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_adatok["eladas_db"] + $megrendeles_adatok["nyomas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_adatok["nyomas_db"]);?><br /><?php echo Utils::DarabszamFormazas($megrendeles_adatok["eladas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_adatok["nyomas_osszeg"] + $megrendeles_adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($megrendeles_adatok["nyomas_osszeg"], 0);?><br /><?php echo Utils::OsszegFormazas($megrendeles_adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo $megrendeles_adatok["megrendeles_szazalek"];?></td>
+		
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($arajanlat_uj_ugyfelek_adatok["eladas_db"] + $arajanlat_uj_ugyfelek_adatok["nyomas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($arajanlat_uj_ugyfelek_adatok["nyomas_db"]);?><br /><?php echo Utils::DarabszamFormazas($arajanlat_uj_ugyfelek_adatok["eladas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($arajanlat_uj_ugyfelek_adatok["nyomas_osszeg"] + $arajanlat_uj_ugyfelek_adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($arajanlat_uj_ugyfelek_adatok["nyomas_osszeg"], 0);?><br /><?php echo Utils::OsszegFormazas($arajanlat_uj_ugyfelek_adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_uj_ugyfelek_adatok["eladas_db"] + $megrendeles_uj_ugyfelek_adatok["nyomas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_uj_ugyfelek_adatok["nyomas_db"]);?><br /><?php echo Utils::DarabszamFormazas($megrendeles_uj_ugyfelek_adatok["eladas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok["nyomas_osszeg"] + $megrendeles_uj_ugyfelek_adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok["nyomas_osszeg"], 0);?><br /><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo $megrendeles_uj_ugyfelek_adatok["megrendeles_szazalek"];?></td>				
+	</tr>
+	<tr>
+		<td class="adat_cella_kisbetu szegely_alul balra" colspan="4">Árajánlat nélkül</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_adatok_arajanlat_nelkul["eladas_db"] + $megrendeles_adatok_arajanlat_nelkul["nyomas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_adatok_arajanlat_nelkul["nyomas_db"]);?><br /><?php echo Utils::DarabszamFormazas($megrendeles_adatok_arajanlat_nelkul["eladas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_adatok_arajanlat_nelkul["nyomas_osszeg"] + $megrendeles_adatok_arajanlat_nelkul["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($megrendeles_adatok_arajanlat_nelkul["nyomas_osszeg"], 0);?><br /><?php echo Utils::OsszegFormazas($megrendeles_adatok_arajanlat_nelkul["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra">&nbsp;</td>
+		
+		<td class="adat_cella_kisbetu szegely_alul jobbra" colspan="4">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["eladas_db"] + $megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["nyomas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["nyomas_db"]);?><br /><?php echo Utils::DarabszamFormazas($megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["eladas_db"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["nyomas_osszeg"] + $megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["nyomas_osszeg"], 0);?><br /><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["eladas_osszeg"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">&nbsp;</td>				
+	</tr>
+	
+	<tr>
+		<td colspan="3" class="adat_cella_kisbetu szegely_alul kozepre">Bevétel - beszerzés</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($adatok["nyomas_haszon"] + $adatok["eladas_haszon"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($adatok["nyomas_haszon"], 0);?><br /><?php echo Utils::OsszegFormazas($adatok["eladas_haszon"], 0);?></td>
+		<td colspan="2" class="adat_cella_kisbetu szegely_alul kozepre">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_adatok["nyomas_haszon"] + $megrendeles_adatok["eladas_haszon"] + $megrendeles_adatok_arajanlat_nelkul["nyomas_haszon"] + $megrendeles_adatok_arajanlat_nelkul["eladas_haszon"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_adatok["nyomas_haszon"] + $megrendeles_adatok_arajanlat_nelkul["nyomas_haszon"], 0);?><br /><?php echo Utils::OsszegFormazas($megrendeles_adatok["eladas_haszon"] + $megrendeles_adatok_arajanlat_nelkul["eladas_haszon"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb">&nbsp;</td>
+		
+		<td colspan="2" class="adat_cella_kisbetu szegely_alul kozepre">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($arajanlat_uj_ugyfelek_adatok["nyomas_haszon"] + $arajanlat_uj_ugyfelek_adatok["eladas_haszon"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($arajanlat_uj_ugyfelek_adatok["nyomas_haszon"], 0);?><br /><?php echo Utils::OsszegFormazas($arajanlat_uj_ugyfelek_adatok["eladas_haszon"], 0);?></td>
+		<td colspan="2" class="adat_cella_kisbetu szegely_alul kozepre">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok["nyomas_haszon"] + $megrendeles_uj_ugyfelek_adatok["eladas_haszon"] + $megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["nyomas_haszon"] + $megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["eladas_haszon"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok["nyomas_haszon"] + $megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["nyomas_haszon"], 0);?><br /><?php echo Utils::OsszegFormazas($megrendeles_uj_ugyfelek_adatok["eladas_haszon"] + $megrendeles_uj_ugyfelek_adatok_arajanlat_nelkul["eladas_haszon"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul">&nbsp;</td>		
+	</tr>	
+<?php
+		}		
+	}
+?>
+	
+<!--Összesen sor-->	
+	<tr>
+		<td class="cim_cella cim_cella_kisbetu szegely_jobb szegely_alul szegely_felul">Összesen:</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_db_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_db_osszesen"]);?><br /><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_netto_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_netto_osszesen"], 0);?><br /><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["megrendelesek_napra_bontva_osszesites"]["eladas_megrendelesek_db_osszesen"] + $stat_adatok["megrendelesek_napra_bontva_osszesites"]["nyomas_megrendelesek_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["megrendelesek_napra_bontva_osszesites"]["nyomas_megrendelesek_db_osszesen"]);?><br /><?php echo Utils::DarabszamFormazas($stat_adatok["megrendelesek_napra_bontva_osszesites"]["eladas_megrendelesek_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_netto_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_netto_osszesen"], 0);?><br /><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo $stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_megrendelesek_szazalek"];?></td>
+		
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_db_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_db_osszesen"]);?><br /><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_netto_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_netto_osszesen"], 0);?><br /><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_db_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_db_osszesen"]);?><br /><?php echo Utils::DarabszamFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_db_osszesen"]);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_netto_osszesen"] + $stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["nyomas_ajanlatok_uj_ugyfel_netto_osszesen"], 0);?><br /><?php echo Utils::OsszegFormazas($stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_ajanlatok_uj_ugyfel_netto_osszesen"], 0);?></td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra"><?php echo $stat_adatok["ajanlatok_napra_bontva_osszesites"]["eladas_megrendelesek_uj_ugyfel_szazalek"];?></td>				
+	</tr>
+	<tr>
+		<td colspan="3" class="adat_cella_kisbetu szegely_alul kozepre">Bevétel - beszerzés</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">1 459 151</td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra">1 360 455<br />98 695</td>
+		<td colspan="2" class="adat_cella_kisbetu szegely_alul kozepre">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">401 784</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">293 778<br />108 005</td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb">&nbsp;</td>
+		
+		<td colspan="2" class="adat_cella_kisbetu szegely_alul kozepre">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">47 387</td>
+		<td class="adat_cella_kisbetu szegely_alul szegely_jobb jobbra">45 623<br />1 764</td>
+		<td colspan="2" class="adat_cella_kisbetu szegely_alul kozepre">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">31 703</td>
+		<td class="adat_cella_kisbetu szegely_alul jobbra">27 959<br />3 744</td>
+		<td class="adat_cella_kisbetu szegely_alul">&nbsp;</td>		
+	</tr>				
+	<tr>
+		<td colspan="10" class="szegely_jobb">&nbsp;</td>
+		<td colspan="3" class="cim_cella cim_cella_kisbetu">Új érdeklődők száma:</td>
+		<td class="cim_cella cim_cella_kisbetu balra szegely_jobb">3</td>
+		<td colspan="3" class="cim_cella cim_cella_kisbetu">Új megrendelők száma:</td>
+		<td class="cim_cella cim_cella_kisbetu balra">2</td>
+		<td class="cim_cella cim_cella_kisbetu balra">66%</td>
+	</tr>
+<!--Összesen sor eddig-->	
+</table>
+
 <htmlpagefooter name="myFooter2" style="display:none">
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
 	<tr>
-		<td width="40%"> <span> <?php echo "Táska nyomtatva: " . date('Y-m-d h:m:s'); ?> </span> </td>
+		<td width="40%"> <span> <?php echo "Statisztika nyomtatva: " . date('Y-m-d h:m:s'); ?> </span> </td>
 		<td width='20%'> <?php echo $actualUserName; ?> </td>
 		<td width="40%" style="text-align: right; "> {PAGENO} .oldal </td>
     </tr>
