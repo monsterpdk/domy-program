@@ -188,6 +188,7 @@ class MegrendelesekController extends Controller
 						
 	//					print_r($nyomdakonyv) ;
 						
+						$nyomdakonyv -> taskat_rogzito_user_id = Yii::app()->user->getId();
 						$nyomdakonyv -> save(false);
 						
 						// UPDATE: ÚJ IGÉNY: ha nincs elég darabszám a raktárban, akkor egy 'negativ' táblába mentjük az adott darabszámot és terméket,
