@@ -21,7 +21,7 @@ class RaktarTermekekController extends Controller
 			$model->attributes=$_GET['RaktarTermekek'];
 	 	
 		$dataProvider=new CActiveDataProvider('RaktarTermekek',
-			array('criteria'=>array('order'=>'raktarhely_id ASC',),)
+			array('criteria'=>array('order'=>'raktarhely_id ASC',), 'pagination'=>array('pageSize'=>10000))
 		);
 		
 		//send model object for search
@@ -32,7 +32,10 @@ class RaktarTermekekController extends Controller
 
 	public function actionPrintRaktarkeszlet()
 	{
-		$dataProvider=new CActiveDataProvider('RaktarTermekek', array());
+		$dataProvider=new CActiveDataProvider('RaktarTermekek',
+			array('criteria'=>array('order'=>'raktarhely_id ASC',), 'pagination'=>array('pageSize'=>10000))
+		);
+
 		if ($dataProvider != null) {			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();

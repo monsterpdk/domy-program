@@ -58,9 +58,12 @@
       'itemsCssClass'=>'items group-grid-view',
       'dataProvider' => $dataProvider,
       'enablePagination' => false,
+      'enableSorting' => false,
       'summaryText' => '',
       'extraRowColumns' => array('raktarHelyek.raktar.nev'),
       'mergeColumns' => array('raktarHelyek.raktar.nev', 'raktarHelyek.nev'),
+      'extraRowPos' => 'above',
+      'maxMergedRows' => 12,
       'columns' => array(
 						array(
 							'class' => 'bootstrap.widgets.TbButtonColumn',
