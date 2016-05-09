@@ -52,37 +52,32 @@
 	<h1> <span class='under'>Raktárkészlet</span> </h1>
 </div>
 
-<?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$dataProvider,
-	'template' => '{items}',
-	'columns'=>array(
-					'raktar.nev',
-					'raktar.tipus',
-					'termek.DisplayTermekTeljesNev',
-					array (
-                        'name' => 'osszes_db',
-                        'value'=>function($data){
-							return Utils::DarabszamFormazas($data->osszes_db);
-						},
-                        'htmlOptions' => array ('style' => 'text-align: right;' ),
-                    ),
-					array (
-                        'name' => 'foglalt_db',
-                        'value'=>function($data){
-							return Utils::DarabszamFormazas($data->foglalt_db);
-						},
-                        'htmlOptions' => array ('style' => 'text-align: right;' ),
-                    ),
-					array (
-                        'name' => 'elerheto_db',
-                        'value'=>function($data){
-							return Utils::DarabszamFormazas($data->elerheto_db);
-						},
-                        'htmlOptions' => array ('style' => 'text-align: right;' ),
-                    ),
-				),
-	'enableSorting' => false,
-)); ?>
+<?php
+    $this->widget('ext.groupgridview.BootGroupGridView', array(
+      'id' => 'raktar_termekek_grid',
+      'itemsCssClass'=>'items group-grid-view',
+      'dataProvider' => $dataProvider,
+      'enablePagination' => false,
+      'summaryText' => '',
+      'extraRowColumns' => array('raktarHelyek.raktar.nev'),
+      'mergeColumns' => array('raktarHelyek.raktar.nev', 'raktarHelyek.nev'),
+      'columns' => array(
+						array(
+							'class' => 'bootstrap.widgets.TbButtonColumn',
+							'htmlOptions'=>array('style'=>'width: 30px; text-align: left;'),
+						),
+      	  				'raktarHelyek.raktar.nev',
+						'raktarHelyek.nev',
+						'anyagbeszallitas.bizonylatszam',
+						'anyagbeszallitas.beszallitas_datum',
+						'termek.DisplayTermekTeljesNev',
+						'osszes_db:number',
+						'foglalt_db:number',
+						'elerheto_db:number',
+      ),
+	  
+    ));
+?>	
 
 <htmlpagefooter name="myFooter2" style="display:none">
 
