@@ -156,7 +156,8 @@ class MegrendelesekController extends Controller
 				// Yii::app()->user->setFlash('error', "Valamely termék készlete túl alacsony, a foglalás nem lehetséges! E-mailben értesítést kaptak az arra jogosultak.");
 			} else {
 				foreach ($megrendeles -> tetelek as $tetel) {
-					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0) {
+					// LI : ha a termék szolgáltatás típusú, akkor nem tesszük nyomdakönyvbe
+					if ($tetel->szinek_szama1 + $tetel->szinek_szama2 > 0 && $tetel->termek->tipus != 'Szolgáltatás') {
 						$nyomdakonyv = new Nyomdakonyv;
 						$nyomdakonyv->taskaszam = $this->ujTaskaszamGeneralas ();
 						$nyomdakonyv->megrendeles_tetel_id = $tetel->id;

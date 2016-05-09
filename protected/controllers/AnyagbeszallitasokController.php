@@ -84,7 +84,6 @@ class AnyagbeszallitasokController extends Controller
 			// akkor lezárjuk az anyagrendelést és az anyagbeszállítást
 			if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.Create') || Yii::app()->user->checkAccess('Admin')) {
 				if (Utils::checkAnyagrendelesBeszallitas ($model -> anyagrendeles_id, $id) == "" && $model -> lezarva != 1) {
-				
 					// ha választottunk ki raktárat és létezik is (nem kamu id-t hackeltek a POST-ba), akkor lezárjuk a rendelést és beszállítást
 					// és eltároljuk a kiválasztott raktárba a tételeket
 					if (isset($_POST['raktarhely_id'])) {
