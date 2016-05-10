@@ -1415,7 +1415,7 @@
 		//
 		// LI: ha hozott borítékos, akkor nem foglalkozunk a raktárműveletekkel, mert nem saját borítékot használunk
 		// LI: ha a termék szolgáltatás típusú, akkor nem foglalkozunk a raktárműveletekkel
-		private function raktarMozgas ($tetelId, $darabszam, $muvelet, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
+		private function raktarMozgas ($tetelId, $darabszam, $muvelet, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true, $checkNegativRaktarTermekek) {
 			$result = true;
 			
 			if ($tetelId != null && $darabszam != null && $muvelet != null && $muvelet != "") {
@@ -1531,7 +1531,7 @@
 									}
 								}
 							}
-							
+
 							if ($muvelet == 'KIVESZ') {
 								$raktarTermekek = RaktarTermekek::model() -> findAllByAttributes(array('termek_id' => $tetelId), array('order'=>'id DESC'));
 								$termek = Termekek::model() -> findByPk($tetelId);
@@ -1555,7 +1555,7 @@
 										}
 
 										$raktarTermek->save(false);
-										
+
 										// elmentjük a tranzakciót a statisztika készítéséhez
 										if ($tranzakcioMentese) {
 											Utils::createRaktarMozgasTranzakció ($termek->id, $raktarTermek->anyagbeszallitas_id, $raktarTermek->raktarhely_id, 0, $mentendoDarabszam * -1, $szallitolevel_nyomdakonyv_id);
@@ -1586,9 +1586,11 @@
 						
 					}
 				}
-				
-				// megnézzük van-e termék a negatív raktártermék táblában és ha igen, akkor kielégíthető-e valamely igény
-				Utils::checkNegativRaktarTermekek();
+
+				if ($checkNegativRaktarTermekek) {
+					// megnézzük van-e termék a negatív raktártermék táblában és ha igen, akkor kielégíthető-e valamely igény
+					Utils::checkNegativRaktarTermekek();
+				}
 				
 				// töröljük az olyan raktártermék sorokat, ahol az összes, elérhető és foglalt darabszámok is 0-ák
 				Utils::removeEmptyRaktarTermekek();
@@ -1598,28 +1600,28 @@
 		}
 		
 		// LI: tétel raktárba történő bevétele
-		function raktarbaBerak ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id=null, $tranzakcioMentese=true) {
-			return Utils::raktarMozgas ($tetelId, $darabszam, 'BERAK', $szallitolevel_nyomdakonyv_id);
+		function raktarbaBerak ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id=null, $tranzakcioMentese=true, $checkNegativRaktarTermekek=true) {
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'BERAK', $szallitolevel_nyomdakonyv_id, $tranzakcioMentese, $checkNegativRaktarTermekek);
 		}
 		
 		// LI: tétel raktárban történő lefoglalása
-		function raktarbanFoglal ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
-			return Utils::raktarMozgas ($tetelId, $darabszam, 'FOGLAL', $szallitolevel_nyomdakonyv_id);
+		function raktarbanFoglal ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true, $checkNegativRaktarTermekek=true) {
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'FOGLAL', $szallitolevel_nyomdakonyv_id, $tranzakcioMentese, $checkNegativRaktarTermekek);
 		}
 
 		// LI: tétel raktárban történő sztornózás
-		function raktarbanSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
-			return Utils::raktarMozgas ($tetelId, $darabszam, 'SZTORNOZ', $szallitolevel_nyomdakonyv_id);
+		function raktarbanSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true, $checkNegativRaktarTermekek=true) {
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'SZTORNOZ', $szallitolevel_nyomdakonyv_id, $tranzakcioMentese, $checkNegativRaktarTermekek);
 		}
 		
 		// LI: tétel raktárból történő kivétele
-		function raktarbolKivesz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
-			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ', $szallitolevel_nyomdakonyv_id);
+		function raktarbolKivesz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true, $checkNegativRaktarTermekek=true) {
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ', $szallitolevel_nyomdakonyv_id, $tranzakcioMentese, $checkNegativRaktarTermekek);
 		}
 		
 		// LI: tétel raktárból történő kivétel sztornózása
-		function raktarbolKiveszSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true) {
-			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ_SZTORNOZ', $szallitolevel_nyomdakonyv_id);
+		function raktarbolKiveszSztornoz ($tetelId, $darabszam, $szallitolevel_nyomdakonyv_id, $tranzakcioMentese=true, $checkNegativRaktarTermekek=true) {
+			return Utils::raktarMozgas ($tetelId, $darabszam, 'KIVESZ_SZTORNOZ', $szallitolevel_nyomdakonyv_id, $tranzakcioMentese, $checkNegativRaktarTermekek);
 		}
 		
 		// LI: küldünk az árajnálat lérehozójának egy e-mailt, ami tartalmazza az e-mailből létrehozott megrendelés linkjét
@@ -1869,7 +1871,7 @@
 			foreach ($negativRaktarTermekek as $negativRaktarTermek) {
 				if (Utils::getTermekRaktarkeszlet ($negativRaktarTermek -> termek_id, 'elerheto_db') >= $negativRaktarTermek -> darabszam) {
 					// találtunk a soron következő foglalási igényhez elegendő terméket a raktárban, így elindítjuk a foglalást, majd töröljük a negatív raktártermék táblából az igényt
-					Utils::raktarbanFoglal($negativRaktarTermek -> termek_id, $negativRaktarTermek -> darabszam, $negativRaktarTermek -> nyomdakonyv_id);
+					Utils::raktarbanFoglal($negativRaktarTermek -> termek_id, $negativRaktarTermek -> darabszam, $negativRaktarTermek -> nyomdakonyv_id, true, false);
 					
 					// megkeressük a megrendelés tételt és levesszük róla a flag, ami jelzi, hogy negatív raktárban van a foglalási igény
 					$nyomdakonyv = Nyomdakonyv::model() -> findByPk ($negativRaktarTermek -> nyomdakonyv_id);

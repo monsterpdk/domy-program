@@ -84,7 +84,7 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> save();
 					}
 				}
-				
+
 				if (strlen($minuszosTermekek) > 0) {
 					$minuszosTermekek = '<strong>' . $minuszosTermekek . '</strong>';
 					$minuszosTermekek = 'A következő termékeknél negatív darabszám keletkezett (további információ a <strong><a href="' . Yii::app()->createUrl("raktartermekek/index") . '" target="_blank">Raktárkészletek</a></strong> menüpont alatt):<br />' . $minuszosTermekek;
