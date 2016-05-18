@@ -707,7 +707,7 @@ class Ugyfelek extends DomyModel
 			
 	 	}
 	 }
-	 
+	  
 	 /* Visszaadja az ügyfélnek adott ajánlatok számát */
 	 public function getAjanlatszam($datum) {
 	 	return Arajanlatok::model()->countByAttributes(array('ugyfel_id'=> $this->id), 'ajanlat_datum<=:date', array(':date'=>$datum));
@@ -718,6 +718,17 @@ class Ugyfelek extends DomyModel
 	 	return Megrendelesek::model()->countByAttributes(array('ugyfel_id'=> $this->id), 'rendeles_idopont<=:date', array(':date'=>$datum . " 00:00:00"));
 	 }
 
+	 /* Visszaadja az ügyfél első megrendelésének adatait */
+	 public function getElsoRendelesDatum() {
+		$criteria = new CDbCriteria();
+		$criteria->select = 'rendeles_idopont';
+		$criteria->condition  = "ugyfel_id=:uid and torolt='0'";
+		$criteria->order = "rendeles_idopont";
+		$criteria->limit = 1;		
+		$criteria->params = array(':uid' => $this->id);
+		$megrendeles = Megrendelesek::model()->find($criteria);
+	 	return $megrendeles->rendeles_idopont ;	 		 
+	 }
 	 
 	/**
 	 * Returns the static model of the specified AR class.
