@@ -127,7 +127,7 @@ class TermekekController extends Controller
 	{
 		Utils::saveCurrentPage("termekekIndex");
 		$updated = "0" ;
-		if (is_numeric($_GET["updated"]))
+		if (isset($_GET["updated"]) && is_numeric($_GET["updated"]))
 			$updated = $_GET["updated"] ;
 		
 		$model=new Termekek('search');

@@ -574,8 +574,11 @@
 							
 							if ($tetel -> negativ_raktar_termek == 0 && (($nyomdakonyv != null && $nyomdakonyv -> sztornozva == 0) || ($nyomdakonyv == null && $tetel->szinek_szama1 + $tetel->szinek_szama2 == 0)) ) {
 								$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
-								if ($darabszamKulonbozet == -1)
-									array_push ($result, $tetel);
+								if ($darabszamKulonbozet == -1) {
+									if (Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db") >= $tetel -> darabszam ) {
+										array_push ($result, $tetel);
+									}
+								}
 								else if ($darabszamKulonbozet > 0) {
 									$tetel->darabszam = $darabszamKulonbozet;
 									array_push ($result, $tetel);
@@ -751,7 +754,7 @@
 				$xml_megrendeles = new SimpleXMLElement('<?xml version="1.0" encoding="ISO-8859-2"?><root/>');
 				Utils::array_to_xml($megrendeles_kesz, $xml_megrendeles) ;
 				$SzamlaImportPath = Yii::app()->config->get('SzamlaImportPath');
-				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
+ 				$xml_megrendeles->asXML($SzamlaImportPath . "/domy_" . $megrendeles_id . ".xml");			
 			}
 		}
 		
