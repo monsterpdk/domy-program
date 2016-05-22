@@ -916,6 +916,15 @@ div.form .checkbox_group_horizontal  label
 	float: left;
 	margin-right: 20px;
 }
+#termek-athelyez-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#termek-athelyez-form .row {
+	float: left;
+	margin-right: 20px;
+}
 #zuh-form .portlet {
 	float: left;
 	margin-right: 20px;
@@ -931,6 +940,15 @@ div.form .checkbox_group_horizontal  label
 	width : 45%;
 }
 #raktarak-form .row {
+	float: left;
+	margin-left: 20px;
+}
+#nyomdakonyv-reklamaciok-form .portlet {
+	float: left;
+	margin-right: 20px;
+	width : 45%;
+}
+#nyomdakonyv-reklamaciok-form .row {
 	float: left;
 	margin-left: 20px;
 }
@@ -1111,4 +1129,8 @@ table tr td.red {
 }
 .search-form {
 	margin-top: 10px;
+}
+
+tr.updated-row {
+	background-color: #ccff99 ;
 }

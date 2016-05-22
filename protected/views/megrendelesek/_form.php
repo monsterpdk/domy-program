@@ -59,13 +59,18 @@
 		</div>
 
 		<div class="row">
-			<?php echo $form->labelEx($model,'arkategoria_id'); ?>
+			<?php echo $form->labelEx($model,'megrendeles_forras_id'); ?>
 			
-				<?php echo CHtml::activeDropDownList($model, 'arkategoria_id',
-					CHtml::listData(Aruhazak::model()->findAll(array("condition"=>"torolt=0")), 'id', 'display_aruhaz_arkategoria')
+				<?php
+					$select_html_options = array() ;
+					if ($model->megrendeles_forras_megrendeles_id != "") {
+						$select_html_options = array("disabled"=>"disabled") ;
+					}
+					echo CHtml::activeDropDownList($model, 'megrendeles_forras_id',
+					CHtml::listData(Aruhazak::model()->findAll(array("condition"=>"torolt=0")), 'id', 'display_aruhaz_arkategoria'), $select_html_options
 				); ?>
 				
-			<?php echo $form->error($model,'arkategoria_id'); ?>
+			<?php echo $form->error($model,'megrendeles_forras_id'); ?>
 		</div>
 
 			<div class="row">
@@ -89,28 +94,50 @@
 															$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
 															$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
 															$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
-															$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').val(ui.item.fontos_megjegyzes);
+															$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').html(ui.item.fontos_megjegyzes);
 															$('#Megrendelesek_cimzett').val(ui.item.cimzett);
+															$('#Ugyfel_fontos_megjegyzes_dialog').html(ui.item.fontos_megjegyzes) ;
+															if (ui.item.fontos_megjegyzes != '') {
+																$('#Ugyfel_fontos_megjegyzes_dialog').dialog('open') ;
+															}
 														}",
 						'change'=>"js:function(event, ui) {
 															if (!ui.item) {
-																$('#Megrendelesek_ugyfel_id').val('');
-																$('#Megrendelesek_ugyfel_tel').val('');
-																$('#Megrendelesek_ugyfel_fax').val('');
-																
-																$('#Megrendelesek_autocomplete_ugyfel_cim').val('');
-																$('#Megrendelesek_autocomplete_ugyfel_adoszam').val('');
-																$('#Megrendelesek_autocomplete_ugyfel_fizetesi_moral').val('');
-																$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val('');
-																$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val('');
-																$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val('');
-																$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').val('');
-																$('#Megrendelesek_cimzett').val('');
+															$('#Megrendelesek_ugyfel_id').val (ui.item.id);
+															$('#Megrendelesek_ugyfel_tel').val (ui.item.tel);
+															$('#Megrendelesek_ugyfel_fax').val (ui.item.fax);
+															
+															$('#Megrendelesek_autocomplete_ugyfel_cim').val(ui.item.cim);
+															$('#Megrendelesek_autocomplete_ugyfel_adoszam').val(ui.item.adoszam);
+															$('#Megrendelesek_autocomplete_ugyfel_fizetesi_moral').val(ui.item.fizetesi_moral);
+															$('#Megrendelesek_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
+															$('#Megrendelesek_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
+															$('#Megrendelesek_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
+															$('#Megrendelesek_autocomplete_ugyfel_fontos_megjegyzes').html(ui.item.fontos_megjegyzes);
+															$('#Megrendelesek_cimzett').val(ui.item.cimzett);
+															$('#Ugyfel_fontos_megjegyzes_dialog').html(ui.item.fontos_megjegyzes) ;
+																$('#Ugyfel_fontos_megjegyzes_dialog').html(ui.item.fontos_megjegyzes) ;
 															}
 														   }",
 														
 					),
 				));
+			?>
+			
+			<?php
+				$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
+					'id'=>'Ugyfel_fontos_megjegyzes_dialog',
+					// additional javascript options for the dialog plugin
+					'options'=>array(
+						'title'=>'Fontos megjegyzés',
+						'autoOpen'=>false,
+						'dialogClass'=>"figyelmeztetes-dialog"
+					),
+				));
+				
+					echo 'dialog content here';			
+				
+				$this->endWidget('zii.widgets.jui.CJuiDialog');
 			?>
 			
 			<?php echo $form->error($model,'ugyfel_id'); ?>

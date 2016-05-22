@@ -17,6 +17,7 @@ class RaktarTermekek extends CActiveRecord
 	public $raktar_search;
 	public $raktar_hely_search;
 	public $termek_search;
+	public $cikkszam_search ;
 	
 	/**
 	 * @return string the associated database table name
@@ -44,7 +45,7 @@ class RaktarTermekek extends CActiveRecord
 			array('termek_id, raktarhely_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, termek_id, anyagbeszallitas_id, raktarhely_id, osszes_db, foglalt_db, elerheto_db, raktar_search, raktar_hely_search, termek_search', 'safe', 'on'=>'search'),
+			array('id, termek_id, anyagbeszallitas_id, raktarhely_id, osszes_db, foglalt_db, elerheto_db, raktar_search, raktar_hely_search, termek_search, cikkszam_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,6 +84,7 @@ class RaktarTermekek extends CActiveRecord
 			'raktar_search' => 'Raktárnév',
 			'raktar_hely_search' => 'Rakárhely neve',
 			'termek_search' => 'Termék neve',
+			'cikkszam_search' => 'Cikkszám',
 		);
 	}
 
@@ -117,6 +119,7 @@ class RaktarTermekek extends CActiveRecord
 		$criteria->compare('raktar.nev',$this->raktar_search,true);
 		$criteria->compare('raktarHelyek.nev',$this->raktar_hely_search,true);
 		$criteria->compare('termek.nev',$this->termek_search,true);
+		$criteria->compare('termek.cikkszam',$this->cikkszam_search,true);
 		
 		$criteria->order = 'raktarhely_id ASC';
 

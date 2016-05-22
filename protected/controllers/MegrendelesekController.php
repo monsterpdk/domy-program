@@ -55,6 +55,14 @@ class MegrendelesekController extends Controller
 			
 			$model->rendeles_idopont = date('Y-m-d H:i:s');		
 			$model -> sorszam = $this->ujMegrendelesIdGeneralas();
+			$aruhaz = Aruhazak::model()->findByPk($model->megrendeles_forras_id) ;
+			if ($aruhaz->arkategoria_id > 0) {
+				$model->arkategoria_id = $aruhaz->arkategoria_id ;	
+			}
+			else
+			{
+				$model->arkategoria_id = 1 ;	
+			}
 			
 			$model -> save(false);
 			$this -> redirect(array('update', 'id'=>$model -> id,));
@@ -96,6 +104,14 @@ class MegrendelesekController extends Controller
 			$model->attributes=$_POST['Megrendelesek'];
 			if ($model->szamla_fizetve == 1) {
 				$model->rendelest_lezaro_user_id = Yii::app()->user->getId();
+			}
+			$aruhaz = Aruhazak::model()->findByPk($model->megrendeles_forras_id) ;
+			if ($aruhaz->arkategoria_id > 0) {
+				$model->arkategoria_id = $aruhaz->arkategoria_id ;	
+			}
+			else
+			{
+				$model->arkategoria_id = 1 ;	
 			}
 			if($model->save())
 				Utils::goToPrevPage("megrendelesekIndex");
@@ -674,6 +690,7 @@ class MegrendelesekController extends Controller
 			$megrendeles -> egyeb_megjegyzes = $arajanlat -> egyeb_megjegyzes;
 
 			$megrendeles -> arajanlat_id = $arajanlat -> id;
+			$megrendeles -> megrendeles_forras_id = 1 ;
 			$megrendeles -> rendelest_rogzito_user_id = Yii::app()->user->getId();
 			$megrendeles -> rendeles_idopont = date('Y-m-d H:i:s');
 			$alap_fizmod = Yii::app()->config->get('AlapertelmezettFizetesiMod');

@@ -45,6 +45,12 @@
 			<?php echo $form->label($model, 'termek_search'); ?>
 			<?php echo $form->textField($model, 'termek_search',array('size'=>10,'maxlength'=>50)); ?>
 		</div>
+
+		<div class="row">
+			<?php echo $form->label($model, 'cikkszam_search'); ?>
+			<?php echo $form->textField($model, 'cikkszam_search',array('size'=>10,'maxlength'=>50)); ?>
+		</div>
+
 		
 		<div class="row buttons">
 			<?php echo CHtml::submitButton('Keresés'); ?>

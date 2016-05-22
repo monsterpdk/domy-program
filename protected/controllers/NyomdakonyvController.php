@@ -412,7 +412,7 @@ class NyomdakonyvController extends Controller
 			$result = unserialize(Utils::httpGet($query_url)) ;		
 			print_r($result) ;*/
 			$muveletek = array() ;
-			if (count($this->aktualis_workflow_dbf_tartalom) > 0) {
+			if ($this->aktualis_workflow_dbf_tartalom != "" && count($this->aktualis_workflow_dbf_tartalom) > 0) {
 				foreach ($this->aktualis_workflow_dbf_tartalom as $aktualis_muvelet) {
 					if ($aktualis_muvelet["TSZAM"] == $model->taskaszam) {
 //						print_r($aktualis_muvelet) ;

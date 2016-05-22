@@ -207,7 +207,7 @@
 				";
 				
 				// összsúly frissítése
-				$osszsuly += $papirtipus->suly * $tetel->darabszam;
+				$osszsuly += $termek->suly * $tetel->darabszam;
 			}
 			
 			echo "

@@ -92,8 +92,12 @@
 															$('#Arajanlatok_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
 															$('#Arajanlatok_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
 															$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
-															$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').val(ui.item.fontos_megjegyzes);
+															$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').html(ui.item.fontos_megjegyzes);
 															$('#Arajanlatok_cimzett').val(ui.item.cimzett);
+															$('#Ugyfel_fontos_megjegyzes_dialog').html(ui.item.fontos_megjegyzes) ;
+															if (ui.item.fontos_megjegyzes != '') {
+																$('#Ugyfel_fontos_megjegyzes_dialog').dialog('open') ;
+															}
 															
 															// frissítjük a választható ügyintézők listáját
 															$('#Arajanlatok_ugyintezo_id')
@@ -115,18 +119,22 @@
 														}",
 						'change'=>"js:function(event, ui) {
 															if (!ui.item) {
-																$('#Arajanlatok_ugyfel_id').val('');
-																$('#Arajanlatok_ugyfel_tel').val('');
-																$('#Arajanlatok_ugyfel_fax').val('');
+																$('#Arajanlatok_ugyfel_id').val (ui.item.id);
+																$('#Arajanlatok_ugyfel_tel').val (ui.item.tel);
+																$('#Arajanlatok_ugyfel_fax').val (ui.item.fax);
 																
-																$('#Arajanlatok_autocomplete_ugyfel_cim').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_adoszam').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_fizetesi_moral').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_max_fizetesi_keses').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_atlagos_fizetesi_keses').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val('');
-																$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').val('');
-																$('#Arajanlatok_cimzett').val('');
+																$('#Arajanlatok_autocomplete_ugyfel_cim').val(ui.item.cim);
+																$('#Arajanlatok_autocomplete_ugyfel_adoszam').val(ui.item.adoszam);
+																$('#Arajanlatok_autocomplete_ugyfel_fizetesi_moral').val(ui.item.fizetesi_moral);
+																$('#Arajanlatok_autocomplete_ugyfel_max_fizetesi_keses').val(ui.item.max_fizetesi_keses);
+																$('#Arajanlatok_autocomplete_ugyfel_atlagos_fizetesi_keses').val(ui.item.atlagos_fizetesi_keses);
+																$('#Arajanlatok_autocomplete_ugyfel_rendelesi_tartozas_limit').val(ui.item.rendelesi_tartozas_limit);
+																$('#Arajanlatok_autocomplete_ugyfel_fontos_megjegyzes').html(ui.item.fontos_megjegyzes);
+																$('#Arajanlatok_cimzett').val(ui.item.cimzett);
+																$('#Ugyfel_fontos_megjegyzes_dialog').html(ui.item.fontos_megjegyzes) ;
+																if (ui.item.fontos_megjegyzes != '') {
+																	$('#Ugyfel_fontos_megjegyzes_dialog').dialog('open') ;
+																}
 																
 																// frissítjük az ügyfél statisztikáit
 																getUgyfelStat(ui.item.id);
@@ -136,6 +144,22 @@
 					),
 				));
 			?>
+			
+			<?php
+				$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
+					'id'=>'Ugyfel_fontos_megjegyzes_dialog',
+					// additional javascript options for the dialog plugin
+					'options'=>array(
+						'title'=>'Fontos megjegyzés',
+						'autoOpen'=>false,
+						'dialogClass'=>"figyelmeztetes-dialog"
+					),
+				));
+				
+					echo 'dialog content here';			
+				
+				$this->endWidget('zii.widgets.jui.CJuiDialog');
+			?>			
 			
 			<?php echo $form->error($model,'ugyfel_id'); ?>
 			
