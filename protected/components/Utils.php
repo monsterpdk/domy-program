@@ -46,10 +46,16 @@
 		//	   tételeken (rendelt tétel + darabszám) és ellenőrzi, hogy megegyeznek-e. Ha valami eltérés van
 		//	   a tételek között, akkor hibaüzenetet ad vissza, egyébként egy üres string-et.
 		//	   Az anyagrendelés vizsgálatakor az IRODA által átvett és a RAKTÁR által átvett táblákat is ellenőrzi.
-		//	   TRUE visszatéréshez tehát az kell, hogy az anyagrendelésen és az anyagbeszállításon (iroda és raktár is) egyezzenek a tételek és darabszámok.
+		// TÁ: Módosítás: a sikerességet jelző mező TRUE visszatéréshez tehát az kell, hogy az anyagbeszállításon (iroda és raktár is) egyezzenek a tételek és darabszámok, az anyagrendeléshez képesti eltérést egy tömbben visszaadjuk
+		// TÁ: Bővül a funkcionalitás annyival, hogy ha van anyagrendelés, akkor visszaadja az anyagrendeléshez képesti eltérést egy tömbben
+		//	   Így ha kell, létrehozható egy új megrendelés automatikusan a hiányzó tételekkel
 		function checkAnyagrendelesBeszallitas ($anyagrendeles_id, $anyagbeszallitas_id) {
 			$anyagrendeles = Anyagrendelesek::model()->findByPk($anyagrendeles_id);
-			$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk($anyagbeszallitas_id);
+			$anyagbeszallitas = Anyagbeszallitasok::model()->findByPk($anyagbeszallitas_id);	
+			$anyagrendeles_beszallitas_tetel_elteresek = array() ;			
+			$return["uzenet"] = "" ;
+			$return["tetel_elteresek"] = array() ;
+			$return["ok"] = true ;
 
 			// ha az anyagrendelés ID hibás volt, akkor hibaüzenettel kilépek
 			// LI: új igény: ha nincs anyagrendelés megadva akkor csak az iroda és raktár által átvetteket hasonlítjuk egymáshoz
@@ -69,22 +75,44 @@
 						$anyagbeszallitas = Anyagbeszallitasok::model() -> findByAttributes(array('anyagrendeles_id' => $anyagrendeles->id));
 						
 						if ($anyagbeszallitas == null) {
-							return "Hibás anyagbeszállítás azonosító!";
+							$return["uzenet"] = "Hibás anyagbeszállítás azonosító!";
+							$return["ok"] = false ;
+							return $return ;
 						}
 					}
 				
 					// anyagrendelés tételeinek lekérdezése
 					$anyagrendeles_termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array('anyagrendeles_id' => $anyagrendeles->id));
 					
-					// először ellenőrzöm, hogy a tételek száma egyáltalán egyezik-e a rendelésen és beérkezett termékek listáján, ha nem, akkor hibaüzenettel kilépek
-					if ( (count($anyagrendeles_termekek) == count($anyagbeszallitas_iroda_termekek)) && (count($anyagbeszallitas_iroda_termekek) == count($anyagbeszallitas_raktar_termekek)) ) {
+					// először ellenőrzöm, hogy a tételek száma egyáltalán egyezik-e az irodai és a raktáros beszállítás listáján, ha nem, akkor hibaüzenettel kilépek
+					if (count($anyagbeszallitas_iroda_termekek) == count($anyagbeszallitas_raktar_termekek)) {
 						// végigmegyek az anyagrendelés tételein és ha bármi eltérést találok, hibaüzenettel kilépek
 						foreach ($anyagrendeles_termekek as $anyagrendeles_termek) {
 							$res = Utils::searchAnyagbeszallitasIrodaRaktarTetel ($anyagrendeles_termek, $anyagbeszallitas_iroda_termekek, $anyagbeszallitas_raktar_termekek);
-							if ($res != "") return $res;
+							if (is_numeric($res)) {
+								$anyagrendeles_beszallitas_tetel_elteresek_sor = array() ;
+								$anyagrendeles_beszallitas_tetel_elteresek_sor["termek"] = $anyagrendeles_termek ;
+								$anyagrendeles_beszallitas_tetel_elteresek_sor["db"] = $res ;
+								$anyagrendeles_beszallitas_tetel_elteresek[] = $anyagrendeles_beszallitas_tetel_elteresek_sor ;
+							}
+							elseif ($res != "") {
+								$return["uzenet"] = $res ;
+								$return["ok"] = false ;
+								return $return;
+							}
 							
 						}
-					} else return "Eltérés található a megrendelt és az iroda vagy a raktár által átvett rendelési tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+						if (count($anyagrendeles_beszallitas_tetel_elteresek) > 0) {
+							$return["uzenet"] = "Eltérés volt az anyagrendeléshez képest a beszállított tételekben." ;
+							$return["tetel_elteresek"] = $anyagrendeles_beszallitas_tetel_elteresek ;
+							$return["ok"] = true ;
+							return $return ;
+						}
+					} else {
+						$return["uzenet"] = "Eltérés található az iroda és a raktár által átvett tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+						$retrun["ok"] = false ;
+						return $return ;						
+					}
 				} else {
 					// nem lett megadva anyagrendelés, így csak az iroda és raktár által átvetteket hasonlítjuk egymáshoz
 					// először ellenőrzöm, hogy a tételek száma egyáltalán egyezik-e az irodai és raktáros listán, ha nem, akkor hibaüzenettel kilépek
@@ -98,44 +126,78 @@
 									break;
 								}
 							}
-							if (!$foundMatch) return "Eltérés található az iroda és a raktár által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+							if (!$foundMatch) {
+								$return["uzenet"] = "Eltérés található az iroda és a raktár által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+								$return["ok"] = false ;
+								return $return ;								
+							}
 						}
-					} else return "Eltérés található a megrendelt és az iroda vagy a raktár által átvett rendelési tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+					} else {
+						$return["uzenet"] = "Eltérés található az iroda vagy a raktár által átvett rendelési tételek között. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+						$return["ok"] = false ;
+						return $return ;						
+					}
 				}
-			} else return "Anyagrendelés.";
+			} else {
+				$return["uzenet"] = "Anyagrendelés.";
+				$return["ok"] = false ;
+				return $return ;
+			}
 		
-			return "";
+			return $return ;
 		}
 		
 		// LI: paraméterben kap egy anyagrendelés tételt és két anyagbeszállítás listát (iroda, raktár).
 		//	   A kapott anyagbeszállítás listákon végigmegy és ha nem találja bennük az anyagrendelés tételt hibával tér vissza.
+		// TÁ: Módosítás: az eltérés darabszámát adja vissza, ha nincs benne egyáltalán, akkor a teljes megrendelt darabszámot
 		function searchAnyagbeszallitasIrodaRaktarTetel ($anyagrendeles_termek, $anyagbeszallitas_iroda_termekek, $anyagbeszallitas_raktar_termekek) {
 			$termek_id = $anyagrendeles_termek -> termek_id;
 			$darabszam = $anyagrendeles_termek -> rendelt_darabszam;
+			$iroda_elteres_darabszam = $raktar_elteres_darabszam = 0 ;
 
 			// először az iroda által felvett listán megyünk végig
 			$foundInIroda = false;
 
 			foreach ($anyagbeszallitas_iroda_termekek as $anyagbeszallitas_iroda_termek) {
-				if ($anyagbeszallitas_iroda_termek->termek_id == $termek_id && $anyagbeszallitas_iroda_termek->darabszam == $darabszam) {
+				if ($anyagbeszallitas_iroda_termek->termek_id == $termek_id) {
 					$foundInIroda = true;
 					break;
 				}
 			}
+			if ($foundInIroda) {
+				$iroda_elteres_darabszam = $darabszam - $anyagbeszallitas_iroda_termek->darabszam ;
+			}
+			else
+			{
+				$iroda_elteres_darabszam = $darabszam ;
+			}
+			
 
-			if (!$foundInIroda) return "Eltérés található az iroda által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+//			if (!$foundInIroda) return "Eltérés található az iroda által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
 			
 			// ezután a raktár által felvett listát vizsgáljuk
 			$foundInRaktar = false;
 			foreach ($anyagbeszallitas_raktar_termekek as $anyagbeszallitas_raktar_termek) {
-				if ($anyagbeszallitas_raktar_termek->termek_id == $termek_id && $anyagbeszallitas_raktar_termek->darabszam == $darabszam) {
+				if ($anyagbeszallitas_raktar_termek->termek_id == $termek_id) {
 					$foundInRaktar = true;
 					break;
 				}
 			}
-			if (!$foundInRaktar) return "Eltérés található a raktár által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+			if ($foundInRaktar) {
+				$raktar_elteres_darabszam = $darabszam - $anyagbeszallitas_iroda_termek->darabszam ;
+			}
+			else
+			{
+				$raktar_elteres_darabszam = $darabszam ;
+			}
 			
-			return "";
+			if ($iroda_elteres_darabszam != $raktar_elteres_darabszam) return "Eltérés található az iroda és raktár által felvett anyaglistán. További információhoz használja a <strong><a href='" . Yii::app()->createUrl("raktareltereslista/index") . "' target='_blank'>Raktár eltéréslista</a></strong> nézetet.";
+			
+			if ($iroda_elteres_darabszam < 0) {
+				$iroda_elteres_darabszam = 0 ;	
+			}
+			
+			return $iroda_elteres_darabszam;
 		}
 	
 		// LI: egy paraméterben kapott termék aktuálisan aktív termékárát adja vissza

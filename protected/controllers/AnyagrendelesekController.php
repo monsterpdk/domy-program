@@ -44,15 +44,7 @@ class AnyagrendelesekController extends Controller
 			$model -> user_id = Yii::app()->user->getId();
 			$model -> rendeles_datum = date('Y-m-d');
 			
-			// megkeressük a legutóbb felvett árajánlatot és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
-			// formátum: AJ2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
-			$criteria = new CDbCriteria;
-			$criteria->select = 'max(id) AS id';
-			$row = Anyagrendelesek::model() -> find ($criteria);
-			$utolsoAnyagrendeles = $row['id'];
-
-			$model -> bizonylatszam = "TM" . date("Y") . str_pad( ($utolsoAnyagrendeles != null) ? ($utolsoAnyagrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
-			
+			$model->getNewBizonylatszam() ;
 			$model -> save(false);
 			$this->redirect(array('update', 'id'=>$model -> id,));
 		}
@@ -136,8 +128,8 @@ class AnyagrendelesekController extends Controller
 			// akkor lezárjuk az anyagrendelést és az anyagbeszállítást
 			if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.Create') || Yii::app()->user->checkAccess('Admin')) {
 				$anyagbeszallitas = Anyagbeszallitasok::model() -> findByAttributes(array('anyagrendeles_id' => $model->id));
-				
-				if ($anyagbeszallitas != null && Utils::checkAnyagrendelesBeszallitas ($model -> id, $anyagbeszallitas -> id) == "" && $model -> lezarva != 1) {
+				$anyagbeszallitasCheck = Utils::checkAnyagrendelesBeszallitas ($model -> id, $anyagbeszallitas -> id) ;		
+				if ($anyagbeszallitas != null && $anyagbeszallitasCheck["ok"] == 1  && $model -> lezarva != 1) {
 				
 					// ha választottunk ki raktárat és létezik is (nem kamu id-t hackeltek a POST-ba), akkor lezárjuk a rendelést és beszállítást
 					// és eltároljuk a kiválasztott raktárba a tételeket
@@ -156,11 +148,12 @@ class AnyagrendelesekController extends Controller
 							$anyagrendeles->save();
 							
 							// végigmegyünk az anyaglistán és eltároljuk a megrendelt termékeket a kiválasztott raktárba
+							// TÁ: Módosítom, hogy ne a megrendelt, hanem a beszállított termékeken menjen végig, mert nem feltétlenül fog egyezni a megrendelés tételsor a beszállítás tételsorral
 							//
 							// TODO: ez így nem túl szép, mert minden elemet egyesével mentek, az mindig egy SQL update/insert.
 							//		 Szebb lenne egy tömbben kezelni az elemeket és a végén egyszer menteni mindegyiket, de most idő hiányában
 							//		 így csináltam, talán egy rendelésen nem lesz több 100 termék, úgyhogy nem lesz érezhető performancia romlás.
-							$termekek = AnyagrendelesTermekek::model()->findAllByAttributes(array("anyagrendeles_id" => $anyagrendeles -> id));
+							$termekek = AnyagbeszallitasTermekek::model()->findAllByAttributes(array("anyagbeszallitas_id" => $anyagbeszallitas -> id));
 							
 							foreach ($termekek as $termek) {
 								$raktarTermek = RaktarTermekek::model()->findByAttributes( array('termek_id' => $termek -> termek_id, 'anyagbeszallitas_id' => $anyagbeszallitas->id, 'raktarhely_id' => $raktarHely -> id) );
@@ -204,6 +197,28 @@ class AnyagrendelesekController extends Controller
 							
 							// megnézzük van-e termék a negatív raktártermék táblában és ha igen, akkor kielégíthető-e valamely igény
 							Utils::checkNegativRaktarTermekek();
+						}
+					}
+					
+					//Ha nem volt minden termék meg a megrendeléshez képest a beszállításnál, akkor létrehozunk a hiányzókkal egy új anyagrendelést
+					if (count($anyagbeszallitasCheck["tetel_elteresek"]) > 0) {
+						$new_anyagrendeles = new Anyagrendelesek;
+						$new_anyagrendeles -> gyarto_id = $anyagrendeles->gyarto_id ;
+						$new_anyagrendeles -> getNewBizonylatszam() ;
+						$new_anyagrendeles -> user_id = $anyagrendeles->user_id;
+						$new_anyagrendeles -> rendeles_datum = date('Y-m-d');
+						$new_anyagrendeles -> megjegyzes = "Az " . $anyagrendeles->bizonylatszam . " hiányos beszállítása után a kimaradt termékekkel automatikusan jött létre." ;
+						$new_anyagrendeles -> save() ;						
+						//Az új anyagrendeléshez felvesszük a termékeket
+						foreach ($anyagbeszallitasCheck["tetel_elteresek"] as $tetel) {
+							$anyagrendeles_tetel = new AnyagrendelesTermekek ;
+							$anyagrendeles_tetel -> anyagrendeles_id = $new_anyagrendeles->id ;
+							$anyagrendeles_tetel -> termek_id = $tetel->termek->termek_id ;
+							$anyagrendeles_tetel -> rendelt_darabszam = $tetel->db ;
+							$termekar = Utils::getActiveTermekar($anyagrendeles_tetel -> termek_id, $tetel->db) ;
+							$kalkulalt_termekar = $termekar != null && is_array($termekar) ? $termekar['db_beszerzesi_ar'] : 0 ;
+							$anyagrendeles_tetel -> rendeleskor_netto_darabar = $kalkulalt_termekar ;
+							$anyagrendeles_tetel->save() ;
 						}
 					}
 					

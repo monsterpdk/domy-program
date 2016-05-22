@@ -83,7 +83,8 @@ class AnyagbeszallitasokController extends Controller
 			// ha a raktárellenőrzés nem talált eltérést a tételek között, valamint rendben vannak a jogosultságok,
 			// akkor lezárjuk az anyagrendelést és az anyagbeszállítást
 			if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.Create') || Yii::app()->user->checkAccess('Admin')) {
-				if (Utils::checkAnyagrendelesBeszallitas ($model -> anyagrendeles_id, $id) == "" && $model -> lezarva != 1) {
+				$anyagbeszallitasCheck = Utils::checkAnyagrendelesBeszallitas ($model -> anyagrendeles_id, $id) ; 
+				if ($anyagbeszallitasCheck["ok"] == 1 && $model -> lezarva != 1) {
 					// ha választottunk ki raktárat és létezik is (nem kamu id-t hackeltek a POST-ba), akkor lezárjuk a rendelést és beszállítást
 					// és eltároljuk a kiválasztott raktárba a tételeket
 					if (isset($_POST['raktarhely_id'])) {
@@ -154,6 +155,30 @@ class AnyagbeszallitasokController extends Controller
 						}
 					}
 					
+					//Ha nem volt minden termék meg a megrendeléshez képest a beszállításnál, akkor létrehozunk a hiányzókkal egy új anyagrendelést
+					if (count($anyagbeszallitasCheck["tetel_elteresek"]) > 0) {
+						$new_anyagrendeles = new Anyagrendelesek;
+						$new_anyagrendeles -> gyarto_id = $anyagrendeles->gyarto_id ;
+						$new_anyagrendeles -> getNewBizonylatszam() ;
+						$new_anyagrendeles -> user_id = $anyagrendeles->user_id;
+						$new_anyagrendeles -> rendeles_datum = date('Y-m-d');
+						$new_anyagrendeles -> megjegyzes = "Az " . $anyagrendeles->bizonylatszam . " hiányos beszállítása után a kimaradt termékekkel automatikusan jött létre." ;
+						$new_anyagrendeles -> save() ;						
+						//Az új anyagrendeléshez felvesszük a termékeket
+						foreach ($anyagbeszallitasCheck["tetel_elteresek"] as $tetel) {
+							$anyagrendeles_tetel = new AnyagrendelesTermekek ;
+							$anyagrendeles_tetel -> anyagrendeles_id = $new_anyagrendeles->id ;
+							$anyagrendeles_tetel -> termek_id = $tetel["termek"]->termek_id ;
+							$anyagrendeles_tetel -> rendelt_darabszam = $tetel->db ;
+							$termekar = Utils::getActiveTermekar($anyagrendeles_tetel -> termek_id, $tetel->db) ;
+							$kalkulalt_termekar = $termekar != null && is_array($termekar) ? $termekar['db_beszerzesi_ar'] : 0 ;
+							$anyagrendeles_tetel -> rendeleskor_netto_darabar = $kalkulalt_termekar ;
+//							print_r($anyagrendeles_tetel) ;
+//							die() ;
+							$anyagrendeles_tetel->save() ;
+						}
+					}
+					
 					Utils::goToPrevPage("anyagbeszallitasokIndex");
 				}
 			}
@@ -220,7 +245,13 @@ class AnyagbeszallitasokController extends Controller
 	
 	public function actionCheckProductDifference ($anyagbeszallitas_id, $anyagrendeles_id) {
 		$result = Utils::checkAnyagrendelesBeszallitas ($anyagrendeles_id, $anyagbeszallitas_id);
-		
+		if ($result["ok"] == 1) {
+			$result = "" ;	
+		}
+		else
+		{
+			$result = $result["uzenet"] ;	
+		}
 		echo json_encode($result);
 		
 		exit();

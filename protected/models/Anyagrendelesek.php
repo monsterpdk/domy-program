@@ -196,4 +196,18 @@ class Anyagrendelesek extends CActiveRecord
 		return $this->anyagbeszallitas_id;
 	}
 	
+	//Új bizonylatszámot generál, ha még nem volt bizonylatszáma az anyagrendelésnek, és vissza adja a beállított bizonylatszámot
+	public function getNewBizonylatszam() {
+		// megkeressük a legutóbb felvett árajánlatot és az ID-jához egyet hozzáadva beajánljuk az újonnan létrejött sorszámának
+		// formátum: AJ2015000001, ahol az évszám után 000001 a rekord ID-ja 6 jeggyel reprezentálva, balról 0-ákkal feltöltve
+		$criteria = new CDbCriteria;
+		$criteria->select = 'max(id) AS id';
+		$row = Anyagrendelesek::model() -> find ($criteria);
+		$utolsoAnyagrendeles = $row['id'];
+		if ($this->bizonylatszam == "") {
+			$this->bizonylatszam = "TM" . date("Y") . str_pad( ($utolsoAnyagrendeles != null) ? ($utolsoAnyagrendeles + 1) : "000001", 6, '0', STR_PAD_LEFT );
+		}
+		return $this->bizonylatszam ;
+	}
+	
 }
