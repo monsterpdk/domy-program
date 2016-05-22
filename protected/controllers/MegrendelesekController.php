@@ -56,7 +56,7 @@ class MegrendelesekController extends Controller
 			$model->rendeles_idopont = date('Y-m-d H:i:s');		
 			$model -> sorszam = $this->ujMegrendelesIdGeneralas();
 			$aruhaz = Aruhazak::model()->findByPk($model->megrendeles_forras_id) ;
-			if ($aruhaz->arkategoria_id > 0) {
+			if ($aruhaz != null && $aruhaz->arkategoria_id > 0) {
 				$model->arkategoria_id = $aruhaz->arkategoria_id ;	
 			}
 			else
