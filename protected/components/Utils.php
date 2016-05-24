@@ -575,7 +575,7 @@
 							if ($tetel -> negativ_raktar_termek == 0 && (($nyomdakonyv != null && $nyomdakonyv -> sztornozva == 0) || ($nyomdakonyv == null && $tetel->szinek_szama1 + $tetel->szinek_szama2 == 0)) ) {
 								$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
 								if ($darabszamKulonbozet == -1) {
-									if (Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db") >= $tetel -> darabszam ) {
+									if (Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db") >= $tetel -> darabszam || Utils::getTermekRaktarkeszlet($tetel->termek_id, "foglalt_db") >= $tetel -> darabszam) {
 										array_push ($result, $tetel);
 									}
 								}
@@ -1598,7 +1598,30 @@
 							}
 
 							if ($muvelet == 'KIVESZ') {
-								$raktarTermekek = RaktarTermekek::model() -> findAllByAttributes(array('termek_id' => $tetelId), array('order'=>'id DESC'));
+								// csak azokat a tranzakciórekordokat használhatjuk fel a kivétre, amikre korábban történt a foglalás
+								$sql = "
+									SELECT * FROM dom_raktar_termekek_tranzakciok
+										INNER JOIN dom_nyomdakonyv ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_nyomdakonyv.id
+										INNER JOIN dom_megrendeles_tetelek ON dom_nyomdakonyv.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+										INNER JOIN dom_szallitolevel_tetelek ON dom_megrendeles_tetelek.id = dom_szallitolevel_tetelek.megrendeles_tetel_id
+									WHERE dom_szallitolevel_tetelek.szallitolevel_id=" . $szallitolevel_nyomdakonyv_id . " AND dom_megrendeles_tetelek.termek_id= " . mysql_escape_string($tetelId) . "
+								";
+
+								$command = Yii::app()->db->createCommand($sql);
+								$raktarTermekTranzakciok = $command->queryAll();
+								
+								$raktarTermekek = array();
+								if (is_array ($raktarTermekTranzakciok) && count($raktarTermekTranzakciok) > 0) {
+									foreach ($raktarTermekTranzakciok as $tranzakcio) {
+										$raktarTermek = RaktarTermekek::model()->findByAttributes(array('termek_id'=>$tetelId, 'anyagbeszallitas_id'=>$tranzakcio['anyagbeszallitas_id'], 'raktarhely_id'=>$tranzakcio['raktarhely_id']));
+										
+										if ($raktarTermek != null) {
+											array_push($raktarTermekek, $raktarTermek);
+											echo $raktarTermek->id . ", ";
+										}
+									}
+								}
+
 								$termek = Termekek::model() -> findByPk($tetelId);
 
 								if ($raktarTermekek != null && count($raktarTermekek > 0) && $termek != null) {

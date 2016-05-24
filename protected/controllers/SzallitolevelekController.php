@@ -68,6 +68,7 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> darabszam = $tetelekASzallitolevelen[$i];
 						
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
+						$tetelASzalliton -> save();
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
 						// LI: csak akkor, ha nem hozott borítékról van szó, ill. ha nyomdakönyves munkáról van szó
@@ -80,8 +81,6 @@ class SzallitolevelekController extends Controller
 							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
 							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
 						}
-						
-						$tetelASzalliton -> save();
 					}
 				}
 
