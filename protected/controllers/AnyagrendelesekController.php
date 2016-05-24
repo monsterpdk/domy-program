@@ -211,14 +211,16 @@ class AnyagrendelesekController extends Controller
 						$new_anyagrendeles -> save() ;						
 						//Az új anyagrendeléshez felvesszük a termékeket
 						foreach ($anyagbeszallitasCheck["tetel_elteresek"] as $tetel) {
-							$anyagrendeles_tetel = new AnyagrendelesTermekek ;
-							$anyagrendeles_tetel -> anyagrendeles_id = $new_anyagrendeles->id ;
-							$anyagrendeles_tetel -> termek_id = $tetel->termek->termek_id ;
-							$anyagrendeles_tetel -> rendelt_darabszam = $tetel->db ;
-							$termekar = Utils::getActiveTermekar($anyagrendeles_tetel -> termek_id, $tetel->db) ;
-							$kalkulalt_termekar = $termekar != null && is_array($termekar) ? $termekar['db_beszerzesi_ar'] : 0 ;
-							$anyagrendeles_tetel -> rendeleskor_netto_darabar = $kalkulalt_termekar ;
-							$anyagrendeles_tetel->save() ;
+							if ($tetel["db"] > 0) {
+								$anyagrendeles_tetel = new AnyagrendelesTermekek ;
+								$anyagrendeles_tetel -> anyagrendeles_id = $new_anyagrendeles->id ;
+								$anyagrendeles_tetel -> termek_id = $tetel["termek"]->termek_id ;
+								$anyagrendeles_tetel -> rendelt_darabszam = $tetel["db"] ;
+								$termekar = Utils::getActiveTermekar($anyagrendeles_tetel -> termek_id, $tetel["db"]) ;
+								$kalkulalt_termekar = $termekar != null && is_array($termekar) ? $termekar['db_beszerzesi_ar'] : 0 ;
+								$anyagrendeles_tetel -> rendeleskor_netto_darabar = $kalkulalt_termekar ;
+								$anyagrendeles_tetel->save() ;
+							}
 						}
 					}
 					

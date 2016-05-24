@@ -184,7 +184,7 @@
 				}
 			}
 			if ($foundInRaktar) {
-				$raktar_elteres_darabszam = $darabszam - $anyagbeszallitas_iroda_termek->darabszam ;
+				$raktar_elteres_darabszam = $darabszam - $anyagbeszallitas_raktar_termek->darabszam ;
 			}
 			else
 			{
@@ -195,6 +195,10 @@
 			
 			if ($iroda_elteres_darabszam < 0) {
 				$iroda_elteres_darabszam = 0 ;	
+			}
+			
+			if ($iroda_elteres_darabszam == 0) {
+				$iroda_elteres_darabszam = "" ;	
 			}
 			
 			return $iroda_elteres_darabszam;
