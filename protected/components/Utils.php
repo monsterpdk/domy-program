@@ -197,6 +197,10 @@
 				$iroda_elteres_darabszam = 0 ;	
 			}
 			
+			if ($iroda_elteres_darabszam == 0) {
+				$iroda_elteres_darabszam = "" ;	
+			}
+			
 			return $iroda_elteres_darabszam;
 		}
 	
