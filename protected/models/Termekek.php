@@ -47,6 +47,7 @@ class Termekek extends CActiveRecord
 	public $meret_search;
 	public $gyarto_search;
 	public $papirtipus_search;
+	public $papirsuly_search;
 	public $termekcsoport_search;
 	
 	// LI amikor valamelyik űrlapról terméket tallózunk, akkor kódszám+terméknév formában jelenítjük meg a termékeket
@@ -91,7 +92,7 @@ class Termekek extends CActiveRecord
 			array('felveteli_datum', 'type', 'type' => 'date', 'message' => '{attribute}: nem megfelelő formátumú!', 'dateFormat' => 'yyyy-MM-dd'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, termekcsoport_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott, arkalkulacioban_megjelenik', 'safe', 'on'=>'search'),
+			array('id, nev, tipus, kodszam, cikkszam, meret_id, meret_search, suly, zaras_id, zaras_search, ablakhely_search, ablakmeret_search, ablakmeret_id, ablakhely_id, papir_id, papirtipus_search, papirsuly_search, termekcsoport_search, afakulcs_id, redotalp, kategoria_tipus, gyarto_id, gyarto_search, ksh_kod, csom_egys, minimum_raktarkeszlet, maximum_raktarkeszlet, doboz_suly, raklap_db, doboz_hossz, doboz_szelesseg, doboz_magassag, megjegyzes, felveteli_datum, datum, torolt, belesnyomott, arkalkulacioban_megjelenik', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -162,6 +163,7 @@ class Termekek extends CActiveRecord
 			'meret_search' => 'Méret',
 			'gyarto_search' => 'Cégnév',
 			'papirtipus_search' => 'Papírtípus',
+			'papirsuly_search' => 'Papír súly',
 			'termekcsoport_search' => 'Termékcsoport'
 			
 		);
@@ -205,6 +207,7 @@ class Termekek extends CActiveRecord
 		$criteria->compare('meret.nev', $this->meret_search, true );
 		$criteria->compare('gyarto.cegnev', $this->gyarto_search, true );
 		$criteria->compare('papirtipus.nev', $this->papirtipus_search, true );
+		$criteria->compare('papirtipus.suly', $this->papirsuly_search, true );
 		$criteria->compare('termekcsoport.nev', $this->termekcsoport_search, true );
 		
 		$criteria->compare('ablakmeret_id',$this->ablakmeret_id);

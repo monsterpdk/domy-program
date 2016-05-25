@@ -1961,7 +1961,7 @@
 			$negativRaktarTermekek = RaktarTermekekNegativ::model() -> findAll(array('order'=>'hatarido DESC'));
 
 			foreach ($negativRaktarTermekek as $negativRaktarTermek) {
-				if (Utils::getTermekRaktarkeszlet ($negativRaktarTermek -> termek_id, 'elerheto_db') >= $negativRaktarTermek -> darabszam) {
+				if (Utils::getTermekRaktarkeszlet($negativRaktarTermek -> termek_id, 'elerheto_db') >= $negativRaktarTermek -> darabszam) {
 					// találtunk a soron következő foglalási igényhez elegendő terméket a raktárban, így elindítjuk a foglalást, majd töröljük a negatív raktártermék táblából az igényt
 					Utils::raktarbanFoglal($negativRaktarTermek -> termek_id, $negativRaktarTermek -> darabszam, $negativRaktarTermek -> nyomdakonyv_id, true, false);
 					

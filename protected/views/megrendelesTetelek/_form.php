@@ -345,6 +345,12 @@
 									'value' => '$data->papirtipus == null ? "" : $data->papirtipus->nev',
 								),
 								array(
+									'name' => 'papirtipus.suly',
+									'header' => 'Papír súly',
+									'filter' => CHtml::activeTextField($termek, 'papirsuly_search'),
+									'value' => '$data->papirtipus == null ? "" : $data->papirtipus->suly',
+								),								
+								array(
 									'name' => 'zaras.nev',
 									'header' => 'Záródás',
 									'filter' => CHtml::activeTextField($termek, 'zaras_search'),
