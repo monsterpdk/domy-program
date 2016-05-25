@@ -1603,6 +1603,8 @@
 
 							if ($muvelet == 'KIVESZ') {
 								// csak azokat a tranzakciórekordokat használhatjuk fel a kivétre, amikre korábban történt a foglalás
+								
+								// NYOMÁSOS munka esetén itt NEM ÜRES eredményhalmazt kapunk vissza
 								$sql = "
 									SELECT * FROM dom_raktar_termekek_tranzakciok
 										INNER JOIN dom_nyomdakonyv ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_nyomdakonyv.id
@@ -1613,6 +1615,18 @@
 
 								$command = Yii::app()->db->createCommand($sql);
 								$raktarTermekTranzakciok = $command->queryAll();
+								
+								if (!is_array ($raktarTermekTranzakciok) || count($raktarTermekTranzakciok) == 0) {
+									// NEM NYOMÁSOS munkát találtunk, így más lekérdezés kell, ugyanis a dom_nyomdakonyv táblában ilyenkor nincs rekord
+									$sql = "
+										SELECT * FROM dom_raktar_termekek_tranzakciok
+											INNER JOIN dom_szallitolevelek ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_szallitolevelek.id
+										WHERE dom_szallitolevelek.id=" . $szallitolevel_nyomdakonyv_id . " AND dom_raktar_termekek_tranzakciok.termek_id= " . mysql_escape_string($tetelId) . "
+									";
+
+									$command = Yii::app()->db->createCommand($sql);
+									$raktarTermekTranzakciok = $command->queryAll();
+								}
 								
 								$raktarTermekek = array();
 								if (is_array ($raktarTermekTranzakciok) && count($raktarTermekTranzakciok) > 0) {
