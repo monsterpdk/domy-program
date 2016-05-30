@@ -38,10 +38,10 @@
 		font-weight: bold;		
 	}
 	.cim_cella_kisbetu {
-		font-size:7px;	
+		font-size:9px;	
 	}
 	.adat_cella_kisbetu {
-		font-size:7px;	
+		font-size:9px;	
 	}
 	.cim_cella_kozepesbetu {
 		font-size:10px;	
@@ -1533,8 +1533,26 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 <!--Ajánlat összesítő adatok vége-->
 	<?php
 		}
-	}
 	?>
+<!--Ajánlatlista összesítő adatok-->
+	<tr style="background-color:lightgrey;">
+		<td class="cim_cella_kisbetu szegely_fent kozepre" colspan="2">Összesen:</td>
+		<td class="cim_cella_kisbetu szegely_fent balra" colspan="2" ><?php echo $stat_adatok["arajanlatok_lista_osszesites"]["db"];?> db</td>
+		<td class="cim_cella_kisbetu szegely_fent jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["arajanlatok_lista_osszesites"]["tetel_db"], 0);?> db</td>
+		<td class="adat_cella_kisbetu szegely_fent" colspan="2">&nbsp;</td>
+		<td class="cim_cella_kisbetu szegely_fent jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["arajanlatok_lista_osszesites"]["netto_osszesen"], 0);?> Ft</td>
+	</tr>
+	<tr style="background-color:lightgrey;">
+		<td class="adat_cella_kisbetu szegely_nincs" colspan="2">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt">anyag: <?php echo Utils::OsszegFormazas($stat_adatok["arajanlatok_lista_osszesites"]["anyagkoltseg_osszesen"], 0);?> Ft</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt" colspan="3">&nbsp;</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt">bevétel-anyag:</td>
+		<td class="adat_cella_kisbetu szegely_nincs jobbra dolt"><?php echo Utils::OsszegFormazas($stat_adatok["arajanlatok_lista_osszesites"]["haszon_osszesen"], 0);?> Ft</td>
+	</tr>
+<!--Ajánlatlista összesítő adatok vége-->	
+<?php	
+	}
+?>
 </table>
 
 </div>
@@ -1551,11 +1569,11 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 
 <table class="statisztika_tablazat">
 	<tr>
-		<td class="cim_cella_kozepesbetu nincs_szegely" colspan="2" style="width: 105px;">Dátum</td>
-		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 95px;">Rendelés szám</td>
-		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 200px;">Vevő neve</td>
-		<td class="nincs_szegely" style="width: 60px;">&nbsp;</td>
-		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 90px;">Első rend.</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" colspan="2" style="width: 115px;">Dátum</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 90px;">Rendelés szám</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 195px;">Vevő neve</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 70px;">Rendelés forrás</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 80px;">Első rend.</td>
 		<td class="nincs_szegely">&nbsp;</td>
 	</tr>
 	<tr>
@@ -1577,7 +1595,7 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent" colspan="2"><strong><?php echo $megrendeles["datum"];?></strong></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $sorszam;?></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $megrendeles["cegnev"];?></td>
-		<td class="adat_cella szegely_alul szegely_fent">&nbsp;</td>
+		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $megrendeles["forras"];?></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $megrendeles["ugyfel_elso_rendeles_datum"];?></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent jobbra"><?php echo $megrendeles["admin"];?></td>
 	</tr>
@@ -1624,8 +1642,29 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 <!--Megrendelés összesítő adatok vége-->
 	<?php
 		}
-	}
 	?>
+<!--Megrendeléslista összesítő adatok-->
+	<tr style="background-color:lightgrey;">
+		<td class="cim_cella_kisbetu szegely_fent kozepre">Összesen:</td>
+		<td class="cim_cella_kisbetu szegely_fent balra" colspan="2" ><?php echo $stat_adatok["megrendelesek_eladas_lista_osszesites"]["db"];?> db</td>
+		<td class="cim_cella_kisbetu szegely_fent jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["megrendelesek_eladas_lista_osszesites"]["tetel_db"], 0);?> db</td>
+		<td class="adat_cella_kisbetu szegely_fent" colspan="2">&nbsp;</td>
+		<td class="cim_cella_kisbetu szegely_fent jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_eladas_lista_osszesites"]["netto_osszesen"], 0);?> Ft</td>
+	</tr>
+	<tr style="background-color:lightgrey;">
+		<td class="adat_cella_kisbetu szegely_nincs">Átlag anyag %:</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt"><?php echo $stat_adatok["megrendelesek_eladas_lista_osszesites"]["anyagkoltseg_szazalek"];?>%</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt">anyag: <?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_eladas_lista_osszesites"]["anyagkoltseg_osszesen"], 0);?> Ft</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt jobbra">Átlag haszon %:</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt"><?php echo $stat_adatok["megrendelesek_eladas_lista_osszesites"]["haszon_szazalek"];?>%</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt">bevétel-anyag:</td>
+		<td class="adat_cella_kisbetu szegely_nincs jobbra dolt"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_eladas_lista_osszesites"]["haszon_osszesen"], 0);?> Ft</td>
+	</tr>
+<!--Megrendeléslista összesítő adatok vége-->	
+	
+<?php	
+	}
+?>
 </table>
 
 </div>
@@ -1642,12 +1681,12 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 
 <table class="statisztika_tablazat">
 	<tr>
-		<td class="cim_cella_kozepesbetu nincs_szegely" colspan="2" style="width: 105px;">Dátum</td>
-		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 95px;">Rendelés szám</td>
-		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 200px;">Vevő neve</td>
-		<td class="nincs_szegely" style="width: 60px;">&nbsp;</td>
-		<td class="nincs_szegely" style="width: 60px;">&nbsp;</td>
-		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 90px;">Első rend.</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" colspan="2" style="width: 115px;">Dátum</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 90px;">Rendelés szám</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 195px;">Vevő neve</td>
+		<td class="nincs_szegely" style="width: 70px;">&nbsp;</td>
+		<td class="nincs_szegely cim_cella_kozepesbetu" style="width: 60px;">Rendelés forrás</td>
+		<td class="cim_cella_kozepesbetu nincs_szegely" style="width: 80px;">Első rend.</td>
 		<td class="nincs_szegely">&nbsp;</td>
 	</tr>
 	<tr>
@@ -1671,7 +1710,7 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $sorszam;?></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $megrendeles["cegnev"];?></td>
 		<td class="adat_cella szegely_alul szegely_fent">&nbsp;</td>
-		<td class="adat_cella szegely_alul szegely_fent">&nbsp;</td>
+		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $megrendeles["forras"];?></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent"><?php echo $megrendeles["ugyfel_elso_rendeles_datum"];?></td>
 		<td class="adat_cella_kozepesbetu szegely_alul szegely_fent jobbra"><?php echo $megrendeles["admin"];?></td>
 	</tr>
@@ -1726,6 +1765,26 @@ Az ilyen ajánlatok / megrendelések mind a két feltételnek megfelelnek, tehá
 <!--Megrendelés összesítő adatok vége-->
 	<?php
 		}
+	?>
+<!--Megrendeléslista összesítő adatok-->
+	<tr style="background-color:lightgrey;">
+		<td class="cim_cella_kisbetu szegely_fent kozepre">Összesen:</td>
+		<td class="cim_cella_kisbetu szegely_fent balra" colspan="3" ><?php echo $stat_adatok["megrendelesek_nyomas_lista_osszesites"]["db"];?> db</td>
+		<td class="cim_cella_kisbetu szegely_fent jobbra"><?php echo Utils::DarabszamFormazas($stat_adatok["megrendelesek_nyomas_lista_osszesites"]["tetel_db"], 0);?> db</td>
+		<td class="adat_cella_kisbetu szegely_fent" colspan="2">&nbsp;</td>
+		<td class="cim_cella_kisbetu szegely_fent jobbra"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_nyomas_lista_osszesites"]["netto_osszesen"], 0);?> Ft</td>
+	</tr>
+	<tr style="background-color:lightgrey;">
+		<td class="adat_cella_kisbetu szegely_nincs">Átlag anyag %:</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt"><?php echo $stat_adatok["megrendelesek_nyomas_lista_osszesites"]["anyagkoltseg_szazalek"];?>%</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt" colspan="2">anyag: <?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_nyomas_lista_osszesites"]["anyagkoltseg_osszesen"], 0);?> Ft</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt jobbra">Átlag haszon %:</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt"><?php echo $stat_adatok["megrendelesek_nyomas_lista_osszesites"]["haszon_szazalek"];?>%</td>
+		<td class="adat_cella_kisbetu szegely_nincs dolt">bevétel-anyag:</td>
+		<td class="adat_cella_kisbetu szegely_nincs jobbra dolt"><?php echo Utils::OsszegFormazas($stat_adatok["megrendelesek_nyomas_lista_osszesites"]["haszon_osszesen"], 0);?> Ft</td>
+	</tr>
+<!--Megrendeléslista összesítő adatok vége-->		
+	<?php
 	}
 	?>
 </table>

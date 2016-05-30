@@ -121,7 +121,7 @@ class StatisztikakController extends Controller
 				'select'=>'tetelek.*',
 				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont >=\'' . $mettol . '\' and t.rendeles_idopont <= \'' . $meddig . '\'' . $elozmeny_query ,
 //				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
-				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel'),
+				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel', 'megrendeles_forras'),
 //				'with'=>array('tetelek', 'ugyfel', 'termek', 'termekar'),
 				'together'=>true,
 			),
@@ -129,7 +129,7 @@ class StatisztikakController extends Controller
 				'select'=>'tetelek.*',
 				'condition'=>'ugyfel.kiemelt = ' . $kiemeltek . ' and t.torolt=0 and t.sztornozva=0 and t.rendeles_idopont >=\'' . $mettol . '\' and t.rendeles_idopont <= \'' . $meddig . '\'' . $elozmeny_query ,
 //				'join'=>'left join dom_ugyfelek ugyfel on (t.ugyfel_id = ugyfel.id) left join dom_megrendeles_tetelek megrendeles_tetel on (t.id = megrendeles_tetel.megrendeles_id)',
-				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel'),
+				'with'=>array('tetelek' => array('termek' => array('termekar')), 'ugyfel','megrendeles_forras'),
 				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
@@ -318,6 +318,12 @@ class StatisztikakController extends Controller
 		$arajanlatok_uj_ugyfelek = array() ;
 		
 		$arajanlatok_lista = array() ;
+		$arajanlatok_lista_osszesites = array() ;
+		$arajanlatok_lista_osszesites["db"] = 0 ;
+		$arajanlatok_lista_osszesites["tetel_db"] = 0 ;
+		$arajanlatok_lista_osszesites["netto_osszesen"] = 0 ;
+		$arajanlatok_lista_osszesites["anyagkoltseg_osszesen"] = 0 ;
+		$arajanlatok_lista_osszesites["haszon_osszesen"] = 0 ;
 		
 		if ($arajanlatTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($arajanlatTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {				
@@ -388,11 +394,23 @@ class StatisztikakController extends Controller
 						$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["szinekszama"] = $tetel_sor->szinek_szama1 . " + " . $tetel_sor->szinek_szama2 ;
 					}
 					$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] = $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
-					$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_szazalek"] = round((($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) / ($tetel_sor->netto_darabar * $tetel_sor->darabszam) * 100), 2) ;
+					if ($tetel_sor->netto_darabar * $tetel_sor->darabszam == 0) {
+						$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_szazalek"] = 0 ;	
+					}
+					else
+					{
+						$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_szazalek"] = round((($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) / ($tetel_sor->netto_darabar * $tetel_sor->darabszam) * 100), 2) ;
+					}
 					$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_koltseg"] = $ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam ;
 					$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["db_koltseg"] = $ervenyes_termekar_rekord->darab_ar_szamolashoz ;
 					$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon"] = $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] - $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_koltseg"] ;
-					$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] = round(($arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon"] / $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] * 100), 2) ;					
+					if ($arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] == 0) {
+						$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] = 0 ;
+					}
+					else
+					{
+						$arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] = round(($arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon"] / $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] * 100), 2) ;
+					}
 					$arajanlatok_lista[$sor->sorszam]["netto_osszeg"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] ;
 					$arajanlatok_lista[$sor->sorszam]["anyagkoltseg"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_koltseg"] ;
 					$arajanlatok_lista[$sor->sorszam]["haszon"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon"] ;				
@@ -400,6 +418,11 @@ class StatisztikakController extends Controller
 					$arajanlatok_lista[$sor->sorszam]["haszon_szazalek_osszeg"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] ;
 					$arajanlatok_lista[$sor->sorszam]["anyag_szazalek"] = round($arajanlatok_lista[$sor->sorszam]["anyag_szazalek_osszeg"] / ($tetel_index + 1), 2) ;
 					$arajanlatok_lista[$sor->sorszam]["haszon_szazalek"] = round($arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] / ($tetel_index + 1), 2) ;
+					
+					$arajanlatok_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+					$arajanlatok_lista_osszesites["netto_osszesen"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] ;
+					$arajanlatok_lista_osszesites["anyagkoltseg_osszesen"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_koltseg"] ;
+					$arajanlatok_lista_osszesites["haszon_osszesen"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon"] ;
 					
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
 						$eladas = true ;
@@ -687,6 +710,11 @@ class StatisztikakController extends Controller
 					$arajanlatok_lista[$sor->sorszam]["haszon_szazalek_osszeg"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] ;
 					$arajanlatok_lista[$sor->sorszam]["anyag_szazalek"] = round($arajanlatok_lista[$sor->sorszam]["anyag_szazalek_osszeg"] / ($tetel_index + 1), 2) ;
 					$arajanlatok_lista[$sor->sorszam]["haszon_szazalek"] = round($arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon_szazalek"] / ($tetel_index + 1), 2) ;
+										
+					$arajanlatok_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+					$arajanlatok_lista_osszesites["netto_osszesen"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["netto_osszeg"] ;
+					$arajanlatok_lista_osszesites["anyagkoltseg_osszesen"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["anyag_koltseg"] ;
+					$arajanlatok_lista_osszesites["haszon_osszesen"] += $arajanlatok_lista[$sor->sorszam]["tetelek"][$tetel_index]["haszon"] ;
 					
 					if ($tetel_sor->termek->termekcsoport_id == 1)	{	//Ha légpárnás boríték, akkor a légpárnás statba is betesszük
 						$eladas = true ;
@@ -736,6 +764,8 @@ class StatisztikakController extends Controller
 		$stat_adatok["arajanlatLegparnasTetelekStatisztika_csak_kiemeltek"] = $arajanlatTetelekLegparnas ;		
 		$stat_adatok["arajanlatOsszegLegparnas_csak_kiemeltek"] = $arajanlatOsszegLegparnas ;	
 		$stat_adatok["arajanlatok_lista"] = $arajanlatok_lista ;
+		$arajanlatok_lista_osszesites["db"] = count($arajanlatok_lista) ;
+		$stat_adatok["arajanlatok_lista_osszesites"] = $arajanlatok_lista_osszesites ;
 				
 		if (count($arajanlatok_napra_bontva) > 0) {
 			$ajanlatok_napra_bontva_osszesites["uj_ajanlatkerok"] = count($arajanlatok_uj_ugyfelek) ;
@@ -842,6 +872,33 @@ class StatisztikakController extends Controller
 		$megrendelesek_nyomas_lista = array() ;		
 		$megrendelesek_nyomas_nincs_nyomdakonyvben_lista = array() ;
 		$megrendelesek_nyomas_nincs_nyomdakonyvben_osszeg = 0 ;
+		
+		$megrendelesek_eladas_lista_osszesites = array() ;
+		$megrendelesek_eladas_lista_osszesites["db"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["tetelek"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["tetel_db"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["netto_osszesen"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["anyagkoltseg_osszesen"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["haszon_szazalek"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["haszon_osszesen"] = 0 ;
+
+		$megrendelesek_nyomas_lista_osszesites = array() ;
+		$megrendelesek_nyomas_lista_osszesites["db"] = 0 ;
+		$megrendelesek_nyomas_lista_osszesites["tetelek"] = 0 ;
+		$megrendelesek_nyomas_lista_osszesites["tetel_db"] = 0 ;
+		$megrendelesek_nyomas_lista_osszesites["netto_osszesen"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] = 0 ;
+		$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_osszesen"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["haszon_szazalek"] = 0 ;
+		$megrendelesek_nyomas_lista_osszesites["haszon_osszesen"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["haszon_szazalek"] = 0 ;
+		$megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] = 0 ;
+		$megrendelesek_nyomas_lista_osszesites["haszon_osszesen"] = 0 ;
+		
 		
 		if ($megrendelesTetelekStatisztika_kiemeltek_nelkul->totalItemCount > 0) {
 			foreach ($megrendelesTetelekStatisztika_kiemeltek_nelkul->getData() as $sor) {
@@ -1036,6 +1093,7 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["cegnev"] = $sor->ugyfel->cegnev ;
 						$megrendeles_eladas_rekord["ugyfel_elso_rendeles_datum"] = date("Y.m.d", strtotime($ugyfel->ElsoRendelesDatum)) ;
 						$megrendeles_eladas_rekord["admin"] =  $admin->fullname ;
+						$megrendeles_eladas_rekord["forras"] = $sor->megrendeles_forras->aruhaz_nev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["termeknev"] = $tetel_sor->termek->DisplayTermekTeljesNev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["darabszam"] = $tetel_sor->darabszam ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["ar"] = $tetel_sor->netto_darabar ;
@@ -1069,6 +1127,13 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["anyag_szazalek"] = round($megrendeles_eladas_rekord["anyag_szazalek_osszeg"] / ($eladas_tetel_index + 1), 2) ;
 						$megrendeles_eladas_rekord["haszon_szazalek"] = round($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] / ($eladas_tetel_index + 1), 2) ;
 						
+						$megrendelesek_eladas_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+						$megrendelesek_eladas_lista_osszesites["tetelek"]++ ;
+						$megrendelesek_eladas_lista_osszesites["netto_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] ;
 						
 					}
 					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
@@ -1175,6 +1240,7 @@ class StatisztikakController extends Controller
 						$megrendeles_nyomas_rekord["cegnev"] = $sor->ugyfel->cegnev ;
 						$megrendeles_nyomas_rekord["ugyfel_elso_rendeles_datum"] = date("Y.m.d", strtotime($ugyfel->ElsoRendelesDatum)) ;
 						$megrendeles_nyomas_rekord["admin"] =  $admin->fullname ;
+						$megrendeles_nyomas_rekord["forras"] = $sor->megrendeles_forras->aruhaz_nev ;
 						$megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["termeknev"] = $tetel_sor->termek->DisplayTermekTeljesNev ;
 						$megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["darabszam"] = $tetel_sor->darabszam ;
 						$megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["ar"] = $tetel_sor->netto_darabar ;
@@ -1194,6 +1260,14 @@ class StatisztikakController extends Controller
 						$megrendeles_nyomas_rekord["haszon_szazalek_osszeg"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["haszon_szazalek"] ;
 						$megrendeles_nyomas_rekord["anyag_szazalek"] = round($megrendeles_nyomas_rekord["anyag_szazalek_osszeg"] / ($nyomas_tetel_index + 1), 2) ;
 						$megrendeles_nyomas_rekord["haszon_szazalek"] = round($megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["haszon_szazalek"] / ($nyomas_tetel_index + 1), 2) ;
+						
+						$megrendelesek_nyomas_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+						$megrendelesek_nyomas_lista_osszesites["tetelek"]++ ;
+						$megrendelesek_nyomas_lista_osszesites["netto_osszesen"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["netto_osszeg"] ;
+						$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_osszesen"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["anyag_koltseg"] ;
+						$megrendelesek_nyomas_lista_osszesites["haszon_osszesen"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["haszon"] ;
+						$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["anyag_szazalek"] ;
+						$megrendelesek_nyomas_lista_osszesites["haszon_szazalek_osszeg"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["haszon_szazalek"] ;
 						
 						if (!$nyomdakonyv_munka) {
 							$nyomas_nincs_nyomdakonyvben_index++ ;
@@ -1295,6 +1369,7 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["cegnev"] = $sor->ugyfel->cegnev ;
 						$megrendeles_eladas_rekord["ugyfel_elso_rendeles_datum"] = date("Y.m.d", strtotime($ugyfel->ElsoRendelesDatum)) ;
 						$megrendeles_eladas_rekord["admin"] =  $admin->fullname ;
+						$megrendeles_eladas_rekord["forras"] = $sor->megrendeles_forras->aruhaz_nev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["termeknev"] = $tetel_sor->termek->DisplayTermekTeljesNev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["darabszam"] = $tetel_sor->darabszam ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["ar"] = $tetel_sor->netto_darabar ;
@@ -1316,16 +1391,31 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["anyag_szazalek"] = round($megrendeles_eladas_rekord["anyag_szazalek_osszeg"] / ($eladas_tetel_index + 1), 2) ;
 						$megrendeles_eladas_rekord["haszon_szazalek"] = round($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] / ($eladas_tetel_index + 1), 2) ;
 						
+						$megrendelesek_eladas_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+						$megrendelesek_eladas_lista_osszesites["tetelek"]++ ;
+						$megrendelesek_eladas_lista_osszesites["netto_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] ;
+						
 					}					
 				}
 				if ($uj_ugyfel) {
 					$megrendelesek_uj_ugyfelek[$sor->ugyfel_id] = 1 ;	
 				}				
 				if ($megrendeles_eladas_rekord["netto_osszeg"] > 0) {
-					$megrendelesek_eladas_lista[$sor->sorszam] = $megrendeles_eladas_rekord ;
+					$megrendelesek_eladas_lista[$sor->sorszam] = $megrendeles_eladas_rekord ;		
+					$megrendelesek_eladas_lista_osszesites["db"]++ ;
+					$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek"] = round($megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] / $megrendelesek_eladas_lista_osszesites["tetelek"], 2) ;
+					$megrendelesek_eladas_lista_osszesites["haszon_szazalek"] = round($megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] / $megrendelesek_eladas_lista_osszesites["tetelek"], 2) ;
+
 				}
 				if ($megrendeles_nyomas_rekord["netto_osszeg"] > 0) {
 					$megrendelesek_nyomas_lista[$sor->sorszam] = $megrendeles_nyomas_rekord ;					
+					$megrendelesek_nyomas_lista_osszesites["db"]++ ;
+					$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_szazalek"] = round($megrendelesek_nyomas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] / $megrendelesek_nyomas_lista_osszesites["tetelek"], 2) ;
+					$megrendelesek_nyomas_lista_osszesites["haszon_szazalek"] = round($megrendelesek_nyomas_lista_osszesites["haszon_szazalek_osszeg"] / $megrendelesek_nyomas_lista_osszesites["tetelek"], 2) ;
 				}				
 				if ($megrendeles_nyomas_nincs_nyomdakonyvben_rekord["netto_osszeg"] > 0) {
 					$megrendelesek_nyomas_nincs_nyomdakonyvben_lista[$sor->sorszam] = $megrendeles_nyomas_nincs_nyomdakonyvben_rekord ;
@@ -1883,6 +1973,7 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["cegnev"] = $sor->ugyfel->cegnev ;
 						$megrendeles_eladas_rekord["ugyfel_elso_rendeles_datum"] = date("Y.m.d", strtotime($ugyfel->ElsoRendelesDatum)) ;
 						$megrendeles_eladas_rekord["admin"] =  $admin->fullname ;
+						$megrendeles_eladas_rekord["forras"] = $sor->megrendeles_forras->aruhaz_nev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["termeknev"] = $tetel_sor->termek->DisplayTermekTeljesNev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["darabszam"] = $tetel_sor->darabszam ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["ar"] = $tetel_sor->netto_darabar ;
@@ -1903,6 +1994,14 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["haszon_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] ;
 						$megrendeles_eladas_rekord["anyag_szazalek"] = round($megrendeles_eladas_rekord["anyag_szazalek_osszeg"] / ($eladas_tetel_index + 1), 2) ;
 						$megrendeles_eladas_rekord["haszon_szazalek"] = round($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] / ($eladas_tetel_index + 1), 2) ;
+					
+						$megrendelesek_eladas_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+						$megrendelesek_eladas_lista_osszesites["tetelek"]++ ;
+						$megrendelesek_eladas_lista_osszesites["netto_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] ;
 						
 					}
 					elseif ($tetel_sor->szinek_szama1 + $tetel_sor->szinek_szama2 > 0) {
@@ -1940,6 +2039,7 @@ class StatisztikakController extends Controller
 						$megrendeles_nyomas_rekord["cegnev"] = $sor->ugyfel->cegnev ;
 						$megrendeles_nyomas_rekord["ugyfel_elso_rendeles_datum"] = date("Y.m.d", strtotime($ugyfel->ElsoRendelesDatum)) ;
 						$megrendeles_nyomas_rekord["admin"] =  $admin->fullname ;
+						$megrendeles_nyomas_rekord["forras"] = $sor->megrendeles_forras->aruhaz_nev ;
 						$megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["termeknev"] = $tetel_sor->termek->DisplayTermekTeljesNev ;
 						$megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["darabszam"] = $tetel_sor->darabszam ;
 						$megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["ar"] = $tetel_sor->netto_darabar ;
@@ -1960,6 +2060,14 @@ class StatisztikakController extends Controller
 						$megrendeles_nyomas_rekord["anyag_szazalek"] = round($megrendeles_nyomas_rekord["anyag_szazalek_osszeg"] / ($nyomas_tetel_index + 1), 2) ;
 						$megrendeles_nyomas_rekord["haszon_szazalek"] = round($megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["haszon_szazalek"] / ($nyomas_tetel_index + 1), 2) ;
 
+						$megrendelesek_nyomas_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+						$megrendelesek_nyomas_lista_osszesites["tetelek"]++ ;						
+						$megrendelesek_nyomas_lista_osszesites["netto_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
+						$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
+						$megrendelesek_nyomas_lista_osszesites["haszon_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;
+						$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["anyag_szazalek"] ;
+						$megrendelesek_nyomas_lista_osszesites["haszon_szazalek_osszeg"] += $megrendeles_nyomas_rekord["tetelek"][$nyomas_tetel_index]["haszon_szazalek"] ;
+						
 						if (!$nyomdakonyv_munka) {
 							$nyomas_nincs_nyomdakonyvben_index++ ;
 							$megrendeles_nyomas_nincs_nyomdakonyvben_rekord["datum"] = $sor->rendeles_idopont ;
@@ -2008,6 +2116,7 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["cegnev"] = $sor->ugyfel->cegnev ;
 						$megrendeles_eladas_rekord["ugyfel_elso_rendeles_datum"] = date("Y.m.d", strtotime($ugyfel->ElsoRendelesDatum)) ;
 						$megrendeles_eladas_rekord["admin"] =  $admin->fullname ;
+						$megrendeles_eladas_rekord["forras"] = $sor->megrendeles_forras->aruhaz_nev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["termeknev"] = $tetel_sor->termek->DisplayTermekTeljesNev ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["darabszam"] = $tetel_sor->darabszam ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["ar"] = $tetel_sor->netto_darabar ;
@@ -2029,6 +2138,13 @@ class StatisztikakController extends Controller
 						$megrendeles_eladas_rekord["anyag_szazalek"] = round($megrendeles_eladas_rekord["anyag_szazalek_osszeg"] / ($eladas_tetel_index + 1), 2) ;
 						$megrendeles_eladas_rekord["haszon_szazalek"] = round($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] / ($eladas_tetel_index + 1), 2) ;
 						
+						$megrendelesek_eladas_lista_osszesites["tetel_db"] += $tetel_sor->darabszam ;
+						$megrendelesek_eladas_lista_osszesites["tetelek"]++ ;						
+						$megrendelesek_eladas_lista_osszesites["netto_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_osszesen"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;
+						$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] ;
+						$megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] ;
 					}					
 				}
 				if ($uj_ugyfel) {
@@ -2036,9 +2152,15 @@ class StatisztikakController extends Controller
 				}				
 				if ($megrendeles_eladas_rekord["netto_osszeg"] > 0) {
 					$megrendelesek_eladas_lista[$sor->sorszam] = $megrendeles_eladas_rekord ;
+					$megrendelesek_eladas_lista_osszesites["db"]++ ;
+					$megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek"] = round($megrendelesek_eladas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] / $megrendelesek_eladas_lista_osszesites["tetelek"], 2) ;
+					$megrendelesek_eladas_lista_osszesites["haszon_szazalek"] = round($megrendelesek_eladas_lista_osszesites["haszon_szazalek_osszeg"] / $megrendelesek_eladas_lista_osszesites["tetelek"], 2) ;
 				}
 				if ($megrendeles_nyomas_rekord["netto_osszeg"] > 0) {
 					$megrendelesek_nyomas_lista[$sor->sorszam] = $megrendeles_nyomas_rekord ;					
+					$megrendelesek_nyomas_lista_osszesites["db"]++ ;
+					$megrendelesek_nyomas_lista_osszesites["anyagkoltseg_szazalek"] = round($megrendelesek_nyomas_lista_osszesites["anyagkoltseg_szazalek_osszeg"] / $megrendelesek_nyomas_lista_osszesites["tetelek"], 2) ;
+					$megrendelesek_nyomas_lista_osszesites["haszon_szazalek"] = round($megrendelesek_nyomas_lista_osszesites["haszon_szazalek_osszeg"] / $megrendelesek_nyomas_lista_osszesites["tetelek"], 2) ;
 				}				
 				if ($megrendeles_nyomas_nincs_nyomdakonyvben_rekord["netto_osszeg"] > 0) {
 					$megrendelesek_nyomas_nincs_nyomdakonyvben_lista[$sor->sorszam] = $megrendeles_nyomas_nincs_nyomdakonyvben_rekord ;
@@ -2231,6 +2353,9 @@ class StatisztikakController extends Controller
 		$stat_adatok["megrendelesek_nyomas_lista"] = $megrendelesek_nyomas_lista ;
 		$stat_adatok["megrendelesek_nyomas_nincs_nyomdakonyvben_lista"] = $megrendelesek_nyomas_nincs_nyomdakonyvben_lista ;
 		$stat_adatok["megrendelesek_nyomas_nincs_nyomdakonyvben_osszeg"] = $megrendelesek_nyomas_nincs_nyomdakonyvben_osszeg ;
+
+		$stat_adatok["megrendelesek_eladas_lista_osszesites"] = $megrendelesek_eladas_lista_osszesites ;
+		$stat_adatok["megrendelesek_nyomas_lista_osszesites"] = $megrendelesek_nyomas_lista_osszesites ;		
 		
 		unset($megrendelesTetelekStatisztika_csak_kiemeltek) ;
 		
