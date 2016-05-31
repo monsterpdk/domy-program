@@ -339,7 +339,9 @@ class Megrendelesek extends CActiveRecord
 			}
 			$megrendeles_tetelek = MegrendelesTetelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id)) ;
 			foreach($megrendeles_tetelek as $megrendeles_tetel) {
-				$ossz_megrendeles_termekszam += $megrendeles_tetel -> darabszam ;
+				if ($megrendeles_tetel->termek->tipus != "Szolgáltatás") {
+					$ossz_megrendeles_termekszam += $megrendeles_tetel -> darabszam ;
+				}
 			}
 			if ($ossz_szallito_termekszam < $ossz_megrendeles_termekszam) {
 				$class = "megrendeles_resszallitos" ;	
