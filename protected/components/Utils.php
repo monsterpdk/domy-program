@@ -1534,17 +1534,17 @@
 									$raktarTermekek = RaktarTermekek::model() -> findAllByAttributes(array('termek_id' => $tetelId), array('order'=>'id ASC'));
 									$termek = Termekek::model() -> findByPk($tetelId);
 
-									if ($raktarTermekek != null && count($raktarTermekek > 0) && $termek != null) {
+									if ($raktarTermekek != null && count($raktarTermekek) > 0 && $termek != null) {
 										// elindulunk a raktárkészlet megfelelő elemein és elkezdjük levonogatni a kért darabszámot
 										$mentendoDarabszam = 0;
 										foreach ($raktarTermekek as $raktarTermek) {
 								
-											if ($raktarTermek -> osszes_db < $darabszam) {
-												$mentendoDarabszam = $raktarTermek -> osszes_db;
-												$darabszam -= $raktarTermek -> osszes_db;
+											if ($raktarTermek -> elerheto_db < $darabszam) {
+												$mentendoDarabszam = $raktarTermek -> elerheto_db;
+												$darabszam -= $raktarTermek -> elerheto_db;
 												
-												$raktarTermek -> foglalt_db += $raktarTermek -> osszes_db;
-												$raktarTermek -> elerheto_db -= $raktarTermek -> osszes_db;
+												$raktarTermek -> foglalt_db += $raktarTermek -> elerheto_db;
+												$raktarTermek -> elerheto_db -= $raktarTermek -> elerheto_db;
 											} else {
 												$raktarTermek -> foglalt_db += $darabszam;
 												$raktarTermek -> elerheto_db -= $darabszam;
@@ -1584,7 +1584,7 @@
 							);
 							$termek = Termekek::model() -> findByPk($tetelId);
 
-							if ($raktarTermekekTranzakciok != null && count($raktarTermekekTranzakciok > 0) && $termek != null) {
+							if ($raktarTermekekTranzakciok != null && count($raktarTermekekTranzakciok) > 0 && $termek != null) {
 								foreach ($raktarTermekekTranzakciok as $raktarTermekekTranzakcio) {
 									$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $termek->id, 'anyagbeszallitas_id' => $raktarTermekekTranzakcio->anyagbeszallitas_id));
 									
@@ -1635,7 +1635,6 @@
 										
 										if ($raktarTermek != null) {
 											array_push($raktarTermekek, $raktarTermek);
-											echo $raktarTermek->id . ", ";
 										}
 									}
 								}
