@@ -1513,8 +1513,13 @@
 									$raktarTermek -> foglalt_db -= $raktarTermekekTranzakcio->foglal_darabszam * -1;
 									$raktarTermek -> elerheto_db += $raktarTermekekTranzakcio->foglal_darabszam * -1;
 
-									$raktarTermek ->save(false);
-									$raktarTermekekTranzakcio->delete();							
+									if ($rakterTermek != null) {
+										$raktarTermek ->save(false);
+									}
+									
+									if ($raktarTermekekTranzakcio != null) {
+										$raktarTermekekTranzakcio->delete();
+									}
 								}
 							}
 							
