@@ -242,7 +242,7 @@
 																"onClick" => "$(\"#termek_dialog' . $grid_id . '\").dialog(\"close\");
 																
 																			  $(\"#AnyagbeszallitasTermekek_termek_id\").val(\"$data->id\");
-																			  $(\"#AnyagbeszallitasTermekek_autocomplete_termek_name\").val(\"$data->nev\");
+																			  $(\"#AnyagbeszallitasTermekek_autocomplete_termek_name\").val(\"$data->DisplayTermekTeljesNev\");
 																			  
 																			  calculateTermekNettoDarabAr (\"$data->id\");
 																			 "))',

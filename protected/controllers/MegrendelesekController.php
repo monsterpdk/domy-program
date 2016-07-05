@@ -377,7 +377,8 @@ class MegrendelesekController extends Controller
 				$model->megrendeles_forras_id = $tomb["megrendeles_forras_id"] ;
 				$model->megrendeles_forras_megrendeles_id = $tomb["megrendeles_forras_megrendeles_id"] ;
 				$fizmod = (string)$xml->orderhead_payment_mode ;
-				$model->proforma_fizetesi_mod = $fizmod ;
+				$valasztott_fizmod = FizetesiModok::model()->findByAttributes(array('szamlazo_azonosito'=>$fizmod)) ;
+				$model->proforma_fizetesi_mod = $valasztott_fizmod->id ;
 				$model -> save(false);	
 				$megrendeles_id = $model->id ;			
 				for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
@@ -531,6 +532,7 @@ class MegrendelesekController extends Controller
 /*				if ($alapertelmezettFizetesiModId != null) {
 					$model -> proforma_fizetesi_mod = $alapertelmezettFizetesiMod->id;
 				}*/
+				
 				
 				$model -> save(false);
 				$model -> refresh() ;

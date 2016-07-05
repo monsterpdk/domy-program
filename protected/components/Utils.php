@@ -638,7 +638,7 @@
 		function szamla_letrehozasa($megrendeles_id) {
 			$megrendeles_tetelek = MegrendelesTetelek::model() -> findAllByAttributes(array('megrendeles_id' => $megrendeles_id)) ;
 			$megrendeles_adatok = Megrendelesek::model() -> findByAttributes(array('id' => $megrendeles_id)) ;
-			switch ($megrendeles_adatok->proforma_fizetesi_mod) {
+/*			switch ($megrendeles_adatok->proforma_fizetesi_mod) {
 					case '1': $fizmod_domy_kod = "készpénz" ;
 						break ;
 					case '2': $fizmod_domy_kod = "átutalás" ;
@@ -649,7 +649,8 @@
 						break ;
 					default: "átutalás" ;
 			}
-			$megrendeles_fizmod = FizetesiModok::model() -> findByAttributes(array('nev' => $fizmod_domy_kod)) ;
+			$megrendeles_fizmod = FizetesiModok::model() -> findByAttributes(array('nev' => $fizmod_domy_kod)) ;*/
+			$megrendeles_fizmod = FizetesiModok::model() -> findByPk($megrendeles_adatok->proforma_fizetesi_mod) ;
 			if (count($megrendeles_tetelek) > 0) {
 				$partner_orszag = Orszagok::model() -> findByAttributes(array('id' => $megrendeles_adatok->ugyfel->szekhely_orszag)) ;
 				$partner_kozterulet_nev = $megrendeles_adatok->ugyfel->szekhely_cim	;
@@ -1513,9 +1514,13 @@
 									$raktarTermek -> foglalt_db -= $raktarTermekekTranzakcio->foglal_darabszam * -1;
 									$raktarTermek -> elerheto_db += $raktarTermekekTranzakcio->foglal_darabszam * -1;
 
-									$raktarTermek ->save(false);
-									$raktarTermekekTranzakcio->delete();							
-								}
+									if ($rakterTermek != null) {
+										$raktarTermek ->save(false);
+									}
+									
+									if ($raktarTermekekTranzakcio != null) {
+										$raktarTermekekTranzakcio->delete();
+									}								}
 							}
 							
 							if ($muvelet == 'FOGLAL') {
@@ -1534,17 +1539,17 @@
 									$raktarTermekek = RaktarTermekek::model() -> findAllByAttributes(array('termek_id' => $tetelId), array('order'=>'id ASC'));
 									$termek = Termekek::model() -> findByPk($tetelId);
 
-									if ($raktarTermekek != null && count($raktarTermekek > 0) && $termek != null) {
+									if ($raktarTermekek != null && count($raktarTermekek) > 0 && $termek != null) {
 										// elindulunk a raktárkészlet megfelelő elemein és elkezdjük levonogatni a kért darabszámot
 										$mentendoDarabszam = 0;
 										foreach ($raktarTermekek as $raktarTermek) {
 								
-											if ($raktarTermek -> osszes_db < $darabszam) {
-												$mentendoDarabszam = $raktarTermek -> osszes_db;
-												$darabszam -= $raktarTermek -> osszes_db;
+											if ($raktarTermek -> elerheto_db < $darabszam) {
+												$mentendoDarabszam = $raktarTermek -> elerheto_db;
+												$darabszam -= $raktarTermek -> elerheto_db;
 												
-												$raktarTermek -> foglalt_db += $raktarTermek -> osszes_db;
-												$raktarTermek -> elerheto_db -= $raktarTermek -> osszes_db;
+												$raktarTermek -> foglalt_db += $raktarTermek -> elerheto_db;
+												$raktarTermek -> elerheto_db -= $raktarTermek -> elerheto_db;
 											} else {
 												$raktarTermek -> foglalt_db += $darabszam;
 												$raktarTermek -> elerheto_db -= $darabszam;

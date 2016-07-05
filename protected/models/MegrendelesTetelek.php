@@ -159,7 +159,7 @@ class MegrendelesTetelek extends CActiveRecord
 
 		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
 		// terméknevet kézzel kell kitöltenünk
-		$this -> autocomplete_termek_name = $this -> termek -> nev;
+		$this -> autocomplete_termek_name = $this -> termek -> DisplayTermekTeljesNev;
 		$this -> megrendelt_termek_nev = $this -> termek -> DisplayTermekTeljesNev ;
 		if ($this -> hozott_boritek == 1) {
 			$this -> megrendelt_termek_nev = "Hozott " . $this -> termek -> DisplayTermekTeljesNev ;

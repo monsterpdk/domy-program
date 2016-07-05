@@ -369,6 +369,12 @@
 									'value' => '$data->ablakmeret == null ? "" : $data->ablakmeret->nev',
 								),								
 								array(
+									'name' => 'termek.csom_egys',
+									'header' => 'Csomag egység (db)',
+									'filter' => CHtml::activeTextField($termek, 'csom_egys'),
+									'value' => '$data->csom_egys == null ? "" : $data->csom_egys',
+								),
+								array(
 								  'header'=>'',
 								  'type'=>'raw',
 								  'value'=>'CHtml::Button("+", 
@@ -377,7 +383,7 @@
 																"onClick" => "$(\"#termek_dialog' . $grid_id . '\").dialog(\"close\");
 																
 																			  $(\"#MegrendelesTetelek_termek_id\").val(\"$data->id\");
-																			  $(\"#MegrendelesTetelek_autocomplete_termek_name\").val(\"$data->nev\");
+																			  $(\"#MegrendelesTetelek_autocomplete_termek_name\").val(\"$data->DisplayTermekTeljesNev\");
 																			  
 																			  calculateTermekNettoDarabAr (\"$data->id\");
 																			 "))',

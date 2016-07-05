@@ -374,6 +374,12 @@
 									'value' => '$data->ablakmeret == null ? "" : $data->ablakmeret->nev',
 								),
 								array(
+									'name' => 'termek.csom_egys',
+									'header' => 'Csomag egység (db)',
+									'filter' => CHtml::activeTextField($termek, 'csom_egys'),
+									'value' => '$data->csom_egys == null ? "" : $data->csom_egys',
+								),
+								array(
 									'name' => 'termek.arkalkulacioban_megjelenik',
 									'header' => '',
 									'filter' => CHtml::activeTextField($termek, 'arkalkulacioban_megjelenik'),
@@ -389,7 +395,7 @@
 																"onClick" => "$(\"#termek_dialog' . $grid_id . '\").dialog(\"close\");
 																
 																			  $(\"#ArajanlatTetelek_termek_id\").val(\"$data->id\");
-																			  $(\"#ArajanlatTetelek_autocomplete_termek_name\").val(\"$data->nev\");
+																			  $(\"#ArajanlatTetelek_autocomplete_termek_name\").val(\"$data->DisplayTermekTeljesNev\");
 																			  
 																			  calculateTermekNettoDarabAr (\"$data->id\");
 																			 "))',
@@ -410,7 +416,7 @@
 	function hideCol() {
 		grid = $('#termekek-grid<?php echo $grid_id; ?>');
 		$('tr', grid).each(function() {
-			$('td:eq(9), th:eq(9)',this).hide();
+			$('td:eq(10), th:eq(10)',this).hide();
 		});
 	}
 	$(hideCol());

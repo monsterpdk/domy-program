@@ -73,6 +73,7 @@
 						'raktarHelyek.nev',
 						'anyagbeszallitas.bizonylatszam',
 						'anyagbeszallitas.beszallitas_datum',
+						'termek.cikkszam',
 						'termek.DisplayTermekTeljesNev',
 						'osszes_db:number',
 						'foglalt_db:number',

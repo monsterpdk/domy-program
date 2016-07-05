@@ -108,7 +108,7 @@ class AnyagbeszallitasTermekek extends DomyModel
 
 		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
 		// terméknevet kézzel kell kitöltenünk
-		$this -> autocomplete_termek_name = $this -> termek -> nev;
+		$this -> autocomplete_termek_name = $this -> termek -> DisplayTermekTeljesNev;
 	}
 	
 	// sikeres mentés után frissítjük a raktár eltérés lista megfelelő sorát a termék és darabszám adatokkal	

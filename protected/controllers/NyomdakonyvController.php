@@ -341,10 +341,6 @@ class NyomdakonyvController extends Controller
 			if ($model->szin_mutaciok > 0) {
 				$mutacio = "TRUE" ;	
 			}
-			$forditott_levezetes = "0" ;
-			if ($model->forditott_levezetes > 0) {
-				$forditott_levezetes = "TRUE" ;	
-			}
 			$ctp = "0" ;
 			if ($model->ctp > 0) {
 				$ctp = "TRUE" ;	
@@ -352,7 +348,11 @@ class NyomdakonyvController extends Controller
 			$kifutos = "0" ;
 			if ($model->kifutos > 0) {
 				$kifutos = "TRUE" ;	
-			}				
+			}		
+			$forditott_levezetes = "0" ;
+			if ($model->kifuto_fent > 0 || $model->forditott_levezetes > 0) {
+				$forditott_levezetes = "TRUE" ;
+			}
 			
 			$parameters = array() ;
 			$nyomasi_kategoria = Utils::NyomasiKategoriaSzamol($model->megrendeles_tetel->displayTermekSzinekSzama, $model->megrendeles_tetel->darabszam, $megrendeles_tetel->termek->tipus,$model->kifutos) ; 

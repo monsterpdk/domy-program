@@ -629,6 +629,7 @@
 				'enablePagination' => false,
 				'dataProvider'=>$dataProvider,
 				'columns'=>array(
+					'termek.cikkszam',
 					'termek.DisplayTermekTeljesNev',
 					'szinek_szama1',
 					'szinek_szama2',
