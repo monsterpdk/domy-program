@@ -81,7 +81,10 @@
 		<td class = 'col1'></td>
 		<td class = 'col2'>1139 Budapest, Lomb utca 37-39.</td>
 		<td class = 'col3'><strong>Szállító</strong></td>
-		<td class = 'col4'><?php echo $szallito -> cegnev; ?></td>
+		<td class = 'col4'>
+			<?php echo $szallito -> cegnev; ?><br />
+			<?php echo $szallito -> kapcsolattarto . " (Tel.:" . $szallito -> telefon . ")" ;?>
+		</td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Ügyintéző</strong></td>

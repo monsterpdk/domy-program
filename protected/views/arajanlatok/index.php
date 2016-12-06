@@ -62,7 +62,7 @@
 				array(
                         'class' => 'bootstrap.widgets.TbButtonColumn',
 						'htmlOptions'=>array('style'=>'width: 220px; text-align: left;'),
-                        'template' => '{print} {view} {update} {delete} {create_megrendeles} {send_via_email}',
+                        'template' => '{print} {view} {update} {delete} {create_megrendeles} {limit_tullepes} {send_via_email}',
 						
 			            'viewButtonOptions'=>array('class'=>'btn btn-warning btn-mini'),
 						'updateButtonOptions'=>array('class'=>'btn btn-success btn-mini'),
@@ -104,6 +104,15 @@
 											),
 								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Create") && $data->van_megrendeles == 0 && $data->torolt == 0 && !(Utils::reachedUgyfelLimit ($data->id)) ',
 							),
+							'limit_tullepes' => array(
+								'label' => 'Tartozási limit túllépve',
+								'icon'=>'icon-white icon-exclamation-sign',
+								'options'=>array(
+											'class'=>'btn btn-danger btn-mini',
+											'style'=>'margin-left: 15px',											
+											),
+								'visible' => 'Yii::app()->user->checkAccess("Megrendelesek.Create") && $data->van_megrendeles == 0 && $data->torolt == 0 && (Utils::reachedUgyfelLimit ($data->id)) ',
+							),							
 							'send_via_email' => array(
 								'label' => 'Árajánlat küldése e-mailben',
 								'icon'=>'icon-white icon-envelope',

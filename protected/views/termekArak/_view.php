@@ -29,7 +29,6 @@
 	<?php echo CHtml::encode($data->db_ar_nyomashoz); ?>
 	<br />
 
-	<?php
 	<b><?php echo CHtml::encode($data->getAttributeLabel('csomag_eladasi_ar')); ?>:</b>
 	<?php echo CHtml::encode($data->csomag_eladasi_ar); ?>
 	<br />

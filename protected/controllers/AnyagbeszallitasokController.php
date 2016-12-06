@@ -143,13 +143,14 @@ class AnyagbeszallitasokController extends Controller
 								
 								// itt vizsgáljuk, hogy túlléptük-e a termék megadott maximum raktárkészletét,
 								// ha igen e-mailt küldünk azoknak felhasználóknak, akik jogosultat megkapni ezt az infót
+								/* E-mailt mégsem kérnek a maximum raktárkészlet túllépésről
 								if ($raktarTermek -> osszes_db > $termek -> termek -> maximum_raktarkeszlet) {
 									$recipients = Utils::getRaktarkeszletLimitAtlepesEsetenErtesitendokEmail();
 									$termek_info = $termek->termek->nev . ', jelenlegi raktármennyiség:  <strong>' . $raktarTermek -> osszes_db . ' db</strong>, maximum raktármennyiség: <strong>' . $termek ->termek-> maximum_raktarkeszlet . '</strong>';
 									$email_body = Yii::app()->controller->renderPartial('application.views.szallitolevelek.ertesites_maximum_raktarkeszlet', array('termek_info'=>$termek_info), true);
 									
 									Utils::sendEmail ($recipients, 'Figyelmeztetés! Maximum raktárkészlet túllépve', $email_body);
-								}
+								}*/
 							}
 							
 							// megnézzük van-e termék a negatív raktártermék táblában és ha igen, akkor kielégíthető-e valamely igény

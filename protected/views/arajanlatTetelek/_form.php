@@ -162,13 +162,13 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'szinek_szama1'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinek_szama1', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'),array('onChange'=>'javascript:nettoar_kalkulal();')); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinek_szama1', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8'),array('onChange'=>'javascript:nettoar_kalkulal();')); ?>
 		<?php echo $form->error($model,'szinek_szama1'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'szinek_szama2'); ?>
-		<?php echo CHtml::activeDropDownList($model, 'szinek_szama2', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4'),array('onChange'=>'javascript:nettoar_kalkulal();')); ?>
+		<?php echo CHtml::activeDropDownList($model, 'szinek_szama2', array('0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8'),array('onChange'=>'javascript:nettoar_kalkulal();')); ?>
 		<?php echo $form->error($model,'szinek_szama2'); ?>
 	</div>
 

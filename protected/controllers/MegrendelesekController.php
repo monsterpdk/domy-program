@@ -470,14 +470,31 @@ class MegrendelesekController extends Controller
 		$this->webaruhazMegrendelesekBegyujt() ;
 		$model=new Megrendelesek('search');
 		$model->unsetAttributes();
-		if(isset($_GET['Megrendelesek']))
+		$c = new CDbCriteria;
+		$c->order = "rendeles_idopont DESC" ;
+		$c->select = "t.id" ;
+		$c->join = "left join dom_ugyfelek on t.ugyfel_id = dom_ugyfelek.id" ;
+		if (Yii::app()->user->checkAccess('Admin') == false) { 
+			$c->addCondition('t.torolt = 0') ;
+		}
+		if(isset($_GET['Megrendelesek']) && count($_GET['Megrendelesek'])) {
 			$model->attributes=$_GET['Megrendelesek'];
-	 	
-		$dataProvider=new CActiveDataProvider('Megrendelesek',
+			foreach ($_GET["Megrendelesek"] as $kulcs => $ertek) {
+				if ($ertek != "") {					
+					$mezonev = "" ;
+					switch ($kulcs) {
+						case 'sorszam': $mezonev = 'sorszam' ;
+							break ;
+						case 'cegnev_search': $mezonev = 'dom_ugyfelek.cegnev' ;
+							break ;
+					}
+					$c->addCondition($mezonev . " = '" . $ertek . "'") ;
+				}
+			}
+	 	}
 //Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
-//			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),'pagination'=>false) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>"rendeles_idopont DESC",),) : array( 'criteria'=>array('condition'=>"torolt = 0 ",),)
-		);
+//		$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c,'pagination'=>false)) ;
+		$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c)) ;
 		
 		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
 		foreach ($dataProvider->getData() as $sor) {
@@ -507,19 +524,19 @@ class MegrendelesekController extends Controller
 			//ha nincs még proforma számla sorszám generálva a megrendeléshez, most megtesszük
 			// ha első nyomtatás, akkor beállítjuk a proforma számlára vonatkozó default értékeket
 			if ($model -> proforma_szamla_sorszam == '') {
-				$model -> proforma_szamla_sorszam = $this -> ujProformaSorszamGeneralas($model );
+				$model -> proforma_szamla_sorszam = $this -> ujProformaSorszamGeneralas($model);
 				
 				// lekérdezzük az alapértelmezett fizetési módot és a hozzá tartozó fizetési határidőt (napokban)
 				$fizetesiHatarido = 0;
 
 				$alapertelmezettFizetesiModId = Yii::app()->config->get('AlapertelmezettFizetesiMod');
 //				$alapertelmezettFizetesiMod = FizetesiModok::model()->findByPk ($alapertelmezettFizetesiModId);
+//				die("aaaa:" . $alapertelmezettFizetesiModId) ;
 				
 				if ($model->proforma_fizetesi_mod <= 0) {
 					$model->proforma_fizetesi_mod = $alapertelmezettFizetesiModId ;
 				}
 				$valasztottFizetesiMod = FizetesiModok::model()->findByPk ($model->proforma_fizetesi_mod);
-				
 /*				if ($alapertelmezettFizetesiMod != null) {
 					$fizetesiHatarido = $alapertelmezettFizetesiMod->fizetesi_hatarido;
 				}*/

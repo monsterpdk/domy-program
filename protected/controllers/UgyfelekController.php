@@ -64,6 +64,7 @@ class UgyfelekController extends Controller
 		if ($modelOrszag != null) {
 			$model->szekhely_orszag = $modelOrszag->id;
 			$model->posta_orszag = $modelOrszag->id;;
+			$model->szallitasi_orszag = $modelOrszag->id;
 		}
  
         // Uncomment the following line if AJAX validation is needed

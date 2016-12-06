@@ -245,6 +245,10 @@
 			$netto_osszeg = 0;
 			$ar = 0;
 			$db_ar = 0;
+			$darabszam_szamolashoz = $darabszam ;
+/*			if ($darabszam < 1000) {
+				$darabszam_szamolashoz = 1000 ;	
+			}*/
 			
 			$afakulcsSzazalek = 0;
 			if ($afakulcs_id != null && $afakulcs_id != 0) {
@@ -257,10 +261,11 @@
 			
 			if ($termek_id != null && $termek_id != 0) {
 						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
-						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
+						$query = "SELECT * FROM dom_termek_arak WHERE
 														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
-														") -> queryRow();
-						$termek_teljes_csomagszam = floor($darabszam / $termek_reszletek->csom_egys) ;
+														" ;
+						$termekAr = Yii::app() -> db -> createCommand  ($query) -> queryRow();
+						$termek_teljes_csomagszam = floor($darabszam_szamolashoz / $termek_reszletek->csom_egys) ;
 						$termekSavosCsomagAr = Yii::app() -> db -> createCommand ("SELECT * FROM dom_termek_ar_savos_csomagarak WHERE 
 														termek_ar_id = '" . $termekAr["id"] . "' and torolt = 0 and (" . $termek_teljes_csomagszam . " BETWEEN csomagszam_tol AND csomagszam_ig)
 														") -> queryRow();
@@ -268,7 +273,7 @@
 						die("SELECT * FROM dom_termek_ar_savos_csomagarak WHERE 
 														termek_ar_id = '" . $termekAr->id . "' and torolt = 0 and (" . $termek_teljes_csomagszam . " BETWEEN csomagszam_tol AND csomagszam_ig)
 														") ;*/
-						if ($termek_reszletek->csom_egys <= $darabszam) {
+						if ($termek_reszletek->csom_egys <= $darabszam_szamolashoz) {
 							if ($termekSavosCsomagAr != null) {
 								$db_ar = $termekSavosCsomagAr["csomag_eladasi_ar"] / $termek_reszletek->csom_egys ;
 							}
@@ -281,17 +286,17 @@
 						{
 							$db_ar = $termekAr["db_eladasi_ar"] ;
 						}
-			}			
+			}
 			$selejt = $selejt1 = $selejt2 = 0 ;
 			$szinszam = max($szinszam1,$szinszam2) ;
 			if ($hozott_boritek == 1) {
 				$termekAr["db_ar_nyomashoz"] = 0;
 			}
 			
-			if ($termekAr != false && $darabszam > 0 && ($szinszam > 0)) {
+			if ($termekAr != false && $darabszam_szamolashoz > 0 && ($szinszam > 0)) {
 				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával								
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
-				if ($termek_reszletek->csom_egys <= $darabszam) {
+				if ($termek_reszletek->csom_egys <= $darabszam_szamolashoz) {
 					if ($termekSavosCsomagAr != null) {
 						$db_ar = $termekSavosCsomagAr["csomag_ar_nyomashoz"] / $termek_reszletek->csom_egys ;						
 					}
@@ -304,13 +309,14 @@
 				{
 					$db_ar = $termekAr["db_ar_nyomashoz"] ;	
 				}
+
 				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
 				$nyomasi_ar_kategoria_tipus = "" ;
 				$termek_reszletek = Termekek::model()->findByPk($termek_id) ;
 				$termek_kategoria_tipus = $termek_reszletek["kategoria_tipus"] ;
 				if ($termek_kategoria_tipus == "") {
 					$kifuto = 0 ;	//Ajánlatnál lehet ezt megadni, vagy csak a nyomdakönyvben?					
-					$nyomasi_ar_kategoria_tipus = Utils::NyomasiKategoriaSzamol($szinszam1 . "+" . $szinszam2, $darabszam, $termek_reszletek->tipus, $kifuto);
+					$nyomasi_ar_kategoria_tipus = Utils::NyomasiKategoriaSzamol($szinszam1 . "+" . $szinszam2, $darabszam_szamolashoz, $termek_reszletek->tipus, $kifuto);
 				}
 				$nyomasi_ar_kategoria_tipus = str_replace("/","",$nyomasi_ar_kategoria_tipus) ;
 //				echo "tipus: " . $nyomasi_ar_kategoria_tipus ;
@@ -335,7 +341,7 @@
 					}							
 				}*/
 				
-				$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0) order by ervenyesseg_tol desc limit 1" ;
+				$sql = "SELECT * FROM dom_nyomasi_arak WHERE ('" . $darabszam_szamolashoz . "' BETWEEN peldanyszam_tol AND peldanyszam_ig) AND (kategoria_tipus = '$nyomasi_ar_kategoria_tipus' AND torolt = 0) order by ervenyesseg_tol desc limit 1" ;
 //				echo $sql ;
 				$nyomasiAr = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
 				$nyomasi_ar = 0 ;
@@ -367,11 +373,17 @@
 					$nyomasi_ar = $elooldali_nyomasi_ar + $hatoldali_nyomasi_ar ;
 //					echo $nyomasi_ar ;
 				}
-				$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
+				if ($darabszam < 1000) {
+					$db_ar = ((($db_ar * $darabszam_szamolashoz) + ($nyomasi_ar * 1000)) / $darabszam) * $szorzo ; 
+				}
+				else
+				{
+					$db_ar = ($db_ar + $nyomasi_ar) * $szorzo ;
+				}
 //				echo $db_ar ;
 
 				//Selejtszámítás a nyomáshoz
-				$sql = "SELECT * FROM dom_zuh WHERE ('" . $darabszam . "' BETWEEN db_tol AND db_ig) AND (nyomasi_kategoria = '$nyomasi_ar_kategoria_tipus' AND torolt = 0 and aktiv = 1)" ;				
+				$sql = "SELECT * FROM dom_zuh WHERE ('" . $darabszam_szamolashoz . "' BETWEEN db_tol AND db_ig) AND (nyomasi_kategoria = '$nyomasi_ar_kategoria_tipus' AND torolt = 0 and aktiv = 1)" ;
 				$ervenyes_zuh_rekord = Yii::app() -> db -> createCommand  ($sql) -> queryRow();
 				if ($ervenyes_zuh_rekord != false) {					
 					if ($szinszam1 > 0) {
@@ -394,27 +406,29 @@
 						}						
 					}
 					$selejt = $selejt1 + $selejt2 ;
-//					echo $selejt ;
+//					echo "selejt: " . $selejt ;
 				}			
 				
 				//Selejtszámítás eddig 		
 				$darabszam_osszesen = $darabszam + $selejt ;
+				$darabszam_szamolashoz_osszesen = $darabszam_szamolashoz + $selejt ;
 
 //				echo $darabszam_osszesen ;
-				
+
 				if ($darabszam >= 2000) {
 //					$netto_osszeg = ($darabszam_osszesen * $db_ar) + ($nyomasi_ar * $darabszam_osszesen) ;
-					$netto_osszeg = ($darabszam_osszesen * $db_ar) ;
+					$netto_osszeg = ($darabszam_szamolashoz_osszesen * $db_ar) ;
 				}
 				else
 				{					
-					$netto_osszeg = $nyomasi_ar + $darabszam_osszesen * $db_ar ;									
+					$netto_osszeg = $nyomasi_ar + $darabszam_szamolashoz_osszesen * $db_ar ;									
 				}				
 			}
 
+//			echo $netto_osszeg ;
 			$ar = ($db_ar == 0) ? 0 : $db_ar;
 			if ($szinszam == 0)
-				$netto_osszeg = round($darabszam * $ar) ;			
+				$netto_osszeg = round($darabszam_szamolashoz * $ar) ;			
 			else if ($darabszam > 0)
 				$ar = round($netto_osszeg / $darabszam_osszesen, 2);
 
@@ -477,7 +491,6 @@
 						foreach ($arajanlat->tetelek as $tetel) {
 							$sumArajanlat += $tetel->netto_darabar * $tetel->darabszam;
 						}
-						
 						// a $sumMegrendelesek változóban van az összeszámolt KIEGYENLÍTETLEN megrendelések összege
 						// a $sumArajanlat változóban pedig az ÁRAJÁNLAT tételeinek összege
 						//
@@ -595,7 +608,7 @@
 			return $result;
 		}
 		
-		// LI: 	megnézei, hogy az adott megnredelés tétel rajta van-e a szállítókon.
+		// LI: 	megnézei, hogy az adott megrendelés tétel rajta van-e a szállítókon.
 		//	   	Ha rajta van, akkor megnézi, hogy a darabszámuk egyezik-e (minden darab szállítón van-e már).
 		//		Visszatérési értékek: 		-1 - nincs rajta
 		//									 0 - minden megrendelt termék szállítón van már
@@ -835,7 +848,18 @@
 							$tranzakciok_osszeg += $uj_tranzakcio->osszeg ;							
 						}
 						$megrendeles_ertek = $megrendeles->getMegrendelesOsszeg() ;
-						if (round($megrendeles_ertek["brutto_osszeg"]) <= $tranzakciok_osszeg) {
+						$megrendeles_ertek_kerekitett = round($megrendeles_ertek["brutto_osszeg"]) ;
+						$megrendeles_ertek_utolso_szamjegy = substr($megrendeles_ertek_kerekitett, count($megrendeles_ertek_kerekitett) - 2) ; 
+						$megrendeles_ertek["brutto_osszeg_kerekitett"] = $megrendeles_ertek_kerekitett ;
+						if ($tranzakciok_osszeg - $megrendeles_ertek_kerekitett <= 2) {
+							if ($megrendeles_ertek_utolso_szamjegy == 1 || $megrendeles_ertek_utolso_szamjegy == 2) {
+								$megrendeles_ertek["brutto_osszeg_kerekitett"]	= substr($megrendeles_ertek_kerekitett, 0, count($megrendeles_ertek_kerekitett) - 2) . "0" ;
+							}
+							else if ($megrendeles_ertek_utolso_szamjegy == 6 || $megrendeles_ertek_utolso_szamjegy == 7) {
+								$megrendeles_ertek["brutto_osszeg_kerekitett"]	= substr($megrendeles_ertek_kerekitett, 0, count($megrendeles_ertek_kerekitett) - 2) . "5" ;
+							}
+						}
+						if ($megrendeles_ertek["brutto_osszeg_kerekitett"] <= $tranzakciok_osszeg) {
 							$kiegyenlitve = 1 ;
 							$megrendeles->setAttribute("szamla_fizetve", $kiegyenlitve);
 							$megrendeles->setAttribute("szamla_kiegyenlites_datum", substr($kiegyenlites_adatok["BizonylatDatum"], 0, 10)) ;

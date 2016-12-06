@@ -22,7 +22,6 @@
 	if ($afakulcs == null)
 		$afakulcs = new AfaKulcsok();
 	
-	$megrendeles_tetelek = $megrendeles->tetelek;
 ?>
 
 <style>
@@ -148,60 +147,55 @@
 	</tr>
 
 	<?php
-		if (is_array($megrendeles_tetelek)) {
 			$ossz_netto = 0;
 			$ossz_afa = 0;
+
+				
+			$termek_meret = TermekMeretek::model()->findByPk($nyomdakonyv->megrendeles_tetel->termek -> meret_id);
+			if ($termek_meret == null)
+				$termek_meret = new TermekMeretek();
+				
+			$zarasmod = TermekZarasiModok::model()->findByPk($nyomdakonyv->megrendeles_tetel->termek -> zaras_id);
+			if ($zarasmod == null)
+				$zarasmod = new TermekZarasiModok();
+						
+			$ablakmeret = TermekAblakMeretek::model()->findByPk($nyomdakonyv->megrendeles_tetel->termek -> ablakmeret_id);
+			if ($ablakmeret == null)
+				$ablakmeret = new TermekAblakMeretek();
+						
+			$ablakhely = TermekAblakhelyek::model()->findByPk($nyomdakonyv->megrendeles_tetel->termek -> ablakhely_id);
+			if ($ablakhely == null)
+				$ablakhely = new TermekAblakhelyek();
+						
+			$papirtipus = PapirTipusok::model()->findByPk($nyomdakonyv->megrendeles_tetel->termek -> papir_id);
+			if ($papirtipus == null)
+				$papirtipus = new PapirTipusok();
 			
-			foreach ($megrendeles_tetelek as $tetel) {
-				$termek = Termekek::model()->findByPk($tetel -> termek_id);
-				if ($termek == null)
-					$termek = new Termekek();
-					
-				$termek_meret = TermekMeretek::model()->findByPk($termek -> meret_id);
-				if ($termek_meret == null)
-					$termek_meret = new TermekMeretek();
-					
-				$zarasmod = TermekZarasiModok::model()->findByPk($termek -> zaras_id);
-				if ($zarasmod == null)
-					$zarasmod = new TermekZarasiModok();
-							
-				$ablakmeret = TermekAblakMeretek::model()->findByPk($termek -> ablakmeret_id);
-				if ($ablakmeret == null)
-					$ablakmeret = new TermekAblakMeretek();
-							
-				$ablakhely = TermekAblakhelyek::model()->findByPk($termek -> ablakhely_id);
-				if ($ablakhely == null)
-					$ablakhely = new TermekAblakhelyek();
-							
-				$papirtipus = PapirTipusok::model()->findByPk($termek -> papir_id);
-				if ($papirtipus == null)
-					$papirtipus = new PapirTipusok();
-				
-				$afakulcs = AfaKulcsok::model()->findByPk($termek -> afakulcs_id);
-				if ($afakulcs == null) {
-					$afakulcs = new AfaKulcsok();
-					$afakulcs->afa_szazalek = 27;
-				}
-				
-				$nyomdakonyvi_munka = Nyomdakonyv::model() -> findByAttributes( array('megrendeles_tetel_id' => $tetel -> id,) );
-				if ($nyomdakonyvi_munka == null)
-					$nyomdakonyvi_munka = new Nyomdakonyv();
-				
-				// összesíteni kell a végén az adóalapot, tehát az egyes tételek nettó árának összegét kell tárolnunk
-				$ossz_netto += number_format((float)$tetel->netto_darabar * $tetel->darabszam, 2, '.', '');
-				$ossz_afa += number_format(round((round($tetel->netto_darabar, 2) * $tetel->darabszam * ($afakulcs->afa_szazalek)) / 100, 0), 2, '.', '');
-				
-				// tételek kiírása
-				echo "
-					<tr>
-						<td> " . $tetel->megrendelt_termek_nev . " <br /> $tetel->munka_neve</td>
-						<td align=right>$tetel->darabszam</td>
-						<td align=right>$tetel->displayTermekSzinekSzama</td>
-						<td align=right>" . number_format((float)$tetel->netto_darabar, 2) . "</td>
-						<td align=right>" .  number_format((float)$tetel->netto_darabar * $tetel->darabszam, 2, '.', '') . "</td>
-					</tr>
-				";
+			$afakulcs = AfaKulcsok::model()->findByPk($nyomdakonyv->megrendeles_tetel->termek -> afakulcs_id);
+			if ($afakulcs == null) {
+				$afakulcs = new AfaKulcsok();
+				$afakulcs->afa_szazalek = 27;
 			}
+			
+			$nyomdakonyvi_munka = Nyomdakonyv::model() -> findByAttributes( array('megrendeles_tetel_id' => $tetel -> id,) );
+			if ($nyomdakonyvi_munka == null)
+				$nyomdakonyvi_munka = new Nyomdakonyv();
+			
+			// összesíteni kell a végén az adóalapot, tehát az egyes tételek nettó árának összegét kell tárolnunk
+			$ossz_netto += number_format((float)$nyomdakonyv->megrendeles_tetel->netto_darabar * $nyomdakonyv->megrendeles_tetel->darabszam, 2, '.', '');
+			$ossz_afa += number_format(round((round($nyomdakonyv->megrendeles_tetel->netto_darabar, 2) * $nyomdakonyv->megrendeles_tetel->darabszam * ($afakulcs->afa_szazalek)) / 100, 0), 2, '.', '');
+			
+			// tételek kiírása
+			echo "
+				<tr>
+					<td> " . $nyomdakonyv->megrendeles_tetel->megrendelt_termek_nev . " <br /> " . $nyomdakonyv->megrendeles_tetel->munka_neve . "</td>
+					<td align=right>" .$nyomdakonyv->megrendeles_tetel->darabszam. "</td>
+					<td align=right>" .$nyomdakonyv->megrendeles_tetel->displayTermekSzinekSzama. "</td>
+					<td align=right>" . number_format((float)$nyomdakonyv->megrendeles_tetel->netto_darabar, 2) . "</td>
+					<td align=right>" .  number_format((float)$nyomdakonyv->megrendeles_tetel->netto_darabar * $nyomdakonyv->megrendeles_tetel->darabszam, 2, '.', '') . "</td>
+				</tr>
+			";
+
 			
 			// adó szekció (ÁFA) kiírása
 			echo "
@@ -224,8 +218,21 @@
 					</tr>
 				</table>
 			";
-		}
 	?>
+	<table>
+		<tr>
+			<td>Selejt leírás:</td>
+			<td><?php echo $model->selejt_leiras;?></td>
+		</tr>
+		<tr>
+			<td>Felelősök:</td>
+			<td><?php echo $model->felelosok;?></td>
+		</tr>
+		<tr>
+			<td>Nettó kár:</td>
+			<td><?php echo Utils::OsszegFormazas($model->netto_kar, 0);?> Ft</td>
+		</tr>
+	</table>
 	
 </table>
 
@@ -250,7 +257,7 @@
 			</tr>
 		</table>
 	</p>
-
+</div>
 <htmlpagefooter name="myFooter2" style="display:none">
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
 	<tr>

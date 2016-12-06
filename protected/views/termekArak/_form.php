@@ -201,8 +201,7 @@ if (!isset($termek_adatok)) {
 				echo "<div class='divForForm'></div>";
 				
 				$this->endWidget();
-				
-				
+
 			// GRIDVIEW BEGIN
 				$dataProvider=new CActiveDataProvider('TermekSavosCsomagarak',
 					array( 'data' => $model->termeksavoscsomagarak,
@@ -224,7 +223,7 @@ if (!isset($termek_adatok)) {
 					'columns'=>array(
 						'csomagszam_tol',
 						'csomagszam_ig',
-						'darab_ar_szamolashoz',
+						'csomag_ar_szamolashoz',
 						'csomag_ar_nyomashoz',
 						'csomag_eladasi_ar',
 						array(

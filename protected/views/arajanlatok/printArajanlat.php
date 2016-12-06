@@ -78,7 +78,7 @@
 <table>
 	<tr>
 		<td class = 'col1'><strong>Feladó</strong></td>
-		<td class = 'col2'> <?php echo $ugyfel -> display_ugyfel_ugyintezok; ?> </td>
+		<td class = 'col2'> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok(0, true); ?> </td>
 		<td class = 'col3'><strong>Sorszám</strong></td>
 		<td class = 'col4'><?php echo $model -> sorszam; ?></td>
 	<tr>

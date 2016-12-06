@@ -510,13 +510,22 @@ class Ugyfelek extends DomyModel
 	 * Őket itt szedem össze is adom vissza.
 	 * TÁ: Bővítettem az ugyintezo_id paraméterrel, mert pl. a szállítólevélen csak annak az ügyintézőnek kell szerepelni, amelyik meg lett adva az árajánlatnál, mint ügyintéző
 	 * 	   Ha nincs megadva ügyintéző, akkor az összeset visszaadja, ha van megadva, akkor csak azt az egyet.
+	 * TÁ: Bővítettem az $alapertelmezett_ugyintezo paraméterrel, ha az true, akkor csak az alapértelmezett ügyintézőt adja vissza
 	 */
-	public function getDisplay_ugyfel_ugyintezok ($ugyintezo_id = 0)
+	public function getDisplay_ugyfel_ugyintezok ($ugyintezo_id = 0, $alapertelmezett_ugyintezo = false)
 	{
 		$result = '';
 		
 		foreach ($this -> ugyfelUgyintezo as $ugyintezo) {
 			if ($ugyintezo_id == 0 || $ugyintezo->id == $ugyintezo_id) {
+				if (!$alapertelmezett_ugyintezo || $ugyintezo->alapertelmezett_kapcsolattarto == true) {
+					$result .= (strlen($result) > 0 ? ', ' : '') . $ugyintezo -> nev;
+				}
+			}
+		}
+
+		if ($result == "" && count($this -> ugyfelUgyintezo) > 0) {
+			foreach ($this -> ugyfelUgyintezo as $ugyintezo) {
 				$result .= (strlen($result) > 0 ? ', ' : '') . $ugyintezo -> nev;
 			}
 		}

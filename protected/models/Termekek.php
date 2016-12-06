@@ -288,49 +288,59 @@ class Termekek extends CActiveRecord
 	// TÁ: Kicsit szofisztikáltabban írjuk ki, mert sok termék lesz, aminél nincs ablak, papír, méret adat.
 	public function getDisplayTermekTeljesNev()
 	{
-		$termek_teljes_nev = $this->nev ;
-		$termek_teljes_nev .= ' ' . $this->zaras->nev ;
 		$meret = "" ;
-		if ($this->meret != null && $this->meret->szelesseg > 0) {
-			$meret .= ' ' . $this->meret->szelesseg ;
+		if ($this->termekcsoport->nev == "Ragasztószalag") {
+			$termek_teljes_nev = $this->nev ;
+			if ($this->meret != null) {
+				$termek_teljes_nev .= " " . $this->meret->nev ;
+			}
+			if ($this->zaras != null) {
+				$termek_teljes_nev .= " " . $this->zaras->nev ;
+			}
+			if ($this->papirtipus != null) {
+				$termek_teljes_nev .= " " . $this->papirtipus->nev ;
+			}
 		}
-		if ($this->meret != null && $this->meret->magassag > 0) {
+		else {
+			$termek_teljes_nev = $this->nev ;
+			$termek_teljes_nev .= ' ' . $this->zaras->nev ;
+			if ($this->meret != null && $this->meret->szelesseg > 0) {
+				$meret .= ' ' . $this->meret->szelesseg;
+			}
+			if ($this->meret != null && $this->meret->magassag > 0) {
+				if ($meret != "") {
+					$meret .= "x";
+				} else {
+					$meret .= " ";
+				}
+				$meret .= $this->meret->magassag;
+			}
+			if ($this->meret != null && $this->meret->vastagsag > 0) {
+				if ($meret != "") {
+					$meret .= "x";
+				} else {
+					$meret .= " ";
+				}
+				$meret .= $this->meret->vastagsag;
+			}
 			if ($meret != "") {
-				$meret .= "x" ;	
+				$meret . ", ";
 			}
-			else
-			{
-				$meret .= " " ;	
+			$termek_teljes_nev .= $meret;
+			$termek_teljes_nev .= ' ' . $this->ablakhely->nev;
+			/*		$termek_teljes_nev .= ' ' . $this->ablakhely->hely ;
+                    if ($this->ablakhely->x_pozicio_honnan != '' && $this->ablakhely->x_pozicio_mm > 0) {
+                        $termek_teljes_nev .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
+                    }*/
+			if ($this->ablakmeret->nev != "") {
+				$termek_teljes_nev .= ' ' . $this->ablakmeret->nev;
 			}
-			$meret .= $this->meret->magassag ;
-		}
-		if ($this->meret != null && $this->meret->vastagsag > 0) {
-			if ($meret != "") {
-				$meret .= "x" ;	
+			if ($this->ablakmeret->magassag > 0) {
+//			$termek_teljes_nev .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
 			}
-			else
-			{
-				$meret .= " " ;	
+			if ($this->papirtipus->suly != 0 && $this->papirtipus->suly != "") {
+				$termek_teljes_nev .= ' ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr';
 			}
-			$meret .= $this->meret->vastagsag ;
-		}
-		if ($meret != "") {
-			$meret . ", " ;	
-		}
-		$termek_teljes_nev .= $meret ;
-		$termek_teljes_nev .= ' ' . $this->ablakhely->nev ;
-/*		$termek_teljes_nev .= ' ' . $this->ablakhely->hely ;
-		if ($this->ablakhely->x_pozicio_honnan != '' && $this->ablakhely->x_pozicio_mm > 0) {
-			$termek_teljes_nev .= ' ' . $this->ablakhely->x_pozicio_honnan . $this->ablakhely->x_pozicio_mm . $this->ablakhely->y_pozicio_honnan . $this->ablakhely->y_pozicio_mm ;
-		}*/
-		if ($this->ablakmeret->nev != "") {
-			$termek_teljes_nev .= ' ' . $this->ablakmeret->nev ;	
-		}
-		if ($this->ablakmeret->magassag > 0) {
-			$termek_teljes_nev .= ' ' . $this->ablakmeret->magassag . 'x' . $this->ablakmeret->szelesseg . ' mm ' ;
-		}
-		if ($this->papirtipus->suly != 0 && $this->papirtipus->suly != "") {
-			$termek_teljes_nev .= ' ' . $this->papirtipus->nev . ' ' . $this->papirtipus->suly . 'gr' ;
 		}
 		
 		return $termek_teljes_nev;

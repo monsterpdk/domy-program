@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9c3c2cbd-e2b7-4a8b-8356-ccd519f95097" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/Domy program www.iml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/gepterem_komm/#Untitled-1#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/gepterem_komm/#dbfcomm.php#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/import/#Untitled-1#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/controllers/#MegrendelesekController.php#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/controllers/#Untitled-1#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/controllers/TermekArSavosCsomagarakController.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/models/TermekArSavosCsomagarak.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/_form.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/_search.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/_view.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/admin.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/create.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/delete.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/index.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/update.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/TermekArSavosCsomagarak/view.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/anyagrendelesTermekek/#_form.php.eles#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/arajanlatTetelek/#_form.php.eles#" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/protected/views/nyomdakonyv/#printTaska.php#" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/components/Utils.php" afterPath="$PROJECT_DIR$/protected/components/Utils.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/AnyagbeszallitasokController.php" afterPath="$PROJECT_DIR$/protected/controllers/AnyagbeszallitasokController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" afterPath="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/UgyfelekController.php" afterPath="$PROJECT_DIR$/protected/controllers/UgyfelekController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/models/TermekArak.php" afterPath="$PROJECT_DIR$/protected/models/TermekArak.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/models/TermekSavosCsomagarak.php" afterPath="$PROJECT_DIR$/protected/models/TermekSavosCsomagarak.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/models/Termekek.php" afterPath="$PROJECT_DIR$/protected/models/Termekek.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/models/Ugyfelek.php" afterPath="$PROJECT_DIR$/protected/models/Ugyfelek.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/anyagrendelesek/printAnyagRendelesekArral.php" afterPath="$PROJECT_DIR$/protected/views/anyagrendelesek/printAnyagRendelesekArral.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/arajanlatTetelek/_form.php" afterPath="$PROJECT_DIR$/protected/views/arajanlatTetelek/_form.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/arajanlatok/index.php" afterPath="$PROJECT_DIR$/protected/views/arajanlatok/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/arajanlatok/printArajanlat.php" afterPath="$PROJECT_DIR$/protected/views/arajanlatok/printArajanlat.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/megrendelesTetelek/_form.php" afterPath="$PROJECT_DIR$/protected/views/megrendelesTetelek/_form.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/nyomdakonyvReklamaciok/printReklamacio.php" afterPath="$PROJECT_DIR$/protected/views/nyomdakonyvReklamaciok/printReklamacio.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/termekArak/_form.php" afterPath="$PROJECT_DIR$/protected/views/termekArak/_form.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/termekArak/_view.php" afterPath="$PROJECT_DIR$/protected/views/termekArak/_view.php" />
+    </list>
+    <ignored path="www.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="www" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="printReklamacio.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/protected/views/nyomdakonyvReklamaciok/printReklamacio.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="192" column="99" selection-start-line="192" selection-start-column="99" selection-end-line="192" selection-end-column="99" />
+              <folding>
+                <marker date="1480286001255" expanded="true" signature="5426:5508" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="5426:5586" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="5426:5661" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="5426:6005" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="5958:5983" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="5958:6005" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="6115:6382" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="6125:6369" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="6469:6795" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="6479:6782" placeholder="..." />
+                <marker date="1480286001255" expanded="true" signature="7345:7374" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MegrendelesTetelek.php.ori" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/models/MegrendelesTetelek.php.ori">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MegrendelesTetelek.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/models/MegrendelesTetelek.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Nyomdakonyv.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/models/Nyomdakonyv.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="9214">
+              <caret line="542" column="4" selection-start-line="542" selection-start-column="4" selection-end-line="542" selection-end-column="4" />
+              <folding>
+                <marker date="1462715808172" expanded="true" signature="23775:23787" placeholder="..." />
+                <marker date="1462715808172" expanded="true" signature="24082:24120" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NyomdakonyvReklamaciokController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/controllers/NyomdakonyvReklamaciokController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="printProforma.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/views/megrendelesek/printProforma.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <marker date="1458865286321" expanded="true" signature="4296:4525" placeholder="..." />
+                <marker date="1458865286321" expanded="true" signature="4535:4592" placeholder="..." />
+                <marker date="1458865286321" expanded="true" signature="4602:4980" placeholder="..." />
+                <marker date="1458865286321" expanded="true" signature="5164:5435" placeholder="..." />
+                <marker date="1458865286321" expanded="true" signature="5174:5422" placeholder="..." />
+                <marker date="1458865286321" expanded="true" signature="5522:5828" placeholder="..." />
+                <marker date="1458865286321" expanded="true" signature="5532:5815" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="printVisszaigazolas.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/views/megrendelesek/printVisszaigazolas.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <marker date="1458865238798" expanded="true" signature="4964:5354" placeholder="..." />
+                <marker date="1458865238798" expanded="true" signature="5469:5736" placeholder="..." />
+                <marker date="1458865238798" expanded="true" signature="5479:5723" placeholder="..." />
+                <marker date="1458865238798" expanded="true" signature="5823:6149" placeholder="..." />
+                <marker date="1458865238798" expanded="true" signature="5833:6136" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Utils.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/components/Utils.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="21437">
+              <caret line="1261" column="31" selection-start-line="1261" selection-start-column="17" selection-end-line="1261" selection-end-column="31" />
+              <folding>
+                <marker date="1475021198004" expanded="true" signature="10437:10594" placeholder="SELECT * FRO... dom_termek_arak" />
+                <marker date="1475021198004" expanded="true" signature="11120:11278" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+                <marker date="1475021198004" expanded="true" signature="12913:13070" placeholder="SELECT * FRO... dom_termek_arak" />
+                <marker date="1475021198004" expanded="true" signature="13328:13530" placeholder="SELECT * FRO... dom_termek_ar_savos_csomagarak" />
+                <marker date="1475021198004" expanded="true" signature="16532:16753" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+                <marker date="1475021198004" expanded="true" signature="18178:18350" placeholder="SELECT * FRO... dom_zuh" />
+                <marker date="1475021198004" expanded="true" signature="21997:22138" placeholder="SELECT id FR... dom_megrendelesek" />
+                <marker date="1475021198004" expanded="true" signature="26310:26659" placeholder="SELECT megre... dom_szallitolevelek" />
+                <marker date="1475021198004" expanded="true" signature="37459:37559" placeholder="select BSors... kerBFejlec" />
+                <marker date="1475021198004" expanded="true" signature="38462:38696" placeholder="select penBF... penBSor" />
+                <marker date="1475021198004" expanded="true" signature="43489:44450" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+                <marker date="1475021198004" expanded="true" signature="45120:45962" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+                <marker date="1475021198004" expanded="true" signature="46997:47347" placeholder="SELECT gepek... dom_nyomdagepek" />
+                <marker date="1475021198004" expanded="true" signature="49896:50245" placeholder="SELECT ROUND... dom_arajanlatok" />
+                <marker date="1475021198004" expanded="true" signature="50859:51261" placeholder="SELECT ROUND... dom_megrendelesek" />
+                <marker date="1475021198004" expanded="true" signature="51844:51964" placeholder="SELECT COUNT... dom_arajanlatok" />
+                <marker date="1475021198004" expanded="true" signature="52413:52535" placeholder="SELECT COUNT... dom_megrendelesek" />
+                <marker date="1475021198004" expanded="true" signature="62676:62810" placeholder="SELECT tbl_u... authassignment" />
+                <marker date="1475021198004" expanded="true" signature="63695:63959" placeholder="SELECT tbl_u... authassignment" />
+                <marker date="1475021198004" expanded="true" signature="72423:72966" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+                <marker date="1475021198004" expanded="true" signature="73383:73684" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+                <marker date="1475021198004" expanded="true" signature="81460:81717" placeholder="SELECT gep_t... dom_nyomdagepek" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NyomdakonyvReklamaciok.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/models/NyomdakonyvReklamaciok.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1547">
+              <caret line="91" column="86" selection-start-line="91" selection-start-column="86" selection-end-line="91" selection-end-column="86" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NyomdaMunkatipusTermekek.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/models/NyomdaMunkatipusTermekek.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/protected/views/arajanlatok/printArajanlat.php" />
+        <option value="$PROJECT_DIR$/protected/models/Ugyfelek.php" />
+        <option value="$PROJECT_DIR$/protected/views/arajanlatTetelek/_form.php" />
+        <option value="$PROJECT_DIR$/protected/views/megrendelesTetelek/_form.php" />
+        <option value="$PROJECT_DIR$/protected/views/ugyfelek/_form.php" />
+        <option value="$PROJECT_DIR$/protected/controllers/UgyfelekController.php" />
+        <option value="$PROJECT_DIR$/protected/views/anyagrendelesek/printAnyagRendelesekArral.php" />
+        <option value="$PROJECT_DIR$/protected/components/Utils.php" />
+        <option value="$PROJECT_DIR$/protected/views/termekArak/_view.php" />
+        <option value="$PROJECT_DIR$/protected/models/TermekSavosCsomagarak.php" />
+        <option value="$PROJECT_DIR$/protected/models/TermekArak.php" />
+        <option value="$PROJECT_DIR$/protected/views/termekArak/_form.php" />
+        <option value="$PROJECT_DIR$/protected/models/Termekek.php" />
+        <option value="$PROJECT_DIR$/protected/models/NyomdakonyvReklamaciok.php" />
+        <option value="$PROJECT_DIR$/protected/views/nyomdakonyvReklamaciok/printReklamacio.php" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="PhpServers">
+    <servers />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1456" />
+    <option name="height" value="876" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ugyfelek" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TermekSavosCsomagarak" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="termekArak" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nyomdakonyvReklamaciok" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="megrendelesek" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="arajanlatTetelek" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="anyagrendelesek" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="models" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="configurable.group.tools" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
+      <BehatRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9c3c2cbd-e2b7-4a8b-8356-ccd519f95097" name="Default" comment="" />
+      <created>1470953019452</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1470953019452</updated>
+      <workItem from="1470953022154" duration="3630000" />
+      <workItem from="1472814708701" duration="1664000" />
+      <workItem from="1473801799024" duration="2111000" />
+      <workItem from="1474632186248" duration="4753000" />
+      <workItem from="1476786228123" duration="10312000" />
+      <workItem from="1479815834024" duration="1689000" />
+      <workItem from="1480018947744" duration="45000" />
+      <workItem from="1480279596702" duration="29000" />
+      <workItem from="1480283770077" duration="2830000" />
+      <workItem from="1480410862372" duration="18000" />
+      <workItem from="1480983823259" duration="632000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="27713000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24722221" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/protected/models/Nyomdakonyv.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1462715808172" expanded="true" signature="23775:23787" placeholder="..." />
+            <marker date="1462715808172" expanded="true" signature="24082:24120" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/UgyfelUgyintezok.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2176">
+          <caret line="128" column="49" selection-start-line="128" selection-start-column="19" selection-end-line="128" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/ArajanlatokController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8619">
+          <caret line="507" column="59" selection-start-line="507" selection-start-column="59" selection-end-line="507" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/UgyfelUgyintezok.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2176">
+          <caret line="128" column="49" selection-start-line="128" selection-start-column="19" selection-end-line="128" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/arajanlatok/printArajanlat.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1360">
+          <caret line="80" column="88" selection-start-line="80" selection-start-column="88" selection-end-line="80" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Ugyfelek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8721">
+          <caret line="513" column="7" selection-start-line="513" selection-start-column="7" selection-end-line="513" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/arajanlatok/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/megrendelesTetelek/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2754">
+          <caret line="162" column="0" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/nyomdakonyv/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1921">
+          <caret line="113" column="83" selection-start-line="113" selection-start-column="77" selection-end-line="113" selection-end-column="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/ugyfelek/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1819">
+          <caret line="107" column="104" selection-start-line="107" selection-start-column="104" selection-end-line="107" selection-end-column="104" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/UgyfelekController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1139">
+          <caret line="67" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Anyagrendelesek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Gyartok.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/anyagrendelesek/printAnyagRendelesekArral.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1428">
+          <caret line="84" column="52" selection-start-line="84" selection-start-column="52" selection-end-line="84" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Megrendelesek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/ArajanlatTetelekController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5746">
+          <caret line="338" column="5" selection-start-line="338" selection-start-column="5" selection-end-line="338" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/MegrendelesekController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1438">
+          <caret line="278" column="23" selection-start-line="278" selection-start-column="23" selection-end-line="278" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/TermekArakController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-306">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/termekArak/update.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/TermekMeretek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="101" column="37" selection-start-line="101" selection-start-column="37" selection-end-line="101" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/TermekAblakHelyek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1428">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/TermekSavosCsomagarakController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="190" column="5" selection-start-line="190" selection-start-column="5" selection-end-line="190" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/TermekSavosCsomagarak/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-49">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/TermekSavosCsomagarak/_search.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/TermekSavosCsomagarak/_view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/TermekSavosCsomagarak/view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/TermekSavosCsomagarak/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/termekArak/_view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/TermekZarasiModok.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1547">
+          <caret line="91" column="49" selection-start-line="91" selection-start-column="49" selection-end-line="91" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/TermekSavosCsomagarak.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2193">
+          <caret line="129" column="8" selection-start-line="129" selection-start-column="8" selection-end-line="129" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/TermekArak.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1547">
+          <caret line="91" column="4" selection-start-line="91" selection-start-column="4" selection-end-line="91" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/termekArak/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3876">
+          <caret line="228" column="0" selection-start-line="228" selection-start-column="0" selection-end-line="228" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/ArajanlatTetelek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/arajanlatTetelek/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2567">
+          <caret line="151" column="68" selection-start-line="151" selection-start-column="44" selection-end-line="151" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Termekcsoportok.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Termekek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5831">
+          <caret line="343" column="9" selection-start-line="343" selection-start-column="9" selection-end-line="343" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/nyomdakonyv/printCtpTaska.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/nyomdakonyv/printTaska.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/nyomdakonyv/printUtemezes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/megrendelesek/printProforma.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1458865286321" expanded="true" signature="4296:4525" placeholder="..." />
+            <marker date="1458865286321" expanded="true" signature="4535:4592" placeholder="..." />
+            <marker date="1458865286321" expanded="true" signature="4602:4980" placeholder="..." />
+            <marker date="1458865286321" expanded="true" signature="5164:5435" placeholder="..." />
+            <marker date="1458865286321" expanded="true" signature="5174:5422" placeholder="..." />
+            <marker date="1458865286321" expanded="true" signature="5522:5828" placeholder="..." />
+            <marker date="1458865286321" expanded="true" signature="5532:5815" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/megrendelesek/printVisszaigazolas.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1458865238798" expanded="true" signature="4964:5354" placeholder="..." />
+            <marker date="1458865238798" expanded="true" signature="5469:5736" placeholder="..." />
+            <marker date="1458865238798" expanded="true" signature="5479:5723" placeholder="..." />
+            <marker date="1458865238798" expanded="true" signature="5823:6149" placeholder="..." />
+            <marker date="1458865238798" expanded="true" signature="5833:6136" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/components/Utils.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21437">
+          <caret line="1261" column="31" selection-start-line="1261" selection-start-column="17" selection-end-line="1261" selection-end-column="31" />
+          <folding>
+            <marker date="1475021198004" expanded="true" signature="10437:10594" placeholder="SELECT * FRO... dom_termek_arak" />
+            <marker date="1475021198004" expanded="true" signature="11120:11278" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+            <marker date="1475021198004" expanded="true" signature="12913:13070" placeholder="SELECT * FRO... dom_termek_arak" />
+            <marker date="1475021198004" expanded="true" signature="13328:13530" placeholder="SELECT * FRO... dom_termek_ar_savos_csomagarak" />
+            <marker date="1475021198004" expanded="true" signature="16532:16753" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+            <marker date="1475021198004" expanded="true" signature="18178:18350" placeholder="SELECT * FRO... dom_zuh" />
+            <marker date="1475021198004" expanded="true" signature="21997:22138" placeholder="SELECT id FR... dom_megrendelesek" />
+            <marker date="1475021198004" expanded="true" signature="26310:26659" placeholder="SELECT megre... dom_szallitolevelek" />
+            <marker date="1475021198004" expanded="true" signature="37459:37559" placeholder="select BSors... kerBFejlec" />
+            <marker date="1475021198004" expanded="true" signature="38462:38696" placeholder="select penBF... penBSor" />
+            <marker date="1475021198004" expanded="true" signature="43489:44450" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+            <marker date="1475021198004" expanded="true" signature="45120:45962" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+            <marker date="1475021198004" expanded="true" signature="46997:47347" placeholder="SELECT gepek... dom_nyomdagepek" />
+            <marker date="1475021198004" expanded="true" signature="49896:50245" placeholder="SELECT ROUND... dom_arajanlatok" />
+            <marker date="1475021198004" expanded="true" signature="50859:51261" placeholder="SELECT ROUND... dom_megrendelesek" />
+            <marker date="1475021198004" expanded="true" signature="51844:51964" placeholder="SELECT COUNT... dom_arajanlatok" />
+            <marker date="1475021198004" expanded="true" signature="52413:52535" placeholder="SELECT COUNT... dom_megrendelesek" />
+            <marker date="1475021198004" expanded="true" signature="62676:62810" placeholder="SELECT tbl_u... authassignment" />
+            <marker date="1475021198004" expanded="true" signature="63695:63959" placeholder="SELECT tbl_u... authassignment" />
+            <marker date="1475021198004" expanded="true" signature="72423:72966" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+            <marker date="1475021198004" expanded="true" signature="73383:73684" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+            <marker date="1475021198004" expanded="true" signature="81460:81717" placeholder="SELECT gep_t... dom_nyomdagepek" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/NyomdakonyvReklamaciokController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/NyomdaMunkatipusTermekek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/NyomdakonyvReklamaciok.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1547">
+          <caret line="91" column="86" selection-start-line="91" selection-start-column="86" selection-end-line="91" selection-end-column="86" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/Nyomdakonyv.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9214">
+          <caret line="542" column="4" selection-start-line="542" selection-start-column="4" selection-end-line="542" selection-end-column="4" />
+          <folding>
+            <marker date="1462715808172" expanded="true" signature="23775:23787" placeholder="..." />
+            <marker date="1462715808172" expanded="true" signature="24082:24120" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/MegrendelesTetelek.php.ori">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/MegrendelesTetelek.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/nyomdakonyvReklamaciok/printReklamacio.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="192" column="99" selection-start-line="192" selection-start-column="99" selection-end-line="192" selection-end-column="99" />
+          <folding>
+            <marker date="1480286001255" expanded="true" signature="5426:5508" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="5426:5586" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="5426:5661" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="5426:6005" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="5958:5983" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="5958:6005" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="6115:6382" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="6125:6369" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="6469:6795" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="6479:6782" placeholder="..." />
+            <marker date="1480286001255" expanded="true" signature="7345:7374" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

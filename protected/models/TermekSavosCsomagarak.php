@@ -52,13 +52,13 @@ class TermekSavosCsomagarak extends CActiveRecord
 	{
 		$criteria = new CDbCriteria();
 		if (is_numeric($this->id)) { 
-			$criteria->condition = "termek_ar_id = :termek_ar_id and ((csomagszam_tol <= :csomagszam_tol and csomagszam_ig >= :csomagszam_ig) or (csomagszam_tol <= :csomagszam_tol and csomagszam_ig >= :csomagszam_tol) or (csomagszam_tol >= :csomagszam_tol and csomagszam_ig >= :csomagszam_ig) ) and id != :id";
+			$criteria->condition = "termek_ar_id = :termek_ar_id and ((csomagszam_tol >= :csomagszam_tol and csomagszam_ig <= :csomagszam_ig) or (csomagszam_tol >= :csomagszam_tol and csomagszam_tol <= :csomagszam_ig) or (csomagszam_ig >= :csomagszam_tol and csomagszam_ig <= :csomagszam_ig) ) and id != :id and torolt = 0";
 			$criteria->params = array(':termek_ar_id' => $this->termek_ar_id, ':csomagszam_tol' => $this->csomagszam_tol, ':csomagszam_ig' => $this->csomagszam_ig, ':id' => $this->id);
 		}
 		else
 		{
-			$criteria->condition = "termek_ar_id = :termek_ar_id and ((csomagszam_tol <= :csomagszam_tol and csomagszam_ig >= :csomagszam_ig) or (csomagszam_tol <= :csomagszam_tol and csomagszam_ig >= :csomagszam_tol) or (csomagszam_tol >= :csomagszam_tol and csomagszam_ig >= :csomagszam_ig) )";
-			$criteria->params = array(':termek_ar_id' => $this->termek_ar_id, ':csomagszam_tol' => $this->csomagszam_tol, ':csomagszam_ig' => $this->csomagszam_ig);			
+			$criteria->condition = "termek_ar_id = :termek_ar_id and ((csomagszam_tol >= :csomagszam_tol and csomagszam_ig <= :csomagszam_ig) or (csomagszam_tol >= :csomagszam_tol and csomagszam_tol <= :csomagszam_ig) or (csomagszam_ig >= :csomagszam_tol and csomagszam_ig <= :csomagszam_ig) ) and torolt = 0";
+			$criteria->params = array(':termek_ar_id' => $this->termek_ar_id, ':csomagszam_tol' => $this->csomagszam_tol, ':csomagszam_ig' => $this->csomagszam_ig);
 		}
 		$beleeso_savok = TermekSavosCsomagarak::model()->findAll($criteria);
 		if ($beleeso_savok != null)
@@ -117,14 +117,16 @@ class TermekSavosCsomagarak extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('termek_ar_id',$this->termek_ar_id,true);
+		$criteria->compare('id',$this->id);
+		$criteria->compare('termek_ar_id',$this->termek_ar_id);
 		$criteria->compare('csomagszam_tol',$this->csomagszam_tol);
 		$criteria->compare('csomagszam_ig',$this->csomagszam_ig);
 		$criteria->compare('csomag_ar_szamolashoz',$this->csomag_ar_szamolashoz);
 		$criteria->compare('csomag_ar_nyomashoz',$this->csomag_ar_nyomashoz);
 		$criteria->compare('csomag_eladasi_ar',$this->csomag_eladasi_ar);
-		$criteria->compare('torolt',$this->torolt);
+		// LI: logikailag törölt sorok ne jelenjenek meg
+//		if (!Yii::app()->user->checkAccess('Admin'))
+			$criteria->compare('torolt', 0);
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
