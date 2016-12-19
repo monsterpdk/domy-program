@@ -17,7 +17,8 @@ class RaktarTermekek extends CActiveRecord
 	public $raktar_search;
 	public $raktar_hely_search;
 	public $termek_search;
-	public $cikkszam_search ;
+	public $cikkszam_search;
+	public $is_atmozgatas;
 	
 	/**
 	 * @return string the associated database table name
@@ -45,7 +46,7 @@ class RaktarTermekek extends CActiveRecord
 			array('termek_id, raktarhely_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, termek_id, anyagbeszallitas_id, raktarhely_id, osszes_db, foglalt_db, elerheto_db, raktar_search, raktar_hely_search, termek_search, cikkszam_search', 'safe', 'on'=>'search'),
+			array('id, termek_id, anyagbeszallitas_id, raktarhely_id, osszes_db, foglalt_db, elerheto_db, raktar_search, raktar_hely_search, termek_search, cikkszam_search, is_atmozgatas', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -85,6 +86,7 @@ class RaktarTermekek extends CActiveRecord
 			'raktar_hely_search' => 'Rakárhely neve',
 			'termek_search' => 'Termék neve',
 			'cikkszam_search' => 'Cikkszám',
+			'is_atmozgatas' => 'Részletes lista',
 		);
 	}
 
@@ -108,6 +110,21 @@ class RaktarTermekek extends CActiveRecord
 		$criteria->together = true;
 		$criteria->with = array('termek', 'raktarHelyek', 'raktarHelyek.raktar');
 		
+		// itt vizsgáljuk, hogy a keresés blokkban a részletes lista kapcsoló milyen állásban van
+		$reszletesLista = false;
+		if (isset($_GET['RaktarTermekek'])) {
+			if ($_GET['RaktarTermekek']['is_atmozgatas']) {
+				$reszletesLista = $_GET['RaktarTermekek']['is_atmozgatas'] == 1;
+			}
+		}
+		
+		// ez a blokk ahhoz a nézethez kell, ahol a termékeket összesítve, raktárhelyenként, group-olva jelenítjük meg, nem egyesével, anyagrendelésenként
+		if (!$reszletesLista) {
+			$criteria->select = '*, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
+			$criteria->group = 'termek_id, raktarhely_id';
+		}
+		//
+		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('termek_id',$this->termek_id,true);
 		$criteria->compare('anyagbeszallitas_id',$this->anyagbeszallitas_id,true);		
@@ -119,7 +136,7 @@ class RaktarTermekek extends CActiveRecord
 		$criteria->compare('raktar.nev',$this->raktar_search,true);
 		$criteria->compare('raktarHelyek.nev',$this->raktar_hely_search,true);
 		$criteria->compare('termek.nev',$this->termek_search,true);
-		$criteria->compare('termek.cikkszam',$this->cikkszam_search,true);
+		$criteria->compare('termek.cikkszam',$this->cikkszam_search,false);
 		
 		$criteria->order = 'raktarhely_id ASC';
 

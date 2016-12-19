@@ -162,7 +162,7 @@
 			  'splitter'=>',',
 			  'sourceUrl'=>$this->createUrl('termekcsoportok/searchTermekcsoportok'),
 			  'options'=>array(
-					  'minLength'=>'2',
+					  'minLength'=>'1',
 			  ),
 			  'htmlOptions'=>array(
 					  'style'=>'width:575px',
