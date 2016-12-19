@@ -71,6 +71,30 @@ class TermekCsoportokController extends Controller
 		));
 	}
 
+	// termékcsoportok előregépelős beajánlásának keresője
+	public function actionSearchTermekcsoportok ($term)
+	{
+		if(Yii::app()->request->isAjaxRequest && !empty($term))
+        {
+              $variants = array();
+              $criteria = new CDbCriteria;
+              $criteria->select='nev';
+              $criteria->addSearchCondition('nev', $term.'%', false);
+              $termekcsoportok = Termekcsoportok::model()->findAll($criteria);
+			  
+              if(!empty($termekcsoportok))
+              {
+                foreach($termekcsoportok as $termekcsoport)
+                {
+                    $variants[] = $termekcsoport->attributes['nev'];
+                }
+              }
+              echo CJSON::encode($variants);
+        }
+        else
+            throw new CHttpException(400,'Hibás kérés.');
+    }
+	
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.

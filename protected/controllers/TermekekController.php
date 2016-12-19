@@ -245,6 +245,30 @@ class TermekekController extends Controller
 		}
 	}
 	
+	// cikkszámok előregépelős beajánlásának keresője
+	public function actionSearchCikkszamok ($term)
+	{
+		if(Yii::app()->request->isAjaxRequest && !empty($term))
+        {
+              $variants = array();
+              $criteria = new CDbCriteria;
+              $criteria->select='cikkszam';
+              $criteria->addSearchCondition('cikkszam', $term.'%', false);
+              $cikkszamok = Termekek::model()->findAll($criteria);
+			  
+              if(!empty($cikkszamok))
+              {
+                foreach($cikkszamok as $cikkszam)
+                {
+                    $variants[] = $cikkszam->attributes['cikkszam'];
+                }
+              }
+              echo CJSON::encode($variants);
+        }
+        else
+            throw new CHttpException(400,'Hibás kérés.');
+    }
+
 	/**
 	 * This is the action to handle external exceptions.
 	 */

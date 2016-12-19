@@ -49,17 +49,19 @@
 </style>
 
 <div style='text-align:center'>
-	<h1> <span class='under'>Raktárkészlet</span> </h1>
+	<h1> <span class='under'>Raktárkészlet cikkszám szerint</span> </h1>
 </div>
 
 <?php
-	$reszletesLista = false;
-	if (isset($_GET['RaktarTermekek'])) {
-		if ($_GET['RaktarTermekek']['is_atmozgatas']) {
-			$reszletesLista = $_GET['RaktarTermekek']['is_atmozgatas'] == 1;
-		}
-	}
+	$cikkszamok = $_GET['cikkszamok'];
 	
+	//kiválasztott cikkszámok kiírása a riportra
+	if (isset($cikkszamok) && strlen($cikkszamok) > 0) {
+		echo "<div style='padding-bottom:15px'><strong>Kiválasztott cikkszámok: </strong> " . $cikkszamok . "</div>";
+	}
+?>
+
+<?php
     $this->widget('ext.groupgridview.BootGroupGridView', array(
       'id' => 'raktar_termekek_grid',
       'itemsCssClass'=>'items group-grid-view',
@@ -67,21 +69,8 @@
       'enablePagination' => false,
       'enableSorting' => false,
       'summaryText' => '',
-      'extraRowColumns' => array('raktarHelyek.raktar.nev'),
-      'mergeColumns' => array('raktarHelyek.raktar.nev', 'raktarHelyek.nev'),
       'extraRowPos' => 'above',
-      'maxMergedRows' => 12,
       'columns' => array(
-      	  				'raktarHelyek.raktar.nev',
-						'raktarHelyek.nev',
-						array(
-							'name'=>'anyagbeszallitas.bizonylatszam',
-							'visible'=>$reszletesLista,
-						), 
-						array(
-							'name'=>'anyagbeszallitas.beszallitas_datum',
-							'visible'=>$reszletesLista,
-						), 
 						'termek.cikkszam',
 						'termek.DisplayTermekTeljesNev',
 						'osszes_db:number',

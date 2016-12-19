@@ -32,10 +32,14 @@ class RaktarTermekekController extends Controller
 
 	public function actionPrintRaktarkeszlet()
 	{
-		$dataProvider=new CActiveDataProvider('RaktarTermekek',
-			array('criteria'=>array('order'=>'raktarhely_id ASC',), 'pagination'=>array('pageSize'=>10000))
-		);
+		$model=new RaktarTermekek('search');
+		$model->unsetAttributes();
+		
+		if(isset($_GET['RaktarTermekek']))
+			$model->attributes=$_GET['RaktarTermekek'];
 
+		$dataProvider=$model -> search();
+		
 		if ($dataProvider != null) {			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
@@ -49,6 +53,96 @@ class RaktarTermekekController extends Controller
 			$mPDF1->Output();
 		}		
 	}	
+	
+	// cikkszámok szerint csoportosított raktárösszesítés nyomtatása
+	public function actionPrintRaktarkeszletByCikkszam($cikkszamok)
+	{
+		$criteria=new CDbCriteria;
+		
+		$criteria->together = true;
+		$criteria->with = array('termek');
+		
+		$criteria->select = 'termek.cikkszam as cikkszam, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
+		$criteria->group = 'cikkszam';
+
+		// minden szóköz, tab, új sor karakter törlése
+		if (isset($cikkszamok)) {
+			$cikkszamok = preg_replace('/\s+/S', '', $cikkszamok);
+		}
+		
+		$cikkszamokList = (isset($cikkszamok)) ? explode(",", $cikkszamok) : array();
+		
+		if (count($cikkszamokList)) {
+			foreach ($cikkszamokList as $cikkszam) {
+				if (strlen($cikkszam) > 0) {
+					$criteria->compare('termek.cikkszam', $cikkszam, false, 'OR');
+				}
+			}
+		}
+		
+		$criteria->order = 'cikkszam ASC';
+
+		$dataProvider = new CActiveDataProvider('RaktarTermekek', array(
+			'criteria' => $criteria,
+			'pagination'=>array('pageSize'=>100000,)
+		));
+
+		if ($dataProvider != null) {			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+	
+			$mPDF1->SetHtmlHeader("Raktárkészlet cikkszámok szerint");
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszletByCikkszam", array('dataProvider' => $dataProvider), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}		
+	}	
+	
+	// termékcsoport szerint csoportosított raktárösszesítés nyomtatása
+	public function actionPrintRaktarkeszletByTermekcsoport($termekcsoportok)
+	{
+		$criteria=new CDbCriteria;
+		
+		$criteria->together = true;
+		$criteria->with = array('termek', 'termek.termekcsoport');
+		
+		$criteria->select = 'termek.cikkszam as cikkszam, termek.nev as termeknev, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
+		$criteria->group = 'cikkszam';
+
+		$termekcsoportokList = (isset($termekcsoportok)) ? explode(",", $termekcsoportok) : array();
+		
+		if (count($termekcsoportokList)) {
+			foreach ($termekcsoportokList as $termekcsoport) {
+				$termekcsoport = trim($termekcsoport);
+				if (strlen($termekcsoport) > 0) {
+					$criteria->compare('termekcsoport.nev', $termekcsoport, false, 'OR');
+				}
+			}
+		}
+		
+		$criteria->order = 'termeknev ASC';
+
+		$dataProvider = new CActiveDataProvider('RaktarTermekek', array(
+			'criteria' => $criteria,
+			'pagination'=>array('pageSize'=>100000,)
+		));
+
+		if ($dataProvider != null) {			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+	
+			$mPDF1->SetHtmlHeader("Raktárkészlet cikkszámok szerint");
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszletByTermekcsoport", array('dataProvider' => $dataProvider), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}		
+	}
 	
 	// egyik raktárból egy másikba áthelyező dialog feldobását rakja össze
 	public function actionTermekAthelyez ($id, $grid_id) {

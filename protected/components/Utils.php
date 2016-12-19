@@ -208,25 +208,27 @@
 		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
 		function getActiveTermekar ($termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {
 			if ($termek_id != null && $termek_id != 0) {
-						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
-														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
-														") -> queryRow();
-			}
-			if ($termekAr != false && $darabszam > 0 && ($szinszam1 > 0 || $szinszam2 > 0)) {
-				//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
-						$termek_reszletek = Termekek::model()->findByPk($termek_id) ;				
-						$termek_meret_adatok = TermekMeretek::model()->findByPk($termek_reszletek->meret_id);	
+				$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_termek_arak WHERE
+												('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
+												") -> queryRow();
+
+				if ($termekAr != false && $darabszam > 0 && ($szinszam1 > 0 || $szinszam2 > 0)) {
+					//Ha van a terméknek érvényes ára és kértek előoldali, vagy hátoldali felülnyomást, akkor a $termekAr módosul a nyomás árával
+							$termek_reszletek = Termekek::model()->findByPk($termek_id) ;				
+							$termek_meret_adatok = TermekMeretek::model()->findByPk($termek_reszletek->meret_id);	
+					
+							return $termek_meret_adatok->nev ;
+							
+							$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_nyomasi_arak WHERE
+															('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
+															") -> queryRow();
+					
+				}
 				
-						return $termek_meret_adatok->nev ;
-						
-						$termekAr = Yii::app() -> db -> createCommand  ("SELECT * FROM dom_nyomasi_arak WHERE
-														('" . date("Y-m-d") . "' BETWEEN datum_mettol AND datum_meddig) AND (termek_id = $termek_id AND torolt = 0)
-														") -> queryRow();
- 				
+				if ($termekAr != false) 
+					return $termekAr;			
+
 			}
-			
-			if ($termekAr != false) 
-				return $termekAr;			
 			
 			return 0;
 		}

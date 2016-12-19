@@ -289,7 +289,7 @@ class Termekek extends CActiveRecord
 	public function getDisplayTermekTeljesNev()
 	{
 		$meret = "" ;
-		if ($this->termekcsoport->nev == "Ragasztószalag") {
+		if ($this->termekcsoport != null && $this->termekcsoport->nev == "Ragasztószalag") {
 			$termek_teljes_nev = $this->nev ;
 			if ($this->meret != null) {
 				$termek_teljes_nev .= " " . $this->meret->nev ;

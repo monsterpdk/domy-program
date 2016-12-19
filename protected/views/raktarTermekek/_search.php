@@ -8,6 +8,7 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'action'=>Yii::app()->createUrl($this->route),
+	'id'=>'raktarkeszlet_form',
 	'method'=>'get',
 )); ?>
 
@@ -51,9 +52,25 @@
 			<?php echo $form->textField($model, 'cikkszam_search',array('size'=>10,'maxlength'=>50)); ?>
 		</div>
 
+		<div class="row">
+			<?php echo $form->label($model, 'is_atmozgatas'); ?>
+			<?php echo $form->checkBox($model,'is_atmozgatas'); ?>
+		</div>
+
+		<?php $this->widget('ext.ibutton.IButton', array(
+            'model'     => $model,
+            'attribute' => 'is_atmozgatas',
+            'options' =>array(
+                'labelOn'=>'Igen',
+                'labelOff'=>'Nem',
+                'change'=>'js:function($choice){
+					$("#submitButton").click();
+                }'
+            )
+    ));?>
 		
 		<div class="row buttons">
-			<?php echo CHtml::submitButton('Keresés'); ?>
+			<?php echo CHtml::submitButton('Keresés', array("id"=>"submitButton", "name"=>"submitButton")); ?>
 		</div>
 		
 		<div class="clear"></div>
