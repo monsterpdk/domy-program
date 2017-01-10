@@ -1,9 +1,3 @@
-<?php
-/* @var $this ArajanlatokController */
-/* @var $model Arajanlatok */
-/* @var $form CActiveForm */
-?>
-
 <div class="wide form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -18,6 +12,7 @@
 		));
 	?>
 	
+	<?php if ($reszletesLista): ?>
 		<div class="row">
 			<?php echo $form->label($model,'raktar_search'); ?>
 			<?php
@@ -41,7 +36,8 @@
 				);
 			?>
 		</div>
-
+	<?php endif ?>
+	
 		<div class="row">
 			<?php echo $form->label($model, 'termek_search'); ?>
 			<?php echo $form->textField($model, 'termek_search',array('size'=>10,'maxlength'=>50)); ?>

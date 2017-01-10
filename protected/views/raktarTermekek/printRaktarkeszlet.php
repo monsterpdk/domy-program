@@ -84,6 +84,7 @@
 						), 
 						'termek.cikkszam',
 						'termek.DisplayTermekTeljesNev',
+						'termek.gyarto.cegnev',
 						'osszes_db:number',
 						'foglalt_db:number',
 						'elerheto_db:number',

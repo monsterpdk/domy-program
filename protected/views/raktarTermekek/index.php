@@ -4,6 +4,18 @@
 
 	$grid_id = round(microtime(true) * 1000);
 
+	// raw foglalt db oszlop formázása
+	function formatFoglaltDb ($data) {
+		 return Utils::DarabszamFormazas($data->foglalt_db);
+	}
+	
+	$reszletesLista = false;
+	if (isset($_GET['RaktarTermekek'])) {
+		if ($_GET['RaktarTermekek']['is_atmozgatas']) {
+			$reszletesLista = $_GET['RaktarTermekek']['is_atmozgatas'] == 1;
+		}
+	}
+	
 ?>
 
 <h1>Raktárkészletek</h1>
@@ -23,25 +35,19 @@
 <div class="search-form">
 	<?php  $this->renderPartial('_search',array(
 		'model'=>$model,
+		'reszletesLista'=>$reszletesLista,
 	)); ?>
 </div>
 
 <?php 
-
-	$reszletesLista = false;
-	if (isset($_GET['RaktarTermekek'])) {
-		if ($_GET['RaktarTermekek']['is_atmozgatas']) {
-			$reszletesLista = $_GET['RaktarTermekek']['is_atmozgatas'] == 1;
-		}
-	}
 
     $this->widget('ext.groupgridview.BootGroupGridView', array(
       'id' => 'raktar_termekek_grid',
       'itemsCssClass'=>'items group-grid-view',
       'dataProvider' => $model -> search(),
 	  'enableSorting' => false,
-      'extraRowColumns' => array('raktarHelyek.raktar.nev'),
-      'mergeColumns' => array('raktarHelyek.raktar.nev', 'raktarHelyek.nev'),
+      'extraRowColumns' => $reszletesLista ? array('raktarHelyek.raktar.nev') : array(),
+      'mergeColumns' => $reszletesLista ? array('raktarHelyek.raktar.nev', 'raktarHelyek.nev') : array(),
       'columns' => array(
 						array(
 							'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -60,8 +66,14 @@
 								),
 							),
 						),
-      	  				'raktarHelyek.raktar.nev',
-						'raktarHelyek.nev',
+						array(
+							'name'=>'raktarHelyek.raktar.nev',
+							'visible'=>$reszletesLista,
+						),
+						array(
+							'name'=>'raktarHelyek.nev',
+							'visible'=>$reszletesLista,
+						),						
 						array(
 							'name'=>'anyagbeszallitas.bizonylatszam',
 							'visible'=>$reszletesLista,
@@ -72,8 +84,14 @@
 						), 
 						'termek.cikkszam',
 						'termek.DisplayTermekTeljesNev',
+						'termek.gyarto.cegnev',
 						'osszes_db:number',
-						'foglalt_db:number',
+						array(
+							'class'=>'CLinkColumnEval',
+							'linkHtmlOptions'=>array('onclick'=>'"openFoglaltDbListDialog ($data->id); return false;"'),
+							'header'=>'Foglalt db',
+							'labelExpression'=>'formatFoglaltDb($data)'
+						),
 						'elerheto_db:number',
       ),
 	  
@@ -174,8 +192,30 @@
 <?php $this->endWidget(); ?>
 <!-- CJUIDIALOG END -->
 
-<script type="text/javascript">
+<!-- CJUIDIALOG BEGIN foglalt db megtekintéshez -->
+<?php 
+	// a dialógus ablak inicializálása
+	$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+		'id'=>'dialogFoglaltDbReszletek' . $grid_id,
+		'options'=>array(
+			'title'=>'Foglalt darabok listája',
+			'autoOpen'=>false,
+			'modal'=>true,
+			'width'=>900,
+			'height'=>580,
+			'buttons' => array('Ok' => 'js:function() {
+					$("#dialogFoglaltDbReszletek' . $grid_id . '").dialog("close");
+								}'),
+		),
+	));?>
+	
+		<div class="divForFoglaltDb"></div>
+	 
+<?php $this->endWidget();?>
 
+
+<script type="text/javascript">
+	
 		// LI: áthelyező dialog összerakása
 		function openRelocateDialog (row_id, event) {
 			event.preventDefault();
@@ -227,4 +267,34 @@
 			return false;
 		}
 		
+		// LI: foglalt db lista elkészítését végzi
+		function openFoglaltDbListDialog (row_id) {
+			grid_id = <?php echo $grid_id; ?>;
+
+			<?php echo CHtml::ajax(array(
+				'url'=> "js:'/index.php/raktarTermekek/foglaltDbLista/id/' + row_id + '/reszletes/" . ($reszletesLista ? '1' : '0') . "/grid_id/' + grid_id",
+				'data'=> "js:$(this).serialize()",
+				'type'=>'post',
+				'id' => 'send-link-'.uniqid(),
+				'replace' => '',
+				'dataType'=>'json',
+				'success'=>"function(data)
+					{
+						if (data.status == 'failure')
+						{
+							$('#dialogFoglaltDbReszletek' + grid_id).dialog('close');
+						}
+						else
+						{
+							$('#dialogFoglaltDbReszletek' + grid_id + ' div.divForFoglaltDb').html(data.div);
+						}
+		 
+					} "
+			)); ?>
+
+			$("#dialogFoglaltDbReszletek" + grid_id).dialog("open");
+			
+			return false;
+		}
+
 </script>

@@ -121,7 +121,7 @@ class RaktarTermekek extends CActiveRecord
 		// ez a blokk ahhoz a nézethez kell, ahol a termékeket összesítve, raktárhelyenként, group-olva jelenítjük meg, nem egyesével, anyagrendelésenként
 		if (!$reszletesLista) {
 			$criteria->select = '*, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
-			$criteria->group = 'termek_id, raktarhely_id';
+			$criteria->group = 'termek_id';
 		}
 		//
 		
@@ -138,7 +138,11 @@ class RaktarTermekek extends CActiveRecord
 		$criteria->compare('termek.nev',$this->termek_search,true);
 		$criteria->compare('termek.cikkszam',$this->cikkszam_search,false);
 		
-		$criteria->order = 'raktarhely_id ASC';
+		if ($reszletesLista) {
+			$criteria->order = 'raktarhely_id ASC';
+		} else {
+			$criteria->order = 'cikkszam ASC';
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

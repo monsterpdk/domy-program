@@ -60,10 +60,10 @@ class RaktarTermekekController extends Controller
 		$criteria=new CDbCriteria;
 		
 		$criteria->together = true;
-		$criteria->with = array('termek');
+		$criteria->with = array('termek', 'termek.gyarto');
 		
-		$criteria->select = 'termek.cikkszam as cikkszam, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
-		$criteria->group = 'cikkszam';
+		$criteria->select = 'gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
+		$criteria->group = 'cikkszam, gyarto';
 
 		// minden szóköz, tab, új sor karakter törlése
 		if (isset($cikkszamok)) {
@@ -107,10 +107,10 @@ class RaktarTermekekController extends Controller
 		$criteria=new CDbCriteria;
 		
 		$criteria->together = true;
-		$criteria->with = array('termek', 'termek.termekcsoport');
+		$criteria->with = array('termek', 'termek.termekcsoport', 'termek.gyarto');
 		
-		$criteria->select = 'termek.cikkszam as cikkszam, termek.nev as termeknev, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
-		$criteria->group = 'cikkszam';
+		$criteria->select = 'gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, termek.nev as termeknev, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
+		$criteria->group = 'cikkszam, gyarto';
 
 		$termekcsoportokList = (isset($termekcsoportok)) ? explode(",", $termekcsoportok) : array();
 		
@@ -230,6 +230,41 @@ class RaktarTermekekController extends Controller
 			exit;  
         }
 
+	}
+	
+	// adott termék foglalásának listáját rakja össze
+	public function actionFoglaltDbLista ($id, $reszletes, $grid_id) {
+		$criteria=new CDbCriteria;
+		
+		$criteria->together = true;
+		$criteria->with = array('termek');
+
+		// ezen lehet finomítani, egyelőre minden oszlop jön, amíg nem fixálódik, hogy pontosan mi kell
+		$criteria->select = '*';
+		
+		$criteria->order = 'termek.cikkszam ASC';
+		
+		if ($reszletes) {
+			// ilyenkor csak 1 db RaktarTermek rekord is lehet
+			$criteria->compare('t.id', $id, false);
+		} else {
+			$raktarTermek = RaktarTermekek::model()->findByPk($id);
+
+			if ($raktarTermek != null) {
+				// ilyenkor akár több RaktarTermek rekord is lehet
+				$criteria->compare('termek.cikkszam', $raktarTermek -> termek -> cikkszam, false);
+			}
+		}
+		
+		$dataProvider = new CActiveDataProvider('RaktarTermekek', array(
+			'criteria' => $criteria,
+			'pagination' => array('pageSize'=>Utils::getIndexPaginationNumber(),)
+		));
+		
+		echo CJSON::encode(array(
+				'status'=>'success', 
+				'div'=>$this->renderPartial('_foglaltDbLista', array('dataProvider' => $dataProvider, 'grid_id' => $grid_id), true, true)));
+			exit;
 	}
 	
 	// Uncomment the following methods and override them if needed
