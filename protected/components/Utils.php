@@ -204,6 +204,17 @@
 			return $iroda_elteres_darabszam;
 		}
 	
+		// LI: archív termékár lekérdezése egy raktárban lévő termékhez az anyagbeszállítás tételéből
+		function getArchiveTermekar ($anyagbeszallitas_id, $termek_id) {
+			if ($anyagbeszallitas_id != null && $anyagbeszallitas_id != 0 && $termek_id != null && $termek_id != 0) {
+				$anyagbeszallitasTermek = AnyagbeszallitasTermekek::model()->findByAttributes(array('anyagbeszallitas_id' => $anyagbeszallitas_id, 'termek_id' => $termek_id));
+				
+				return ($anyagbeszallitasTermek != null) ? $anyagbeszallitasTermek->netto_darabar : 0;
+			}
+			
+			return 0;
+		}
+	
 		// LI: egy paraméterben kapott termék aktuálisan aktív termékárát adja vissza
 		// TÁ: Bővítettem a $darabszam, $szinszam1, $szinszam2 opcionális paraméterekkel, amelyek segítségével a felülnyomási árat adhatjuk vissza a natúr darabár helyett, amennyiben kérnek felülnyomást
 		function getActiveTermekar ($termek_id, $darabszam = 1, $szinszam1 = 0, $szinszam2 = 0) {

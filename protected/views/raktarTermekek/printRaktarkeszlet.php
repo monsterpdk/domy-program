@@ -68,13 +68,19 @@
       'enablePagination' => false,
       'enableSorting' => false,
       'summaryText' => '',
-      'extraRowColumns' => array('raktarHelyek.raktar.nev'),
-      'mergeColumns' => array('raktarHelyek.raktar.nev', 'raktarHelyek.nev'),
+      'extraRowColumns' => $reszletesLista ? array('raktarHelyek.raktar.nev') : array(),
+      'mergeColumns' => $reszletesLista ? array('raktarHelyek.raktar.nev', 'raktarHelyek.nev') : array(),
       'extraRowPos' => 'above',
       'maxMergedRows' => 12,
       'columns' => array(
-      	  				'raktarHelyek.raktar.nev',
-						'raktarHelyek.nev',
+						array(
+							'name'=>'raktarHelyek.raktar.nev',
+							'visible'=>$reszletesLista,
+						), 
+						array(
+							'name'=>'raktarHelyek.nev',
+							'visible'=>$reszletesLista,
+						), 
 						array(
 							'name'=>'anyagbeszallitas.bizonylatszam',
 							'visible'=>$reszletesLista,

@@ -39,17 +39,27 @@ class RaktarTermekekController extends Controller
 			$model->attributes=$_GET['RaktarTermekek'];
 
 		$dataProvider=$model -> search();
-		
+
 		if ($dataProvider != null) {
-			// az összes darab és összes ár mezőket itt számoljuk ki
+			// az összes darab és összes ár mezőket itt számoljuk ki (ehhez kell egy új lekérdezés, amiben nincs group meg sum)
+			$criteria = clone($dataProvider->getCriteria());
+
+			$criteria->select = '*';
+			$criteria->group = '';
+			
+			$dataproviderSum = new CActiveDataProvider('RaktarTermekek', array(
+				'criteria'=>$criteria,
+				'pagination'=>array('pageSize'=>100000,)
+			));
+			
 			$osszesen_db = 0;
 			$osszesen_ft = 0;
 			
-			foreach($dataProvider -> getData() as $record) {
+			foreach($dataproviderSum -> getData() as $record) {
 				$osszesen_db += $record->osszes_db;
 				
-				$termekAr = Utils::getActiveTermekar ($record->termek->id);
-				$osszesen_ft += (($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"]) * $record->osszes_db;
+				$termekAr = Utils::getArchiveTermekar ($record->anyagbeszallitas_id, $record->termek->id);
+				$osszesen_ft += $termekAr * $record->osszes_db;
      	    }
 
 			# mPDF
@@ -98,16 +108,38 @@ class RaktarTermekekController extends Controller
 			'pagination'=>array('pageSize'=>100000,)
 		));
 
-		if ($dataProvider != null) {
+		// összesítéshez (ez így nem szép, de nem jár legalább DB módosítással, ha esetleg később performanica gondot okoz, akkor viszont át kell írni, hogy ne legyen ennyi lekérdezés, most ennyi adatnál nem jelent gondot)
+		$criteriaSum = new CDbCriteria;
+		$criteriaSum->together = true;
+		$criteriaSum->with = array('termek', 'termek.gyarto');
+		$criteriaSum->select = 'anyagbeszallitas_id, gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, osszes_db, foglalt_db, elerheto_db';
+		
+		if (count($cikkszamokList)) {
+			foreach ($cikkszamokList as $cikkszam) {
+				if (strlen($cikkszam) > 0) {
+					$criteriaSum->compare('termek.cikkszam', $cikkszam, false, 'OR');
+				}
+			}
+		}
+		
+		$criteriaSum->order = 'cikkszam ASC';
+		
+		$dataProviderSum = new CActiveDataProvider('RaktarTermekek', array(
+			'criteria' => $criteriaSum,
+			'pagination'=>array('pageSize'=>100000,)
+		));
+		//
+		
+		if ($dataProviderSum != null) {
 			// az összes darab és összes ár mezőket itt számoljuk ki
 			$osszesen_db = 0;
 			$osszesen_ft = 0;
 			
-			foreach($dataProvider -> getData() as $record) {
+			foreach($dataProviderSum -> getData() as $record) {
 				$osszesen_db += $record->osszes_db;
 				
-				$termekAr = Utils::getActiveTermekar ($record->termek->id);
-				$osszesen_ft += (($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"]) * $record->osszes_db;
+				$termekAr = Utils::getArchiveTermekar ($record->anyagbeszallitas_id, $record->termek->id);
+				$osszesen_ft += $termekAr * $record->osszes_db;
      	    }
 			
 			# mPDF
@@ -152,18 +184,41 @@ class RaktarTermekekController extends Controller
 			'pagination'=>array('pageSize'=>100000,)
 		));
 
-		if ($dataProvider != null) {
+		// összesítéshez (ez így nem szép, de nem jár legalább DB módosítással, ha esetleg később performanica gondot okoz, akkor viszont át kell írni, hogy ne legyen ennyi lekérdezés, most ennyi adatnál nem jelent gondot)
+		$criteriaSum = new CDbCriteria;
+		$criteriaSum->together = true;
+		$criteriaSum->with = array('termek', 'termek.termekcsoport', 'termek.gyarto');
+		$criteriaSum->select = 'anyagbeszallitas_id, gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, termek.nev as termeknev, osszes_db, foglalt_db, elerheto_db';
+		
+		if (count($termekcsoportokList)) {
+			foreach ($termekcsoportokList as $termekcsoport) {
+				$termekcsoport = trim($termekcsoport);
+				if (strlen($termekcsoport) > 0) {
+					$criteriaSum->compare('termekcsoport.nev', $termekcsoport, false, 'OR');
+				}
+			}
+		}
+		
+		$criteriaSum->order = 'termeknev ASC';
+		
+		$dataProviderSum = new CActiveDataProvider('RaktarTermekek', array(
+			'criteria' => $criteriaSum,
+			'pagination'=>array('pageSize'=>100000,)
+		));
+		//
+		
+		if ($dataProviderSum != null) {
 			// az összes darab és összes ár mezőket itt számoljuk ki
 			$osszesen_db = 0;
 			$osszesen_ft = 0;
 			
-			foreach($dataProvider -> getData() as $record) {
+			foreach($dataProviderSum -> getData() as $record) {
 				$osszesen_db += $record->osszes_db;
 				
-				$termekAr = Utils::getActiveTermekar ($record->termek->id);
-				$osszesen_ft += (($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"]) * $record->osszes_db;
+				$termekAr = Utils::getArchiveTermekar ($record->anyagbeszallitas_id, $record->termek->id);
+				$osszesen_ft += $termekAr * $record->osszes_db;
      	    }
-			
+
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 	
