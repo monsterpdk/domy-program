@@ -35,6 +35,7 @@
 	}
 	
 	table.items td {
+		border-right: 2px solid #000000;
 		padding: 2px ;
 		background-color: white ;
 	}
@@ -74,13 +75,21 @@
 						'termek.cikkszam',
 						'termek.DisplayTermekTeljesNev',
 						'termek.gyarto.cegnev',
-						'osszes_db:number',
-						'foglalt_db:number',
-						'elerheto_db:number',
+						array('name' => 'osszes_db', 'value' => 'Utils::DarabszamFormazas($data->osszes_db)', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array('name' => 'foglalt_db', 'value' => 'Utils::DarabszamFormazas($data->foglalt_db)', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array('name' => 'elerheto_db', 'value' => 'Utils::DarabszamFormazas($data->elerheto_db)', 'htmlOptions' => array('style' => 'text-align: right;')),
       ),
 	  
     ));
 ?>	
+
+<?php
+	// összesítés kiírása a riport aljára
+	if (isset($termekcsoportok) && strlen($termekcsoportok) > 0) {
+		echo "<div align='right' style='padding-top:15px'><strong>Összesen db: </strong> " . Utils::DarabszamFormazas($osszesen_db) . "</div>";
+		echo "<div align='right' style='padding-top:15px'><strong>Összesen ft: </strong> " . Utils::DarabszamFormazas($osszesen_ft) . "</div>";
+	}
+?>
 
 <htmlpagefooter name="myFooter2" style="display:none">
 

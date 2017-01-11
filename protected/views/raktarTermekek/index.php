@@ -209,6 +209,16 @@
 		),
 	));?>
 	
+		<div id="divLoader" style="display:none">
+			<p align='center' style='margin:50px'>
+				<img src='../../../images/ajax-loader.gif' />
+			</p>
+
+			<p align='center'>
+				Tételek lekérése ...
+			</p>
+		</div>
+	
 		<div class="divForFoglaltDb"></div>
 	 
 <?php $this->endWidget();?>
@@ -271,6 +281,12 @@
 		function openFoglaltDbListDialog (row_id) {
 			grid_id = <?php echo $grid_id; ?>;
 
+			// töröljük a DIV tartalmát az előző eredmények miatt
+			$('#dialogFoglaltDbReszletek' + grid_id + ' div.divForFoglaltDb').html('');
+			
+			// loader ikon kirakása
+			$('#divLoader').show();
+			
 			<?php echo CHtml::ajax(array(
 				'url'=> "js:'/index.php/raktarTermekek/foglaltDbLista/id/' + row_id + '/reszletes/" . ($reszletesLista ? '1' : '0') . "/grid_id/' + grid_id",
 				'data'=> "js:$(this).serialize()",
@@ -280,6 +296,8 @@
 				'dataType'=>'json',
 				'success'=>"function(data)
 					{
+						$('#divLoader').hide();
+						
 						if (data.status == 'failure')
 						{
 							$('#dialogFoglaltDbReszletek' + grid_id).dialog('close');

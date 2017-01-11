@@ -40,14 +40,25 @@ class RaktarTermekekController extends Controller
 
 		$dataProvider=$model -> search();
 		
-		if ($dataProvider != null) {			
+		if ($dataProvider != null) {
+			// az összes darab és összes ár mezőket itt számoljuk ki
+			$osszesen_db = 0;
+			$osszesen_ft = 0;
+			
+			foreach($dataProvider -> getData() as $record) {
+				$osszesen_db += $record->osszes_db;
+				
+				$termekAr = Utils::getActiveTermekar ($record->termek->id);
+				$osszesen_ft += (($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"]) * $record->osszes_db;
+     	    }
+
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 	
 			$mPDF1->SetHtmlHeader("Raktárkészlet");
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszlet", array('dataProvider' => $dataProvider), true));
+			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszlet", array('dataProvider' => $dataProvider, 'osszesen_db' => $osszesen_db, 'osszesen_ft' => $osszesen_ft), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
@@ -87,14 +98,25 @@ class RaktarTermekekController extends Controller
 			'pagination'=>array('pageSize'=>100000,)
 		));
 
-		if ($dataProvider != null) {			
+		if ($dataProvider != null) {
+			// az összes darab és összes ár mezőket itt számoljuk ki
+			$osszesen_db = 0;
+			$osszesen_ft = 0;
+			
+			foreach($dataProvider -> getData() as $record) {
+				$osszesen_db += $record->osszes_db;
+				
+				$termekAr = Utils::getActiveTermekar ($record->termek->id);
+				$osszesen_ft += (($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"]) * $record->osszes_db;
+     	    }
+			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 	
 			$mPDF1->SetHtmlHeader("Raktárkészlet cikkszámok szerint");
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszletByCikkszam", array('dataProvider' => $dataProvider), true));
+			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszletByCikkszam", array('dataProvider' => $dataProvider, 'osszesen_db' => $osszesen_db, 'osszesen_ft' => $osszesen_ft), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
@@ -130,14 +152,25 @@ class RaktarTermekekController extends Controller
 			'pagination'=>array('pageSize'=>100000,)
 		));
 
-		if ($dataProvider != null) {			
+		if ($dataProvider != null) {
+			// az összes darab és összes ár mezőket itt számoljuk ki
+			$osszesen_db = 0;
+			$osszesen_ft = 0;
+			
+			foreach($dataProvider -> getData() as $record) {
+				$osszesen_db += $record->osszes_db;
+				
+				$termekAr = Utils::getActiveTermekar ($record->termek->id);
+				$osszesen_ft += (($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"]) * $record->osszes_db;
+     	    }
+			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 	
 			$mPDF1->SetHtmlHeader("Raktárkészlet cikkszámok szerint");
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszletByTermekcsoport", array('dataProvider' => $dataProvider), true));
+			$mPDF1->WriteHTML($this->renderPartial("printRaktarkeszletByTermekcsoport", array('dataProvider' => $dataProvider, 'osszesen_db' => $osszesen_db, 'osszesen_ft' => $osszesen_ft), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
