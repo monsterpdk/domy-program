@@ -16,9 +16,12 @@
 			  'selectableRows'=>1,
 			  'columns'=>array(
 						array(
-							'name' => 'sorszam',
-							'header' => 'Megrendelés sorszáma',
-						),
+							'class'=>'CLinkColumnEval',
+							'header'=>'Megrendelés sorszáma',
+							'labelExpression'  => '$data["sorszam"]',
+							'urlExpression' => 'Yii::app()->createUrl("megrendelesek/index",array("id"=>$data["megrendelesek_id"]))',
+							'linkHtmlOptions' => array('style'=>'"text-decoration:underline"', 'target'=>"'_blank'"),
+						),						
 						array(
 							'name' => 'nev',
 							'header' => 'Termék neve',
