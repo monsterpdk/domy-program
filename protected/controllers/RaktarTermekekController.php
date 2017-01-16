@@ -278,6 +278,11 @@ class RaktarTermekekController extends Controller
 			// rendben lefutott a validáció és az 'Áthelyez' gombot nyomtuk, akkor végrehajtjuk a tényleges termékáthelyezést
 			// ha a forrás és cél megegyezik, akkor nem hajtjuk végre az áthelyezést, mert duplázódnának a darabszámok
 			if ($status == 'success' && isset($_GET['form']) && $model->forrasRaktarHelyId != $model->celRaktarHelyId) {
+
+				// LI: áthelyezésnél levonjuk az áthelyezendő mennyiséget a tranzakciós táblában tárolt sorokból,
+				//	   majd létrehozunk egy újat (ha még nincs) az új raktárhely adataival
+				Utils::foglaltDbAtmozgatas($raktarTermek, $model);
+
 				// megnézzük van-e már egyező beszállításból származó bejegyzése az adott terméknek
 				// ha van, odaírjuk az új darabszámokat, ha nincs, akkor létrehozunk egy új rekordot rá
 				$ujRaktarTermek = RaktarTermekek::model()->findByAttributes(
@@ -312,6 +317,9 @@ class RaktarTermekekController extends Controller
 				$ujRaktarTermek -> save (false);
 			}
 			
+			// töröljük az olyan raktártermék sorokat, ahol az összes, elérhető és foglalt darabszámok is 0-ák
+			Utils::removeEmptyRaktarTermekek();
+			
 			echo CJSON::encode(array(
 				'status'=>$status, 
 				'div'=>$this->renderPartial('_termekAthelyez', array('model' => $model, 'grid_id' => $grid_id), true, true)));
@@ -322,31 +330,99 @@ class RaktarTermekekController extends Controller
 	
 	// adott termék foglalásának listáját rakja össze
 	public function actionFoglaltDbLista ($id, $reszletes, $grid_id) {
-		$criteria=new CDbCriteria;
 		
-		$criteria->together = true;
-		$criteria->with = array('termek');
+		$whereClause = "";
+		
+		$raktarTermek = RaktarTermekek::model()->findByPk($id);
+		if ($raktarTermek != null) {
+			if ($reszletes) {
+				// ilyenkor csak 1 db RaktarTermekek rekord lesz
+				$whereClause = "dom_raktar_termekek_tranzakciok.termek_id = " . $raktarTermek->termek_id . " AND dom_raktar_termekek_tranzakciok.anyagbeszallitas_id = " . $raktarTermek->anyagbeszallitas_id . " AND dom_raktar_termekek_tranzakciok.raktarhely_id = " . $raktarTermek->raktarhely_id;
+			} else {
+				// ilyenkor akár több RaktarTermekek rekord is lehet
+				$whereClause = "dom_termekek.cikkszam = " . $raktarTermek -> termek -> cikkszam;
+			}
+		}
+	
+		$sqlMegrendelesTetelek = "
+				SELECT DISTINCT dom_raktar_termekek_tranzakciok.id AS tranzakcio_id,
+									 dom_raktar_termekek_tranzakciok.raktarhely_id,
+									 dom_termekek.id AS termek_id,
+									 dom_megrendelesek.id AS megrendelesek_id,
+									 dom_megrendeles_tetelek.id AS megrendeles_tetel_id,
+									 dom_megrendelesek.sorszam,
+									 dom_termekek.nev,
+									 dom_megrendeles_tetelek.munka_neve,
+									 dom_nyomdakonyv.taskaszam," . ($reszletes ? "foglal_darabszam * -1 AS darabszam" : "darabszam") . "
+									 
+				FROM dom_raktar_termekek_tranzakciok
 
-		// ezen lehet finomítani, egyelőre minden oszlop jön, amíg nem fixálódik, hogy pontosan mi kell
-		$criteria->select = '*';
-		
-		$criteria->order = 'termek.cikkszam ASC';
-		
-		if ($reszletes) {
-			// ilyenkor csak 1 db RaktarTermek rekord is lehet
-			$criteria->compare('t.id', $id, false);
-		} else {
-			$raktarTermek = RaktarTermekek::model()->findByPk($id);
+				INNER JOIN dom_nyomdakonyv
+				ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_nyomdakonyv.id
 
-			if ($raktarTermek != null) {
-				// ilyenkor akár több RaktarTermek rekord is lehet
-				$criteria->compare('termek.cikkszam', $raktarTermek -> termek -> cikkszam, false);
+				INNER JOIN dom_megrendeles_tetelek
+				ON dom_nyomdakonyv.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+
+				INNER JOIN dom_megrendelesek
+				ON dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
+
+				INNER JOIN dom_termekek
+				ON dom_megrendeles_tetelek.termek_id = dom_termekek.id
+
+				WHERE " . $whereClause . "
+
+				GROUP BY dom_megrendeles_tetelek.id
+			";
+		
+		// lekérdezzük az összes ide vonatkozó megrendelés tételt a megrendelésekkel együtt (itt még NINCSENEK levonva azon mennyiségek, amiket esetleg időközben már szállítóra tettek, vagy töröltek stb.)
+		$megrendelesTetelek = Yii::app() -> db -> createCommand  ($sqlMegrendelesTetelek) -> queryAll();
+		
+		$sqlKivettDarabok = "
+			SELECT dom_szallitolevel_tetelek.megrendeles_tetel_id, dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam AS darabszam FROM dom_raktar_termekek_tranzakciok
+
+			INNER JOIN dom_szallitolevelek
+			ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_szallitolevelek.id
+
+			INNER JOIN dom_szallitolevel_tetelek
+			ON dom_szallitolevelek.id = dom_szallitolevel_tetelek.szallitolevel_id
+
+			INNER JOIN dom_termekek
+			ON dom_raktar_termekek_tranzakciok.termek_id = dom_termekek.id
+			
+			WHERE dom_szallitolevelek.torolt = 0 AND dom_szallitolevelek.sztornozva = 0 AND dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0
+		";
+
+		// lekérdezzük az összes már kivételezett terméket darabszámmal együtt (ezeket vonjuk le az előző lekérdezésbne kapott eredményhalmazból)
+		$kivettDarabok = Yii::app() -> db -> createCommand  ($sqlKivettDarabok) -> queryAll();
+
+		if ($megrendelesTetelek != null) {
+			foreach ($megrendelesTetelek as $key => $megrendelesTetel) {
+				if ($kivettDarabok != null) {
+					foreach ($kivettDarabok as $kivettDarab) {
+						if ($megrendelesTetel['megrendeles_tetel_id'] == $kivettDarab['megrendeles_tetel_id']) {
+							if (isset($megrendelesTetelek[$key])) {
+								$megrendelesTetelek[$key]['darabszam'] = $megrendelesTetelek[$key]['darabszam'] + $kivettDarab['darabszam'];
+								
+								if ($megrendelesTetelek[$key]['darabszam'] == 0) {
+									unset($megrendelesTetelek[$key]);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		
-		$dataProvider = new CActiveDataProvider('RaktarTermekek', array(
-			'criteria' => $criteria,
-			'pagination' => array('pageSize'=>Utils::getIndexPaginationNumber(),)
+		$dataProvider=new CArrayDataProvider($megrendelesTetelek, array(
+			'keyField'=>'megrendelesek_id',
+			'sort'=>array(
+				'attributes'=>array(
+					 'megrendelesek_id DESC',
+				),
+			),
+			'pagination'=>array(
+				'pageSize'=>10000,
+			),
 		));
 		
 		echo CJSON::encode(array(

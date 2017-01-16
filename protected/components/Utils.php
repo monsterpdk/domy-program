@@ -601,10 +601,12 @@
 						foreach ($megrendeles->tetelek as $tetel )
 						{
 							$nyomdakonyv = Nyomdakonyv::model()->findByAttributes(array("megrendeles_tetel_id" => $tetel -> id));
-							
+
 							if ($tetel -> negativ_raktar_termek == 0 && (($nyomdakonyv != null && $nyomdakonyv -> sztornozva == 0) || ($nyomdakonyv == null && $tetel->szinek_szama1 + $tetel->szinek_szama2 == 0)) ) {
 								$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
+								
 								if ($darabszamKulonbozet == -1) {
+
 									if (Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db") >= $tetel -> darabszam || Utils::getTermekRaktarkeszlet($tetel->termek_id, "foglalt_db") >= $tetel -> darabszam) {
 										array_push ($result, $tetel);
 									}
@@ -615,6 +617,7 @@
 								}
 							}
 						}
+
 				}
 			}
 
@@ -791,7 +794,7 @@
 		
 		/* Az ACTUAL adatbázisából beolvassa a $megrendeles_id azonosítójú megrendeléshez tartozó számla sorszámot és visszaadja */
 		function szamla_sorszam_beolvas($megrendeles_id) {
-			$return = 0 ;
+			$return = 0;
 			$sql = "select BSorszam, Esedekes, Kiallitas from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
 			$fp = fopen('szamla_sorszamok_queryk.txt', 'a');
 			fwrite($fp, $sql . "\n");
@@ -1500,8 +1503,8 @@
 			return $emailek;
 		}
 
-		// LI: bejegzést készít egy raktármozgásról (ezek lehetnek: lásd a lenti függvényt)
-		private function createRaktarMozgasTranzakció ($termekId, $anyagbeszallitas_id, $raktarhely_id, $foglal_darabszam, $betesz_kivesz_darabszam, $szallitolevel_nyomdakonyv_id) {
+		// LI: bejegyzést készít egy raktármozgásról (ezek lehetnek: lásd a lenti függvényt)
+		function createRaktarMozgasTranzakció ($termekId, $anyagbeszallitas_id, $raktarhely_id, $foglal_darabszam, $betesz_kivesz_darabszam, $szallitolevel_nyomdakonyv_id) {
 			$raktarTermekekTranzakciok = new RaktarTermekekTranzakciok;
 			
 			$raktarTermekekTranzakciok->termek_id = $termekId;
@@ -1551,7 +1554,7 @@
 									$raktarTermek -> foglalt_db -= $raktarTermekekTranzakcio->foglal_darabszam * -1;
 									$raktarTermek -> elerheto_db += $raktarTermekekTranzakcio->foglal_darabszam * -1;
 
-									if ($rakterTermek != null) {
+									if ($raktarTermek != null) {
 										$raktarTermek ->save(false);
 									}
 									
@@ -1616,7 +1619,7 @@
 							}
 						} else if ($muvelet == 'KIVESZ' || $muvelet == 'KIVESZ_SZTORNOZ') {
 							// 'sztorno' művelet kell szállítólevél létrehozásakor/módosításakor is, mert az előző értékeket ki kell törölnünk, hogy újat vehessünk fel
-							// végigmegyünk az elmentett KIVESZ típusú raktátranzakciókon és visszaírjuk őket a raktárba, majd töröljük a tételeket
+							// végigmegyünk az elmentett KIVESZ típusú tranzakciókon és visszaírjuk őket a raktárba, majd töröljük a tételeket
 							$raktarTermekekTranzakciok = RaktarTermekekTranzakciok::model()->findAllByAttributes(
 									array(),
 									$condition  = 'szallitolevel_nyomdakonyv_id = :szallitolevel_nyomdakonyv_id AND betesz_kivesz_darabszam <> 0',
@@ -1628,13 +1631,25 @@
 
 							if ($raktarTermekekTranzakciok != null && count($raktarTermekekTranzakciok > 0) && $termek != null) {
 								foreach ($raktarTermekekTranzakciok as $raktarTermekekTranzakcio) {
-									$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $termek->id, 'anyagbeszallitas_id' => $raktarTermekekTranzakcio->anyagbeszallitas_id));
+									$raktarTermek = RaktarTermekek::model() -> findByAttributes(array('termek_id' => $termek->id, 'anyagbeszallitas_id' => $raktarTermekekTranzakcio->anyagbeszallitas_id, 'raktarhely_id'=>$raktarTermekekTranzakcio->raktarhely_id));
 									
 									if ($raktarTermek != null) {
 										$raktarTermek -> foglalt_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
 										$raktarTermek -> osszes_db += $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
 
 										$raktarTermek -> save(false);
+									} else {
+										// ha nem találunk ilyen raktártermék sort, akkor létrehozzuk azt
+										$raktarTermekRestore = new RaktarTermekek();
+										
+										$raktarTermekRestore -> termek_id = $raktarTermekekTranzakcio -> termek_id;
+										$raktarTermekRestore -> anyagbeszallitas_id = $raktarTermekekTranzakcio -> anyagbeszallitas_id;
+										$raktarTermekRestore -> raktarhely_id = $raktarTermekekTranzakcio -> raktarhely_id;
+										$raktarTermekRestore -> foglalt_db = $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
+										$raktarTermekRestore -> osszes_db = $raktarTermekekTranzakcio->betesz_kivesz_darabszam * -1;
+										$raktarTermekRestore -> elerheto_db = 0;
+										
+										$raktarTermekRestore -> save(false);
 									}
 									
 									if ($tranzakcioMentese) {
@@ -1673,11 +1688,13 @@
 								$raktarTermekek = array();
 								if (is_array ($raktarTermekTranzakciok) && count($raktarTermekTranzakciok) > 0) {
 									foreach ($raktarTermekTranzakciok as $tranzakcio) {
-										$raktarTermek = RaktarTermekek::model()->findByAttributes(array('termek_id'=>$tetelId, 'anyagbeszallitas_id'=>$tranzakcio['anyagbeszallitas_id'], 'raktarhely_id'=>$tranzakcio['raktarhely_id']));
 										
-										if ($raktarTermek != null) {
-											array_push($raktarTermekek, $raktarTermek);
-											echo $raktarTermek->id . ", ";
+										$raktarTermek = RaktarTermekek::model()->findAllByAttributes(array('termek_id'=>$tetelId, 'raktarhely_id'=>$tranzakcio['raktarhely_id']), array('order'=>'elerheto_db ASC'));
+										
+										if ($raktarTermek != null && count($raktarTermek) > 0) {
+											foreach ($raktarTermek as $raktarTermekSor) {
+												array_push($raktarTermekek, $raktarTermekSor);
+											}
 										}
 									}
 								}
@@ -2039,6 +2056,125 @@
 			RaktarTermekek::model() ->deleteAllByAttributes (array ('osszes_db' => 0, 'foglalt_db' => 0, 'elerheto_db' => 0));
 		}
 
+		
+		/**
+		 *  LI: raktárban történő átmozgatásnál a foglalt db mennyiségeket itt kezeljük le
+		 *		$raktarTermek - a raktár termék DB rekord, ahonnan az áhelyezés indul
+		 *		$model		  - az áthelyezős formon kitöltött adatokat tartalmazó objektum
+		 */
+		function foglaltDbAtmozgatas ($raktarTermek, $model) {
+			$tranzakciok = RaktarTermekekTranzakciok::model()->findAll(array(
+				'condition'=>'termek_id=:termek_id AND anyagbeszallitas_id=:anyagbeszallitas_id AND raktarhely_id = :raktarhely_id AND (foglal_darabszam < 0 OR betesz_kivesz_darabszam < 0)',
+				'params'=>array(':termek_id' => $raktarTermek->termek_id, ':anyagbeszallitas_id'=>$raktarTermek->anyagbeszallitas_id, ':raktarhely_id'=>$model->forrasRaktarHelyId),
+				'order'=>'foglal_darabszam ASC',
+			));
+			
+			if ($tranzakciok != null && is_array($tranzakciok)) {
+				// 1. lépés összeadjuk azon elemeket, amik már kivételre kerültek
+				$osszesKivet = 0;
+				foreach ($tranzakciok as $tranzakcio) {
+					$osszesKivet += abs($tranzakcio->betesz_kivesz_darabszam);
+				}
+
+				// 2. lépés elkezdjük a legnagyobb foglalástól levonogatni az áthelyezendő mennyiséget (figyelembe véve azt a darabszmot, amit közben esetleg már kivettek a raktárból)
+				$celDb = $model -> celFoglaltDb;
+				
+				if ($celDb > 0) {
+					foreach ($tranzakciok as $tranzakcio) {
+						// elértünk a levoonogatás végére
+						if ($celDb == 0) {
+							break;
+						}
+						
+						$foglalt = abs($tranzakcio->foglal_darabszam);
+						
+						// nem elégíthető ki egy az egyben a soron következő tranzakcióval a kívánt darabszám
+						if ($foglalt < ($celDb + $osszesKivet)) {
+							if ($osszesKivet >= $foglalt) {
+								$osszesKivet -= $foglalt;
+							} else {
+								$foglalt -= $osszesKivet;
+								$osszesKivet = 0;
+
+								// a célhelyre írjuk a maradékot
+								Utils::createRaktarMozgasTranzakció ($raktarTermek->termek_id, $raktarTermek->anyagbeszallitas_id, $model->celRaktarHelyId, $foglalt * -1, 0, $tranzakcio->szallitolevel_nyomdakonyv_id);
+								$tranzakcio->delete();
+								$celDb -= $foglalt;
+							}
+						} else if ($foglalt == ($celDb + $osszesKivet)) {
+								Utils::createRaktarMozgasTranzakció ($raktarTermek->termek_id, $raktarTermek->anyagbeszallitas_id, $model->celRaktarHelyId, $celDb * -1, 0, $tranzakcio->szallitolevel_nyomdakonyv_id);
+								$tranzakcio->delete();
+								$celDb = 0;
+						} else if ($foglalt > ($celDb + $osszesKivet)) {
+								Utils::createRaktarMozgasTranzakció ($raktarTermek->termek_id, $raktarTermek->anyagbeszallitas_id, $model->celRaktarHelyId, $celDb * -1, 0, $tranzakcio->szallitolevel_nyomdakonyv_id);
+								$tranzakcio->foglal_darabszam = $celDb - $foglalt;
+								$tranzakcio->save(false);
+								$celDb = 0;
+						}
+					}
+				}
+			}
+		}
+		
+		/**
+		 *  LI: raktárban történő átmozgatásnál az elérhető db mennyiségeket itt kezeljük le
+		 *		$raktarTermek - a raktár termék DB rekord, ahonnan az áhelyezés indul
+		 *		$model		  - az áthelyezős formon kitöltött adatokat tartalmazó objektum
+		 */
+		function elerhetoDbAtmozgatas ($raktarTermek, $model) {
+			$tranzakciok = RaktarTermekekTranzakciok::model()->findAll(array(
+				'condition'=>'termek_id=:termek_id AND anyagbeszallitas_id=:anyagbeszallitas_id AND raktarhely_id = :raktarhely_id AND (foglal_darabszam < 0 OR betesz_kivesz_darabszam < 0)',
+				'params'=>array(':termek_id' => $raktarTermek->termek_id, ':anyagbeszallitas_id'=>$raktarTermek->anyagbeszallitas_id, ':raktarhely_id'=>$model->forrasRaktarHelyId),
+				'order'=>'betesz_kivesz_darabszam DESC',
+			));
+			
+			if ($tranzakciok != null && is_array($tranzakciok)) {
+				// 1. lépés összeadjuk azon elemeket, amik már kivételre kerültek
+				$osszesBetet = 0;
+				foreach ($tranzakciok as $tranzakcio) {
+					$osszesBetet += abs($tranzakcio->betesz_kivesz_darabszam);
+				}
+
+				// 2. lépés elkezdjük a legnagyobb foglalástól levonogatni az áthelyezendő mennyiséget (figyelembe véve azt a darabszmot, amit közben esetleg már kivettek a raktárból)
+				$celDb = $model -> celFoglaltDb;
+				
+				if ($celDb > 0) {
+					foreach ($tranzakciok as $tranzakcio) {
+						// elértünk a levoonogatás végére
+						if ($celDb == 0) {
+							break;
+						}
+						
+						$foglalt = abs($tranzakcio->foglal_darabszam);
+						
+						// nem elégíthető ki egy az egyben a soron következő tranzakcióval a kívánt darabszám
+						if ($foglalt < ($celDb + $osszesBetet)) {
+							if ($osszesBetet >= $foglalt) {
+								$osszesBetet -= $foglalt;
+							} else {
+								$foglalt -= $osszesBetet;
+								$osszesBetet = 0;
+
+								// a célhelyre írjuk a maradékot
+								Utils::createRaktarMozgasTranzakció ($raktarTermek->termek_id, $raktarTermek->anyagbeszallitas_id, $model->celRaktarHelyId, $foglalt * -1, 0, $tranzakcio->szallitolevel_nyomdakonyv_id);
+								$tranzakcio->delete();
+								$celDb -= $foglalt;
+							}
+						} else if ($foglalt == ($celDb + $osszesBetet)) {
+								Utils::createRaktarMozgasTranzakció ($raktarTermek->termek_id, $raktarTermek->anyagbeszallitas_id, $model->celRaktarHelyId, $celDb * -1, 0, $tranzakcio->szallitolevel_nyomdakonyv_id);
+								$tranzakcio->delete();
+								$celDb = 0;
+						} else if ($foglalt > ($celDb + $osszesBetet)) {
+								Utils::createRaktarMozgasTranzakció ($raktarTermek->termek_id, $raktarTermek->anyagbeszallitas_id, $model->celRaktarHelyId, $celDb * -1, 0, $tranzakcio->szallitolevel_nyomdakonyv_id);
+								$tranzakcio->foglal_darabszam = $celDb - $foglalt;
+								$tranzakcio->save(false);
+								$celDb = 0;
+						}
+					}
+				}
+			}
+		}
+		
 	}
 
 ?>

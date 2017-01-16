@@ -328,7 +328,7 @@ class Megrendelesek extends CActiveRecord
 	// TÁ: A megrendelések listázásánál a sorok css classát adja vissza, mivel eltérő színezést kell kapniuk attól függően, hogy van-e szállítólevél, minden termék szállítón van-e, stb.
     public function getCssClass() {
         $class = "" ;
-    	$szallitolevelek = Szallitolevelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id));
+    	$szallitolevelek = Szallitolevelek::model()->findAllByAttributes(array('megrendeles_id' => $this->id, 'sztornozva' => 0, 'torolt' => 0));
     	if ($szallitolevelek != null) {
 			$class = "megrendeles_minden_szalliton" ;
 			$ossz_szallito_termekszam = 0 ;

@@ -45,7 +45,7 @@ class SzallitolevelekController extends Controller
 
 			$elso_szallitolevel = true ;
 			if (count($model->findByAttributes(array('megrendeles_id'=>$id))) > 0) {
-					$elso_szallitolevel = false ;
+					$elso_szallitolevel = false;
 			}
 			
 			//Létrehozzuk a számlát a szállítólevél létrejötte után, ha még nem volt szállítólevele korábban
@@ -106,7 +106,7 @@ class SzallitolevelekController extends Controller
 
 			$model -> sorszam = "SZ" . date("Y") . str_pad( ($utolsoArajanlat != null) ? ($utolsoArajanlat + 1) : "000001", 6, '0', STR_PAD_LEFT );
 		}
-		
+
 		$dataProvider = new CArrayDataProvider(Utils::getSzallitolevelTetelToMegrendeles($id),
 			array(
 				'pagination'=>array(
