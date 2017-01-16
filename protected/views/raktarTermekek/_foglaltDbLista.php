@@ -15,11 +15,27 @@
 			  'dataProvider'=>$dataProvider,
 			  'selectableRows'=>1,
 			  'columns'=>array(
-							'termek.DisplayTermekTeljesNev',
-							'anyagbeszallitas.bizonylatszam',
-							'anyagbeszallitas.beszallitas_datum',
-							'foglalt_db:number',
-							  ),
+						array(
+							'name' => 'sorszam',
+							'header' => 'Megrendelés sorszáma',
+						),
+						array(
+							'name' => 'nev',
+							'header' => 'Termék neve',
+						),
+						array(
+							'name' => 'munka_neve',
+							'header' => 'Munka neve',
+						),
+						array(
+							'name' => 'taskaszam',
+							'header' => 'Táskaszám',
+						),
+						array(
+							'name' => 'darabszam',
+							'header' => 'Foglalt darabszám',
+						),
+					  ),
 			));
 
 ?>
