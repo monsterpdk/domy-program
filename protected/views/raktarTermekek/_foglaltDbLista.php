@@ -19,7 +19,7 @@
 							'class'=>'CLinkColumnEval',
 							'header'=>'Megrendelés sorszáma',
 							'labelExpression'  => '$data["sorszam"]',
-							'urlExpression' => 'Yii::app()->createUrl("megrendelesek/index",array("id"=>$data["megrendelesek_id"]))',
+							'urlExpression' => 'Yii::app()->createUrl("megrendelesek/view",array("id"=>$data["megrendelesek_id"]))',
 							'linkHtmlOptions' => array('style'=>'"text-decoration:underline"', 'target'=>"'_blank'"),
 						),						
 						array(
