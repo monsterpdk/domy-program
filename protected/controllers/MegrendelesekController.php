@@ -210,22 +210,26 @@ class MegrendelesekController extends Controller
 						
 						// UPDATE: ÚJ IGÉNY: ha nincs elég darabszám a raktárban, akkor egy 'negativ' táblába mentjük az adott darabszámot és terméket,
 						//					 és akkor foglaljuk később, ha felszabadul a megfelelő mennyiség
-						$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
-						if ( $elerheto_db < $tetel -> darabszam) {
-							$raktarTermekNegativ = new RaktarTermekekNegativ;
-							$raktarTermekNegativ -> termek_id = $tetel -> termek_id;
-							$raktarTermekNegativ -> darabszam = $tetel -> darabszam;
-							$raktarTermekNegativ -> megrendeles_id = $megrendeles -> id;
-							$raktarTermekNegativ -> nyomdakonyv_id = $nyomdakonyv -> id;
-							$raktarTermekNegativ -> hatarido = $nyomdakonyv -> hatarido;
-							$raktarTermekNegativ -> save (false);
-							
-							// rámentjük a megrendelés tételre is, hogy ő egy negatív raktártermék tétel lett, így könnyebb később kezelnünk a lekérdezésekben
-							$tetel -> negativ_raktar_termek = 1;
-							$tetel -> save (false);
-						} else {
-							// a raktárban foglaljuk a megfelelő mennyiséget
-							Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+						
+						// ha hozott borítékról van szó, akkor nem foglalkozunk a rektárkezeléssel
+						if ($tetel -> hozott_boritek != 1) {
+							$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
+							if ( $elerheto_db < $tetel -> darabszam) {
+								$raktarTermekNegativ = new RaktarTermekekNegativ;
+								$raktarTermekNegativ -> termek_id = $tetel -> termek_id;
+								$raktarTermekNegativ -> darabszam = $tetel -> darabszam;
+								$raktarTermekNegativ -> megrendeles_id = $megrendeles -> id;
+								$raktarTermekNegativ -> nyomdakonyv_id = $nyomdakonyv -> id;
+								$raktarTermekNegativ -> hatarido = $nyomdakonyv -> hatarido;
+								$raktarTermekNegativ -> save (false);
+								
+								// rámentjük a megrendelés tételre is, hogy ő egy negatív raktártermék tétel lett, így könnyebb később kezelnünk a lekérdezésekben
+								$tetel -> negativ_raktar_termek = 1;
+								$tetel -> save (false);
+							} else {
+								// a raktárban foglaljuk a megfelelő mennyiséget
+								Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+							}
 						}
 					}
 					

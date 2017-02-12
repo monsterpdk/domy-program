@@ -337,60 +337,66 @@ class RaktarTermekekController extends Controller
 		if ($raktarTermek != null) {
 			if ($reszletes) {
 				// ilyenkor csak 1 db RaktarTermekek rekord lesz
-				$whereClause = "dom_raktar_termekek_tranzakciok.termek_id = " . $raktarTermek->termek_id . " AND dom_raktar_termekek_tranzakciok.anyagbeszallitas_id = " . $raktarTermek->anyagbeszallitas_id . " AND dom_raktar_termekek_tranzakciok.raktarhely_id = " . $raktarTermek->raktarhely_id;
+				$whereClause = "dom_raktar_termekek_tranzakciok.termek_id = " . $raktarTermek->termek_id . " AND dom_megrendeles_tetelek.termek_id = " . $raktarTermek->termek_id . " AND dom_raktar_termekek_tranzakciok.anyagbeszallitas_id = " . $raktarTermek->anyagbeszallitas_id . " AND dom_raktar_termekek_tranzakciok.raktarhely_id = " . $raktarTermek->raktarhely_id;
 			} else {
 				// ilyenkor akár több RaktarTermekek rekord is lehet
-				$whereClause = "dom_termekek.cikkszam = " . $raktarTermek -> termek -> cikkszam;
+				$whereClause = "dom_raktar_termekek_tranzakciok.termek_id = " . $raktarTermek->termek_id . " AND dom_megrendeles_tetelek.termek_id = " . $raktarTermek -> termek_id;
 			}
 		}
 	
 		$sqlMegrendelesTetelek = "
-				SELECT DISTINCT dom_raktar_termekek_tranzakciok.id AS tranzakcio_id,
-									 dom_raktar_termekek_tranzakciok.raktarhely_id,
-									 dom_termekek.id AS termek_id,
-									 dom_megrendelesek.id AS megrendelesek_id,
-									 dom_megrendeles_tetelek.id AS megrendeles_tetel_id,
-									 dom_megrendelesek.sorszam,
-									 dom_termekek.nev,
-									 dom_megrendeles_tetelek.munka_neve,
-									 dom_nyomdakonyv.taskaszam," . ($reszletes ? "foglal_darabszam * -1 AS darabszam" : "darabszam") . "
-									 
-				FROM dom_raktar_termekek_tranzakciok
+			SELECT DISTINCT 	 dom_raktar_termekek_tranzakciok.id AS tranzakcio_id,
+								 dom_raktar_termekek_tranzakciok.raktarhely_id,
+								 dom_raktar_termekek_tranzakciok.anyagbeszallitas_id,
+								 dom_termekek.id AS termek_id,
+								 dom_megrendelesek.id AS megrendelesek_id,
+								 dom_megrendeles_tetelek.id AS megrendeles_tetel_id,
+								 dom_megrendelesek.sorszam,
+								 dom_termekek.nev,
+								 dom_megrendeles_tetelek.munka_neve,
+								 dom_nyomdakonyv.taskaszam," . ($reszletes ? "foglal_darabszam * -1 AS darabszam" : "darabszam") . "
+								 
+			FROM dom_raktar_termekek_tranzakciok
 
-				INNER JOIN dom_nyomdakonyv
-				ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_nyomdakonyv.id
+			INNER JOIN dom_nyomdakonyv
+			ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_nyomdakonyv.id
 
-				INNER JOIN dom_megrendeles_tetelek
-				ON dom_nyomdakonyv.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+			INNER JOIN dom_megrendeles_tetelek
+			ON dom_nyomdakonyv.megrendeles_tetel_id = dom_megrendeles_tetelek.id
 
-				INNER JOIN dom_megrendelesek
-				ON dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
+			INNER JOIN dom_megrendelesek
+			ON dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
 
-				INNER JOIN dom_termekek
-				ON dom_megrendeles_tetelek.termek_id = dom_termekek.id
+			INNER JOIN dom_termekek
+			ON dom_raktar_termekek_tranzakciok.termek_id = dom_termekek.id
 
-				WHERE " . $whereClause . "
+			WHERE foglal_darabszam <> 0 AND " . $whereClause . " AND dom_nyomdakonyv.sztornozva = 0 AND dom_megrendeles_tetelek.torolt = 0 AND dom_nyomdakonyv.torolt=0 AND dom_megrendeles_tetelek.hozott_boritek=0 AND dom_megrendeles_tetelek.negativ_raktar_termek = 0
 
-				GROUP BY dom_megrendeles_tetelek.id
-			";
+			GROUP BY dom_megrendeles_tetelek.id
+		";
 		
 		// lekérdezzük az összes ide vonatkozó megrendelés tételt a megrendelésekkel együtt (itt még NINCSENEK levonva azon mennyiségek, amiket esetleg időközben már szállítóra tettek, vagy töröltek stb.)
 		$megrendelesTetelek = Yii::app() -> db -> createCommand  ($sqlMegrendelesTetelek) -> queryAll();
 		
 		$sqlKivettDarabok = "
-			SELECT dom_szallitolevel_tetelek.megrendeles_tetel_id, dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam AS darabszam FROM dom_raktar_termekek_tranzakciok
-
-			INNER JOIN dom_szallitolevelek
-			ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_szallitolevelek.id
-
-			INNER JOIN dom_szallitolevel_tetelek
-			ON dom_szallitolevelek.id = dom_szallitolevel_tetelek.szallitolevel_id
-
-			INNER JOIN dom_termekek
-			ON dom_raktar_termekek_tranzakciok.termek_id = dom_termekek.id
+			SELECT dom_szallitolevel_tetelek.megrendeles_tetel_id, dom_szallitolevel_tetelek.darabszam, dom_raktar_termekek_tranzakciok.anyagbeszallitas_id FROM dom_szallitolevel_tetelek
 			
-			WHERE dom_szallitolevelek.torolt = 0 AND dom_szallitolevelek.sztornozva = 0 AND dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0
-		";
+			INNER JOIN dom_megrendeles_tetelek
+			ON dom_szallitolevel_tetelek.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+			
+			INNER JOIN dom_szallitolevelek
+			ON dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
+			
+			INNER JOIN dom_raktar_termekek_tranzakciok
+			ON dom_szallitolevelek.id = dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id
+			
+			WHERE dom_szallitolevel_tetelek.torolt = 0 AND dom_szallitolevel_tetelek.darabszam != 0 
+			AND (dom_megrendeles_tetelek.szinek_szama1 != 0 OR dom_megrendeles_tetelek.szinek_szama2 != 0) AND dom_megrendeles_tetelek.negativ_raktar_termek = 0 
+			AND dom_megrendeles_tetelek.hozott_boritek = 0 AND dom_megrendeles_tetelek.negativ_raktar_termek = 0
+			AND dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0 
+			AND " . $whereClause . " GROUP BY dom_szallitolevel_tetelek.id";
+
+// echo $sqlMegrendelesTetelek . '<br /> <br />' . $sqlKivettDarabok; die();
 
 		// lekérdezzük az összes már kivételezett terméket darabszámmal együtt (ezeket vonjuk le az előző lekérdezésbne kapott eredményhalmazból)
 		$kivettDarabok = Yii::app() -> db -> createCommand  ($sqlKivettDarabok) -> queryAll();
@@ -399,12 +405,26 @@ class RaktarTermekekController extends Controller
 			foreach ($megrendelesTetelek as $key => $megrendelesTetel) {
 				if ($kivettDarabok != null) {
 					foreach ($kivettDarabok as $kivettDarab) {
-						if ($megrendelesTetel['megrendeles_tetel_id'] == $kivettDarab['megrendeles_tetel_id']) {
-							if (isset($megrendelesTetelek[$key])) {
-								$megrendelesTetelek[$key]['darabszam'] = $megrendelesTetelek[$key]['darabszam'] + $kivettDarab['darabszam'];
-								
-								if ($megrendelesTetelek[$key]['darabszam'] == 0) {
-									unset($megrendelesTetelek[$key]);
+						if ($reszletes) {
+							if ($megrendelesTetel['megrendeles_tetel_id'] == $kivettDarab['megrendeles_tetel_id'] && ($megrendelesTetel['anyagbeszallitas_id'] == $kivettDarab['anyagbeszallitas_id'])) {
+								if (isset($megrendelesTetelek[$key])) {
+									$megrendelesTetelek[$key]['darabszam'] = $megrendelesTetelek[$key]['darabszam'] - $kivettDarab['darabszam'];
+									
+									if ($megrendelesTetelek[$key]['darabszam'] <= 0) {
+										unset($megrendelesTetelek[$key]);
+										break;
+									}
+								}
+							}
+						} else {
+							if ($megrendelesTetel['megrendeles_tetel_id'] == $kivettDarab['megrendeles_tetel_id'] /*&& ($megrendelesTetel['anyagbeszallitas_id'] == $kivettDarab['anyagbeszallitas_id']) */) {
+								if (isset($megrendelesTetelek[$key])) {
+									$megrendelesTetelek[$key]['darabszam'] = $megrendelesTetelek[$key]['darabszam'] - $kivettDarab['darabszam'];
+									
+									if ($megrendelesTetelek[$key]['darabszam'] <= 0) {
+										unset($megrendelesTetelek[$key]);
+										break;
+									}
 								}
 							}
 						}
@@ -429,6 +449,10 @@ class RaktarTermekekController extends Controller
 				'status'=>'success', 
 				'div'=>$this->renderPartial('_foglaltDbLista', array('dataProvider' => $dataProvider, 'grid_id' => $grid_id), true, true)));
 			exit;
+	}
+
+	public function actionUjrageneralas () {
+			Utils::raktarTermekekUjrageneralas ();
 	}
 	
 	// Uncomment the following methods and override them if needed

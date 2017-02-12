@@ -16,6 +16,9 @@
 		});
 	}
 	', CClientScript::POS_READY);
+	
+	// ha túl nagy raktárkészlet akkor nálam néha kifutott a default 30 másodpercből (ezt az activeDropDown-t lehet édemes lenen valamire előregépelősre kicserélni, vagy egy külön dialog-ra)
+	ini_set('max_execution_time', 300);	
 ?>
 
 <?php

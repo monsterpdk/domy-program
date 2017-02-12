@@ -73,13 +73,13 @@ class SzallitolevelekController extends Controller
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
 						// LI: csak akkor, ha nem hozott borítékról van szó, ill. ha nyomdakönyves munkáról van szó
 						if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel->szinek_szama1 + $megrendelesTetel->szinek_szama2 > 0) {
-							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id)) {
+							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, true, $megrendelesTetel->id)) {
 								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 							}
 						} else if ($megrendelesTetel->szinek_szama1 + $megrendelesTetel->szinek_szama2 == 0 && $megrendelesTetel->negativ_raktar_termek == 0) {
 							// ha sima boríték eladásról van szó, akkor nincs foglalás, csak levonjuk a raktárkészletből a megfelelő mennyiséget
 							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
-							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
+							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, true, $megrendelesTetel->id);
 						}
 					}
 				}
@@ -146,16 +146,22 @@ class SzallitolevelekController extends Controller
 				$tetelekASzallitolevelen = explode('$#$', $model -> szallito_darabszamok);
 				
 				// LI: a raktárból sztornózzuk a szállítólevél egyes tételeit, majd újra felvesszük őket az új darabszámmal
+				// mivel a sztornó egy komplett terméket sztornóz ID szerint, ezért itt figyeljük, hogy volt-e már sztornóegy adott termékre
+				$hasStorno = array();
 				foreach ($model->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
 
-					// LI: csak akkor, ha nem hozott borítékról van szó és nyomdakönyvi a munka
-					if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
-						Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id);
-					} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
-						// sima boríték eladás
-						// sztornózzuk az eddigi levont mennyiséget, majd kivesszük az újat
-						Utils::raktarbolKiveszSztornoz ($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id, true);
+					if (!in_array($megrendelesTetel -> termek_id, $hasStorno)) {
+						// LI: csak akkor, ha nem hozott borítékról van szó és nyomdakönyvi a munka
+						if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
+							Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id);
+						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
+							// sima boríték eladás
+							// sztornózzuk az eddigi levont mennyiséget, majd kivesszük az újat
+							Utils::raktarbolKiveszSztornoz ($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id, true);
+						}
+						
+						array_push($hasStorno, $megrendelesTetel -> termek_id);
 					}
 				}
 				
@@ -164,6 +170,7 @@ class SzallitolevelekController extends Controller
 				$command -> execute ();
 				
 				$minuszosTermekek = '';
+
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
 					if ( ($tetelekASzallitolevelen[$i] >= 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
@@ -171,33 +178,34 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> szallitolevel_id = $model -> id;
 						$tetelASzalliton -> megrendeles_tetel_id = $tetelekAMegrendelon[$i] -> id;
 						$tetelASzalliton -> darabszam = $tetelekASzallitolevelen[$i];
-						
+
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
 						// LI: csak akkor, ha nem hozott borítékról van szó
 						if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
-							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id)) {
+							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id)) {
 								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 							}
 						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
 							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
-							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
+							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id);
 						}
 						
 						
 						$tetelASzalliton -> save();
 					}
 				}
-				
+
 				if (strlen($minuszosTermekek) > 0) {
 					$minuszosTermekek = '<strong>' . $minuszosTermekek . '</strong>';
 					$minuszosTermekek = 'A következő termékeknél negatív darabszám keletkezett (további információ a <strong><a href="' . Yii::app()->createUrl("raktartermekek/index") . '" target="_blank">Raktárkészletek</a></strong> menüpont alatt):<br />' . $minuszosTermekek;
 					Yii::app()->user->setFlash('error', $minuszosTermekek);
 				}
-				
+
 				$this->redirect(array('szallitolevelek/index','id'=>$model->megrendeles_id,));
 			}
+			
 		}
 		
 		$dataProvider = new CArrayDataProvider(Utils::getSzallitolevelTetelToMegrendeles($model -> megrendeles_id, $model -> id));

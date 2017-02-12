@@ -6,6 +6,8 @@ $this->breadcrumbs=array(
 	'Anyagbeszállítások',
 );
 
+	set_time_limit(0);
+
 ?>
 
 <h1>Anyagbeszállítások</h1>

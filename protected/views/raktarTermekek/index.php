@@ -16,6 +16,8 @@
 		}
 	}
 	
+	// ha túl nagy raktárkészlet akkor nálam néha kifutott a default 30 másodpercből
+	ini_set('max_execution_time', 300);	
 ?>
 
 <h1>Raktárkészletek</h1>
@@ -82,6 +84,7 @@
 							'name'=>'anyagbeszallitas.beszallitas_datum',
 							'visible'=>$reszletesLista,
 						), 
+						'termek.id',
 						'termek.cikkszam',
 						'termek.DisplayTermekTeljesNev',
 						'termek.gyarto.cegnev',

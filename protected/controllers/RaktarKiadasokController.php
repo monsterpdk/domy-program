@@ -38,13 +38,17 @@ class RaktarKiadasokController extends Controller
 		if(isset($_POST['RaktarKiadasok']))
 		{
 			$model->attributes=$_POST['RaktarKiadasok'];
+
+			$nyomdakonyv = Nyomdakonyv::model()->findByPk($model->nyomdakonyv_id);
 			
-			if($model->save()) {
-				// kivesszük a raktárból a kért darabszámot
-				Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
-				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
-				
-				$this->redirect(array('index'));
+			if ($nyomdakonyv != null) {
+				if($model->save()) {
+					// kivesszük a raktárból a kért darabszámot
+					Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
+					Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true, true, false, null, false, 0);
+
+					$this->redirect(array('index'));
+				}
 			}
 		}
 
@@ -70,12 +74,13 @@ class RaktarKiadasokController extends Controller
 			$elozoDarabszam = $model->darabszam;
 			$model->attributes=$_POST['RaktarKiadasok'];
 			
-			if($model->save()) {
+			$nyomdakonyv = Nyomdakonyv::model()->findByPk($model->nyomdakonyv_id);
+			
+			if($nyomdakonyv != null && $model->save()) {
 				// stornozzuk az eddigi levont mennyiséget, majd kivesszük az újat
 				Utils::raktarbolKiveszSztornoz ($model->termek_id, $elozoDarabszam, $model->nyomdakonyv_id, true);
 				Utils::raktarbanFoglal ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
-				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true);
-				
+				Utils::raktarbolKivesz ($model->termek_id, $model->darabszam, $model->nyomdakonyv_id, true, true, false, null, false, $nyomdakonyv->megrendeles_tetel_id);
 				$this->redirect(array('index'));
 			}
 		}
