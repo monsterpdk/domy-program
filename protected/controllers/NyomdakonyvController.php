@@ -198,7 +198,7 @@ class NyomdakonyvController extends Controller
 		if(isset($_GET['Nyomdakonyv']))
 			$model->attributes=$_GET['Nyomdakonyv'];
 		
-		$this->NyitottNyomdakonyvAdatszinkron() ;
+//		$this->NyitottNyomdakonyvAdatszinkron() ;
 		
 		$this->render('index',array(
 			'model'=>$model,
@@ -658,7 +658,7 @@ class NyomdakonyvController extends Controller
 	}
 	
 	//A nyitott nyomdakönyv rekordokhoz letölti a géptermi program adatbázisából a legfrissebb adatokat
-	protected function NyitottNyomdakonyvAdatszinkron() {
+	public function NyitottNyomdakonyvAdatszinkron() {
 		$datum_mettol = date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d"),   date("Y")-1));
 		$parameters = array() ;
 		$parameters[] = array("field"=>"KEZDDATE", "value"=>rawurlencode($datum_mettol), "op"=>">=") ;	

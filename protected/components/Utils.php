@@ -2180,6 +2180,62 @@
 				}
 			}
 		}
+
+		function adatszinkronizacio() {
+			$fp = fopen('szinkron_log.txt', 'a');
+			fwrite($fp, date("Y-m-d H:i:s") . ": indult\n");
+			fclose($fp);
+			// Nyomdakönyvi munkák szinkronizációja
+			$nyc = Yii::app()->createController('Nyomdakonyv');
+			$nyomdakonyv_controller = $nyc[0] ;
+
+			$nyomdakonyv_controller->NyitottNyomdakonyvAdatszinkron() ;
+			// Nyomdakönyvi munkák szinkronizációja eddig
+			// Megrendelések begyűjtése és számlák szinkronizációja
+			Utils::szamla_kiegyenlitettseg_szinkron() ;
+			$mc = Yii::app()->createController('Megrendelesek');
+			$megrendelesek_controller = $mc[0] ;
+			$megrendelesek_controller->webaruhazMegrendelesekBegyujt() ;
+//			Yii::app()->runController('Megrendelesek/MegrendelesekBegyujt') ;
+			$megrendeles_model=new Megrendelesek('search');
+			$megrendeles_model->unsetAttributes();
+			$c = new CDbCriteria;
+			$c->order = "rendeles_idopont DESC" ;
+			$c->select = "t.id" ;
+			$c->join = "left join dom_ugyfelek on t.ugyfel_id = dom_ugyfelek.id" ;
+			if (Yii::app()->user->checkAccess('Admin') == false) {
+				$c->addCondition('t.torolt = 0') ;
+			}
+			if(isset($_GET['Megrendelesek']) && count($_GET['Megrendelesek'])) {
+				$megrendeles_model->attributes=$_GET['Megrendelesek'];
+				foreach ($_GET["Megrendelesek"] as $kulcs => $ertek) {
+					if ($ertek != "") {
+						$mezonev = "" ;
+						switch ($kulcs) {
+							case 'sorszam': $mezonev = 'sorszam' ;
+								break ;
+							case 'cegnev_search': $mezonev = 'dom_ugyfelek.cegnev' ;
+								break ;
+						}
+						$c->addCondition($mezonev . " = '" . $ertek . "'") ;
+					}
+				}
+			}
+//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
+//		$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c,'pagination'=>false)) ;
+			$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c)) ;
+
+			//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
+			foreach ($dataProvider->getData() as $sor) {
+				$megrendelesek_controller->checkSzamlaSorszam($sor->id) ;
+			}
+
+			// Megrendelések begyűjtése és számlák szinkronizációja eddig
+
+			$fp = fopen('szinkron_log.txt', 'a');
+			fwrite($fp, date("Y-m-d H:i:s") . ": lefutott\n");
+			fclose($fp);
+		}
 		
 		/**
 		* Újragenerálja a dom_raktar_termekek és a dom_raktar_termekek_tranzakciok táblák tartalmát.

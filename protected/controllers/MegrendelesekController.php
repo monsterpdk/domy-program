@@ -462,6 +462,11 @@ class MegrendelesekController extends Controller
 	 	 		}
 	 	 }
 	 }
+
+	public function actionMegrendelesekBegyujt()
+	{
+		$this->webaruhazMegrendelesekBegyujt() ;
+	}
 	
 	/**
 	 * Lists all models.
@@ -470,8 +475,7 @@ class MegrendelesekController extends Controller
 	{
 		Utils::saveCurrentPage("megrendelesekIndex");
 		
-		Utils::szamla_kiegyenlitettseg_szinkron() ;		
-		$this->webaruhazMegrendelesekBegyujt() ;
+//		$this->webaruhazMegrendelesekBegyujt() ;
 		$model=new Megrendelesek('search');
 		$model->unsetAttributes();
 		$c = new CDbCriteria;
@@ -501,9 +505,9 @@ class MegrendelesekController extends Controller
 		$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c)) ;
 		
 		//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
-		foreach ($dataProvider->getData() as $sor) {
+/*		foreach ($dataProvider->getData() as $sor) {
 			$this->checkSzamlaSorszam($sor->id) ;	
-		}
+		}*/
 		
 		//send model object for search
 		$this->render('index',array(
