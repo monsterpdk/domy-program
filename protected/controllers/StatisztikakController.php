@@ -3060,6 +3060,54 @@ class StatisztikakController extends Controller
  														    'stat_adatok' => $stat_adatok,
 		));		
 	}
-	
 
+	// sztornózott megrendelések felületét kezelire irányít
+	public function actionSztornozottMegrendelesek () {
+		$model = new StatisztikakSztornozottMegrendelesek;
+		
+		if (isset($_POST['StatisztikakSztornozottMegrendelesek'])) {
+            $model->attributes = $_POST['StatisztikakSztornozottMegrendelesek'];
+
+            if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> sztornozottMegrendelesekPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_sztornozottMegrendelesek',array('model'=>$model,));
+			}
+			
+			return;
+        } else {
+			$model = new StatisztikakSztornozottMegrendelesek;
+			$this->render('_sztornozottMegrendelesek',array(
+				'model'=>$model,)
+			);
+		}
+	}
+
+	// a kapott model alapján összeállítja a sztornózott megrendelések PDF-ét
+	public function sztornozottMegrendelesekPrintPDF ($model) {
+		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+		if ($model != null) {
+			$dataProvider = new CActiveDataProvider('Megrendelesek', array(
+				'criteria'=>array(
+					'condition'=>'rendeles_idopont >= :mettol AND rendeles_idopont <= :meddig AND sztornozva = 1',
+					'params'=>array(':mettol' => $model -> statisztika_mettol, ':meddig' => $model -> statisztika_meddig),
+				),
+				'pagination'=>false,
+			));
+			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Sztornózott megrendelések: " . $model->statisztika_mettol . " - " . $model->statisztika_meddig);
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printSztornozottMegrendelesek', array('dataProvider' => $dataProvider, 'model' => $model), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}
+	
 }
