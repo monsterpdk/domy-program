@@ -841,6 +841,9 @@ class MegrendelesekController extends Controller
 				$megrendeles -> sztornozas_oka = $storno_ok;
 				$megrendeles -> sztornozva = 1;
 				
+				// beírjuk a lezárást végző user-hez a sztornózó személyét
+				$megrendeles->rendelest_lezaro_user_id = Yii::app()->user->getId();
+				
 				$megrendeles -> save(false);
 			}
 		}

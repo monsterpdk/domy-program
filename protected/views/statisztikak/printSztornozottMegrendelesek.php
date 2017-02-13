@@ -68,7 +68,14 @@
 						'ugyfel.cegnev',
 						'sorszam',
 						'rendeles_idopont',
-						'rendelest_rogzito_user.fullname'
+						array(
+						   'header'=>'Rögzítette',
+						   'value'=>'$data->rendelest_rogzito_user->fullname',
+						),
+						array(
+						   'header'=>'Lezárta',
+						   'value'=>'$data->rendelest_lezaro_user->fullname',
+						),
 					),
     ));
 ?>	
