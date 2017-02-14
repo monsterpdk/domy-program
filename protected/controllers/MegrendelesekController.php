@@ -383,7 +383,7 @@ class MegrendelesekController extends Controller
 				$megrendeles_id = $model->id ;			
 				for ($i = 0; $i < count($xml->orderitems->orderitem); $i++) {
 					$termek = $xml->orderitems->orderitem[$i] ;
-					$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model)) ;
+					$termek_adatok = Termekek::model()->findByAttributes(array('cikkszam'=>(string)$termek->orderitem_model,'torolt'=>'0')) ;
 //					print_r($termek_adatok) ;
 					if ($termek_adatok != null) {
 						$szinekszama1 = $szinekszama2 = 0 ;
@@ -637,7 +637,7 @@ class MegrendelesekController extends Controller
 		if ($_GET['term']) {
 			$match = addcslashes($_GET['term'], '%_');
 			$q = new CDbCriteria( array(
-				'condition' => "cegnev LIKE :match",
+				'condition' => "cegnev LIKE :match AND archiv=0 AND torolt=0",
 				'params'    => array(':match' => "%$match%")
 			) );
 			 

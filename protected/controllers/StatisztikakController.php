@@ -1994,11 +1994,15 @@ class StatisztikakController extends Controller
 							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["szinekszama"] = $tetel_sor->szinek_szama1 . " + " . $tetel_sor->szinek_szama2 ;
 						}
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] = $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
-						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] = round((($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) / ($tetel_sor->netto_darabar * $tetel_sor->darabszam) * 100), 2) ;
+						if ($tetel_sor->netto_darabar * $tetel_sor->darabszam > 0) {
+							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] = round((($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) / ($tetel_sor->netto_darabar * $tetel_sor->darabszam) * 100), 2);
+						}
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] = $ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["db_koltseg"] = $ervenyes_termekar_rekord->darab_ar_szamolashoz ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] = $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] - $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
-						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] = round(($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] / $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] * 100), 2) ;					
+						if ($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] > 0) {
+							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] = round(($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] / $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] * 100), 2);
+						}
 						$megrendeles_eladas_rekord["netto_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
 						$megrendeles_eladas_rekord["anyagkoltseg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
 						$megrendeles_eladas_rekord["haszon"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;				

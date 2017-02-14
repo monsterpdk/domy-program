@@ -283,7 +283,7 @@ class ArajanlatokController extends Controller
 		if ($_GET['term']) {
 			$match = addcslashes($_GET['term'], '%_');
 			$q = new CDbCriteria( array(
-				'condition' => "cegnev LIKE :match",
+				'condition' => "cegnev LIKE :match AND archiv=0 AND torolt=0",
 				'params'    => array(':match' => "%$match%")
 			) );
 			 
