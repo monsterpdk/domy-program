@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9c3c2cbd-e2b7-4a8b-8356-ccd519f95097" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/components/Utils.php" afterPath="$PROJECT_DIR$/protected/components/Utils.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/ArajanlatokController.php" afterPath="$PROJECT_DIR$/protected/controllers/ArajanlatokController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" afterPath="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" afterPath="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php" afterPath="$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php" />
     </list>
     <ignored path="www.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,41 +28,46 @@
       <file leaf-file-name="Utils.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/components/Utils.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-42">
-              <caret line="2179" column="49" selection-start-line="2179" selection-start-column="49" selection-end-line="2179" selection-end-column="49" />
+            <state relative-caret-position="43">
+              <caret line="2184" column="0" selection-start-line="2184" selection-start-column="0" selection-end-line="2186" selection-end-column="24" />
               <folding>
-                <marker date="1485441196383" expanded="true" signature="10995:11150" placeholder="SELECT * FRO... dom_termek_arak" />
-                <marker date="1485441196383" expanded="true" signature="11678:11837" placeholder="SELECT * FRO... dom_nyomasi_arak" />
-                <marker date="1485441196383" expanded="true" signature="13483:13640" placeholder="SELECT * FRO... dom_termek_arak" />
-                <marker date="1485441196383" expanded="true" signature="13898:14100" placeholder="SELECT * FRO... dom_termek_ar_savos_csomagarak" />
-                <marker date="1485441196383" expanded="true" signature="17102:17323" placeholder="SELECT * FRO... dom_nyomasi_arak" />
-                <marker date="1485441196383" expanded="true" signature="18748:18920" placeholder="SELECT * FRO... dom_zuh" />
-                <marker date="1485441196383" expanded="true" signature="22567:22708" placeholder="SELECT id FR... dom_megrendelesek" />
-                <marker date="1485441196383" expanded="true" signature="26880:27229" placeholder="SELECT megre... dom_szallitolevelek" />
-                <marker date="1485441196383" expanded="true" signature="38053:38153" placeholder="select BSors... kerBFejlec" />
-                <marker date="1485441196383" expanded="true" signature="39056:39290" placeholder="select penBF... penBSor" />
-                <marker date="1485441196383" expanded="true" signature="44083:45044" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
-                <marker date="1485441196383" expanded="true" signature="45714:46556" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
-                <marker date="1485441196383" expanded="true" signature="47591:47941" placeholder="SELECT gepek... dom_nyomdagepek" />
-                <marker date="1485441196383" expanded="true" signature="50490:50839" placeholder="SELECT ROUND... dom_arajanlatok" />
-                <marker date="1485441196383" expanded="true" signature="51453:51855" placeholder="SELECT ROUND... dom_megrendelesek" />
-                <marker date="1485441196383" expanded="true" signature="52438:52558" placeholder="SELECT COUNT... dom_arajanlatok" />
-                <marker date="1485441196383" expanded="true" signature="53007:53129" placeholder="SELECT COUNT... dom_megrendelesek" />
-                <marker date="1485441196383" expanded="true" signature="63270:63404" placeholder="SELECT tbl_u... authassignment" />
-                <marker date="1485441196383" expanded="true" signature="64289:64553" placeholder="SELECT tbl_u... authassignment" />
-                <marker date="1485441196383" expanded="true" signature="73819:74362" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
-                <marker date="1485441196383" expanded="true" signature="74779:75080" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
-                <marker date="1485441196383" expanded="true" signature="82906:83163" placeholder="SELECT gep_t... dom_nyomdagepek" />
+                <marker date="1487104149097" expanded="true" signature="10995:11150" placeholder="SELECT * FRO... dom_termek_arak" />
+                <marker date="1487104149097" expanded="true" signature="11678:11837" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+                <marker date="1487104149097" expanded="true" signature="13483:13640" placeholder="SELECT * FRO... dom_termek_arak" />
+                <marker date="1487104149097" expanded="true" signature="13898:14100" placeholder="SELECT * FRO... dom_termek_ar_savos_csomagarak" />
+                <marker date="1487104149097" expanded="true" signature="17102:17323" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+                <marker date="1487104149097" expanded="true" signature="18748:18920" placeholder="SELECT * FRO... dom_zuh" />
+                <marker date="1487104149097" expanded="true" signature="22567:22708" placeholder="SELECT id FR... dom_megrendelesek" />
+                <marker date="1487104149097" expanded="true" signature="26880:27229" placeholder="SELECT megre... dom_szallitolevelek" />
+                <marker date="1487104149097" expanded="true" signature="38063:38163" placeholder="select BSors... kerBFejlec" />
+                <marker date="1487104149097" expanded="true" signature="39066:39300" placeholder="select penBF... penBSor" />
+                <marker date="1487104149097" expanded="true" signature="44093:45054" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+                <marker date="1487104149097" expanded="true" signature="45724:46566" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+                <marker date="1487104149097" expanded="true" signature="47601:47951" placeholder="SELECT gepek... dom_nyomdagepek" />
+                <marker date="1487104149097" expanded="true" signature="50497:50846" placeholder="SELECT ROUND... dom_arajanlatok" />
+                <marker date="1487104149097" expanded="true" signature="51460:51862" placeholder="SELECT ROUND... dom_megrendelesek" />
+                <marker date="1487104149097" expanded="true" signature="52445:52565" placeholder="SELECT COUNT... dom_arajanlatok" />
+                <marker date="1487104149097" expanded="true" signature="53014:53136" placeholder="SELECT COUNT... dom_megrendelesek" />
+                <marker date="1487104149097" expanded="true" signature="63277:63411" placeholder="SELECT tbl_u... authassignment" />
+                <marker date="1487104149097" expanded="true" signature="64296:64560" placeholder="SELECT tbl_u... authassignment" />
+                <marker date="1487104149097" expanded="true" signature="74271:74542" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+                <marker date="1487104149097" expanded="true" signature="74452:74512" placeholder="SELECT id FR... dom_nyomdakonyv" />
+                <marker date="1487104149097" expanded="true" signature="74922:75221" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+                <marker date="1487104149097" expanded="true" signature="84059:84316" placeholder="SELECT gep_t... dom_nyomdagepek" />
+                <marker date="1487104149097" expanded="true" signature="101852:101936" placeholder="UPDATE dom_m... " />
+                <marker date="1487104149097" expanded="true" signature="107350:108355" placeholder="SELECT dom_n... dom_szallitolevel_tetelek" />
+                <marker date="1487104149097" expanded="true" signature="110432:111425" placeholder="SELECT dom_m... dom_szallitolevel_tetelek" />
+                <marker date="1487104149097" expanded="true" signature="116497:116817" placeholder="select sum(d... dom_szallitolevel_tetelek" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MegrendelesekController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MegrendelesekController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/controllers/MegrendelesekController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="387" column="49" selection-start-line="387" selection-start-column="49" selection-end-line="387" selection-end-column="49" />
+            <state relative-caret-position="560">
+              <caret line="389" column="48" selection-start-line="389" selection-start-column="48" selection-end-line="389" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -81,70 +83,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RaktarTermekekController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/controllers/RaktarTermekekController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="444" column="10" selection-start-line="444" selection-start-column="10" selection-end-line="444" selection-end-column="10" />
-              <folding>
-                <marker date="1484640632766" expanded="true" signature="13625:14268" placeholder="SELECT dom_s... dom_raktar_termekek_tranzakciok" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="printRaktarkeszletByTermekcsoport.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/printRaktarkeszletByTermekcsoport.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <marker date="1484177146063" expanded="true" signature="1130:1149" placeholder="..." />
-                <marker date="1484177146063" expanded="true" signature="2302:2318" placeholder="..." />
-                <marker date="1484177146063" expanded="true" signature="2440:2456" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="printRaktarkeszlet.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/printRaktarkeszlet.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <marker date="1484215563357" expanded="true" signature="2742:2758" placeholder="..." />
-                <marker date="1484215563357" expanded="true" signature="2879:2895" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/index.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-2504">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_search.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/views/termekCsoportok/_search.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TermekCsoportokController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/controllers/TermekCsoportokController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="74" column="47" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="47" />
+              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -153,9 +96,33 @@
       <file leaf-file-name="SiteController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/controllers/SiteController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="57" column="5" selection-start-line="57" selection-start-column="5" selection-end-line="57" selection-end-column="5" />
+            <state relative-caret-position="397">
+              <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="printSzallitolevel.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="202" column="0" selection-start-line="202" selection-start-column="0" selection-end-line="202" selection-end-column="0" />
+              <folding>
+                <marker date="1487252442860" expanded="false" signature="2030:2047" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="2048:2101" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="5132:5225" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="5132:5457" placeholder="..." />
+                <marker date="1487252442860" expanded="false" signature="5809:5825" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="5826:5859" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="5889:5964" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="6070:6682" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="6078:6181" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="6189:6278" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="6286:6385" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="6393:6671" placeholder="..." />
+                <marker date="1487252442860" expanded="true" signature="6810:6879" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -183,13 +150,14 @@
         <option value="$PROJECT_DIR$/protected/models/NyomdakonyvReklamaciok.php" />
         <option value="$PROJECT_DIR$/protected/views/nyomdakonyvReklamaciok/printReklamacio.php" />
         <option value="$PROJECT_DIR$/protected/controllers/NyomdakonyvController.php" />
-        <option value="$PROJECT_DIR$/protected/controllers/SiteController.php" />
         <option value="$PROJECT_DIR$/protected/views/raktarTermekek/_foglaltDbLista.php" />
         <option value="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" />
         <option value="$PROJECT_DIR$/protected/controllers/ArajanlatokController.php" />
         <option value="$PROJECT_DIR$/protected/controllers/SzallitolevelekController.php" />
         <option value="$PROJECT_DIR$/protected/components/Utils.php" />
         <option value="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" />
+        <option value="$PROJECT_DIR$/protected/controllers/SiteController.php" />
+        <option value="$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php" />
       </list>
     </option>
   </component>
@@ -390,51 +358,29 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="szallitolevelek" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Domy program www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="protected" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="raktarTermekek" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Domy program www" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="www" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nyomdakonyvReklamaciok" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Domy program www" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="www" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="megrendelesek" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -625,12 +571,12 @@
       <workItem from="1481657410520" duration="414000" />
       <workItem from="1481714993653" duration="974000" />
       <workItem from="1482353772764" duration="617000" />
-      <workItem from="1484225861612" duration="19607000" />
+      <workItem from="1484225861612" duration="22398000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="51450000" />
+    <option name="totallyTimeSpent" value="54241000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
@@ -672,13 +618,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/protected/controllers/ArajanlatTetelekController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5746">
-          <caret line="338" column="5" selection-start-line="338" selection-start-column="5" selection-end-line="338" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/protected/controllers/TermekArakController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-306">
@@ -964,7 +903,7 @@
         <state relative-caret-position="519">
           <caret line="202" column="88" selection-start-line="202" selection-start-column="54" selection-end-line="202" selection-end-column="88" />
           <folding>
-            <marker date="1485439923654" expanded="true" signature="6600:6663" placeholder="DELETE FROM " />
+            <marker date="1487104148630" expanded="true" signature="6600:6663" placeholder="DELETE FROM " />
           </folding>
         </state>
       </provider>
@@ -995,12 +934,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/controllers/RaktarTermekekController.php">
+    <entry file="file://$PROJECT_DIR$/protected/controllers/MegrendelesekController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="444" column="10" selection-start-line="444" selection-start-column="10" selection-end-line="444" selection-end-column="10" />
+        <state relative-caret-position="560">
+          <caret line="389" column="48" selection-start-line="389" selection-start-column="48" selection-end-line="389" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/TermekCsoportokController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="74" column="47" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/printRaktarkeszlet.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1484640632766" expanded="true" signature="13625:14268" placeholder="SELECT dom_s... dom_raktar_termekek_tranzakciok" />
+            <marker date="1484215563357" expanded="true" signature="2742:2758" placeholder="..." />
+            <marker date="1484215563357" expanded="true" signature="2879:2895" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -1017,25 +973,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/printRaktarkeszlet.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1484215563357" expanded="true" signature="2742:2758" placeholder="..." />
-            <marker date="1484215563357" expanded="true" signature="2879:2895" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2504">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/protected/views/termekCsoportok/_search.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1044,49 +981,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/controllers/TermekCsoportokController.php">
+    <entry file="file://$PROJECT_DIR$/protected/views/raktarTermekek/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="74" column="47" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="47" />
+        <state relative-caret-position="-2504">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/controllers/SiteController.php">
+    <entry file="file://$PROJECT_DIR$/protected/controllers/RaktarTermekekController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="57" column="5" selection-start-line="57" selection-start-column="5" selection-end-line="57" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/components/Utils.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-42">
-          <caret line="2179" column="49" selection-start-line="2179" selection-start-column="49" selection-end-line="2179" selection-end-column="49" />
+        <state relative-caret-position="356">
+          <caret line="468" column="10" selection-start-line="468" selection-start-column="10" selection-end-line="468" selection-end-column="10" />
           <folding>
-            <marker date="1485441196383" expanded="true" signature="10995:11150" placeholder="SELECT * FRO... dom_termek_arak" />
-            <marker date="1485441196383" expanded="true" signature="11678:11837" placeholder="SELECT * FRO... dom_nyomasi_arak" />
-            <marker date="1485441196383" expanded="true" signature="13483:13640" placeholder="SELECT * FRO... dom_termek_arak" />
-            <marker date="1485441196383" expanded="true" signature="13898:14100" placeholder="SELECT * FRO... dom_termek_ar_savos_csomagarak" />
-            <marker date="1485441196383" expanded="true" signature="17102:17323" placeholder="SELECT * FRO... dom_nyomasi_arak" />
-            <marker date="1485441196383" expanded="true" signature="18748:18920" placeholder="SELECT * FRO... dom_zuh" />
-            <marker date="1485441196383" expanded="true" signature="22567:22708" placeholder="SELECT id FR... dom_megrendelesek" />
-            <marker date="1485441196383" expanded="true" signature="26880:27229" placeholder="SELECT megre... dom_szallitolevelek" />
-            <marker date="1485441196383" expanded="true" signature="38053:38153" placeholder="select BSors... kerBFejlec" />
-            <marker date="1485441196383" expanded="true" signature="39056:39290" placeholder="select penBF... penBSor" />
-            <marker date="1485441196383" expanded="true" signature="44083:45044" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
-            <marker date="1485441196383" expanded="true" signature="45714:46556" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
-            <marker date="1485441196383" expanded="true" signature="47591:47941" placeholder="SELECT gepek... dom_nyomdagepek" />
-            <marker date="1485441196383" expanded="true" signature="50490:50839" placeholder="SELECT ROUND... dom_arajanlatok" />
-            <marker date="1485441196383" expanded="true" signature="51453:51855" placeholder="SELECT ROUND... dom_megrendelesek" />
-            <marker date="1485441196383" expanded="true" signature="52438:52558" placeholder="SELECT COUNT... dom_arajanlatok" />
-            <marker date="1485441196383" expanded="true" signature="53007:53129" placeholder="SELECT COUNT... dom_megrendelesek" />
-            <marker date="1485441196383" expanded="true" signature="63270:63404" placeholder="SELECT tbl_u... authassignment" />
-            <marker date="1485441196383" expanded="true" signature="64289:64553" placeholder="SELECT tbl_u... authassignment" />
-            <marker date="1485441196383" expanded="true" signature="73819:74362" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
-            <marker date="1485441196383" expanded="true" signature="74779:75080" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
-            <marker date="1485441196383" expanded="true" signature="82906:83163" placeholder="SELECT gep_t... dom_nyomdagepek" />
+            <marker date="1487104148583" expanded="true" signature="14060:15099" placeholder="SELECT dom_s... dom_szallitolevel_tetelek" />
           </folding>
         </state>
       </provider>
@@ -1099,11 +1007,69 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/controllers/MegrendelesekController.php">
+    <entry file="file://$PROJECT_DIR$/protected/components/Utils.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="387" column="49" selection-start-line="387" selection-start-column="49" selection-end-line="387" selection-end-column="49" />
+        <state relative-caret-position="43">
+          <caret line="2184" column="0" selection-start-line="2184" selection-start-column="0" selection-end-line="2186" selection-end-column="24" />
+          <folding>
+            <marker date="1487104149097" expanded="true" signature="10995:11150" placeholder="SELECT * FRO... dom_termek_arak" />
+            <marker date="1487104149097" expanded="true" signature="11678:11837" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+            <marker date="1487104149097" expanded="true" signature="13483:13640" placeholder="SELECT * FRO... dom_termek_arak" />
+            <marker date="1487104149097" expanded="true" signature="13898:14100" placeholder="SELECT * FRO... dom_termek_ar_savos_csomagarak" />
+            <marker date="1487104149097" expanded="true" signature="17102:17323" placeholder="SELECT * FRO... dom_nyomasi_arak" />
+            <marker date="1487104149097" expanded="true" signature="18748:18920" placeholder="SELECT * FRO... dom_zuh" />
+            <marker date="1487104149097" expanded="true" signature="22567:22708" placeholder="SELECT id FR... dom_megrendelesek" />
+            <marker date="1487104149097" expanded="true" signature="26880:27229" placeholder="SELECT megre... dom_szallitolevelek" />
+            <marker date="1487104149097" expanded="true" signature="38063:38163" placeholder="select BSors... kerBFejlec" />
+            <marker date="1487104149097" expanded="true" signature="39066:39300" placeholder="select penBF... penBSor" />
+            <marker date="1487104149097" expanded="true" signature="44093:45054" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+            <marker date="1487104149097" expanded="true" signature="45724:46566" placeholder="SELECT munka... dom_nyomda_munkatipusok" />
+            <marker date="1487104149097" expanded="true" signature="47601:47951" placeholder="SELECT gepek... dom_nyomdagepek" />
+            <marker date="1487104149097" expanded="true" signature="50497:50846" placeholder="SELECT ROUND... dom_arajanlatok" />
+            <marker date="1487104149097" expanded="true" signature="51460:51862" placeholder="SELECT ROUND... dom_megrendelesek" />
+            <marker date="1487104149097" expanded="true" signature="52445:52565" placeholder="SELECT COUNT... dom_arajanlatok" />
+            <marker date="1487104149097" expanded="true" signature="53014:53136" placeholder="SELECT COUNT... dom_megrendelesek" />
+            <marker date="1487104149097" expanded="true" signature="63277:63411" placeholder="SELECT tbl_u... authassignment" />
+            <marker date="1487104149097" expanded="true" signature="64296:64560" placeholder="SELECT tbl_u... authassignment" />
+            <marker date="1487104149097" expanded="true" signature="74271:74542" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+            <marker date="1487104149097" expanded="true" signature="74452:74512" placeholder="SELECT id FR... dom_nyomdakonyv" />
+            <marker date="1487104149097" expanded="true" signature="74922:75221" placeholder="SELECT * FRO... dom_raktar_termekek_tranzakciok" />
+            <marker date="1487104149097" expanded="true" signature="84059:84316" placeholder="SELECT gep_t... dom_nyomdagepek" />
+            <marker date="1487104149097" expanded="true" signature="101852:101936" placeholder="UPDATE dom_m... " />
+            <marker date="1487104149097" expanded="true" signature="107350:108355" placeholder="SELECT dom_n... dom_szallitolevel_tetelek" />
+            <marker date="1487104149097" expanded="true" signature="110432:111425" placeholder="SELECT dom_m... dom_szallitolevel_tetelek" />
+            <marker date="1487104149097" expanded="true" signature="116497:116817" placeholder="select sum(d... dom_szallitolevel_tetelek" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/controllers/SiteController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/szallitolevelek/printSzallitolevel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="202" column="0" selection-start-line="202" selection-start-column="0" selection-end-line="202" selection-end-column="0" />
+          <folding>
+            <marker date="1487252442860" expanded="false" signature="2030:2047" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="2048:2101" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="5132:5225" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="5132:5457" placeholder="..." />
+            <marker date="1487252442860" expanded="false" signature="5809:5825" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="5826:5859" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="5889:5964" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="6070:6682" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="6078:6181" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="6189:6278" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="6286:6385" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="6393:6671" placeholder="..." />
+            <marker date="1487252442860" expanded="true" signature="6810:6879" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>

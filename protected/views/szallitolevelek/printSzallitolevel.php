@@ -199,7 +199,7 @@
 				// tétel kiírása
 				echo "
 					<tr>
-						<td> " . $termek->getDisplayTermekTeljesNev() . " </td>
+						<td> " . $termek->getDisplayTermekTeljesNev() . " <br />(#" . $termek->kodszam . ") </td>
 						<td align=right> $megrendelesTetel->szinek_szama1+$megrendelesTetel->szinek_szama2 </td>
 						<td align=right> " . $tetel->DarabszamFormazott . " </td>
 						<td align=right> $megrendelesTetel->munka_neve </td>
