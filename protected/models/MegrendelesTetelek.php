@@ -192,6 +192,23 @@ class MegrendelesTetelek extends CActiveRecord
 		return $this->szinek_szama1 . (strlen($this->szinek_szama1) > 0 ? '+' : '') . $this->szinek_szama2;
 	}
 
+	// visszaadja, hogy egy rendelés tétel már szállítólevélen van-e (akár részben is)
+	public function getSzallitonVan ()
+	{
+		$sql = "SELECT * FROM dom_szallitolevel_tetelek
+
+				INNER JOIN dom_szallitolevelek ON
+				dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
+
+				WHERE dom_szallitolevelek.sztornozva = 0 AND dom_szallitolevel_tetelek.darabszam > 0 AND dom_szallitolevel_tetelek.megrendeles_tetel_id = 
+				" . $this -> id;
+	
+		$command = Yii::app()->db->createCommand($sql);
+		$result = $command -> queryAll();
+
+		return ($result != null && is_array($result) && count($result) > 0);
+	}
+	
 	public function getTetelnevHozottNemHozott() {
 		if ($this->hozott_boritek)
 			return "Hozott " ;

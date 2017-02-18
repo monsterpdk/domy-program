@@ -44,7 +44,7 @@ $this->menu=array(
 						'update' => array(
 							'label' => 'Szerkeszt',
 							'icon'=>'icon-white icon-pencil',
-							'visible' => "Yii::app()->user->checkAccess('Nyomdakonyv.Update')",
+							'visible' => 'Yii::app()->user->checkAccess("Nyomdakonyv.Update") && $data->sztornozva != 1',
 						),
 						'storno' => array(
 							'label' => 'Sztornózás',

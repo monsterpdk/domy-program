@@ -60,6 +60,7 @@ class SzallitolevelekController extends Controller
 				
 				$minuszosTermekek = '';
 				for ($i = 0; $i < count($tetelekAMegrendelon); $i++) {
+					
 					if ( ($tetelekASzallitolevelen[$i] >= 0) || ( ($tetelekASzallitolevelen[$i] == 0) && ($tetelekAMegrendelon[$i]->darabszam == 0) ) ) {
 						$tetelASzalliton = new SzallitolevelTetelek;
 						
@@ -78,10 +79,11 @@ class SzallitolevelekController extends Controller
 							}
 						} else if ($megrendelesTetel->szinek_szama1 + $megrendelesTetel->szinek_szama2 == 0 && $megrendelesTetel->negativ_raktar_termek == 0) {
 							// ha sima boríték eladásról van szó, akkor nincs foglalás, csak levonjuk a raktárkészletből a megfelelő mennyiséget
-							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
+							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, $i > 0, $megrendelesTetel->id);
 							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, true, $megrendelesTetel->id);
 						}
 					}
+					
 				}
 
 				if (strlen($minuszosTermekek) > 0) {
@@ -94,6 +96,7 @@ class SzallitolevelekController extends Controller
 					szamla_letrehozasa($id) ;
 				}
 */				
+
 				$this->redirect(array('szallitolevelek/index','id'=>$model->megrendeles_id,));
 			}
 		} else {
@@ -146,7 +149,7 @@ class SzallitolevelekController extends Controller
 				$tetelekASzallitolevelen = explode('$#$', $model -> szallito_darabszamok);
 				
 				// LI: a raktárból sztornózzuk a szállítólevél egyes tételeit, majd újra felvesszük őket az új darabszámmal
-				// mivel a sztornó egy komplett terméket sztornóz ID szerint, ezért itt figyeljük, hogy volt-e már sztornóegy adott termékre
+				// mivel a sztornó egy komplett terméket sztornóz ID szerint, ezért itt figyeljük, hogy volt-e már sztornó egy adott termékre
 				$hasStorno = array();
 				foreach ($model->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
@@ -157,14 +160,15 @@ class SzallitolevelekController extends Controller
 							Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id);
 						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
 							// sima boríték eladás
-							// sztornózzuk az eddigi levont mennyiséget, majd kivesszük az újat
+							// sztornózzuk az eddigi levont mennyiséget, lejjebb újra kivesszük az új összeggel
+							Utils::raktarbanSztornoz ($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id, true);
 							Utils::raktarbolKiveszSztornoz ($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id, true);
 						}
 						
 						array_push($hasStorno, $megrendelesTetel -> termek_id);
 					}
 				}
-				
+
 				// töröljük a szállítólevélhez már felvett tételeket, majd újra létrehozzuk őket az új darabszámmal
 				$command = Yii::app()->db->createCommand("DELETE FROM dom_szallitolevel_tetelek WHERE szallitolevel_id = " . $id);
 				$command -> execute ();
@@ -187,8 +191,8 @@ class SzallitolevelekController extends Controller
 							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id)) {
 								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 							}
-						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
-							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true);
+						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0 && $megrendelesTetel -> negativ_raktar_termek == 0) {
+							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id);
 							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id);
 						}
 						

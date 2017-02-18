@@ -1,14 +1,6 @@
 <?php
 	/* @var $this StatisztikaController */
-
-	$this->breadcrumbs=array(
-		'Napi kombinált statisztika',
-	);
-
-	$this->menu=array(
-		array('label'=>'Statisztika', 'url'=>array('admin')),
-	);
-
+	
 	// kezdő dátum értékek meghatározása: 'aktuális dátum - 1 év'   -   'aktuális dátum'
 	$now = new DateTime('now');
 

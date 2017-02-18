@@ -149,10 +149,31 @@ class NyomdakonyvController extends Controller
 				// LI: csak akkor, ha nem hozott borítékról van szó
 				if ($megrendelesTetel != null && $megrendelesTetel -> hozott_boritek != 1) {
 					// a raktárban töröljük az ide vonatkozó foglalást
-					
 					if (!Utils::isMunkaInNegativRaktar($nyomdakonyv -> id)) {
 						// ha NEM mínuszos a darabszám
 						Utils::raktarbanSztornoz($megrendelesTetel->termek_id, $megrendelesTetel->darabszam, $nyomdakonyv->id);
+						
+						// töröljük továbbá az ide tartozó kivét(eket) (ha van(nak))
+						$sql = "
+							SELECT termek_id, dom_szallitolevel_tetelek.darabszam, dom_szallitolevelek.id AS szallitolevel_id FROM dom_szallitolevel_tetelek
+
+							INNER JOIN dom_szallitolevelek ON dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
+							INNER JOIN dom_megrendeles_tetelek ON dom_szallitolevel_tetelek.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+							
+							WHERE dom_szallitolevelek.sztornozva = 0 AND dom_szallitolevel_tetelek.darabszam > 0 AND dom_szallitolevel_tetelek.megrendeles_tetel_id = 
+							" . $megrendelesTetel -> id;
+				
+						$command = Yii::app()->db->createCommand($sql);
+						$result = $command -> queryAll();
+						
+						if ($result != null && count($result) > 0) {
+							// találtunk szállítólevelet a nyomdakönyvi munkához kapcsolódóan
+							
+							foreach ($result as $szallitolevelTetel) {
+								Utils::raktarbolKiveszSztornoz ($szallitolevelTetel['termek_id'], $szallitolevelTetel['darabszam'], $szallitolevelTetel['szallitolevel_id']);
+							}
+						}
+						
 					} else {
 						// ha mínuszos a darabszám
 						Utils::negativRaktarbanSztornoz($nyomdakonyv->id);

@@ -581,7 +581,7 @@
 										'icon'=>'icon-white icon-pencil',
 										'url'=>'',
 										'click'=>'function() {addUpdateMegrendelesTetel("update", $(this));}',
-										'visible' => "Yii::app()->user->checkAccess('MegrendelesTetelek.Update')",
+										'visible' => 'Yii::app()->user->checkAccess("MegrendelesTetelek.Update") && (($data->szinek_szama1+$data->szinek_szama2 > 0 && $data->megrendeles->nyomdakonyv_munka_id != 1) || ($data->szinek_szama1+$data->szinek_szama2 == 0 &&!$data->szallitonVan))',
 									),
 							        'delete_item' => array
 									(
@@ -591,7 +591,7 @@
 											'class'=>'btn btn-danger btn-mini',
 											),
 										'url'=>'"#"',
-										'visible' => "Yii::app()->user->checkAccess('MegrendelesTetelek.Delete')",
+										'visible' => 'Yii::app()->user->checkAccess("MegrendelesTetelek.Update") && (($data->szinek_szama1+$data->szinek_szama2 > 0 && $data->megrendeles->nyomdakonyv_munka_id != 1) || ($data->szinek_szama1+$data->szinek_szama2 == 0 &&!$data->szallitonVan))',
 										'click'=>"function(){
 														$.fn.yiiGridView.update('megrendelesTetelek-grid', {
 															type:'POST',

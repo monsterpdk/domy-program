@@ -606,7 +606,8 @@
 								$darabszamKulonbozet = Utils::isTetelOnDeliveryNote ($tetel, $megrendelesTetelek);
 
 								if ($darabszamKulonbozet == -1) {
-									if (Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db") >= $tetel -> darabszam || Utils::getTermekRaktarkeszlet($tetel->termek_id, "foglalt_db") >= $tetel -> darabszam || $skipId != null) {
+									if ( ($nyomdakonyv != null && Utils::getTermekRaktarkeszlet($tetel->termek_id, "foglalt_db") >= $tetel -> darabszam) || ($nyomdakonyv == null && $tetel->szinek_szama1 + $tetel->szinek_szama2 == 0 && Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db") >= $tetel -> darabszam) || $skipId != null) {
+
 										array_push ($result, $tetel);
 									}
 								}
@@ -1540,12 +1541,13 @@
 								// végigmegyünk az elmentett FOGLAL típusú raktátranzakciókon és visszaírjuk őket a raktárba, majd töröljük a tételeket
 								$raktarTermekekTranzakciok = RaktarTermekekTranzakciok::model()->findAllByAttributes(
 										array(),
-										$condition  = 'szallitolevel_nyomdakonyv_id = :szallitolevel_nyomdakonyv_id AND foglal_darabszam <> 0',
+										$condition  = 'szallitolevel_nyomdakonyv_id = :szallitolevel_nyomdakonyv_id AND foglal_darabszam <> 0 AND termek_id = :termek_id',
 										$params     = array(
 												':szallitolevel_nyomdakonyv_id' => $szallitolevel_nyomdakonyv_id,
+												':termek_id' => $termek ->id,
 										)
 								);
-								$termek = Termekek::model() -> findByPk($tetelId);
+								// $termek = Termekek::model() -> findByPk($tetelId);
 
 								if ($raktarTermekekTranzakciok != null && count($raktarTermekekTranzakciok > 0) && $termek != null) {
 									foreach ($raktarTermekekTranzakciok as $raktarTermekekTranzakcio) {
@@ -1556,11 +1558,12 @@
 											$raktarTermek -> elerheto_db += $raktarTermekekTranzakcio->foglal_darabszam * -1;
 
 											$raktarTermek ->save(false);
+
+											if ($raktarTermekekTranzakcio != null) {
+												$raktarTermekekTranzakcio->delete();
+											}
 										}
-										
-										if ($raktarTermekekTranzakcio != null) {
-											$raktarTermekekTranzakcio->delete();
-										}
+
 									}
 								}
 							}
@@ -1629,9 +1632,10 @@
 								// végigmegyünk az elmentett KIVESZ típusú tranzakciókon és visszaírjuk őket a raktárba, majd töröljük a tételeket
 								$raktarTermekekTranzakciok = RaktarTermekekTranzakciok::model()->findAllByAttributes(
 										array(),
-										$condition  = 'szallitolevel_nyomdakonyv_id = :szallitolevel_nyomdakonyv_id AND betesz_kivesz_darabszam < 0',
+										$condition  = 'szallitolevel_nyomdakonyv_id = :szallitolevel_nyomdakonyv_id AND betesz_kivesz_darabszam < 0 AND termek_id = :termek_id',
 										$params     = array(
 												':szallitolevel_nyomdakonyv_id' => $szallitolevel_nyomdakonyv_id,
+												':termek_id' => $termek ->id,
 										)
 								);
 								$termek = Termekek::model() -> findByPk($tetelId);
@@ -1684,7 +1688,7 @@
 								$sql = "
 									SELECT * FROM dom_raktar_termekek_tranzakciok
 										INNER JOIN dom_szallitolevelek ON dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id = dom_szallitolevelek.id
-									WHERE dom_szallitolevelek.id=" . $szallitolevel_nyomdakonyv_id . " AND dom_raktar_termekek_tranzakciok.termek_id= " . mysql_escape_string($tetelId) . "
+									WHERE foglal_darabszam < 0 AND dom_szallitolevelek.id=" . $szallitolevel_nyomdakonyv_id . " AND dom_raktar_termekek_tranzakciok.termek_id= " . mysql_escape_string($tetelId) . "
 								";
 
 								$command = Yii::app()->db->createCommand($sql);
