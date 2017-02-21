@@ -3065,7 +3065,7 @@ class StatisztikakController extends Controller
 		));		
 	}
 
-	// sztornózott megrendelések felületét kezelire irányít
+	// sztornózott megrendelések felületét kezeli
 	public function actionSztornozottMegrendelesek () {
 		$model = new StatisztikakSztornozottMegrendelesek;
 		
@@ -3113,5 +3113,79 @@ class StatisztikakController extends Controller
 			$mPDF1->Output();
 		}
 	}
+	
+	// elfekvő termékek felületét kezeli
+	public function actionElfekvoTermekek () {
+		$model = new StatisztikakElfekvoTermekek;
+		
+		if (isset($_POST['StatisztikakElfekvoTermekek'])) {
+            $model->attributes = $_POST['StatisztikakElfekvoTermekek'];
+
+            if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> elfekvoTermekekPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_elfekvoTermekek',array('model'=>$model,));
+			}
+			
+			return;
+        } else {
+			$model = new StatisztikakElfekvoTermekek;
+			$this->render('_elfekvoTermekek',array(
+				'model'=>$model,)
+			);
+		}
+	}
+	
+	// a kapott model alapján összeállítja az elfekvő termékek PDF-ét
+	public function elfekvoTermekekPrintPDF ($model) {
+		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+		if ($model != null) {
+			$sql = 
+			"
+				SELECT dom_raktar_termekek.id AS idk, dom_anyagbeszallitas_termekek.termek_id AS termek_id, REPLACE (FORMAT( ROUND (dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS keszlet_darabszam, REPLACE (FORMAT( ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS netto_ertek FROM dom_raktar_termekek
+				
+				INNER JOIN dom_anyagbeszallitasok ON
+				dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
+
+				INNER JOIN dom_anyagbeszallitas_termekek ON
+				dom_raktar_termekek.termek_id = dom_anyagbeszallitas_termekek.termek_id AND dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
+				
+				WHERE ABS (DATEDIFF (NOW(), dom_anyagbeszallitasok.beszallitas_datum)) >= :day
+				
+				ORDER BY dom_anyagbeszallitasok.beszallitas_datum
+			";
+			
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':day', $model -> nap_filter);
+			$elfekvoTermekek = $command->queryAll();
+
+			if ($elfekvoTermekek != null) {
+				foreach ($elfekvoTermekek as &$elfekvoTermek) {
+					$termek = Termekek::model() ->findByPk ($elfekvoTermek['termek_id']);
+					
+					if ($termek != null) {
+						$elfekvoTermek['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
+						$elfekvoTermek['cikkszam'] = $termek -> cikkszam;
+						$elfekvoTermek['gyarto'] = $termek -> gyarto -> cegnev;
+					}
+				}
+			}
+
+			$dataProvider = new CArrayDataProvider($elfekvoTermekek);
+
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Elfekvő termékek");
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printElfekvoTermekek', array('dataProvider' => $dataProvider, 'model' => $model), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}	
 	
 }
