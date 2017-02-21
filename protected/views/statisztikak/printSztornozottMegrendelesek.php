@@ -65,16 +65,47 @@
       'enablePagination' => false,
       'enableSorting' => false,
       'columns' => array(
-						'ugyfel.cegnev',
-						'sorszam',
-						'rendeles_idopont',
 						array(
-						   'header'=>'Rögzítette',
-						   'value'=>'$data->rendelest_rogzito_user->fullname',
+						   'header'=>'Ügyfélnév',
+						   'name'=>'ugyfel_neve',
 						),
 						array(
-						   'header'=>'Lezárta',
-						   'value'=>'$data->rendelest_lezaro_user->fullname',
+						   'header'=>'Sorszám',
+						   'name'=>'sorszam',
+						),
+						array(
+						   'header'=>'Rendelés időpontja',
+						   'name'=>'rendeles_idopont',
+						),
+						array(
+						   'header'=>'Rögzítette',
+						   'name'=>'rendelest_rogzito',
+						),
+						array(
+						   'header'=>'Sztornózta',
+						   'name'=>'rendelest_sztornozo',
+						),
+						array(
+						   'header'=>'Terméknév',
+						   'name'=>'termek_neve',
+						),
+						array(
+						   'header'=>'Cikkszám',
+						   'name'=>'cikkszam',
+						),
+						array(
+						   'header'=>'Darabszám',
+						   'name'=>'darabszam',
+						   'htmlOptions'=>array('style' => 'text-align: right;'),
+						),
+						array(
+						   'header'=>'Munkanév',
+						   'name'=>'munka_neve',
+						),
+						array(
+						   'header'=>'Nettó összeg (Ft)',
+						   'name'=>'netto_osszeg',
+						   'htmlOptions'=>array('style' => 'text-align: right;'),
 						),
 					),
     ));

@@ -3093,13 +3093,47 @@ class StatisztikakController extends Controller
 	public function sztornozottMegrendelesekPrintPDF ($model) {
 		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
 		if ($model != null) {
-			$dataProvider = new CActiveDataProvider('Megrendelesek', array(
-				'criteria'=>array(
-					'condition'=>'rendeles_idopont >= :mettol AND rendeles_idopont <= :meddig AND sztornozva = 1',
-					'params'=>array(':mettol' => $model -> statisztika_mettol, ':meddig' => $model -> statisztika_meddig),
-				),
-				'pagination'=>false,
-			));
+			$sql = 
+			"
+				SELECT dom_megrendeles_tetelek.termek_id AS termek_id, dom_megrendelesek.sorszam AS sorszam, dom_megrendelesek.rendeles_idopont AS rendeles_idopont, dom_megrendelesek.rendelest_rogzito_user_id AS rendelest_rogzito_id, dom_megrendelesek.rendelest_lezaro_user_id AS rendelest_sztornozo_id,
+				REPLACE (FORMAT( dom_megrendeles_tetelek.darabszam, 0, 'hu_HU'), '.', ' ') AS darabszam, dom_megrendeles_tetelek.munka_neve AS munka_neve,
+				REPLACE (FORMAT( ROUND (dom_megrendeles_tetelek.netto_darabar * dom_megrendeles_tetelek.darabszam), 0, 'hu_HU'), '.', ' ') AS netto_osszeg
+				FROM dom_megrendeles_tetelek
+
+				INNER JOIN dom_megrendelesek ON
+				dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
+
+				WHERE dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= :meddig AND dom_megrendelesek.sztornozva = 1			
+			";
+			
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':mettol', $model -> statisztika_mettol);
+			$command->bindParam(':meddig', $model -> statisztika_meddig);
+			$sztornozottMegrendelesek = $command->queryAll();
+
+			if ($sztornozottMegrendelesek != null) {
+				foreach ($sztornozottMegrendelesek as &$sztornozottMegrendeles) {
+					$termek = Termekek::model() ->findByPk ($sztornozottMegrendeles['termek_id']);
+					
+					if ($termek != null) {
+						$sztornozottMegrendeles['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
+						$sztornozottMegrendeles['cikkszam'] = $termek -> cikkszam;
+						$sztornozottMegrendeles['ugyfel_neve'] = $termek -> gyarto -> cegnev;
+						
+						$rogzito = User::model() ->findByPk ($sztornozottMegrendeles['rendelest_rogzito_id']);
+						$sztornozo = User::model() ->findByPk ($sztornozottMegrendeles['rendelest_sztornozo_id']);
+						
+						if ($rogzito != null) {
+							$sztornozottMegrendeles['rendelest_rogzito'] = $rogzito -> fullname;
+						}
+						if ($sztornozo != null) {
+							$sztornozottMegrendeles['rendelest_sztornozo'] = $sztornozo -> fullname;
+						}
+					}
+				}
+			}
+
+			$dataProvider = new CArrayDataProvider($sztornozottMegrendelesek, array('pagination' => false));
 			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
@@ -3173,7 +3207,7 @@ class StatisztikakController extends Controller
 				}
 			}
 
-			$dataProvider = new CArrayDataProvider($elfekvoTermekek);
+			$dataProvider = new CArrayDataProvider($elfekvoTermekek, array('pagination' => false));
 
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
