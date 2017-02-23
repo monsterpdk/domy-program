@@ -475,7 +475,10 @@ class Ugyfelek extends DomyModel
         $check_szallitasi_varos = Varosok::model()->find($q);
 		if ($check_szallitasi_varos != null)
 			$this -> szallitasi_varos = $check_szallitasi_varos -> id;
-		
+
+		if ($this -> cegnev_teljes == "") {
+			$this -> cegnev_teljes = $this -> cegnev ;
+		}
 		
 		return parent::beforeValidate();
 	}
@@ -595,9 +598,12 @@ class Ugyfelek extends DomyModel
 			$model->posta_orszag = $modelOrszag->id;;
 			$model->szallitasi_orszag = $modelOrszag->id;;
 		}
+
 		if ($ugyfel_adatok["cegnev"] != "") {
+			$model->cegnev_teljes = $ugyfel_adatok["cegnev"] ;
+			$model->cegnev = $ugyfel_adatok["cegnev"] ;
 			$cegforma_string = substr($ugyfel_adatok["cegnev"] , strrpos($ugyfel_adatok["cegnev"], " ") + 1) ;
-			
+
 			$match = trim($cegforma_string);
 			$match = addcslashes($match, '%_');
 			$q = new CDbCriteria( array(
@@ -606,22 +612,23 @@ class Ugyfelek extends DomyModel
 			) );
 			$cegforma = Cegformak::model()->find( $q );
 
+			$cegforma_id = 3 ;  //3 = nincs megadva. Mivel a webáruházakban nem kérünk be külön cégformát, ezt onnan nem lehet egyértelműen kinyerni. Ha nem sikerül, ez marad.
 			if ($cegforma != null) {
 				$model->cegforma = (int)$cegforma->id ;
-				$model->cegnev = substr($ugyfel_adatok["cegnev"] , 0,  strrpos($ugyfel_adatok["cegnev"], " ")) ;
+//				$model->cegnev = substr($ugyfel_adatok["cegnev"] , 0,  strrpos($ugyfel_adatok["cegnev"], " ")) ;
+				$cegforma_id = $model->cegforma ;
 			}
 			else
 			{
 				$model->cegnev = $ugyfel_adatok["cegnev"] ;				
 			}
-			$model->cegnev_teljes = $model->cegnev ;
 		}
 		
 		$model->ugyfel_tipus = "vasarlo" ;
 		$model->kapcsolattarto_nev = "Nincs megadva" ;
 		$model->kapcsolattarto_telefon = $ugyfel_adatok["telefon"] ;
 		$model->kapcsolattarto_email = $ugyfel_adatok["email"] ;
-		$model->cegforma = 3 ;	//3 = nincs megadva. Mivel a webáruházakban nem kérünk be külön cégformát, ezt onnan nem lehet egyértelműen kinyerni.
+		$model->cegforma = $cegforma_id ;
 		$model->max_fizetesi_keses = 10 ;	//Nem tudom mennyi lesz az alapértelmezett, most 10-re állítom
 		$model->atlagos_fizetesi_keses = 0 ;
 		$model->rendelesi_tartozasi_limit = 500000 ;
