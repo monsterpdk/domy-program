@@ -3174,11 +3174,12 @@ class StatisztikakController extends Controller
 	
 	// a kapott model alapján összeállítja az elfekvő termékek PDF-ét
 	public function elfekvoTermekekPrintPDF ($model) {
+			
 		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
 		if ($model != null) {
 			$sql = 
 			"
-				SELECT dom_raktar_termekek.id AS idk, dom_anyagbeszallitas_termekek.termek_id AS termek_id, REPLACE (FORMAT( ROUND (dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS keszlet_darabszam, REPLACE (FORMAT( ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS netto_ertek FROM dom_raktar_termekek
+				SELECT DISTINCT dom_raktar_termekek.id, dom_anyagbeszallitas_termekek.termek_id AS termek_id, REPLACE (FORMAT( ROUND (dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS keszlet_darabszam, REPLACE (FORMAT( ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS netto_ertek FROM dom_raktar_termekek
 				
 				INNER JOIN dom_anyagbeszallitasok ON
 				dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
@@ -3211,6 +3212,10 @@ class StatisztikakController extends Controller
 
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->cacheTables = true;
+			$mPDF1->simpleTables = true;
+			$mPDF1->packTableData = true;
 
 			$mPDF1->SetHtmlHeader("Elfekvő termékek");
 			
