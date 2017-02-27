@@ -3220,6 +3220,230 @@ class StatisztikakController extends Controller
 			# Outputs ready PDF
 			$mPDF1->Output();
 		}
-	}	
+	}
 	
+
+	// beszállítói statisztika felületét kezeli
+	public function actionBeszallitoiStatisztika () {
+		$model = new StatisztikakBeszallitoiStatisztika;
+		
+		if (isset($_POST['StatisztikakBeszallitoiStatisztika'])) {
+            $model->attributes = $_POST['StatisztikakBeszallitoiStatisztika'];
+
+            if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> beszallitoiStatisztikaPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_beszallitoiStatisztika',array('model'=>$model,));
+			}
+			
+			return;
+        } else {
+			$model = new StatisztikakBeszallitoiStatisztika;
+			$this->render('_beszallitoiStatisztika',array(
+				'model'=>$model,)
+			);
+		}
+	}
+	
+	// a kapott model alapján összeállítja a sztornózott megrendelések PDF-ét
+	public function beszallitoiStatisztikaPrintPDF ($model) {
+		set_time_limit(0);
+		
+		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+		if ($model != null) {
+			// beszállítás tételek lekérdezése
+			$gyartoSzures = $model -> gyarto_id != null && $model -> gyarto_id != "" ? " AND dom_termekek.gyarto_id = :gyarto_id " : "";
+
+			Yii::app()->db->createCommand("SET lc_time_names = 'hu_HU';")->execute();
+			
+			$sqlBeszallitasok = 
+			"
+				SELECT
+					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
+					YEAR(dom_anyagbeszallitasok.beszallitas_datum) AS ev,
+					MONTHNAME(dom_anyagbeszallitasok.beszallitas_datum) AS ho,
+					dom_gyartok.cegnev AS gyarto,
+					dom_anyagbeszallitas_termekek.termek_id AS termek_id,
+					SUM( ROUND (dom_anyagbeszallitas_termekek.darabszam * dom_anyagbeszallitas_termekek.netto_darabar)) AS osszeg,
+					dom_anyagbeszallitas_termekek.darabszam AS darabszam
+					
+				FROM dom_anyagbeszallitas_termekek
+
+				INNER JOIN dom_anyagbeszallitasok ON
+				dom_anyagbeszallitas_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
+
+				INNER JOIN dom_termekek ON
+				dom_anyagbeszallitas_termekek.termek_id = dom_termekek.id
+
+				INNER JOIN dom_gyartok ON
+				dom_termekek.gyarto_id = dom_gyartok.id
+
+				WHERE dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig " . $gyartoSzures . " 
+
+				GROUP BY dom_anyagbeszallitasok.id, ev, ho, gyarto, termek_id
+
+				ORDER BY ev, ho, gyarto
+			";
+			
+			$command = Yii::app()->db->createCommand($sqlBeszallitasok);
+			$command->bindParam(':mettol', $model -> statisztika_mettol);
+			$command->bindParam(':meddig', $model -> statisztika_meddig);
+			
+			if ($gyartoSzures != "") {
+				$command->bindParam(':gyarto_id', $model -> gyarto_id);
+			}
+			
+			$beszallitasTetelek = $command->queryAll();
+
+			// eladás tételek lekérdezése
+			Yii::app()->db->createCommand("SET lc_time_names = 'hu_HU';")->execute();
+			
+			$gyartoSzures = $model -> gyarto_id != null && $model -> gyarto_id != "" ? " AND dom_termekek.gyarto_id = :gyarto_id " : "";
+			$sqlEladasok = 
+			"
+				SELECT
+					DISTINCT dom_szallitolevel_tetelek.id,
+					dom_megrendeles_tetelek.id,
+					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
+					dom_megrendeles_tetelek.termek_id AS termek_id,
+					YEAR(dom_anyagbeszallitasok.beszallitas_datum) AS ev,
+					MONTHNAME(dom_anyagbeszallitasok.beszallitas_datum) AS ho,
+					dom_gyartok.cegnev AS gyarto,
+					( ROUND (dom_szallitolevel_tetelek.darabszam * dom_megrendeles_tetelek.netto_darabar)) AS osszeg,
+					(dom_szallitolevel_tetelek.darabszam) AS darabszam
+					
+				FROM dom_megrendeles_tetelek
+
+				INNER JOIN dom_megrendelesek ON
+				dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
+				
+				INNER JOIN dom_szallitolevel_tetelek ON
+				dom_megrendeles_tetelek.id = dom_szallitolevel_tetelek.megrendeles_tetel_id
+
+				INNER JOIN dom_szallitolevelek ON
+				dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
+
+				INNER JOIN dom_raktar_termekek_tranzakciok ON
+				dom_szallitolevelek.id = dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id
+
+				INNER JOIN dom_anyagbeszallitasok ON
+				dom_raktar_termekek_tranzakciok.anyagbeszallitas_id = dom_anyagbeszallitasok.id
+
+				INNER JOIN dom_termekek ON
+				dom_megrendeles_tetelek.termek_id = dom_termekek.id
+
+				INNER JOIN dom_gyartok ON
+				dom_termekek.gyarto_id = dom_gyartok.id
+				
+				WHERE dom_megrendelesek.sztornozva = 0 AND dom_megrendelesek.torolt = 0 AND dom_raktar_termekek_tranzakciok.anyagbeszallitas_id IN
+				(
+					SELECT dom_anyagbeszallitasok.id FROM dom_anyagbeszallitasok
+					WHERE  dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig
+				) " . $gyartoSzures;
+			
+			$commandEladasok = Yii::app()->db->createCommand($sqlEladasok);
+			
+			if ($gyartoSzures != "") {
+				$commandEladasok->bindParam(':gyarto_id', $model -> gyarto_id);
+			}
+			
+			$commandEladasok->bindParam(':mettol', $model -> statisztika_mettol);
+			$commandEladasok->bindParam(':meddig', $model -> statisztika_meddig);
+			
+			if ($gyartoSzures != "") {
+				$commandEladasok->bindParam(':gyarto_id', $model -> gyarto_id);
+			}
+			
+			$eladasTetelek = $commandEladasok->queryAll();
+			
+			// beszállítások és eladások összefésülés
+			if ($beszallitasTetelek != null) {
+				foreach ($beszallitasTetelek as &$beszallitasTetel) {
+					
+					$beszallitasTetel['eladas_osszeg'] = 0;
+					$beszallitasTetel['eladas_darabszam'] = 0;
+
+					$beszallitasTetel['haszon'] = 0;
+					
+					if ($eladasTetelek != null) {
+						foreach ($eladasTetelek as $eladasTetel) {
+							if ($beszallitasTetel['anyagbeszallitas_id'] == $eladasTetel['anyagbeszallitas_id'] &&
+								$beszallitasTetel['ev'] == $eladasTetel['ev'] &&
+								$beszallitasTetel['ho'] == $eladasTetel['ho'] &&
+								$beszallitasTetel['gyarto'] == $eladasTetel['gyarto'] &&
+								$beszallitasTetel['termek_id'] == $eladasTetel['termek_id']
+								) {
+									if (!array_key_exists('eladas_osszeg', $beszallitasTetel)) {
+										$beszallitasTetel['eladas_osszeg'] = 0;
+									}
+									$beszallitasTetel['eladas_osszeg'] += $eladasTetel['osszeg'];
+									
+									if (!array_key_exists('eladas_darabszam', $beszallitasTetel)) {
+										$beszallitasTetel['eladas_darabszam'] = 0;
+									}
+									$beszallitasTetel['eladas_darabszam'] += $eladasTetel['darabszam'];
+								}
+						}
+					}
+			
+				}
+
+				// kézzel megcsináljuk az egyes tételekre a SUM műveletet (összeg + darabszám)
+				$elozoRekord = null;
+
+				foreach ($beszallitasTetelek as $i => &$beszallitasTetel) {
+					$termek = Termekek::model() ->findByPk ($beszallitasTetel['termek_id']);
+					$beszallitasTetel['termek_nev'] = $termek != null ? $termek -> getDisplayTermekTeljesNev() : "";
+
+					$beszallitasTetel['haszon'] = $beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg'];
+					
+					if ($elozoRekord != null) {
+						if (
+								$beszallitasTetel['ev'] == $elozoRekord['ev'] &&
+								$beszallitasTetel['ho'] == $elozoRekord['ho'] &&
+								$beszallitasTetel['gyarto'] == $elozoRekord['gyarto'] &&
+								$beszallitasTetel['termek_id'] == $elozoRekord['termek_id']
+								) {
+									$beszallitasTetel['osszeg'] += $elozoRekord['osszeg'];
+									$beszallitasTetel['darabszam'] += $elozoRekord['darabszam'];
+									$beszallitasTetel['eladas_osszeg'] += $elozoRekord['eladas_osszeg'];
+									$beszallitasTetel['eladas_darabszam'] += $elozoRekord['eladas_darabszam'];
+									
+									$beszallitasTetel['haszon'] = $beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg'];
+									
+									$elozoRekord = $beszallitasTetel;
+									
+									unset($beszallitasTetelek[$i]);
+								}
+					} 
+
+					// szám formázások
+					$beszallitasTetel['haszon'] = Utils::DarabszamFormazas($beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg']);
+					$beszallitasTetel['osszeg'] = Utils::DarabszamFormazas($beszallitasTetel['osszeg']);
+					$beszallitasTetel['darabszam'] = Utils::DarabszamFormazas($beszallitasTetel['darabszam']);
+					$beszallitasTetel['eladas_osszeg'] = Utils::DarabszamFormazas($beszallitasTetel['eladas_osszeg']);
+					$beszallitasTetel['eladas_darabszam'] = Utils::DarabszamFormazas($beszallitasTetel['eladas_darabszam']);
+					
+					$elozoRekord = $beszallitasTetel;
+				}
+
+			}
+
+			$dataProvider = new CArrayDataProvider($beszallitasTetelek, array('pagination' => false));
+			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Beszállítói statisztika: " . $model->statisztika_mettol . " - " . $model->statisztika_meddig);
+			
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printBeszallitoiStatisztika', array('dataProvider' => $dataProvider, 'model' => $model), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}
+
 }
