@@ -17,7 +17,13 @@
 	$fizetesiMod = FizetesiModok::model()->findByPk($model -> proforma_fizetesi_mod);
 	if ($fizetesiMod == null)
 		$fizetesiMod = new FizetesiModok();
-	
+
+	$szamlaszam = "Unicredit 10918001-00000006-23320004" ;
+	$aruhaz = Aruhazak::model()->findByPk($model -> megrendeles_forras_id) ;
+	if ($aruhaz != null && $aruhaz -> bankszamlaszam_proforman != "") {
+		$szamlaszam = $aruhaz -> bankszamlaszam_proforman  ;
+	}
+
 	$megrendeles_tetelek = $model->tetelek;
 ?>
 
@@ -90,7 +96,7 @@
 		<td class = 'col2'></td>
 	<tr>
 	<tr>
-		<td class = 'col1'><strong>Számlaszám:</strong> Unicredit 10918001-00000006-23320004</td>
+		<td class = 'col1'><strong>Számlaszám:</strong> <?php echo $szamlaszam;?></td>
 		<td class = 'col2'></td>
 	<tr>
 	<tr>

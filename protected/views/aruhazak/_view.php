@@ -27,8 +27,12 @@
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('aruhaz_megrendeles_order_prefix')); ?>:</b>
 	<?php echo CHtml::encode($data->aruhaz_megrendeles_order_prefix); ?>
-	<br />	
-	
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('bankszamlaszam_proforman')); ?>:</b>
+	<?php echo CHtml::encode($data->bankszamlaszam_proforman); ?>
+	<br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('arkategoria_id')); ?>:</b>
 	<?php echo CHtml::encode($data->arkategoria_id); ?>
 	<br />
