@@ -125,6 +125,18 @@
 
 ?>	
 
+<p align='right'>
+	<strong>Összes beszerzési érték: <?php echo $osszesBeszerzesiErtek; ?> Ft</strong>
+</p>
+
+<p align='right'>
+	<strong>Összes eladási érték: <?php echo $osszesEladasiErtek; ?> Ft</strong>
+</p>
+
+<p align='right'>
+	<strong>Összes haszon: <?php echo $osszesHaszon; ?> Ft</strong>
+</p>
+
 <htmlpagefooter name="myFooter2" style="display:none">
 
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">

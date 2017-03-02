@@ -3255,6 +3255,7 @@ class StatisztikakController extends Controller
 	// a kapott model alapján összeállítja a sztornózott megrendelések PDF-ét
 	public function beszallitoiStatisztikaPrintPDF ($model) {
 		set_time_limit(0);
+		$resultArray = array();
 		
 		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
 		if ($model != null) {
@@ -3266,6 +3267,7 @@ class StatisztikakController extends Controller
 			$sqlBeszallitasok = 
 			"
 				SELECT
+				
 					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
 					YEAR(dom_anyagbeszallitasok.beszallitas_datum) AS ev,
 					MONTHNAME(dom_anyagbeszallitasok.beszallitas_datum) AS ho,
@@ -3285,7 +3287,7 @@ class StatisztikakController extends Controller
 				INNER JOIN dom_gyartok ON
 				dom_termekek.gyarto_id = dom_gyartok.id
 
-				WHERE dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig " . $gyartoSzures . " 
+				WHERE dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig AND darabszam > 0 " . $gyartoSzures . " 
 
 				GROUP BY dom_anyagbeszallitasok.id, ev, ho, gyarto, termek_id
 
@@ -3302,71 +3304,84 @@ class StatisztikakController extends Controller
 			
 			$beszallitasTetelek = $command->queryAll();
 
-			// eladás tételek lekérdezése
+			// az összes, ide vonatkozó tranzakciós tétel lekérdezése
 			Yii::app()->db->createCommand("SET lc_time_names = 'hu_HU';")->execute();
 			
-			$gyartoSzures = $model -> gyarto_id != null && $model -> gyarto_id != "" ? " AND dom_termekek.gyarto_id = :gyarto_id " : "";
-			$sqlEladasok = 
+			$sqlTranzakciok =
 			"
-				SELECT
-					DISTINCT dom_szallitolevel_tetelek.id,
-					dom_megrendeles_tetelek.id,
+				SELECT 
+				
 					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
-					dom_megrendeles_tetelek.termek_id AS termek_id,
 					YEAR(dom_anyagbeszallitasok.beszallitas_datum) AS ev,
 					MONTHNAME(dom_anyagbeszallitasok.beszallitas_datum) AS ho,
 					dom_gyartok.cegnev AS gyarto,
-					( ROUND (dom_szallitolevel_tetelek.darabszam * dom_megrendeles_tetelek.netto_darabar)) AS osszeg,
-					(dom_szallitolevel_tetelek.darabszam) AS darabszam
+					dom_raktar_termekek_tranzakciok.termek_id AS termek_id,
+					dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam * -1 AS darabszam,
+					dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id AS szallitolevel_id
 					
-				FROM dom_megrendeles_tetelek
-
-				INNER JOIN dom_megrendelesek ON
-				dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
-				
-				INNER JOIN dom_szallitolevel_tetelek ON
-				dom_megrendeles_tetelek.id = dom_szallitolevel_tetelek.megrendeles_tetel_id
-
-				INNER JOIN dom_szallitolevelek ON
-				dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
-
-				INNER JOIN dom_raktar_termekek_tranzakciok ON
-				dom_szallitolevelek.id = dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id
+				FROM dom_raktar_termekek_tranzakciok
 
 				INNER JOIN dom_anyagbeszallitasok ON
 				dom_raktar_termekek_tranzakciok.anyagbeszallitas_id = dom_anyagbeszallitasok.id
 
 				INNER JOIN dom_termekek ON
-				dom_megrendeles_tetelek.termek_id = dom_termekek.id
+				dom_raktar_termekek_tranzakciok.termek_id = dom_termekek.id
 
 				INNER JOIN dom_gyartok ON
 				dom_termekek.gyarto_id = dom_gyartok.id
-				
-				WHERE dom_megrendelesek.sztornozva = 0 AND dom_megrendelesek.torolt = 0 AND dom_raktar_termekek_tranzakciok.anyagbeszallitas_id IN
+
+				where dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0 AND dom_raktar_termekek_tranzakciok.anyagbeszallitas_id IN
 				(
 					SELECT dom_anyagbeszallitasok.id FROM dom_anyagbeszallitasok
 					WHERE  dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig
-				) " . $gyartoSzures;
+				)
+			";
 			
-			$commandEladasok = Yii::app()->db->createCommand($sqlEladasok);
+			$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+			$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+			$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
 			
-			if ($gyartoSzures != "") {
-				$commandEladasok->bindParam(':gyarto_id', $model -> gyarto_id);
+			$eladasTetelek = $commandTranzakcio->queryAll();
+
+			// kikeressük az eladott termékek mellé az összegeket
+			// ha találunk a szállítólevélen darabra pontos tételt, akkor azét vesszük, ha nem, akkor az első olyan szállítólevél tételét, aminek a termék ID-ja egyezett az eladott darabéval
+			// ez sajnos nem 100%-os, de a most mentet adatokat felhasználva csak így tudtam megoldani
+			
+			if ($eladasTetelek != null) {
+				foreach ($eladasTetelek as &$eladasTetel) {
+					$szallitolevel = Szallitolevelek::model()->findByPk ($eladasTetel['szallitolevel_id']);
+					
+					if ($szallitolevel != null) {
+						$osszeg = null;
+						foreach ($szallitolevel->tetelek as $szallitoTetel) {
+							$megrendelesTetel = $szallitoTetel->megrendeles_tetel;
+							if ($megrendelesTetel != null) {
+								if ($megrendelesTetel->termek_id == $eladasTetel['termek_id'] && $szallitoTetel->darabszam == $eladasTetel['darabszam']) {
+									// komplett termék ID és darabszám találat
+									$osszeg = $megrendelesTetel->netto_darabar;
+									break;
+								} else if ( ($osszeg == null && $megrendelesTetel->termek_id == $eladasTetel['termek_id'])) {
+									// elsőnek talált termék ID, ami egyezk a keresettel
+									$osszeg = $megrendelesTetel->netto_darabar;
+								}
+							}
+						}
+						
+						if ($osszeg != null) {
+							$eladasTetel['osszeg'] = $osszeg * $eladasTetel['darabszam'];
+							unset($osszeg);
+						} else {
+							$eladasTetel['osszeg'] = 0;
+						}
+					}
+					
+					unset($szallitolevel);
+				}
 			}
-			
-			$commandEladasok->bindParam(':mettol', $model -> statisztika_mettol);
-			$commandEladasok->bindParam(':meddig', $model -> statisztika_meddig);
-			
-			if ($gyartoSzures != "") {
-				$commandEladasok->bindParam(':gyarto_id', $model -> gyarto_id);
-			}
-			
-			$eladasTetelek = $commandEladasok->queryAll();
 			
 			// beszállítások és eladások összefésülés
 			if ($beszallitasTetelek != null) {
 				foreach ($beszallitasTetelek as &$beszallitasTetel) {
-					
 					$beszallitasTetel['eladas_osszeg'] = 0;
 					$beszallitasTetel['eladas_darabszam'] = 0;
 
@@ -3394,11 +3409,12 @@ class StatisztikakController extends Controller
 					}
 			
 				}
-
+				unset($beszallitasTetel);
+				
 				// kézzel megcsináljuk az egyes tételekre a SUM műveletet (összeg + darabszám)
 				$elozoRekord = null;
-
-				foreach ($beszallitasTetelek as $i => &$beszallitasTetel) {
+				
+				foreach ($beszallitasTetelek as $i => $beszallitasTetel) {
 					$termek = Termekek::model() ->findByPk ($beszallitasTetel['termek_id']);
 					$beszallitasTetel['termek_nev'] = $termek != null ? $termek -> getDisplayTermekTeljesNev() : "";
 
@@ -3406,6 +3422,7 @@ class StatisztikakController extends Controller
 					
 					if ($elozoRekord != null) {
 						if (
+								$beszallitasTetel['anyagbeszallitas_id'] == $elozoRekord['anyagbeszallitas_id'] &&
 								$beszallitasTetel['ev'] == $elozoRekord['ev'] &&
 								$beszallitasTetel['ho'] == $elozoRekord['ho'] &&
 								$beszallitasTetel['gyarto'] == $elozoRekord['gyarto'] &&
@@ -3419,24 +3436,35 @@ class StatisztikakController extends Controller
 									$beszallitasTetel['haszon'] = $beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg'];
 									
 									$elozoRekord = $beszallitasTetel;
-									
-									unset($beszallitasTetelek[$i]);
+									array_pop($resultArray);
+									//unset($beszallitasTetelek[$i]);
 								}
 					} 
 
-					// szám formázások
-					$beszallitasTetel['haszon'] = Utils::DarabszamFormazas($beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg']);
-					$beszallitasTetel['osszeg'] = Utils::DarabszamFormazas($beszallitasTetel['osszeg']);
-					$beszallitasTetel['darabszam'] = Utils::DarabszamFormazas($beszallitasTetel['darabszam']);
-					$beszallitasTetel['eladas_osszeg'] = Utils::DarabszamFormazas($beszallitasTetel['eladas_osszeg']);
-					$beszallitasTetel['eladas_darabszam'] = Utils::DarabszamFormazas($beszallitasTetel['eladas_darabszam']);
-					
 					$elozoRekord = $beszallitasTetel;
+					array_push($resultArray, $beszallitasTetel);
+				}
+
+				$osszesBeszerzesiErtek = 0;
+				$osszesEladasiErtek = 0;
+				$osszesHaszon = 0;
+				
+				foreach ($resultArray as &$resultItem) {
+					// összegző számolása
+					$osszesBeszerzesiErtek += $resultItem['osszeg'];
+					$osszesEladasiErtek += $resultItem['eladas_osszeg'];
+					
+					// szám formázások
+					$resultItem['haszon'] = Utils::DarabszamFormazas($resultItem['eladas_osszeg'] - $resultItem['osszeg']);
+					$resultItem['osszeg'] = Utils::DarabszamFormazas($resultItem['osszeg']);
+					$resultItem['darabszam'] = Utils::DarabszamFormazas($resultItem['darabszam']);
+					$resultItem['eladas_osszeg'] = Utils::DarabszamFormazas($resultItem['eladas_osszeg']);
+					$resultItem['eladas_darabszam'] = Utils::DarabszamFormazas($resultItem['eladas_darabszam']);
 				}
 
 			}
 
-			$dataProvider = new CArrayDataProvider($beszallitasTetelek, array('pagination' => false));
+			$dataProvider = new CArrayDataProvider($resultArray, array('pagination' => false));
 			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
@@ -3444,8 +3472,8 @@ class StatisztikakController extends Controller
 			$mPDF1->SetHtmlHeader("Beszállítói statisztika: " . $model->statisztika_mettol . " - " . $model->statisztika_meddig);
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial('printBeszallitoiStatisztika', array('dataProvider' => $dataProvider, 'model' => $model), true));
-	 
+			$mPDF1->WriteHTML($this->renderPartial('printBeszallitoiStatisztika', array('dataProvider' => $dataProvider, 'model' => $model, 'osszesBeszerzesiErtek' => Utils::DarabszamFormazas($osszesBeszerzesiErtek), 'osszesEladasiErtek' => Utils::DarabszamFormazas($osszesEladasiErtek), 'osszesHaszon' => Utils::DarabszamFormazas($osszesEladasiErtek - $osszesBeszerzesiErtek)), true));
+
 			# Outputs ready PDF
 			$mPDF1->Output();
 		}

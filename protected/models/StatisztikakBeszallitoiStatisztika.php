@@ -25,7 +25,7 @@ class StatisztikakBeszallitoiStatisztika extends CFormModel
 		public function checkDates($attribute,$params)
 		{
 			if ($this->statisztika_mettol != null && $this->statisztika_meddig != null) {
-				if (!($this->statisztika_mettol < $this->statisztika_meddig))
+				if (!($this->statisztika_mettol <= $this->statisztika_meddig))
 					$this->addError('statisztika_mettol', 'A végdátum nagyobb kell legyen, mint a kezdődátum.');
 			}
 		}
