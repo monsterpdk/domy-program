@@ -370,7 +370,7 @@ class RaktarTermekekController extends Controller
 			INNER JOIN dom_termekek
 			ON dom_raktar_termekek_tranzakciok.termek_id = dom_termekek.id
 
-			WHERE foglal_darabszam <> 0 AND " . $whereClause . " AND dom_nyomdakonyv.sztornozva = 0 AND dom_megrendeles_tetelek.torolt = 0 AND dom_nyomdakonyv.torolt=0 AND dom_megrendeles_tetelek.hozott_boritek=0 AND dom_megrendeles_tetelek.negativ_raktar_termek = 0
+			WHERE foglal_darabszam <> 0 AND " . $whereClause . " AND dom_nyomdakonyv.sztornozva = 0 AND dom_megrendeles_tetelek.torolt = 0 AND dom_nyomdakonyv.torolt=0 AND dom_megrendeles_tetelek.negativ_raktar_termek = 0
 
 			GROUP BY dom_megrendeles_tetelek.id
 		";
@@ -392,7 +392,7 @@ class RaktarTermekekController extends Controller
 			
 			WHERE dom_szallitolevel_tetelek.torolt = 0 AND dom_szallitolevel_tetelek.darabszam != 0 
 			AND (dom_megrendeles_tetelek.szinek_szama1 != 0 OR dom_megrendeles_tetelek.szinek_szama2 != 0) AND dom_megrendeles_tetelek.negativ_raktar_termek = 0 
-			AND dom_megrendeles_tetelek.hozott_boritek = 0 AND dom_megrendeles_tetelek.negativ_raktar_termek = 0
+			AND dom_megrendeles_tetelek.negativ_raktar_termek = 0
 			AND dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0 
 			AND " . $whereClause . " GROUP BY dom_szallitolevel_tetelek.id";
 

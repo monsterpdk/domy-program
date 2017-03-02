@@ -72,8 +72,8 @@ class SzallitolevelekController extends Controller
 						$tetelASzalliton -> save();
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						// LI: csak akkor, ha nem hozott borítékról van szó, ill. ha nyomdakönyves munkáról van szó
-						if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel->szinek_szama1 + $megrendelesTetel->szinek_szama2 > 0) {
+						// ha nyomdakönyves munkáról van szó
+						if (/* $megrendelesTetel -> hozott_boritek != 1 && */ $megrendelesTetel->szinek_szama1 + $megrendelesTetel->szinek_szama2 > 0) {
 							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, true, $megrendelesTetel->id)) {
 								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 							}
@@ -155,8 +155,8 @@ class SzallitolevelekController extends Controller
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
 
 					if (!in_array($megrendelesTetel -> termek_id, $hasStorno)) {
-						// LI: csak akkor, ha nem hozott borítékról van szó és nyomdakönyvi a munka
-						if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
+						// nyomdakönyvi a munka
+						if (/*$megrendelesTetel -> hozott_boritek != 1 && */ $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
 							Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $model->id);
 						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
 							// sima boríték eladás
@@ -186,12 +186,13 @@ class SzallitolevelekController extends Controller
 						$megrendelesTetel = MegrendelesTetelek::model()->findByPk($tetelASzalliton -> megrendeles_tetel_id);
 						
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						// LI: csak akkor, ha nem hozott borítékról van szó
-						if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
+						// nyomdakönyvi munka
+						if (/* $megrendelesTetel -> hozott_boritek != 1 && */ $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
 							if (!Utils::raktarbolKivesz($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id)) {
 								$minuszosTermekek .= (strlen($minuszosTermekek) == 0 ? '<br />' : '') . '- ' . $megrendelesTetel->termek->nev;
 							}
 						} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0 && $megrendelesTetel -> negativ_raktar_termek == 0) {
+							// sima eladás
 							Utils::raktarbanFoglal ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id);
 							Utils::raktarbolKivesz ($megrendelesTetel->termek_id, $tetelASzalliton->darabszam, $model->id, true, true, false, null, false, $megrendelesTetel->id);
 						}
@@ -356,11 +357,10 @@ class SzallitolevelekController extends Controller
 				$szallitolevel -> sztornozva = 1;
 				
 				// a raktárban növeljük a foglalt és az összes mennyiségeket
-				// LI: csak akkor, ha nem hozott borítékról van szó
 				foreach ($szallitolevel->tetelek as $szallitolevel_tetel) {
 					$megrendelesTetel = $szallitolevel_tetel->megrendeles_tetel;
 					
-					if ($megrendelesTetel -> hozott_boritek != 1 && $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
+					if (/* $megrendelesTetel -> hozott_boritek != 1 && */ $megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 > 0) {
 						Utils::raktarbolKiveszSztornoz($megrendelesTetel->termek_id, $szallitolevel_tetel->darabszam, $szallitolevel->id);
 					} else if ($megrendelesTetel -> szinek_szama1 + $megrendelesTetel -> szinek_szama2 == 0) {
 						// visszarakjuk a raktárba a sztornózott darabszámot

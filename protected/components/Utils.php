@@ -2337,7 +2337,7 @@
 			));			
 			
 			if ($nyomdakonyvek != null) {
-				// találtam néhány megrendeles_tetel_id-ból többet, elvileg ugye nem lehet ilyen, ha csak nem storno vag törlés történt, de mégis van
+				// találtam néhány megrendeles_tetel_id-ból többet, elvileg ugye nem lehet ilyen, ha csak nem storno vagy törlés történt, de mégis van
 				// a változó segítségével vizsgálom, hogy volt-e már egy megadott megrendelés tétel, ha igen, akkor skip
 				$elozoMegrendelesTetelId = 0;
 				$kulonbozet = 0;
@@ -2347,7 +2347,7 @@
 				while($nyomdakonyv = array_pop($nyomdakonyvek)) {
 					$tetel = $nyomdakonyv -> megrendeles_tetel;
 					
-					if ($tetel != null && $elozoMegrendelesTetelId != $tetel->id && $tetel -> hozott_boritek != 1) {
+					if ($tetel != null && $elozoMegrendelesTetelId != $tetel->id) {
 						$elozoMegrendelesTetelId = $tetel->id;
 						$elerheto_db = Utils::getTermekRaktarkeszlet($tetel -> termek_id, "elerheto_db");
 
@@ -2413,7 +2413,7 @@
 				LEFT OUTER JOIN dom_nyomdakonyv
 				ON dom_szallitolevel_tetelek.megrendeles_tetel_id=dom_nyomdakonyv.megrendeles_tetel_id
 
-				WHERE dom_szallitolevel_tetelek.darabszam > 0 AND (szinek_szama1 > 0 OR szinek_szama2 > 0) AND hozott_boritek = 0
+				WHERE dom_szallitolevel_tetelek.darabszam > 0 AND (szinek_szama1 > 0 OR szinek_szama2 > 0)
 
 				group by dom_szallitolevel_tetelek.megrendeles_tetel_id
 				order by dom_szallitolevel_tetelek.megrendeles_tetel_id
@@ -2513,8 +2513,8 @@
 						) {
 							
 						// a raktárban csökkentjük a foglalt és az elérhető mennyiségeket
-						// LI: csak akkor, ha nem hozott borítékról van szó, ill. ha nyomdakönyves munkáról van szó
-						if ($szallitolevel['hozott_boritek'] != 1 && ($szallitolevel['szinek_szama1'] + $szallitolevel['szinek_szama2']) > 0) {
+						// nyomdakönyves munkáról van szó
+						if (($szallitolevel['szinek_szama1'] + $szallitolevel['szinek_szama2']) > 0) {
 							Utils::raktarbolKivesz($szallitolevel['termek_id'], $szallitolevel['darabszam'], $szallitolevel['szallitolevel_id'], true, true, true, $szallitolevel['datum'], true, $szallitolevel['megrendeles_tetel_id']);
 							//echo 'NYOMAS: ' . $szallitolevel['szallitolevel_id'] . ' - ' . $szallitolevel['darabszam'] . '<br />';
 						} else if ($szallitolevel['szinek_szama1'] + $szallitolevel['szinek_szama2'] == 0 && $szallitolevel['negativ_raktar_termek'] == 0) {
