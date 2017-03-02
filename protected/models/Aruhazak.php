@@ -8,6 +8,9 @@
  * @property string $kod
  * @property string $aruhaz_nev
  * @property string $aruhaz_url
+ * @property string $aruhaz_megrendelesek_xml_url
+ * @property string aruhaz_megrendeles_order_prefix
+ * @property string bankszamlaszam_proforman
  * @property integer $arkategoria_id
  * @property integer $ingyen_szallitas
  * @property integer $torolt
@@ -45,6 +48,7 @@ class Aruhazak extends CActiveRecord
 			array('aruhaz_url', 'length', 'max'=>127),
 			array('aruhaz_megrendelesek_xml_url', 'length', 'max'=>255),
 			array('aruhaz_megrendeles_order_prefix', 'length', 'max'=>2),
+			array('bankszamlaszam_proforman', 'length', 'max'=>40),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, kod, aruhaz_nev, aruhaz_url, arkategoria_id, ingyen_szallitas, torolt', 'safe', 'on'=>'search'),
@@ -75,6 +79,7 @@ class Aruhazak extends CActiveRecord
 			'aruhaz_url' => 'Áruház URL',
 			'aruhaz_megrendelesek_xml_url' => 'Áruház megrendelések import XML URL',
 			'aruhaz_megrendeles_order_prefix' => 'Megrendelés azonosító prefix',
+			'bankszamlaszam_proforman' => 'Proformán megjelenő bankszámlaszám',
 			'arkategoria_id' => 'Árkategória',
 			'ingyen_szallitas' => 'Ingyen szállítás',
 			'display_aruhazkod_nev' => 'Áruház',
@@ -110,6 +115,7 @@ class Aruhazak extends CActiveRecord
 		$criteria->compare('aruhaz_url',$this->aruhaz_url,true);
 		$criteria->compare('aruhaz_megrendelesek_xml_url',$this->aruhaz_megrendelesek_xml_url,true);
 		$criteria->compare('aruhaz_megrendeles_order_prefix',$this->aruhaz_megrendeles_order_prefix,true);
+		$criteria->compare('bankszamlaszam_proforman',$this->bankszamlaszam_proforman,true);
 		$criteria->compare('arkategoria_id',$this->arkategoria_id);
 		$criteria->compare('ingyen_szallitas',$this->ingyen_szallitas);
 

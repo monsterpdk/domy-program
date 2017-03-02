@@ -52,7 +52,13 @@
 			<?php echo $form->textField($model,'aruhaz_megrendeles_order_prefix',array('size'=>4,'maxlength'=>2)); ?>
 			<?php echo $form->error($model,'aruhaz_megrendeles_order_prefix'); ?>
 		</div>
-		
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'bankszamlaszam_proforman'); ?>
+		<?php echo $form->textField($model,'bankszamlaszam_proforman',array('size'=>40,'maxlength'=>40)); ?>
+		<?php echo $form->error($model,'bankszamlaszam_proforman'); ?>
+	</div>
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'arkategoria_id'); ?>
 			
