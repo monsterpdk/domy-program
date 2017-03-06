@@ -403,4 +403,26 @@ class SzallitolevelekController extends Controller
 			Yii::app()->end();
 		}
 	}
+	
+	public function actionRepairHozottBoritek () {
+		$javitandoMegrendelesek = array('6457', '6434', '6304', '6295', '6293', '6243', '6198', '6135', '5700');
+		$result = '';
+		
+		foreach ($javitandoMegrendelesek as $javitandoMegrendeles) {
+			$megrendeles = Megrendelesek::model()->findByPk($javitandoMegrendeles);
+			
+			if ($megrendeles != null) {
+				$result .= ' ' . $megrendeles -> id;
+				foreach ($megrendeles->tetelek as $megrendelesTetel) {
+					$nyomdakonyv = Nyomdakonyv::model()->findByAttributes(array("megrendeles_tetel_id" => $megrendelesTetel -> id, "sztornozva" => "0"));
+					
+					if ($nyomdakonyv != null) {
+						Utils::raktarbanFoglal($megrendelesTetel -> termek_id, $megrendelesTetel -> darabszam, $nyomdakonyv->id);
+					}
+				}
+			}
+		}
+		
+		echo "Javítot megrendelések: " . $result;
+	}
 }
