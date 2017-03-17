@@ -120,7 +120,7 @@ class NyomdakonyvReklamaciokController extends Controller
     }
 	
 	// a felhasználók (felelősök) előregépelős beajánlásának keresője
-	public function actionSearchFelelosok ($term)
+	public function actionSearchFelelosok ($anotherParam = null, $term)
 	{
 		if(Yii::app()->request->isAjaxRequest && !empty($term))
         {

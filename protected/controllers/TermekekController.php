@@ -246,7 +246,7 @@ class TermekekController extends Controller
 	}
 	
 	// cikkszámok előregépelős beajánlásának keresője
-	public function actionSearchCikkszamok ($term)
+	public function actionSearchCikkszamok ($anotherParam = null, $term)
 	{
 		if(Yii::app()->request->isAjaxRequest && !empty($term))
         {
@@ -254,6 +254,12 @@ class TermekekController extends Controller
               $criteria = new CDbCriteria;
               $criteria->select='cikkszam';
               $criteria->addSearchCondition('cikkszam', $term.'%', false);
+			  
+			  // ezzel tudunk termékcsoportra szűrni, ha szükséges
+			  if ($anotherParam != null) {
+				  $criteria->addSearchCondition('termekcsoport_id', $anotherParam, false);
+			  }
+			  
               $cikkszamok = Termekek::model()->findAll($criteria);
 			  
               if(!empty($cikkszamok))

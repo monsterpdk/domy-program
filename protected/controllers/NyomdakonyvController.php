@@ -614,7 +614,7 @@ class NyomdakonyvController extends Controller
 	}	
 	
 	// panton színkódok előregépelős beajánlásának keresője
-	public function actionSearchPantones ($term)
+	public function actionSearchPantones ($anotherParam = null, $term)
 	{
 		if(Yii::app()->request->isAjaxRequest && !empty($term))
         {
