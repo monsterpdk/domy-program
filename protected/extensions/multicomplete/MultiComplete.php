@@ -4,6 +4,8 @@ Yii::import('zii.widgets.jui.CJuiAutoComplete');
 class MultiComplete extends CJuiAutoComplete
 {
     public $splitter = ",";
+	public $anotherParam = '';
+	
 	/**
 	 * Run this widget.
 	 * This method registers necessary javascript and renders the needed HTML code.
@@ -28,7 +30,8 @@ class MultiComplete extends CJuiAutoComplete
 		if($this->sourceUrl!==null)
           {
             $this->source = 'function( request, response ) {$.getJSON( "'.CHtml::normalizeUrl($this->sourceUrl).'", {
-             term: extractLast( request.term )
+             term: extractLast( request.term ),
+			 anotherParam: $("#' . $this -> anotherParam . '").val()
             }, response );
 			}';
           } else {

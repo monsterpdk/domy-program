@@ -146,10 +146,9 @@ class MegrendelesekController extends Controller
 	public function actionMunkakGeneralasaMegrendelesbol($id) {
 		$megrendeles = $this->loadModel($id);
 		$hasError = false;
-		
+
 		// ha létezik a megrendelés és még nincsenek a tételei a nyomdakönyvbe rakva
 		if ($megrendeles != null && $megrendeles->nyomdakonyv_munka_id == 0) {
-			
 			
 		//	foreach ($megrendeles -> tetelek as $tetel) {
 				// leellenőrizzük még minden előtt, hogy tudunk-e megfelelő mennyiségeket foglalni, ha nem, neki se állunk
@@ -233,7 +232,7 @@ class MegrendelesekController extends Controller
 						}
 						//}
 					}
-					
+
 					$megrendeles->nyomdakonyv_munka_id = 1;	// Mivel az egyes tételek kerülnek a nyomdakönyvbe önálló munkákként, nincs értelme egy nyomdakönyv azonosítót letárolni egy megrendeléshez, csak annyit, hogy be vannak-e rakva nyomdakönyvbe a cuccok
 					$megrendeles->save(false);
 				}
