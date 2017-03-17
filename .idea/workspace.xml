@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9c3c2cbd-e2b7-4a8b-8356-ccd519f95097" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/protected/models/StatisztikakTermekeladasStatisztika.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/protected/views/statisztikak/_termekeladasStatisztika.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/protected/views/statisztikak/printTermekeladasStatisztika.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" afterPath="$PROJECT_DIR$/protected/controllers/MegrendelesekController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/NyomdakonyvController.php" afterPath="$PROJECT_DIR$/protected/controllers/NyomdakonyvController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/NyomdakonyvReklamaciokController.php" afterPath="$PROJECT_DIR$/protected/controllers/NyomdakonyvReklamaciokController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" afterPath="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/controllers/TermekekController.php" afterPath="$PROJECT_DIR$/protected/controllers/TermekekController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protected/extensions/multicomplete/MultiComplete.php" afterPath="$PROJECT_DIR$/protected/extensions/multicomplete/MultiComplete.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php" afterPath="$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php" />
-    </list>
+    <list default="true" id="9c3c2cbd-e2b7-4a8b-8356-ccd519f95097" name="Default" comment="" />
     <ignored path="www.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -37,13 +25,16 @@
       <file leaf-file-name="StatisztikakController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/protected/controllers/StatisztikakController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1770">
-              <caret line="3481" column="7" selection-start-line="3481" selection-start-column="0" selection-end-line="3481" selection-end-column="7" />
+            <state relative-caret-position="288">
+              <caret line="4107" column="42" selection-start-line="4107" selection-start-column="26" selection-end-line="4107" selection-end-column="42" />
               <folding>
-                <marker date="1489790966810" expanded="true" signature="220886:221739" placeholder="SELECT dom_m... dom_megrendeles_tetelek" />
-                <marker date="1489790966810" expanded="true" signature="224331:225152" placeholder="SELECT DISTI... dom_raktar_termekek" />
-                <marker date="1489790966810" expanded="true" signature="227535:228586" placeholder="SELECT dom_a... " />
-                <marker date="1489790966810" expanded="true" signature="229114:230238" placeholder="SELECT dom_a... " />
+                <marker date="1489793285873" expanded="true" signature="220886:221739" placeholder="SELECT dom_m... dom_megrendeles_tetelek" />
+                <marker date="1489793285873" expanded="true" signature="224331:225152" placeholder="SELECT DISTI... dom_raktar_termekek" />
+                <marker date="1489793285873" expanded="true" signature="227535:228586" placeholder="SELECT dom_a... " />
+                <marker date="1489793285873" expanded="true" signature="229114:230238" placeholder="SELECT dom_a... " />
+                <marker date="1489793285873" expanded="true" signature="239039:239903" placeholder="SELECT dom_a... dom_raktar_termekek_tranzakciok" />
+                <marker date="1489793285873" expanded="true" signature="245908:246959" placeholder="SELECT dom_a... " />
+                <marker date="1489793285873" expanded="true" signature="247493:248617" placeholder="SELECT dom_a... " />
               </folding>
             </state>
           </provider>
@@ -122,60 +113,9 @@
       <file leaf-file-name="tpl_navigation.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1309">
-              <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
-              <folding>
-                <marker date="1489790966790" expanded="true" signature="9170:11324" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="9206:9478" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="9516:9787" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="9825:10069" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="10107:10372" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="11524:12188" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="11760:12051" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="11796:12024" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="12223:21296" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="12472:21147" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="12489:12793" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="12818:13092" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="13111:13404" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="13423:13711" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="13730:15993" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="13909:15825" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="13947:14183" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="14209:14461" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="14487:14723" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="14749:14994" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="15020:15268" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="15294:15549" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="15575:15807" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="16102:18741" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="16297:18542" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="16335:16577" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="16603:16842" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="16868:17113" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="17139:17393" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="17419:17670" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="17696:17950" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="17976:18240" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="18266:18524" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="18850:19541" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="19050:19353" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="19088:19335" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="19666:20600" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="19847:20431" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="19885:20145" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="20185:20413" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="20619:20878" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="20897:21137" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="21330:22896" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="21572:22753" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="21837:22035" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="22073:22275" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="22292:22507" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="23302:23432" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="23333:23404" placeholder="..." />
-                <marker date="1489790966790" expanded="true" signature="23362:23375" placeholder="..." />
-              </folding>
+            <state relative-caret-position="433">
+              <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -228,11 +168,11 @@
         <option value="$PROJECT_DIR$/protected/models/StatisztikakBeszallitasRendeles.php" />
         <option value="$PROJECT_DIR$/protected/views/statisztikak/printBeszallitasRendeles.php" />
         <option value="$PROJECT_DIR$/protected/views/statisztikak/_beszallitasRendeles.php" />
-        <option value="$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php" />
         <option value="$PROJECT_DIR$/protected/views/statisztikak/_ugyfelRendelesei.php" />
         <option value="$PROJECT_DIR$/protected/models/StatisztikakUgyfelRendelesei.php" />
-        <option value="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" />
         <option value="$PROJECT_DIR$/protected/views/statisztikak/printUgyfelRendelesei.php" />
+        <option value="$PROJECT_DIR$/protected/controllers/StatisztikakController.php" />
+        <option value="$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php" />
       </list>
     </option>
   </component>
@@ -877,12 +817,12 @@
       <workItem from="1489528509890" duration="3840000" />
       <workItem from="1489614847106" duration="8788000" />
       <workItem from="1489662445357" duration="36692000" />
-      <workItem from="1489788204870" duration="3678000" />
+      <workItem from="1489788204870" duration="4536000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="123728000" />
+    <option name="totallyTimeSpent" value="124586000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
@@ -1202,65 +1142,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1309">
-          <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
-          <folding>
-            <marker date="1489790966790" expanded="true" signature="9170:11324" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="9206:9478" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="9516:9787" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="9825:10069" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="10107:10372" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="11524:12188" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="11760:12051" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="11796:12024" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="12223:21296" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="12472:21147" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="12489:12793" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="12818:13092" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="13111:13404" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="13423:13711" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="13730:15993" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="13909:15825" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="13947:14183" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="14209:14461" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="14487:14723" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="14749:14994" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="15020:15268" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="15294:15549" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="15575:15807" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="16102:18741" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="16297:18542" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="16335:16577" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="16603:16842" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="16868:17113" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="17139:17393" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="17419:17670" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="17696:17950" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="17976:18240" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="18266:18524" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="18850:19541" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="19050:19353" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="19088:19335" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="19666:20600" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="19847:20431" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="19885:20145" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="20185:20413" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="20619:20878" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="20897:21137" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="21330:22896" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="21572:22753" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="21837:22035" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="22073:22275" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="22292:22507" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="23302:23432" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="23333:23404" placeholder="..." />
-            <marker date="1489790966790" expanded="true" signature="23362:23375" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/protected/views/statisztikak/_ugyfelRendelesei.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
@@ -1287,6 +1168,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="407">
           <caret line="47" column="28" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1353,15 +1235,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/themes/domy/views/layouts/tpl_navigation.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/protected/controllers/StatisztikakController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1770">
-          <caret line="3481" column="7" selection-start-line="3481" selection-start-column="0" selection-end-line="3481" selection-end-column="7" />
+        <state relative-caret-position="288">
+          <caret line="4107" column="42" selection-start-line="4107" selection-start-column="26" selection-end-line="4107" selection-end-column="42" />
           <folding>
-            <marker date="1489790966810" expanded="true" signature="220886:221739" placeholder="SELECT dom_m... dom_megrendeles_tetelek" />
-            <marker date="1489790966810" expanded="true" signature="224331:225152" placeholder="SELECT DISTI... dom_raktar_termekek" />
-            <marker date="1489790966810" expanded="true" signature="227535:228586" placeholder="SELECT dom_a... " />
-            <marker date="1489790966810" expanded="true" signature="229114:230238" placeholder="SELECT dom_a... " />
+            <marker date="1489793285873" expanded="true" signature="220886:221739" placeholder="SELECT dom_m... dom_megrendeles_tetelek" />
+            <marker date="1489793285873" expanded="true" signature="224331:225152" placeholder="SELECT DISTI... dom_raktar_termekek" />
+            <marker date="1489793285873" expanded="true" signature="227535:228586" placeholder="SELECT dom_a... " />
+            <marker date="1489793285873" expanded="true" signature="229114:230238" placeholder="SELECT dom_a... " />
+            <marker date="1489793285873" expanded="true" signature="239039:239903" placeholder="SELECT dom_a... dom_raktar_termekek_tranzakciok" />
+            <marker date="1489793285873" expanded="true" signature="245908:246959" placeholder="SELECT dom_a... " />
+            <marker date="1489793285873" expanded="true" signature="247493:248617" placeholder="SELECT dom_a... " />
           </folding>
         </state>
       </provider>
