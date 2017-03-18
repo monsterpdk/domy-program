@@ -3179,7 +3179,7 @@ class StatisztikakController extends Controller
 		if ($model != null) {
 			$sql = 
 			"
-				SELECT DISTINCT dom_raktar_termekek.id, dom_anyagbeszallitas_termekek.termek_id AS termek_id, REPLACE (FORMAT( ROUND (dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS keszlet_darabszam, REPLACE (FORMAT( ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS netto_ertek FROM dom_raktar_termekek
+				SELECT DISTINCT dom_raktar_termekek.id, dom_anyagbeszallitas_termekek.termek_id AS termek_id, REPLACE (FORMAT( ROUND (dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS keszlet_darabszam, dom_raktar_termekek.osszes_db AS keszlet_darabszam_formazatlan, ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db) AS netto_ertek_formazatlan, REPLACE (FORMAT( ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS netto_ertek FROM dom_raktar_termekek
 				
 				INNER JOIN dom_anyagbeszallitasok ON
 				dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
@@ -3197,6 +3197,8 @@ class StatisztikakController extends Controller
 			$elfekvoTermekek = $command->queryAll();
 
 			if ($elfekvoTermekek != null) {
+				$osszesElfekvoDb = 0;
+				$osszesNettoErtek = 0;
 				foreach ($elfekvoTermekek as &$elfekvoTermek) {
 					$termek = Termekek::model() ->findByPk ($elfekvoTermek['termek_id']);
 					
@@ -3204,6 +3206,9 @@ class StatisztikakController extends Controller
 						$elfekvoTermek['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
 						$elfekvoTermek['cikkszam'] = $termek -> cikkszam;
 						$elfekvoTermek['gyarto'] = $termek -> gyarto -> cegnev;
+						
+						$osszesElfekvoDb += $elfekvoTermek['keszlet_darabszam_formazatlan'];
+						$osszesNettoErtek += round($elfekvoTermek['netto_ertek_formazatlan']);
 					}
 				}
 			}
@@ -3218,9 +3223,12 @@ class StatisztikakController extends Controller
 			$mPDF1->packTableData = true;
 
 			$mPDF1->SetHtmlHeader("Elfekvő termékek");
-			
+
 			# render
-			$mPDF1->WriteHTML($this->renderPartial('printElfekvoTermekek', array('dataProvider' => $dataProvider, 'model' => $model), true));
+			$mPDF1->WriteHTML($this->renderPartial('printElfekvoTermekek', array('dataProvider' => $dataProvider, 'model' => $model,
+			'osszesElfekvoDb' => Utils::DarabszamFormazas($osszesElfekvoDb),
+			'osszesNettoErtek' => Utils::DarabszamFormazas($osszesNettoErtek),
+			), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
@@ -3508,6 +3516,8 @@ class StatisztikakController extends Controller
 		set_time_limit(0);
 		$resultArray = array();
 		
+		$time_start = microtime(true);
+		
 		// mivel kliens oldalon bármit beírhattak a cikkszámválasztóba, ezért itt szerver oldalon is ellenőrizni kell,
 		// hogy valóban a termékcsoporthoz tartozó cikkszámok lettek-e beírva (ha ki van töltve persze a termékcsoport)
 		$cikkszamokSqlWhere = '';
@@ -3536,7 +3546,7 @@ class StatisztikakController extends Controller
 				}
 			}
 		}
-		
+
 		// összerakjuk a szűrőfeltételek alapján az SQL where-es párját
 		$sqlWhere = '';
 		$sqlWhere .= ($termekcsoportId == '') ? '' : ' AND dom_termekek.termekcsoport_id = :termekcsoportId';
@@ -3547,14 +3557,19 @@ class StatisztikakController extends Controller
 			// az összes, ide vonatkozó tranzakciós tétel lekérdezése
 			$sqlTranzakciok =
 			"
-				SELECT 
-				
+				SELECT
+					dom_raktar_termekek_tranzakciok.id AS tranzakcio_id,
+					dom_szallitolevelek.id,
 					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
 					dom_raktar_termekek_tranzakciok.termek_id AS termek_id,
+					dom_termekek.cikkszam AS cikkszam,
 					dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam * -1 AS darabszam,
 					dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id AS szallitolevel_id,
 					dom_termekcsoportok.nev AS termekcsoport,
-					dom_termekek.cikkszam AS cikkszam
+					dom_megrendeles_tetelek.termek_id AS megrendeles_tetel_termek_id,
+					dom_megrendeles_tetelek.netto_darabar AS megrendeles_tetel_netto_darabar,
+					dom_szallitolevel_tetelek.darabszam AS szallitolevel_tetel_darabszam,
+					dom_megrendelesek.megrendeles_forras_id AS megrendeles_forras_id
 					
 				FROM dom_raktar_termekek_tranzakciok
 
@@ -3567,12 +3582,27 @@ class StatisztikakController extends Controller
 				INNER JOIN dom_termekcsoportok ON
 				dom_termekek.termekcsoport_id = dom_termekcsoportok.id
 
-				WHERE dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0 " . $sqlWhere . "
+				LEFT OUTER JOIN dom_szallitolevelek ON
+				dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id=dom_szallitolevelek.id
+
+				INNER JOIN dom_szallitolevel_tetelek ON
+				dom_szallitolevelek.id=dom_szallitolevel_tetelek.szallitolevel_id
+		
+				INNER JOIN dom_megrendeles_tetelek ON
+				dom_szallitolevel_tetelek.megrendeles_tetel_id=dom_megrendeles_tetelek.id
 				
-				ORDER BY cikkszam
+				INNER JOIN dom_megrendelesek ON
+				dom_megrendeles_tetelek.megrendeles_id=dom_megrendelesek.id
+
+				WHERE dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0 AND dom_szallitolevelek.datum >= :mettol AND dom_szallitolevelek.datum <= :meddig" . $sqlWhere . "
+				
+				ORDER BY cikkszam, termek_id
 			";
 			
 			$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+			$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+			$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
+			
 			if ($termekcsoportId != '') {
 				$commandTranzakcio->bindParam(':termekcsoportId', $termekcsoportId);
 			}			
@@ -3584,46 +3614,24 @@ class StatisztikakController extends Controller
 			// ez sajnos nem 100%-os, de a most mentett adatokat felhasználva csak így tudtam megoldani
 			if ($eladasTetelek != null) {
 				foreach ($eladasTetelek as &$eladasTetel) {
-					$szallitolevel = Szallitolevelek::model()->findByPk ($eladasTetel['szallitolevel_id']);
-					
-					if ($szallitolevel != null) {
-						if ($szallitolevel -> datum >= $model -> statisztika_mettol && $szallitolevel -> datum <= $model -> statisztika_meddig) {
-
-							$osszeg = null;
-							foreach ($szallitolevel->tetelek as $szallitoTetel) {
-								$megrendelesTetel = $szallitoTetel->megrendeles_tetel;
-								
-								if ($megrendelesTetel != null) {
-									$megrendeles = $szallitoTetel->megrendeles_tetel->megrendeles;
-									
-									if ($aruhazId == '' || ($aruhazId != '' && $megrendeles->megrendeles_forras_id == $aruhazId)) {
-										if ($megrendelesTetel->termek_id == $eladasTetel['termek_id'] && $szallitoTetel->darabszam == $eladasTetel['darabszam']) {
-											// komplett termék ID és darabszám találat
-											$osszeg = $megrendelesTetel->netto_darabar;
-											break;
-										} else if ( ($osszeg == null && $megrendelesTetel->termek_id == $eladasTetel['termek_id'])) {
-											// elsőnek talált termék ID, ami egyezik a keresettel
-											$osszeg = $megrendelesTetel->netto_darabar;
-										}
-									}
-								}
+					$osszeg = null;
+					if ($eladasTetel['megrendeles_tetel_termek_id'] != null) {
+						if ($aruhazId == '' || ($aruhazId != '' && $eladasTetel['megrendeles_forras_id'] == $aruhazId)) {
+							if ($eladasTetel['megrendeles_tetel_termek_id'] == $eladasTetel['termek_id'] && $eladasTetel['szallitolevel_tetel_darabszam'] == $eladasTetel['darabszam']) {
+								// komplett termék ID és darabszám találat
+								$osszeg = $eladasTetel['megrendeles_tetel_netto_darabar'];
+							} else if ( ($osszeg == null && $eladasTetel['megrendeles_tetel_termek_id'] == $eladasTetel['termek_id'])) {
+								// elsőnek talált termék ID, ami egyezik a keresettel
+								$osszeg = $eladasTetel['megrendeles_tetel_netto_darabar'];
 							}
-							
-							if ($osszeg != null) {
-								$eladasTetel['osszeg'] = $osszeg * $eladasTetel['darabszam'];
-								unset($osszeg);
-							} else {
-								$eladasTetel['osszeg'] = 0;
-							}
-
-						} else {
-							$eladasTetel['osszeg'] = 0;
 						}
-					} else {
-						$eladasTetel['osszeg'] = -1;
 					}
 					
-					unset($szallitolevel);
+					if ($osszeg != null) {
+						$eladasTetel['osszeg'] = $osszeg * $eladasTetel['darabszam'];
+					} else {
+						$eladasTetel['osszeg'] = 0;
+					}
 				}
 				
 				unset($eladasTetel);
@@ -3632,14 +3640,20 @@ class StatisztikakController extends Controller
 			// az eladások mellé keresünk árat a beszállításokból, ami a haszon kalkulálásához kell
 			if ($eladasTetelek != null) {
 				
+				$anyagbeszallitasTermek = null;
+				$feldolgozottTranzakciok = array();
 				foreach ($eladasTetelek as $eladasTetel) {
-					$termek = Termekek::model() ->findByPk ($eladasTetel['termek_id']);
-					
+					if (!in_array($eladasTetel['tranzakcio_id'], $feldolgozottTranzakciok)) {
+						array_push ($feldolgozottTranzakciok, $eladasTetel['tranzakcio_id']);
+						
+						$termek = Termekek::model() ->findByPk ($eladasTetel['termek_id']);
+						$anyagbeszallitasTermek = AnyagbeszallitasTermekek::model() ->findByAttributes (array('anyagbeszallitas_id' => $eladasTetel['anyagbeszallitas_id'], 'termek_id' => $eladasTetel['termek_id']));
+					}						
+
 					if ($termek != null) {
 						$eladasTetel['termek_nev'] = $termek -> getDisplayTermekTeljesNev();
 					}
 					
-					$anyagbeszallitasTermek = AnyagbeszallitasTermekek::model() ->findByAttributes (array('anyagbeszallitas_id' => $eladasTetel['anyagbeszallitas_id'], 'termek_id' => $eladasTetel['termek_id']));
 					if ($anyagbeszallitasTermek != null) {
 						$eladasTetel['bevetelOsszeg'] = $anyagbeszallitasTermek -> netto_darabar * $eladasTetel['darabszam'];
 					} else {
@@ -3649,6 +3663,7 @@ class StatisztikakController extends Controller
 					if ($eladasTetel['osszeg'] > 0) {
 						array_push($resultArray, $eladasTetel);
 					}
+
 				}
 			
 				// kézzel megcsináljuk az egyes tételekre a SUM műveletet (összeg + darabszám)
@@ -3674,19 +3689,21 @@ class StatisztikakController extends Controller
 					array_push($eladasokLista, $resultArray[$i]);
 				}
 
-				$osszesBeszerzesiErtek = 0;
-				$osszesEladasiErtek = 0;
+				$osszesNettoErtek = 0;
+				$osszesBeszerzesiAr = 0;
 				$osszesHaszon = 0;
 				
 				foreach ($eladasokLista as $i => $resultItem) {
 					// összegző számolása
-					//$osszesBeszerzesiErtek += $resultArray[$i]['osszeg'];
-					//$osszesEladasiErtek += $resultArray[$i]['eladas_osszeg'];
+					$osszesNettoErtek += round($eladasokLista[$i]['osszeg']);
+					$osszesBeszerzesiAr += round($eladasokLista[$i]['bevetelOsszeg']);
+					$osszesHaszon += round($eladasokLista[$i]['osszeg'] - $eladasokLista[$i]['bevetelOsszeg']);
 					
 					// szám formázások
 					$eladasokLista[$i]['haszon'] = Utils::DarabszamFormazas($eladasokLista[$i]['osszeg'] - $eladasokLista[$i]['bevetelOsszeg']);
 					$eladasokLista[$i]['osszeg'] = Utils::DarabszamFormazas($eladasokLista[$i]['osszeg']);
 					$eladasokLista[$i]['darabszam'] = Utils::DarabszamFormazas($eladasokLista[$i]['darabszam']);
+					$eladasokLista[$i]['bevetelOsszeg'] = Utils::DarabszamFormazas($eladasokLista[$i]['bevetelOsszeg']);
 				}
 				unset($resultItem);
 				
@@ -3700,7 +3717,11 @@ class StatisztikakController extends Controller
 			$mPDF1->SetHtmlHeader("Termékeladás statisztika: " . $model->statisztika_mettol . " - " . $model->statisztika_meddig);
 			
 			# render
-			$mPDF1->WriteHTML($this->renderPartial('printTermekeladasStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,), true));
+			$mPDF1->WriteHTML($this->renderPartial('printTermekeladasStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+			'osszesNettoErtek' => Utils::DarabszamFormazas($osszesNettoErtek),
+			'osszesBeszerzesiAr' => Utils::DarabszamFormazas($osszesBeszerzesiAr),
+			'osszesHaszon' => Utils::DarabszamFormazas($osszesHaszon),
+			), true));
 
 			# Outputs ready PDF
 			$mPDF1->Output();

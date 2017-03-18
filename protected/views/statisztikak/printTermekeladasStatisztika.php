@@ -128,6 +128,11 @@
 						   'htmlOptions'=>array('style' => 'text-align: right;'),
 						),
 						array(
+						   'header'=>'Beszerzési ár (Ft)',
+						   'name'=>'bevetelOsszeg',
+						   'htmlOptions'=>array('style' => 'text-align: right;'),
+						),
+						array(
 						   'header'=>'Haszon (Ft)',
 						   'name'=>'haszon',
 						   'htmlOptions'=>array('style' => 'text-align: right;'),
@@ -137,19 +142,17 @@
 
 ?>	
 
-<!--
 <p align='right'>
-	<strong>Összes beszerzési érték: <?php echo $osszesBeszerzesiErtek; ?> Ft</strong>
+	<strong>Összes nettó érték: <?php echo $osszesNettoErtek; ?> Ft</strong>
 </p>
 
 <p align='right'>
-	<strong>Összes eladási érték: <?php echo $osszesEladasiErtek; ?> Ft</strong>
+	<strong>Összes beszerzési érték: <?php echo $osszesBeszerzesiAr; ?> Ft</strong>
 </p>
 
 <p align='right'>
 	<strong>Összes haszon: <?php echo $osszesHaszon; ?> Ft</strong>
 </p>
--->
 
 <htmlpagefooter name="myFooter2" style="display:none">
 

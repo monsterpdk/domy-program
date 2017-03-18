@@ -93,6 +93,14 @@
 
 ?>	
 
+<p align='right'>
+	<strong>Összes elfekvő termék: <?php echo $osszesElfekvoDb; ?> db</strong>
+</p>
+
+<p align='right'>
+	<strong>Összes nettó érték: <?php echo $osszesNettoErtek; ?> Ft</strong>
+</p>
+			
 <htmlpagefooter name="myFooter2" style="display:none">
 
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
