@@ -3561,6 +3561,7 @@ class StatisztikakController extends Controller
 					dom_raktar_termekek_tranzakciok.id AS tranzakcio_id,
 					dom_szallitolevelek.id,
 					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
+					dom_anyagbeszallitasok.beszallitas_datum,
 					dom_raktar_termekek_tranzakciok.termek_id AS termek_id,
 					dom_termekek.cikkszam AS cikkszam,
 					dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam * -1 AS darabszam,
@@ -3689,11 +3690,38 @@ class StatisztikakController extends Controller
 					array_push($eladasokLista, $resultArray[$i]);
 				}
 
+				// formázzuk az összegeket, valamint megpróbáljuk pótolni a hiányzó termékárakat
 				$osszesNettoErtek = 0;
 				$osszesBeszerzesiAr = 0;
 				$osszesHaszon = 0;
 				
+				// tömbbe rakjuk az összes termékárat, hogy ne DB-hez nyúljunk minden lépésnél, hanem a memóriából gyorsan elérhető legyen, amire szükség van
+				// nem activerecord-ot használunk, hanem sima tömbös megoldást, az kevésbé erőforrásigényes
+				$sqlTermekArak =
+				"
+					SELECT
+						termek_id,
+						db_beszerzesi_ar,
+						datum_mettol,
+						datum_meddig
+					FROM dom_termek_arak
+				";
+				
+				$commandTermekArak = Yii::app()->db->createCommand($sqlTermekArak);
+				$termekArak = $commandTermekArak->queryAll();
+				
 				foreach ($eladasokLista as $i => $resultItem) {
+					if ($eladasokLista[$i]['bevetelOsszeg'] == 0) {
+						// nincs ár az anyagbeszállítás termék rekordban, ezért kikeressük a termékár listából, ha ott nincs, akkor marad 0
+						foreach ($termekArak as $termekAr) {
+							if ($resultItem['beszallitas_datum'] >= $termekAr['datum_mettol'] && $resultItem['beszallitas_datum'] <= $termekAr['datum_meddig'] && $termekAr['termek_id'] == $resultItem['termek_id']) {
+								// megtaláltuk a termékárat: beírjuk az adott tömbelembe és kilépünk a ciklusból
+								$eladasokLista[$i]['bevetelOsszeg'] = $termekAr['db_beszerzesi_ar'] * $resultItem['darabszam'];
+								break;
+							}
+						}
+					}
+					
 					// összegző számolása
 					$osszesNettoErtek += round($eladasokLista[$i]['osszeg']);
 					$osszesBeszerzesiAr += round($eladasokLista[$i]['bevetelOsszeg']);
