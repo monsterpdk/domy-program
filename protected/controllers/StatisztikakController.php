@@ -3744,7 +3744,7 @@ class StatisztikakController extends Controller
 				INNER JOIN dom_gyartok ON
 				dom_termekek.gyarto_id = dom_gyartok.id
 
-				WHERE dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig AND darabszam > 0 " . $gyartoSzures . " 
+				WHERE dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig AND darabszam > 0 
 
 				GROUP BY dom_anyagbeszallitasok.id, ev, ho, gyarto, termek_id
 
@@ -3754,9 +3754,6 @@ class StatisztikakController extends Controller
         $command->bindParam(':mettol', $mettol);
         $command->bindParam(':meddig', $meddig);
 
-        if ($gyartoSzures != "") {
-            $command->bindParam(':gyarto_id', $model -> gyarto_id);
-        }
         $beszallitasTetelek = $command->queryAll();
 
         // az összes, ide vonatkozó tranzakciós tétel lekérdezése
@@ -3865,6 +3862,7 @@ class StatisztikakController extends Controller
                         unset($eladas_tipus);
                     } else {
                         $eladasTetel['osszeg'] = 0;
+                        $eladasTetel['eladas_tipus'] = "eladas" ;
                     }
                 }
 
