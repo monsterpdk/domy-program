@@ -4262,6 +4262,9 @@ class StatisztikakController extends Controller
                             $megrendeles_tetel = array() ;
                             $megrendeles_tetel["munka_nev"] = $sor2->munka_neve ;
                             $megrendeles_tetel["termek_nev"] = $sor2->termek->getDisplayTermekTeljesNev() ;
+							if ($sor2->hozott_boritek == 1) {
+								$megrendeles_tetel["termek_nev"] = "Hozott " . $megrendeles_tetel["termek_nev"] ;
+							}
                             $megrendeles_tetel["darabszam"] = $sor2->darabszam ;
                             $megrendeles_tetel["szin"] = $sor2->szinek_szama1 . "+" . $sor2->szinek_szama2 ;
                             $megrendeles_tetel["netto_darabar"] = $sor2->netto_darabar ;
