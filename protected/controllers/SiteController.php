@@ -32,6 +32,9 @@ class SiteController extends Controller
 		if (isset($_GET["mode"]) && $_GET["mode"] == "sync") {
 			Utils::adatszinkronizacio() ;
 		}
+		else if (isset($_GET["mode"]) && $_GET["mode"] == "statisztika_general") {
+			Utils::statisztika_generalas_cachebe() ;
+		}
 		else {
 			$this->render('index');
 		}
@@ -58,6 +61,9 @@ class SiteController extends Controller
 	{
 		if (isset($_GET["mode"]) && $_GET["mode"] == "sync") {
 			Utils::adatszinkronizacio() ;
+		}
+		else if (isset($_GET["mode"]) && $_GET["mode"] == "statisztika_general") {
+			Utils::statisztika_generalas_cachebe() ;
 		}
 		$model=new LoginForm;
 

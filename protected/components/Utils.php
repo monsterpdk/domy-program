@@ -2240,7 +2240,24 @@
 			fwrite($fp, date("Y-m-d H:i:s") . ": lefutott\n");
 			fclose($fp);
 		}
-		
+
+		function statisztika_generalas_cachebe() {
+			$statisztikak_controller = Yii::app()->createController('Statisztikak');
+			$statisztika_controller = $statisztikak_controller[0] ;
+			//Napi statisztika generálás
+			$statisztika_controller->actionNapiKombinaltStatisztikaPrintPDF("", "", true) ;
+			//Havi "napi" statisztika generálás
+			$mettol_datum = date('Y-m-01');
+			$meddig_datum = date("Y-m-d");
+			$statisztika_controller->actionNapiKombinaltStatisztikaPrintPDF($mettol_datum, $meddig_datum, true) ;
+			//Előző havi "napi" statisztika generálás
+			$mettol_date = new DateTime("first day of last month");
+			$meddig_date = new DateTime("last day of last month");
+			$mettol_datum = $mettol_date->format('Y-m-d');
+			$meddig_datum = $meddig_date->format('Y-m-d');
+			$statisztika_controller->actionNapiKombinaltStatisztikaPrintPDF($mettol_datum, $meddig_datum, true) ;
+		}
+
 		/**
 		* Újragenerálja a dom_raktar_termekek és a dom_raktar_termekek_tranzakciok táblák tartalmát.
 		**/

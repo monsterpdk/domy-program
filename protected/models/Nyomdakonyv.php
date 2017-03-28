@@ -282,8 +282,8 @@ class Nyomdakonyv extends CActiveRecord
 			
 			'display_normaido' => 'Normaidő',
 			'display_normaar' => 'Normaár',
-			'darabszam_tol_search' =>'Daradbszám -tól',
-			'darabszam_search' =>'Daradbszám tól-ig',
+			'darabszam_tol_search' =>'Darabszám -tól',
+			'darabszam_search' =>'Darabszám tól-ig',
 			'szinszam1_search' => 'Előoldal színszám tól-ig',
 			'szinszam2_search' => 'Hátoldal színszám tól-ig',
 			'folyamatban_levo_muvelet' => 'Folyamatban lévő művelet',
@@ -549,3 +549,4 @@ class Nyomdakonyv extends CActiveRecord
 	}
 	
 }
+

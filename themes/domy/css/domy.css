@@ -79,6 +79,7 @@ and (min-width : 1824px) {
 table.detail-view td {font-size:12px;}
 h1,h2,h3,h4, .portlet > .portlet-decoration, .sidebar-nav > ul > li > a, .navbar a, th{
 	font-family: 'Carrois Gothic', sans-serif;
+	text-decoration: none;
 }
 
 .portlet > .portlet-decoration, .sidebar-nav > ul > li > a, .navbar li > a, th{
