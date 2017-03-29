@@ -3304,21 +3304,19 @@ class StatisztikakController extends Controller
 			);
 		}
 	}
-	
-	// a kapott model alapján összeállítja a sztornózott megrendelések PDF-ét
-	public function beszallitoiStatisztikaPrintPDF ($model) {
-		set_time_limit(0);
-		$resultArray = array();
-		
+
+	private function beszallitoiStatisztikaGeneral($model)
+	{
+		$resultArray = array() ;
 		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
 		if ($model != null) {
 			// beszállítás tételek lekérdezése
-			$gyartoSzures = $model -> gyarto_id != null && $model -> gyarto_id != "" ? " AND dom_termekek.gyarto_id = :gyarto_id " : "";
+			$gyartoSzures = $model->gyarto_id != null && $model->gyarto_id != "" ? " AND dom_termekek.gyarto_id = :gyarto_id " : "";
 
 			Yii::app()->db->createCommand("SET lc_time_names = 'hu_HU';")->execute();
-			
-			$sqlBeszallitasok = 
-			"
+
+			$sqlBeszallitasok =
+				"
 				SELECT
 				
 					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
@@ -3346,22 +3344,22 @@ class StatisztikakController extends Controller
 
 				ORDER BY ev, ho, gyarto
 			";
-			
+
 			$command = Yii::app()->db->createCommand($sqlBeszallitasok);
-			$command->bindParam(':mettol', $model -> statisztika_mettol);
-			$command->bindParam(':meddig', $model -> statisztika_meddig);
-			
+			$command->bindParam(':mettol', $model->statisztika_mettol);
+			$command->bindParam(':meddig', $model->statisztika_meddig);
+
 			if ($gyartoSzures != "") {
-				$command->bindParam(':gyarto_id', $model -> gyarto_id);
+				$command->bindParam(':gyarto_id', $model->gyarto_id);
 			}
-			
+
 			$beszallitasTetelek = $command->queryAll();
 
 			// az összes, ide vonatkozó tranzakciós tétel lekérdezése
 			Yii::app()->db->createCommand("SET lc_time_names = 'hu_HU';")->execute();
-			
+
 			$sqlTranzakciok =
-			"
+				"
 				SELECT 
 				
 					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
@@ -3389,21 +3387,21 @@ class StatisztikakController extends Controller
 					WHERE  dom_anyagbeszallitasok.beszallitas_datum >= :mettol AND dom_anyagbeszallitasok.beszallitas_datum <= :meddig
 				)
 			";
-			
+
 			$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
-			$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
-			$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
-			
+			$commandTranzakcio->bindParam(':mettol', $model->statisztika_mettol);
+			$commandTranzakcio->bindParam(':meddig', $model->statisztika_meddig);
+
 			$eladasTetelek = $commandTranzakcio->queryAll();
 
 			// kikeressük az eladott termékek mellé az összegeket
 			// ha találunk a szállítólevélen darabra pontos tételt, akkor azét vesszük, ha nem, akkor az első olyan szállítólevél tételét, aminek a termék ID-ja egyezett az eladott darabéval
 			// ez sajnos nem 100%-os, de a most mentet adatokat felhasználva csak így tudtam megoldani
-			
+
 			if ($eladasTetelek != null) {
 				foreach ($eladasTetelek as &$eladasTetel) {
-					$szallitolevel = Szallitolevelek::model()->findByPk ($eladasTetel['szallitolevel_id']);
-					
+					$szallitolevel = Szallitolevelek::model()->findByPk($eladasTetel['szallitolevel_id']);
+
 					if ($szallitolevel != null) {
 						$osszeg = null;
 						foreach ($szallitolevel->tetelek as $szallitoTetel) {
@@ -3413,13 +3411,13 @@ class StatisztikakController extends Controller
 									// komplett termék ID és darabszám találat
 									$osszeg = $megrendelesTetel->netto_darabar;
 									break;
-								} else if ( ($osszeg == null && $megrendelesTetel->termek_id == $eladasTetel['termek_id'])) {
+								} else if (($osszeg == null && $megrendelesTetel->termek_id == $eladasTetel['termek_id'])) {
 									// elsőnek talált termék ID, ami egyezk a keresettel
 									$osszeg = $megrendelesTetel->netto_darabar;
 								}
 							}
 						}
-						
+
 						if ($osszeg != null) {
 							$eladasTetel['osszeg'] = $osszeg * $eladasTetel['darabszam'];
 							unset($osszeg);
@@ -3427,11 +3425,11 @@ class StatisztikakController extends Controller
 							$eladasTetel['osszeg'] = 0;
 						}
 					}
-					
+
 					unset($szallitolevel);
 				}
 			}
-			
+
 			// beszállítások és eladások összefésülés
 			if ($beszallitasTetelek != null) {
 				foreach ($beszallitasTetelek as &$beszallitasTetel) {
@@ -3439,7 +3437,7 @@ class StatisztikakController extends Controller
 					$beszallitasTetel['eladas_darabszam'] = 0;
 
 					$beszallitasTetel['haszon'] = 0;
-					
+
 					if ($eladasTetelek != null) {
 						foreach ($eladasTetelek as $eladasTetel) {
 							if ($beszallitasTetel['anyagbeszallitas_id'] == $eladasTetel['anyagbeszallitas_id'] &&
@@ -3447,52 +3445,52 @@ class StatisztikakController extends Controller
 								$beszallitasTetel['ho'] == $eladasTetel['ho'] &&
 								$beszallitasTetel['gyarto'] == $eladasTetel['gyarto'] &&
 								$beszallitasTetel['termek_id'] == $eladasTetel['termek_id']
-								) {
-									if (!array_key_exists('eladas_osszeg', $beszallitasTetel)) {
-										$beszallitasTetel['eladas_osszeg'] = 0;
-									}
-									$beszallitasTetel['eladas_osszeg'] += $eladasTetel['osszeg'];
-									
-									if (!array_key_exists('eladas_darabszam', $beszallitasTetel)) {
-										$beszallitasTetel['eladas_darabszam'] = 0;
-									}
-									$beszallitasTetel['eladas_darabszam'] += $eladasTetel['darabszam'];
+							) {
+								if (!array_key_exists('eladas_osszeg', $beszallitasTetel)) {
+									$beszallitasTetel['eladas_osszeg'] = 0;
 								}
+								$beszallitasTetel['eladas_osszeg'] += $eladasTetel['osszeg'];
+
+								if (!array_key_exists('eladas_darabszam', $beszallitasTetel)) {
+									$beszallitasTetel['eladas_darabszam'] = 0;
+								}
+								$beszallitasTetel['eladas_darabszam'] += $eladasTetel['darabszam'];
+							}
 						}
 					}
-			
+
 				}
 				unset($beszallitasTetel);
-				
+
 				// kézzel megcsináljuk az egyes tételekre a SUM műveletet (összeg + darabszám)
 				$elozoRekord = null;
-				
+
 				foreach ($beszallitasTetelek as $i => $beszallitasTetel) {
-					$termek = Termekek::model() ->findByPk ($beszallitasTetel['termek_id']);
-					$beszallitasTetel['termek_nev'] = $termek != null ? $termek -> getDisplayTermekTeljesNev() : "";
+					$termek = Termekek::model()->findByPk($beszallitasTetel['termek_id']);
+					$beszallitasTetel['termek_nev'] = $termek != null ? $termek->getDisplayTermekTeljesNev() : "";
 
 					$beszallitasTetel['haszon'] = $beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg'];
-					
+
 					if ($elozoRekord != null) {
 						if (
-								$beszallitasTetel['anyagbeszallitas_id'] == $elozoRekord['anyagbeszallitas_id'] &&
-								$beszallitasTetel['ev'] == $elozoRekord['ev'] &&
-								$beszallitasTetel['ho'] == $elozoRekord['ho'] &&
-								$beszallitasTetel['gyarto'] == $elozoRekord['gyarto'] &&
-								$beszallitasTetel['termek_id'] == $elozoRekord['termek_id']
-								) {
-									$beszallitasTetel['osszeg'] += $elozoRekord['osszeg'];
-									$beszallitasTetel['darabszam'] += $elozoRekord['darabszam'];
-									$beszallitasTetel['eladas_osszeg'] += $elozoRekord['eladas_osszeg'];
-									$beszallitasTetel['eladas_darabszam'] += $elozoRekord['eladas_darabszam'];
-									
-									$beszallitasTetel['haszon'] = $beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg'];
-									
-									$elozoRekord = $beszallitasTetel;
-									array_pop($resultArray);
-									//unset($beszallitasTetelek[$i]);
-								}
-					} 
+							$beszallitasTetel['anyagbeszallitas_id'] == $elozoRekord['anyagbeszallitas_id'] &&
+							$beszallitasTetel['ev'] == $elozoRekord['ev'] &&
+							$beszallitasTetel['ho'] == $elozoRekord['ho'] &&
+							$beszallitasTetel['gyarto'] == $elozoRekord['gyarto'] &&
+							$beszallitasTetel['termek_id'] == $elozoRekord['termek_id']
+						) {
+							$beszallitasTetel['osszeg'] += $elozoRekord['osszeg'];
+							$beszallitasTetel['darabszam'] += $elozoRekord['darabszam'];
+							$beszallitasTetel['eladas_osszeg'] += $elozoRekord['eladas_osszeg'];
+							$beszallitasTetel['eladas_darabszam'] += $elozoRekord['eladas_darabszam'];
+
+							$beszallitasTetel['haszon'] = $beszallitasTetel['eladas_osszeg'] - $beszallitasTetel['osszeg'];
+
+							$elozoRekord = $beszallitasTetel;
+							array_pop($resultArray);
+							//unset($beszallitasTetelek[$i]);
+						}
+					}
 
 					$elozoRekord = $beszallitasTetel;
 					array_push($resultArray, $beszallitasTetel);
@@ -3501,12 +3499,12 @@ class StatisztikakController extends Controller
 				$osszesBeszerzesiErtek = 0;
 				$osszesEladasiErtek = 0;
 				$osszesHaszon = 0;
-				
+
 				foreach ($resultArray as &$resultItem) {
 					// összegző számolása
 					$osszesBeszerzesiErtek += $resultItem['osszeg'];
 					$osszesEladasiErtek += $resultItem['eladas_osszeg'];
-					
+
 					// szám formázások
 					$resultItem['haszon'] = Utils::DarabszamFormazas($resultItem['eladas_osszeg'] - $resultItem['osszeg']);
 					$resultItem['osszeg'] = Utils::DarabszamFormazas($resultItem['osszeg']);
@@ -3516,20 +3514,53 @@ class StatisztikakController extends Controller
 				}
 
 			}
+		}
+		return $resultArray ;
+	}
+	
+	// a kapott model alapján összeállítja a sztornózott megrendelések PDF-ét
+	public function beszallitoiStatisztikaPrintPDF ($model, $mentes_cachebe = false) {
+		set_time_limit(0);
+		$resultArray = array();
 
-			$dataProvider = new CArrayDataProvider($resultArray, array('pagination' => false));
-			
+		$eredmeny_cacheben = StatisztikaCache::model()->find("statisztika_nev = :statisztika_nev and datum_mettol = :datum_mettol and datum_meddig = :datum_meddig and parameterek = :parameterek", array("statisztika_nev" => "beszallitoi_statisztika", "datum_mettol" => $model->statisztika_mettol, "datum_meddig" => $model->statisztika_meddig, "parameterek" => "gyarto_id=" . $model->gyarto_id));
+		if ($mentes_cachebe && count($eredmeny_cacheben) > 0) {
+			$eredmeny_cacheben->delete();
+			$eredmeny_cacheben = array();
+		}
+		if (count($eredmeny_cacheben) > 0) {
+			$resultArray = json_decode($eredmeny_cacheben["eredmeny"], true) ;
+		}
+		else {
+			$resultArray = $this->beszallitoiStatisztikaGeneral($model);
+		}
+
+		$dataProvider = new CArrayDataProvider($resultArray, array('pagination' => false));
+
+		if (!$mentes_cachebe) {
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
 			$mPDF1->SetHtmlHeader("Beszállítói statisztika: " . $model->statisztika_mettol . " - " . $model->statisztika_meddig);
-			
+
 			# render
 			$mPDF1->WriteHTML($this->renderPartial('printBeszallitoiStatisztika', array('dataProvider' => $dataProvider, 'model' => $model, 'osszesBeszerzesiErtek' => Utils::DarabszamFormazas($osszesBeszerzesiErtek), 'osszesEladasiErtek' => Utils::DarabszamFormazas($osszesEladasiErtek), 'osszesHaszon' => Utils::DarabszamFormazas($osszesEladasiErtek - $osszesBeszerzesiErtek)), true));
 
 			# Outputs ready PDF
 			$mPDF1->Output();
 		}
+		else
+		{
+			$eredmeny_json = json_encode($resultArray) ;
+			$stat_cache = new StatisztikaCache ;
+			$stat_cache->statisztika_nev = "beszallitoi_statisztika" ;
+			$stat_cache->datum_mettol = $model -> statisztika_mettol ;
+			$stat_cache->datum_meddig = $model -> statisztika_meddig ;
+			$stat_cache->parameterek = "gyarto_id=" . $model->gyarto_id ;
+			$stat_cache->eredmeny = $eredmeny_json ;
+			$stat_cache->save() ;
+		}
+
 	}
 
 	// termékeladás statisztika felületét kezeli

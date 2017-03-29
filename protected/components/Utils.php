@@ -2254,16 +2254,64 @@
 			$statisztika_controller = $statisztikak_controller[0];
 			//Napi statisztika generálás
 			$statisztika_controller->actionNapiKombinaltStatisztikaPrintPDF("", "", true);
-			//Havi "napi" statisztika generálás
-			$mettol_datum = date('Y-m-01');
-			$meddig_datum = date("Y-m-d");
+			//Havi "napi" és beszállítói statisztika generálás
+			$mettol_date = new DateTime("first day of this month");
+			$meddig_date = new DateTime("last day of this month");
+			$mettol_datum = $mettol_date->format('Y-m-d');
+			$meddig_datum = $meddig_date->format('Y-m-d');
 			$statisztika_controller->actionNapiKombinaltStatisztikaPrintPDF($mettol_datum, $meddig_datum, true);
-			//Előző havi "napi" statisztika generálás
+			$beszallito_stat_model = new StatisztikakBeszallitoiStatisztika;
+			$beszallito_stat_model->statisztika_mettol = $mettol_datum;
+			$beszallito_stat_model->statisztika_meddig = $meddig_datum;
+			//Euro
+			$beszallito_stat_model->gyarto_id = 1 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Harmanec
+			$beszallito_stat_model->gyarto_id = 11 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//GPV
+			$beszallito_stat_model->gyarto_id = 6 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Global pack
+			$beszallito_stat_model->gyarto_id = 9 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Előző havi "napi" és beszállítói statisztika generálás
 			$mettol_date = new DateTime("first day of last month");
 			$meddig_date = new DateTime("last day of last month");
 			$mettol_datum = $mettol_date->format('Y-m-d');
 			$meddig_datum = $meddig_date->format('Y-m-d');
 			$statisztika_controller->actionNapiKombinaltStatisztikaPrintPDF($mettol_datum, $meddig_datum, true);
+			$beszallito_stat_model->statisztika_mettol = $mettol_datum;
+			$beszallito_stat_model->statisztika_meddig = $meddig_datum;
+			//Euro
+			$beszallito_stat_model->gyarto_id = 1 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Harmanec
+			$beszallito_stat_model->gyarto_id = 11 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//GPV
+			$beszallito_stat_model->gyarto_id = 6 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Global pack
+			$beszallito_stat_model->gyarto_id = 9 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Aktuális éves beszállítói statisztika generálás
+			$mettol_datum = date('Y-01-01');
+			$meddig_datum = date('Y-12-31');
+			$beszallito_stat_model->statisztika_mettol = $mettol_datum;
+			$beszallito_stat_model->statisztika_meddig = $meddig_datum;
+			//Euro
+			$beszallito_stat_model->gyarto_id = 1 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Harmanec
+			$beszallito_stat_model->gyarto_id = 11 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//GPV
+			$beszallito_stat_model->gyarto_id = 6 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
+			//Global pack
+			$beszallito_stat_model->gyarto_id = 9 ;
+			$statisztika_controller->beszallitoiStatisztikaPrintPDF($beszallito_stat_model, true);
 		}
 
 		/**
