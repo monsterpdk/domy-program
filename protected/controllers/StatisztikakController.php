@@ -4312,10 +4312,27 @@ class StatisztikakController extends Controller
                                     $beszerzes_db += $beszerzes["darabszam"] ;
                                     $beszerzes_osszeg += $beszerzes["darabszam"] * $beszerzes["beszerzesi_ar"] ;
                                 }
-                                $megrendeles_tetel["beszerzes_szazalek"] = round(($beszerzes_osszeg / $megrendeles_tetel["netto_osszeg"]) * 100, 2) ;
-                                $megrendeles_tetel["bevetel_beszerzes_szazalek"] = round(($megrendeles_tetel["netto_osszeg"] / $beszerzes_osszeg) * 100, 2) ;
+								if ($megrendeles_tetel["netto_osszeg"] > 0) {
+									$megrendeles_tetel["beszerzes_szazalek"] = round(($beszerzes_osszeg / $megrendeles_tetel["netto_osszeg"]) * 100, 2);
+								}
+								else
+								{
+									$megrendeles_tetel["beszerzes_szazalek"] = 100 ;
+								}
+								if ($beszerzes_osszeg > 0) {
+									$megrendeles_tetel["bevetel_beszerzes_szazalek"] = round(($megrendeles_tetel["netto_osszeg"] / $beszerzes_osszeg) * 100, 2);
+								}
+								else
+								{
+									$megrendeles_tetel["bevetel_beszerzes_szazalek"] = 100 ;
+								}
                                 $megrendeles_tetel["bevetel_beszerzes"] = $megrendeles_tetel["netto_osszeg"] - $beszerzes_osszeg ;
                             }
+							else
+							{
+								$megrendeles_tetel["bevetel_beszerzes_szazalek"] = 100 ;
+								$megrendeles_tetel["bevetel_beszerzes"] = $megrendeles_tetel["netto_osszeg"] ;
+							}
                             $megrendeles_adat["tetelek"][] = $megrendeles_tetel ;
                         }
                     }
@@ -4377,7 +4394,6 @@ class StatisztikakController extends Controller
                 }
 
             }
-
             # mPDF
             $mPDF1 = Yii::app()->ePdf->mpdf();
 

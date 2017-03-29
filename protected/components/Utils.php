@@ -2227,7 +2227,10 @@
 			}
 //Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
 //		$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c,'pagination'=>false)) ;
-			$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c)) ;
+//Ha csak annyit néznénk végig, amennyi egy oldalra normál esetben kifér
+//			$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c)) ;
+//
+			$dataProvider=new CActiveDataProvider('Megrendelesek', array('criteria'=>$c, 'pagination'=>array('pageSize'=>1000,),)) ;
 
 			//Normál esetben nem ellenőrizzük végig mindet, mert csak viszi az erőforrást, ha szinkronizálni kell, akkor viszont jól jön ez
 			foreach ($dataProvider->getData() as $sor) {
