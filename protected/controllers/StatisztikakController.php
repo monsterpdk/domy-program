@@ -3974,7 +3974,7 @@ class StatisztikakController extends Controller
 
                     if ($osszeg != null) {
                         $eladasTetel['osszeg'] = $osszeg * $eladasTetel['darabszam'];
-                        if ($fizetesi_mod == '3') {
+                        if ($fizetesi_mod == '4') {
                             $fizetesi_mod = "kp" ;
                         }
                         else {
