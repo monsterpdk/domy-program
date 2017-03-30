@@ -4437,4 +4437,128 @@ class StatisztikakController extends Controller
             $mPDF1->Output();
         }
     }
+	
+	// ki nem számlázott tételek statisztika felületét kezeli
+    public function actionKiNemSzamlazottTetelek () {
+        $model = new StatisztikakKiNemSzamlazottTetelek;
+
+        if (isset($_POST['StatisztikakKiNemSzamlazottTetelek'])) {
+            $model->attributes = $_POST['StatisztikakKiNemSzamlazottTetelek'];
+
+            if ($model->validate()) {
+                // minden rendben, jók a dátumszűrők, mehet a lekérdezés
+                $this -> kiNemSzamlazottTetelekPrintPDF($model);
+            } else {
+                // nincs kitöltve/jól kitöltve valamelyik szűrőmező
+                $this->render('_kiNemSzamlazottTetelek',array('model'=>$model,));
+            }
+
+            return;
+        } else {
+            $model = new StatisztikakKiNemSzamlazottTetelek;
+			// default radio button kiválasztás beállítása
+			$model -> stat_type_filter = 'nem_kerult_szallitora';
+			
+            $this->render('_kiNemSzamlazottTetelek',array(
+                    'model'=>$model,)
+            );
+        }
+    }
+	
+    // a kapott model alapján összeállítja a választott ügyfél leadott rendeléseinek PDF-ét
+    public function kiNemSzamlazottTetelekPrintPDF ($model) {
+        set_time_limit(0);
+        $resultArray = array();
+
+        // ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+        if ($model != null) {
+			$ugyfelSzures = $model -> ugyfel_id != null && $model -> ugyfel_id != "" ? " AND dom_megrendelesek.ugyfel_id = :ugyfel_id " : "";
+
+			$megrendelesSzures = '';
+			if ($model->stat_type_filter != 'nem_kerult_szallitora') {
+				$megrendelesSzures = 
+				"
+					AND dom_megrendelesek.id IN
+					(
+						SELECT dom_megrendelesek.id FROM dom_megrendelesek
+						
+						LEFT JOIN dom_szallitolevelek ON
+						dom_megrendelesek.id=dom_szallitolevelek.megrendeles_id
+						
+						WHERE dom_szallitolevelek.id IS NULL
+					)
+				";
+			}
+
+			$sql =
+				"
+					SELECT
+
+						dom_ugyfelek.cegnev AS megrendelo_neve,
+						dom_megrendelesek.sorszam AS megrendeles_azonosito,
+						dom_megrendelesek.rendeles_idopont AS megrendeles_idopontja,
+						dom_megrendeles_tetelek.termek_id AS termek_id,
+						dom_termekek.cikkszam AS cikkszam,
+						dom_megrendeles_tetelek.darabszam AS darabszam,
+						dom_megrendeles_tetelek.munka_neve AS munka_neve,
+						ROUND (dom_megrendeles_tetelek.darabszam * dom_megrendeles_tetelek.netto_darabar) AS ertek	
+							
+					FROM dom_megrendeles_tetelek
+
+					INNER JOIN dom_megrendelesek ON
+					dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
+
+					INNER JOIN dom_termekek ON
+					dom_megrendeles_tetelek.termek_id = dom_termekek.id
+
+					INNER JOIN dom_ugyfelek ON
+					dom_megrendelesek.ugyfel_id = dom_ugyfelek.id
+
+					LEFT JOIN dom_szallitolevel_tetelek ON
+					dom_szallitolevel_tetelek.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+
+					LEFT JOIN dom_szallitolevelek ON
+					dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
+
+					WHERE dom_szallitolevel_tetelek.id IS NULL AND dom_megrendelesek.torolt = 0 AND dom_megrendelesek.sztornozva = 0
+						AND dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= (:meddig + INTERVAL 1 DAY + INTERVAL -1 SECOND) " . $ugyfelSzures . $megrendelesSzures . "
+						
+
+					GROUP BY dom_megrendeles_tetelek.id
+					ORDER BY dom_ugyfelek.cegnev
+				";			
+			
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(':mettol', $model->statisztika_mettol);
+			$command->bindParam(':meddig', $model->statisztika_meddig);
+			
+			if ($ugyfelSzures != "") {
+				$command->bindParam(':ugyfel_id', $model -> ugyfel_id);
+			}
+
+			$megrendelesTetelek = $command -> queryAll();
+
+			if ($megrendelesTetelek != null) {
+				foreach ($megrendelesTetelek as &$tetel) {
+					$termek = Termekek::model() ->findByPk ($tetel['termek_id']);
+					
+					if ($termek != null) {
+						$tetel['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
+					}
+					
+					$tetel['ertek'] = Utils::DarabszamFormazas($tetel['ertek']);
+				}
+			}
+			
+            # mPDF
+            $mPDF1 = Yii::app()->ePdf->mpdf();
+
+            # render
+            $mPDF1->WriteHTML($this->renderPartial('printKiNemSzamlazottTetelek', array('megrendelesTetelek' => $megrendelesTetelek, 'model' => $model), true));
+
+            # Outputs ready PDF
+            $mPDF1->Output();
+        }
+    }	
+	
 }
