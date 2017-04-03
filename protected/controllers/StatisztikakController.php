@@ -4521,11 +4521,12 @@ class StatisztikakController extends Controller
 					dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
 
 					WHERE dom_szallitolevel_tetelek.id IS NULL AND dom_megrendelesek.torolt = 0 AND dom_megrendelesek.sztornozva = 0
+						AND dom_termekek.cikkszam <> 'szallitas_futar'
 						AND dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= (:meddig + INTERVAL 1 DAY + INTERVAL -1 SECOND) " . $ugyfelSzures . $megrendelesSzures . "
 						
 
 					GROUP BY dom_megrendeles_tetelek.id
-					ORDER BY dom_ugyfelek.cegnev
+					ORDER BY dom_megrendelesek.rendeles_idopont
 				";			
 			
 			$command = Yii::app()->db->createCommand($sql);
@@ -4538,6 +4539,8 @@ class StatisztikakController extends Controller
 
 			$megrendelesTetelek = $command -> queryAll();
 
+			$osszDarab = 0;
+			$osszErtek = 0;
 			if ($megrendelesTetelek != null) {
 				foreach ($megrendelesTetelek as &$tetel) {
 					$termek = Termekek::model() ->findByPk ($tetel['termek_id']);
@@ -4545,6 +4548,9 @@ class StatisztikakController extends Controller
 					if ($termek != null) {
 						$tetel['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
 					}
+					
+					$osszDarab += $tetel['darabszam'];
+					$osszErtek += $tetel['ertek'];
 					
 					$tetel['ertek'] = Utils::DarabszamFormazas($tetel['ertek']);
 				}
@@ -4554,7 +4560,7 @@ class StatisztikakController extends Controller
             $mPDF1 = Yii::app()->ePdf->mpdf();
 
             # render
-            $mPDF1->WriteHTML($this->renderPartial('printKiNemSzamlazottTetelek', array('megrendelesTetelek' => $megrendelesTetelek, 'model' => $model), true));
+            $mPDF1->WriteHTML($this->renderPartial('printKiNemSzamlazottTetelek', array('megrendelesTetelek' => $megrendelesTetelek, 'osszDarab' => Utils::DarabszamFormazas($osszDarab), 'osszErtek' => Utils::DarabszamFormazas($osszErtek), 'model' => $model), true));
 
             # Outputs ready PDF
             $mPDF1->Output();

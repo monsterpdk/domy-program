@@ -159,10 +159,25 @@
 					<td class="cim_cella szegely_felul szegely_alul" align='right'><?php echo $tetel["ertek"];?></td>
 				</tr>
 	<?php
-		}}
+			}
+		}
 	?>
-
+	
 </table>
+
+<?php
+	if (count($megrendelesTetelek) > 0) {
+?>
+	<p align='right'>
+		<strong>Összes darab: <?php echo $osszDarab; ?> db</strong>
+	</p>
+	<p align='right'>
+		<strong>Összes érték: <?php echo $osszErtek; ?> Ft</strong>
+	</p>
+<?php
+	}
+?>
+
 <htmlpagefooter name="myFooter2" style="display:none">
 
 <table width="100%" class = "table_footer" style="vertical-align: bottom; font-family: arial; font-size: 8pt; color: #000000;">
