@@ -4521,7 +4521,7 @@ class StatisztikakController extends Controller
 					dom_szallitolevel_tetelek.szallitolevel_id = dom_szallitolevelek.id
 
 					WHERE dom_szallitolevel_tetelek.id IS NULL AND dom_megrendelesek.torolt = 0 AND dom_megrendelesek.sztornozva = 0
-						AND dom_termekek.cikkszam <> 'szallitas_futar'
+						AND dom_termekek.cikkszam <> 'szallitas_futar' AND dom_termekek.cikkszam <> 'kuponfelhasznalas'
 						AND dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= (:meddig + INTERVAL 1 DAY + INTERVAL -1 SECOND) " . $ugyfelSzures . $megrendelesSzures . "
 						
 
