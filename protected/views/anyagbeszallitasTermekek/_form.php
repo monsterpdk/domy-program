@@ -23,6 +23,7 @@
 		
 		<?php echo $form->hiddenField($model,'termek_id'); ?>
 		<?php echo $form->hiddenField($model,'anyagbeszallitas_id'); ?>
+		<?php echo CHtml::hiddenField('nyomdakonyv_id_hidden' , $model -> nyomdakonyv_id, array('id' => 'nyomdakonyv_id_hidden')); ?>
 		
 		<?php
 			$meretek =  CHtml::listData(TermekMeretek::model()->findAll(array('select' => 'nev')), 'nev', 'nev');
@@ -47,7 +48,7 @@
 					<?php 
 						echo CHtml::radioButtonList('boritek_meret', '' ,$meretek, array( 'separator' => "  ", 'template' => '{label} {input}')); 
 					?>
-				Légpárnás <?php echo CHtml::checkBox('legparnas',false); ?>
+					Légpárnás <?php echo CHtml::checkBox('legparnas',false); ?>
 				</div>
 			</fieldset>
 			
@@ -135,7 +136,7 @@
 		
 		<div class="row">
 			<?php echo $form->labelEx($model,'termek_id'); ?>
-			<?php echo $form->textField($model,'autocomplete_termek_name', array('style' => 'width:445px!important', 'disabled' => 'true') ); ?>
+			<?php echo $form->textField($model,'autocomplete_termek_name', array('style' => 'width:445px!important', 'disabled' => 'true',) ); ?>
 			<?php echo $form->error($model,'termek_id'); ?>
 		</div>
 		
@@ -158,6 +159,18 @@
 		<?php echo $form->error($model,'netto_darabar'); ?>
 	</div>
 
+	<div class="row active">
+		<?php echo $form->checkBox($model,'hozott_boritek', array('checked' => ($model->hozott_boritek == 1) ? 'checked' : '', 'onChange'=>'javascript:showNyomdakonyvSelector();')); ?>
+		<?php echo $form->label($model,'hozott_boritek'); ?>
+		<?php echo $form->error($model,'hozott_boritek'); ?>
+	</div>
+
+	<div id ="nyomdakonyvValaszto" class="row" <?php if ($model->nyomdakonyv_id == null || $model->nyomdakonyv_id == 0) { echo " style='display:none'"; } ?>>
+		<?php echo $form->labelEx($model,'nyomdakonyv_id'); ?>
+		<?php echo $form->dropDownList($model, 'nyomdakonyv_id', array('-=Válasszon=-'), array()); ?>
+		<?php echo $form->error($model,'nyomdakonyv_id'); ?>
+	</div>
+	
 	<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 
 				 array(
@@ -245,6 +258,9 @@
 																			  $(\"#AnyagbeszallitasTermekek_autocomplete_termek_name\").val(\"$data->DisplayTermekTeljesNev\");
 																			  
 																			  calculateTermekNettoDarabAr (\"$data->id\");
+																			  
+																			  // frissíteni kell a kiválasztott termékhez tartozó nyomdakönyvi munkákat (ha a hozott boríték checkbox be van jelölve)
+																			  termekValtozas ();
 																			 "))',
 															),
 								   ),
@@ -295,8 +311,45 @@
 				{
 					$('#AnyagbeszallitasTermekek_netto_darabar' ).val (data);
 				} ",
-		)); ?>;
+		)); ?>
 	}
+	
+	// a hozott boríték checkbox nyomkodásakor lefutó kódrész
+	function showNyomdakonyvSelector() {
+		if ($("#AnyagbeszallitasTermekek_hozott_boritek").prop("checked")) {
+			$( "#nyomdakonyvValaszto" ).show();
+		} else {
+			$( "#nyomdakonyvValaszto" ).hide();
+		}
+		
+		termekValtozas ();
+	}
+	
+	// termék választásakor lefutó kódrész
+	function termekValtozas () {
+		// csak akkor foglalkozunk ezzel, ha a 'hozott boríték' checkbox be van jelölve
+		if ($("#AnyagbeszallitasTermekek_hozott_boritek").prop("checked")) {
+			if ($("#AnyagbeszallitasTermekek_termek_id").val () != '') {
+				<?php echo CHtml::ajax(array(
+					'url'=> "js:'/index.php/Anyagbeszallitasok/nyomdakonyvListazas/termek_id/' + $('#AnyagbeszallitasTermekek_termek_id').val() + '/nyomdakonyv_id/' + $('#nyomdakonyv_id_hidden').val()",
+					'data'=> "",
+					'type'=>'post',
+					'id' => 'send-link-'.uniqid(),
+					'success'=>"js:function(data)
+					{
+						// az első elem kivételével minden option tag-et törlünk
+						$('option', '#AnyagbeszallitasTermekek_nyomdakonyv_id').not(':eq(0)').remove();
+						
+						$('#AnyagbeszallitasTermekek_nyomdakonyv_id').append(data);
+					}",
+				)); ?>
+			}
+		}
+	}
+
+	$(function() {
+		showNyomdakonyvSelector();
+	});
 </script>
 
 </div><!-- form -->

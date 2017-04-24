@@ -208,12 +208,12 @@ class MegrendelesekController extends Controller
 						$nyomdakonyv -> save(false);
 						
 						// UPDATE: ÚJ IGÉNY: ha nincs elég darabszám a raktárban, akkor egy 'negativ' táblába mentjük az adott darabszámot és terméket,
-						//					 és akkor foglaljuk később, ha felszabadul a megfelelő mennyiség
+						//					 és akkor foglaljuk később, ha felszabadul/rendelkezésre áll a megfelelő mennyiség
 						
 						// ha hozott borítékról van szó, akkor nem foglalkozunk a raktárkezeléssel
 						// LI: 2017.02.28 - de, mégis foglalkozunk vele
 						// if ($tetel -> hozott_boritek != 1) {
-						$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db");
+						$elerheto_db = Utils::getTermekRaktarkeszlet($tetel->termek_id, "elerheto_db", $tetel -> hozott_boritek != 1);
 						if ( $elerheto_db < $tetel -> darabszam) {
 							$raktarTermekNegativ = new RaktarTermekekNegativ;
 							$raktarTermekNegativ -> termek_id = $tetel -> termek_id;
@@ -228,7 +228,7 @@ class MegrendelesekController extends Controller
 							$tetel -> save (false);
 						} else {
 							// a raktárban foglaljuk a megfelelő mennyiséget
-							Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id);
+							Utils::raktarbanFoglal($termek_id, $darabszam, $nyomdakonyv->id, true, true, false, null, false, $tetel -> id);
 						}
 						//}
 					}

@@ -55,11 +55,11 @@
 							'class' => 'bootstrap.widgets.TbButtonColumn',
 							'htmlOptions'=>array('style'=>'width: 30px; text-align: left;'),
 							'template' => '{relocate}',
-							'visible' => $reszletesLista,
 							'buttons' => array(
 								'relocate' => array(
 									'url' => '$data->id',
 									'label' => 'Átmozgat',
+									'visible' => '$data->raktarHelyek->raktar->nev != "Hozott boríték raktár"',
 									'icon'=>'icon-white icon-move',
 									'options'=>array(
 												'class'=>'btn btn-info btn-mini',
@@ -129,10 +129,10 @@
 								'title'=>'Nyomtatás cikkszám(ok) szerint',
 								'modal'=>true,
 								'width'=>620,
-								'height'=>230,
+								'height'=>300,
 								'autoOpen'=>false,
   							    'buttons' => array('Nyomtatás' => 'js:function() {
-									window.open("/index.php/raktarTermekek/printRaktarkeszletByCikkszam?cikkszamok=" + $("#cikkszamok").val(), "_blank");
+									window.open("/index.php/raktarTermekek/printRaktarkeszletByCikkszam?cikkszamok=" + $("#cikkszamok").val() + "&gyarto_id=" + $("#gyarto_id").val(), "_blank");
 								}'),
 							),
 						));
@@ -153,6 +153,16 @@
 			  ),
 			));
 		?>
+		
+		<?php echo Chtml::label('Gyártó kiválasztása:', 'gyarto_id'); ?>
+		<?php
+			echo Chtml::dropDownList('gyarto_id', '', 
+				CHtml::listData(Gyartok::model()->findAll(array("condition"=>"torolt=0", 'order'=>'cegnev')), 'id', 'cegnev'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>
 	</div>
 	
 <?php $this->endWidget(); ?>
@@ -166,10 +176,10 @@
 								'title'=>'Nyomtatás termékcsoport(ok) szerint',
 								'modal'=>true,
 								'width'=>620,
-								'height'=>230,
+								'height'=>300,
 								'autoOpen'=>false,
   							    'buttons' => array('Nyomtatás' => 'js:function() {
-									window.open("/index.php/raktarTermekek/printRaktarkeszletByTermekcsoport?termekcsoportok=" + $("#termekcsoportok").val(), "_blank");
+									window.open("/index.php/raktarTermekek/printRaktarkeszletByTermekcsoport?termekcsoportok=" + $("#termekcsoportok").val() + "&gyarto_id=" + $("#termekcsoport_gyarto_id").val(), "_blank");
 								}'),
 							),
 						));
@@ -190,6 +200,16 @@
 			  ),
 			));
 		?>
+		
+		<?php echo Chtml::label('Gyártó kiválasztása:', 'termekcsoport_gyarto_id'); ?>
+		<?php
+			echo Chtml::dropDownList('termekcsoport_gyarto_id', '', 
+				CHtml::listData(Gyartok::model()->findAll(array("condition"=>"torolt=0", 'order'=>'cegnev')), 'id', 'cegnev'),
+				array(
+					'empty'=>'--Minden--',
+				)
+			);
+		?>		
 	</div>
 	
 <?php $this->endWidget(); ?>

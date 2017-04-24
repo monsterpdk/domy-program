@@ -76,16 +76,10 @@ class RaktarTermekekController extends Controller
 	}	
 	
 	// cikkszámok szerint csoportosított raktárösszesítés nyomtatása
-	public function actionPrintRaktarkeszletByCikkszam($cikkszamok)
+	public function actionPrintRaktarkeszletByCikkszam($cikkszamok, $gyarto_id = null)
 	{
-		$criteria=new CDbCriteria;
+		$where = '';
 		
-		$criteria->together = true;
-		$criteria->with = array('termek', 'termek.gyarto');
-		
-		$criteria->select = 'gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
-		$criteria->group = 'cikkszam, gyarto';
-
 		// minden szóköz, tab, új sor karakter törlése
 		if (isset($cikkszamok)) {
 			$cikkszamok = preg_replace('/\s+/S', '', $cikkszamok);
@@ -94,54 +88,95 @@ class RaktarTermekekController extends Controller
 		$cikkszamokList = (isset($cikkszamok)) ? explode(",", $cikkszamok) : array();
 		
 		if (count($cikkszamokList)) {
+			$cikkszamWhere = '';
 			foreach ($cikkszamokList as $cikkszam) {
 				if (strlen($cikkszam) > 0) {
-					$criteria->compare('termek.cikkszam', $cikkszam, false, 'OR');
+					$cikkszamWhere .= (strlen($cikkszamWhere) > 0 ? ', ' : '') . $cikkszam;
 				}
 			}
-		}
-		
-		$criteria->order = 'cikkszam ASC';
-
-		$dataProvider = new CActiveDataProvider('RaktarTermekek', array(
-			'criteria' => $criteria,
-			'pagination'=>array('pageSize'=>100000,)
-		));
-
-		// összesítéshez (ez így nem szép, de nem jár legalább DB módosítással, ha esetleg később performanica gondot okoz, akkor viszont át kell írni, hogy ne legyen ennyi lekérdezés, most ennyi adatnál nem jelent gondot)
-		$criteriaSum = new CDbCriteria;
-		$criteriaSum->together = true;
-		$criteriaSum->with = array('termek', 'termek.gyarto');
-		$criteriaSum->select = 'anyagbeszallitas_id, gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, osszes_db, foglalt_db, elerheto_db';
-		
-		if (count($cikkszamokList)) {
-			foreach ($cikkszamokList as $cikkszam) {
-				if (strlen($cikkszam) > 0) {
-					$criteriaSum->compare('termek.cikkszam', $cikkszam, false, 'OR');
-				}
+			if (strlen($cikkszamWhere) > 0) {
+				$where = 'WHERE cikkszam IN (' . $cikkszamWhere . ')';
 			}
 		}
-		
-		$criteriaSum->order = 'cikkszam ASC';
-		
-		$dataProviderSum = new CActiveDataProvider('RaktarTermekek', array(
-			'criteria' => $criteriaSum,
-			'pagination'=>array('pageSize'=>100000,)
-		));
-		//
-		
-		if ($dataProviderSum != null) {
-			// az összes darab és összes ár mezőket itt számoljuk ki
-			$osszesen_db = 0;
-			$osszesen_ft = 0;
+
+		if ($gyarto_id != null) {
+			$gyarto = Gyartok::model()->findByPk ($gyarto_id);
 			
-			foreach($dataProviderSum -> getData() as $record) {
-				$osszesen_db += $record->osszes_db;
+			if ($gyarto != null) {
+				$where .= (strlen($where) > 0 ? ' AND ' : ' WHERE ') . 'dom_termekek.gyarto_id = ' . $gyarto_id;
+			}
+		}
+
+		$sql = 
+		"
+			SELECT 
+				dom_termekek.cikkszam as cikkszam,
+				dom_termekek.id as termek_id,
+				dom_gyartok.cegnev as cegnev,
+				SUM(osszes_db) as osszes_db,
+				SUM(foglalt_db) as foglalt_db,
+				SUM(elerheto_db) as elerheto_db,
 				
-				$termekAr = Utils::getArchiveTermekar ($record->anyagbeszallitas_id, $record->termek->id);
-				$osszesen_ft += $termekAr * $record->osszes_db;
-     	    }
+				dom_raktar_termekek.anyagbeszallitas_id,
+				ROUND(AVG(dom_anyagbeszallitas_termekek.netto_darabar), 2) as netto_darabar,
+				ROUND(SUM(osszes_db) * AVG(dom_anyagbeszallitas_termekek.netto_darabar)) AS ertek
+
+			FROM dom_raktar_termekek
+
+			INNER JOIN dom_termekek ON
+			dom_raktar_termekek.termek_id = dom_termekek.id
+
+			INNER JOIN dom_gyartok ON
+			dom_termekek.gyarto_id = dom_gyartok.id
+
+			LEFT JOIN
+				(
+				SELECT * FROM dom_anyagbeszallitas_termekek
+				GROUP BY anyagbeszallitas_id, termek_id
+				) AS dom_anyagbeszallitas_termekek
+			ON
+			dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitas_termekek.anyagbeszallitas_id AND
+			dom_raktar_termekek.termek_id = dom_anyagbeszallitas_termekek.termek_id
+
+			" . $where . "
+
+			GROUP BY cikkszam
+
+			ORDER BY cikkszam, dom_raktar_termekek.termek_id, anyagbeszallitas_id		
+		";		
+		
+		$raktarTermekek = Yii::app() -> db -> createCommand  ($sql) -> queryAll();
+
+		// összesítéshez, terméknévhez
+		// az összes darab és összes ár mezőket itt számoljuk ki
+		$osszesen_db = 0;
+		$osszesen_ft = 0;
+		
+		foreach ($raktarTermekek as &$megrendelesTetel) {
+			$termek = Termekek::model() ->findByPk ($megrendelesTetel['termek_id']);
+					
+			if ($termek != null) {
+				$megrendelesTetel['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
+			}
 			
+			$osszesen_db += $megrendelesTetel['osszes_db'];
+			$osszesen_ft += $megrendelesTetel['ertek'];
+		}
+
+		$dataProvider = new CArrayDataProvider($raktarTermekek, array(
+			'keyField'=>'megrendelesek_id',
+			'sort' => array(
+				'attributes'=>array(
+					 'megrendelesek_id DESC',
+				),
+			),
+			'pagination'=>array(
+				'pageSize'=>10000,
+			),
+		));		
+		
+		if ($dataProvider != null) {
+		
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 	
@@ -156,69 +191,105 @@ class RaktarTermekekController extends Controller
 	}	
 	
 	// termékcsoport szerint csoportosított raktárösszesítés nyomtatása
-	public function actionPrintRaktarkeszletByTermekcsoport($termekcsoportok)
+	public function actionPrintRaktarkeszletByTermekcsoport($termekcsoportok, $gyarto_id = null)
 	{
-		$criteria=new CDbCriteria;
+		$where = '';
 		
-		$criteria->together = true;
-		$criteria->with = array('termek', 'termek.termekcsoport', 'termek.gyarto');
-		
-		$criteria->select = 'gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, termek.nev as termeknev, sum(osszes_db) as osszes_db, sum(foglalt_db) as foglalt_db, sum(elerheto_db) as elerheto_db';
-		$criteria->group = 'cikkszam, gyarto';
-
 		$termekcsoportokList = (isset($termekcsoportok)) ? explode(",", $termekcsoportok) : array();
 		
 		if (count($termekcsoportokList)) {
+			$termekCsoportWhere = '';
 			foreach ($termekcsoportokList as $termekcsoport) {
 				$termekcsoport = trim($termekcsoport);
 				if (strlen($termekcsoport) > 0) {
-					$criteria->compare('termekcsoport.nev', $termekcsoport, false, 'OR');
+					$termekCsoportWhere .= (strlen($termekCsoportWhere) > 0 ? ', ' : '') . "'" . mysql_escape_string($termekcsoport) . "'";
 				}
 			}
-		}
-		
-		$criteria->order = 'termeknev ASC';
-
-		$dataProvider = new CActiveDataProvider('RaktarTermekek', array(
-			'criteria' => $criteria,
-			'pagination'=>array('pageSize'=>100000,)
-		));
-
-		// összesítéshez (ez így nem szép, de nem jár legalább DB módosítással, ha esetleg később performanica gondot okoz, akkor viszont át kell írni, hogy ne legyen ennyi lekérdezés, most ennyi adatnál nem jelent gondot)
-		$criteriaSum = new CDbCriteria;
-		$criteriaSum->together = true;
-		$criteriaSum->with = array('termek', 'termek.termekcsoport', 'termek.gyarto');
-		$criteriaSum->select = 'anyagbeszallitas_id, gyarto.cegnev as gyarto, termek.cikkszam as cikkszam, termek.nev as termeknev, osszes_db, foglalt_db, elerheto_db';
-		
-		if (count($termekcsoportokList)) {
-			foreach ($termekcsoportokList as $termekcsoport) {
-				$termekcsoport = trim($termekcsoport);
-				if (strlen($termekcsoport) > 0) {
-					$criteriaSum->compare('termekcsoport.nev', $termekcsoport, false, 'OR');
-				}
+			if (strlen($termekCsoportWhere) > 0) {
+				$where = 'WHERE dom_termekcsoportok.nev IN (' . $termekCsoportWhere . ')';
 			}
 		}
-		
-		$criteriaSum->order = 'termeknev ASC';
-		
-		$dataProviderSum = new CActiveDataProvider('RaktarTermekek', array(
-			'criteria' => $criteriaSum,
-			'pagination'=>array('pageSize'=>100000,)
-		));
-		//
-		
-		if ($dataProviderSum != null) {
-			// az összes darab és összes ár mezőket itt számoljuk ki
-			$osszesen_db = 0;
-			$osszesen_ft = 0;
+
+		if ($gyarto_id != null) {
+			$gyarto = Gyartok::model()->findByPk ($gyarto_id);
 			
-			foreach($dataProviderSum -> getData() as $record) {
-				$osszesen_db += $record->osszes_db;
-				
-				$termekAr = Utils::getArchiveTermekar ($record->anyagbeszallitas_id, $record->termek->id);
-				$osszesen_ft += $termekAr * $record->osszes_db;
-     	    }
+			if ($gyarto != null) {
+				$where .= (strlen($where) > 0 ? ' AND ' : ' WHERE ') . 'dom_termekek.gyarto_id = ' . $gyarto_id;
+			}
+		}
 
+		$sql = 
+		"
+			SELECT 
+				dom_termekek.cikkszam as cikkszam,
+				dom_termekek.id as termek_id,
+				dom_gyartok.cegnev as cegnev,
+				SUM(osszes_db) as osszes_db,
+				SUM(foglalt_db) as foglalt_db,
+				SUM(elerheto_db) as elerheto_db,
+				
+				dom_raktar_termekek.anyagbeszallitas_id,
+				ROUND(AVG(dom_anyagbeszallitas_termekek.netto_darabar), 2) as netto_darabar,
+				ROUND(SUM(osszes_db) * AVG(dom_anyagbeszallitas_termekek.netto_darabar)) AS ertek
+
+			FROM dom_raktar_termekek
+
+			INNER JOIN dom_termekek ON
+			dom_raktar_termekek.termek_id = dom_termekek.id
+
+			INNER JOIN dom_termekcsoportok ON
+			dom_termekek.termekcsoport_id = dom_termekcsoportok.id
+
+			INNER JOIN dom_gyartok ON
+			dom_termekek.gyarto_id = dom_gyartok.id
+
+			LEFT JOIN
+				(
+				SELECT * FROM dom_anyagbeszallitas_termekek
+				GROUP BY anyagbeszallitas_id, termek_id
+				) AS dom_anyagbeszallitas_termekek
+			ON
+			dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitas_termekek.anyagbeszallitas_id AND
+			dom_raktar_termekek.termek_id = dom_anyagbeszallitas_termekek.termek_id
+
+			" . $where . "
+
+			GROUP BY cikkszam
+
+			ORDER BY cikkszam, dom_raktar_termekek.termek_id, anyagbeszallitas_id		
+		";		
+
+		$raktarTermekek = Yii::app() -> db -> createCommand  ($sql) -> queryAll();
+
+		// összesítéshez, terméknévhez
+		// az összes darab és összes ár mezőket itt számoljuk ki
+		$osszesen_db = 0;
+		$osszesen_ft = 0;
+		
+		foreach ($raktarTermekek as &$megrendelesTetel) {
+			$termek = Termekek::model() ->findByPk ($megrendelesTetel['termek_id']);
+					
+			if ($termek != null) {
+				$megrendelesTetel['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
+			}
+			
+			$osszesen_db += $megrendelesTetel['osszes_db'];
+			$osszesen_ft += $megrendelesTetel['ertek'];
+		}
+
+		$dataProvider = new CArrayDataProvider($raktarTermekek, array(
+			'keyField'=>'megrendelesek_id',
+			'sort' => array(
+				'attributes'=>array(
+					 'megrendelesek_id DESC',
+				),
+			),
+			'pagination'=>array(
+				'pageSize'=>10000,
+			),
+		));		
+
+		if ($dataProvider != null) {
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 	
@@ -275,6 +346,12 @@ class RaktarTermekekController extends Controller
 		
 			$status = $model -> validate() ? 'success' : 'failure';
 			
+			// ha a forrás vagy cél raktárhely a 'hozott boríték' raktárhely, akkor nem végezzük el az áthelyezést, ugyanis sem oda nem lehet berakni terméket kézzel, sem pedig kivenni nem lehet belőle
+			$hozotBoritekRaktarHely = Utils::getHozottBoritekRaktarHely();
+			if ($model->forrasRaktarHelyId == $hozotBoritekRaktarHely->id || $model->celRaktarHelyId == $hozotBoritekRaktarHely->id) {
+				return null;
+			}
+
 			// rendben lefutott a validáció és az 'Áthelyez' gombot nyomtuk, akkor végrehajtjuk a tényleges termékáthelyezést
 			// ha a forrás és cél megegyezik, akkor nem hajtjuk végre az áthelyezést, mert duplázódnának a darabszámok
 			if ($status == 'success' && isset($_GET['form']) && $model->forrasRaktarHelyId != $model->celRaktarHelyId) {

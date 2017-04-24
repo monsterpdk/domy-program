@@ -1148,3 +1148,7 @@ tr.updated-row {
 .statChooser label {
 	display:inline;
 }
+.hozottChooser label {
+	display: inline;
+	margin-left: 5px;
+}

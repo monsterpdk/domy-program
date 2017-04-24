@@ -334,7 +334,7 @@ class Nyomdakonyv extends CActiveRecord
 		$criteria->compare('zaras.nev', $this->boritek_tipus_search, true );
 		
 		$darabszam_tol = ($this->darabszam_tol_search != '') ? $this->darabszam_tol_search : 0;
-		$darabszam_ig = ($this->darabszam_ig_search != '') ? $this->darabszam_ig_search : 9999999;
+		$darabszam_ig = ($this->darabszam_ig_search != '') ? $this->darabszam_ig_search : 99999999;
 		$criteria->addCondition('megrendeles_tetel.darabszam >= ' . $darabszam_tol . ' AND megrendeles_tetel.darabszam <= ' . $darabszam_ig);
 		
 		$szinszam1_tol = ($this->szinszam1_tol_search != '') ? $this->szinszam1_tol_search : 0;

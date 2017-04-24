@@ -44,17 +44,17 @@ $this->menu=array(
 							'view' => array(
 								'label' => 'Megtekint',
 								'icon'=>'icon-white icon-eye-open',
-								'visible' => "Yii::app()->user->checkAccess('Raktarak.View')",
+								'visible' => 'Yii::app()->user->checkAccess("Raktarak.View")',
 							),
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => "Yii::app()->user->checkAccess('Raktarak.Update')",
+								'visible' => 'Yii::app()->user->checkAccess("Raktarak.View") && $data->nev != "Hozott boríték raktár"',
 							),
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => 'Yii::app()->user->checkAccess("Raktarak.Delete") && $data->torolt != 1',
+								'visible' => 'Yii::app()->user->checkAccess("Raktarak.View") && $data->nev != "Hozott boríték raktár"',
 							)
 						),
                 ),

@@ -55,10 +55,29 @@
 
 <?php
 	$termekcsoportok = $_GET['termekcsoportok'];
+	$termekcsoportLista = (isset($termekcsoportok)) ? explode(",", $termekcsoportok) : array();
 	
-	//kiválasztott termékcsoportok kiírása a riportra
-	if (isset($termekcsoportok) && strlen($termekcsoportok) > 0) {
-		echo "<div style='padding-bottom:15px'><strong>Kiválasztott termékcsoportok: </strong> " . $termekcsoportok . "</div>";
+	$tisztitottTermekcsoportList = "";
+	foreach ($termekcsoportLista as $termekcsoport) {
+		if (strlen(trim($termekcsoport)) > 0) {
+			$tisztitottTermekcsoportList .= ((strlen($tisztitottTermekcsoportList) > 0) ? ", " : "") . $termekcsoport;
+		}
+	}
+	
+	$gyarto = $_GET['gyarto_id'];
+	
+	// kiválasztott termékcsoportok kiírása a riportra
+	if (isset($tisztitottTermekcsoportList) && strlen($tisztitottTermekcsoportList) > 0) {
+		echo "<div style='padding-bottom:15px'><strong>Kiválasztott termékcsoportok: </strong> " . $tisztitottTermekcsoportList . "</div>";
+	}
+
+	// kiválasztott gyártó kiírása a riportra
+	if (isset($gyarto) && strlen($gyarto) > 0) {
+		$gyartoRekord = Gyartok::model()->findByPk($gyarto);
+		
+		if ($gyartoRekord != null) {
+			echo "<div style='padding-bottom:15px'><strong>Kiválasztott gyártó: </strong> " . $gyartoRekord ->cegnev . "</div>";
+		}
 	}
 ?>
 
@@ -70,14 +89,28 @@
       'enablePagination' => false,
       'enableSorting' => false,
       'summaryText' => '',
-	  'extraRowPos' => 'above',
+      'extraRowPos' => 'above',
       'columns' => array(
-						'termek.cikkszam',
-						'termek.DisplayTermekTeljesNev',
-						'termek.gyarto.cegnev',
-						array('name' => 'osszes_db', 'value' => 'Utils::DarabszamFormazas($data->osszes_db)', 'htmlOptions' => array('style' => 'text-align: right;')),
-						array('name' => 'foglalt_db', 'value' => 'Utils::DarabszamFormazas($data->foglalt_db)', 'htmlOptions' => array('style' => 'text-align: right;')),
-						array('name' => 'elerheto_db', 'value' => 'Utils::DarabszamFormazas($data->elerheto_db)', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array(
+							'name' => 'Cikkszám',
+							'type' => 'raw',
+							'value' => 'CHtml::encode($data["cikkszam"])'
+                        ),
+						array(
+							'name' => 'Termék neve',
+							'type' => 'raw',
+							'value' => 'CHtml::encode($data["termek_neve"])'
+                        ),
+						array(
+							'name' => 'Cégnév',
+							'type' => 'raw',
+							'value' => 'CHtml::encode($data["cegnev"])'
+                        ),
+						array('name' => 'Összes db', 'value' => 'Utils::DarabszamFormazas($data["osszes_db"])', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array('name' => 'Foglalt db', 'value' => 'Utils::DarabszamFormazas($data["foglalt_db"])', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array('name' => 'Elérhető db', 'value' => 'Utils::DarabszamFormazas($data["elerheto_db"])', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array('name' => 'Nettó darabár (átlag) Ft', 'value' => 'Utils::OsszegFormazas($data["netto_darabar"])', 'htmlOptions' => array('style' => 'text-align: right;')),
+						array('name' => 'Érték (Ft)', 'value' => 'Utils::DarabszamFormazas($data["ertek"])', 'htmlOptions' => array('style' => 'text-align: right;')),
       ),
 	  
     ));
@@ -85,10 +118,8 @@
 
 <?php
 	// összesítés kiírása a riport aljára
-	if (isset($termekcsoportok) && strlen($termekcsoportok) > 0) {
-		echo "<div align='right' style='padding-top:15px'><strong>Összesen db: </strong> " . Utils::DarabszamFormazas($osszesen_db) . "</div>";
-		echo "<div align='right' style='padding-top:15px'><strong>Összesen ft: </strong> " . Utils::DarabszamFormazas($osszesen_ft) . "</div>";
-	}
+	echo "<div align='right' style='padding-top:15px'><strong>Összesen db: </strong> " . Utils::DarabszamFormazas($osszesen_db) . "</div>";
+	echo "<div align='right' style='padding-top:15px'><strong>Összesen ft: </strong> " . Utils::DarabszamFormazas($osszesen_ft) . "</div>";
 ?>
 
 <htmlpagefooter name="myFooter2" style="display:none">

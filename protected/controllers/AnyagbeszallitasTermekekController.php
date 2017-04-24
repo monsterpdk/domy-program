@@ -178,7 +178,7 @@ class AnyagbeszallitasTermekekController extends Controller
 			// Stop jQuery from re-initialization
 			Yii::app()->clientScript->scriptMap['*.js'] = false;
 			Yii::app()->clientScript->scriptMap['*.css'] = false;
-		
+
             echo CJSON::encode(array(
                 'status'=>'failure', 
                 'div'=>$this->renderPartial('_form', array('model'=>$model, 'termek' => $termek, 'grid_id' => $grid_id), true, true)));

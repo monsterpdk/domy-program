@@ -9,6 +9,8 @@
  * @property string $termek_id
  * @property string $darabszam
  * @property double $netto_darabar
+ * @property double $nyomdakonyv_id
+ * @property double $hozott_boritek
  */
 class AnyagbeszallitasTermekek extends DomyModel
 {
@@ -36,14 +38,28 @@ class AnyagbeszallitasTermekek extends DomyModel
 		// will receive user inputs.
 		return array(
 			array('anyagbeszallitas_id, termek_id, darabszam, netto_darabar', 'required'),
-			array('netto_darabar, darabszam', 'numerical'),
-			array('anyagbeszallitas_id, termek_id, darabszam', 'length', 'max'=>10),
+			array('netto_darabar, darabszam, hozott_boritek', 'numerical'),
+			array('anyagbeszallitas_id, termek_id, nyomdakonyv_id, darabszam', 'length', 'max'=>10),
+
+			array('nyomdakonyv_id', 'checkhozottBoritek'),
+			
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, anyagbeszallitas_id, termek_id, darabszam, netto_darabar', 'safe', 'on'=>'search'),
+			array('id, anyagbeszallitas_id, termek_id, nyomdakonyv_id, hozott_boritek, darabszam, netto_darabar', 'safe', 'on'=>'search'),
 		);
 	}
 
+	// LI : ha be van pipálva a hozott boríték checkbox, akkor 'ki kell tölteni' a nyomdakönyv hozzárendelés mezőt
+	public function checkhozottBoritek($attribute)
+	{
+		if ($this->hozott_boritek != "" && $this->hozott_boritek != 0) {
+			if ($this -> nyomdakonyv_id == '' || $this -> nyomdakonyv_id == 0)
+				$this->addError($attribute, 'Hozott termék esetén kötelező hozzárendelni a beszállítási tételt egy nyomdakönyvi munkához!');
+		}
+
+		return true;
+	}		
+	
 	/**
 	 * @return array relational rules.
 	 */
@@ -52,7 +68,8 @@ class AnyagbeszallitasTermekek extends DomyModel
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'termek'    => array(self::BELONGS_TO, 'Termekek', 'termek_id'),
+			'termek'    	=> array(self::BELONGS_TO, 'Termekek', 'termek_id'),
+			'nyomdakonyv'   => array(self::BELONGS_TO, 'Nyomdakonyv', 'nyomdakonyv_id'),
 		);
 	}
 
@@ -71,6 +88,8 @@ class AnyagbeszallitasTermekek extends DomyModel
 			'termek_id' => 'Termék',
 			'darabszam' => 'Darabszám',
 			'netto_darabar' => 'Nettó darabár',
+			'nyomdakonyv_id' => 'Nyomdakönyvi munka',
+			'hozott_boritek' => 'Hozott boríték'
 		);
 	}
 
@@ -95,8 +114,10 @@ class AnyagbeszallitasTermekek extends DomyModel
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('anyagbeszallitas_id',$this->anyagbeszallitas_id,true);
 		$criteria->compare('termek_id',$this->termek_id,true);
+		$criteria->compare('nyomdakonyv_id',$this->nyomdakonyv_id,true);
 		$criteria->compare('darabszam',$this->darabszam,true);
 		$criteria->compare('netto_darabar',$this->netto_darabar);
+		$criteria->compare('hozott_boritek',$this->hozott_boritek);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -109,6 +130,14 @@ class AnyagbeszallitasTermekek extends DomyModel
 		// autocomplete mező esetén a termék ID van csak tárolva, így a beszédes
 		// terméknevet kézzel kell kitöltenünk
 		$this -> autocomplete_termek_name = $this -> termek -> DisplayTermekTeljesNev;
+	}
+	
+	public function beforeSave() {
+		if ($this -> hozott_boritek != 1) {
+			$this -> nyomdakonyv_id = 0;
+		}
+		
+		return parent::beforeSave();
 	}
 	
 	// sikeres mentés után frissítjük a raktár eltérés lista megfelelő sorát a termék és darabszám adatokkal	

@@ -46,7 +46,7 @@
 			<?php echo $form->labelEx($model,'forrasRaktarHelyId'); ?>
 			
 				<?php echo CHtml::activeDropDownList($model, 'forrasRaktarHelyId',
-					CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"", 'order'=>'nev')), 'id', 'displayTeljesNev'),
+					CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"nev <> 'Hozott boríték raktár 1'", 'order'=>'nev')), 'id', 'displayTeljesNev'),
 					array("disabled"=>"disabled",)
 				); ?>
 			<?php echo $form->error($model,'forrasRaktarHelyId'); ?>
@@ -74,7 +74,7 @@
 			<?php echo $form->labelEx($model,'celRaktarHelyId'); ?>
 			
 				<?php echo CHtml::activeDropDownList($model, 'celRaktarHelyId',
-					CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"", 'order'=>'nev')), 'id', 'displayTeljesNev'),
+					CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"nev <> 'Hozott boríték raktár 1'", 'order'=>'nev')), 'id', 'displayTeljesNev'),
 					array( 'empty'=>'-= Válasszon raktárhelyet =-')
 				); ?>
 			<?php echo $form->error($model,'celRaktarHelyId'); ?>

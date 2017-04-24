@@ -320,6 +320,7 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekek.View'))
 				'columns'=>array(
 					'termek.kodszam',
 					'termek.DisplayTermekTeljesNev',
+					'hozott_boritek:boolean',
 					
 					// a darabszám szerkeszthető a gyorsabb ügyintézés érdekében
 					array(
@@ -496,7 +497,8 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 				'columns'=>array(
 					'termek.kodszam',
 					'termek.DisplayTermekTeljesNev',
-
+					'hozott_boritek:boolean',
+					
 					// a darabszám szerkeszthető a gyorsabb ügyintézés érdekében
 					array(
 						'class' => 'editable.EditableColumn',
@@ -575,21 +577,25 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 					success:function(data){
 						if (data !==  null) {
 							// a tételek ellenőrzés során eltérést találtunk
-							if (data != "") {
-								
+							if (data.ok != 1) {
 								// LI: egy új kérés szerint nem dobunk fel dialog-ot az eltérésről, hagyjuk menteni
 								$("#anyagbeszallitasok-form").submit()
 								
 								//$('#dialogUnSuccesfullCheck').html(data);
 								//$('#dialogUnSuccesfullCheck').dialog('open');
-							} else if (data == "") {
+							} else if (data.ok == 1) {
 								// a tételek ellenőrzés során megegyeztek a tételek az anyagrendelés és beszállítás során, lezárható
 								// az anyagbeszállításhoz tartozó anyagrendelés
-								
-								if ( $('#dialogSuccesfullCheck').html().indexOf('a rendszerben') == -1 ) {
-									$('#dialogSuccesfullCheck').html('Az anyagbeszállításhoz található megrendelés a rendszerben. Mentést követően lezárásra kerül az anyagrendelés és az anyagbeszállítás, a tételek pedig a kiválasztott raktárba kerülnek. <br /><br /> Raktár+raktárhely kiválasztása: <br /><br />' + $('#dialogSuccesfullCheck').html());
+
+								if (data.hozott_boritek == 0) {
+									$('#nemHozottSzoveg').show();
+									$('#hozottSzoveg').hide();
+								} else {
+									// van hozott termék a listában, ezért automatikusan abba a raktárba rakjuk őket
+									$('#nemHozottSzoveg').hide();
+									$('#hozottSzoveg').show();
 								}
-								
+
 								$('#dialogSuccesfullCheck').dialog('open');
 							}
 						}
@@ -610,19 +616,28 @@ if (Yii::app()->user->checkAccess('AnyagbeszallitasTermekekIroda.View'))
 		$this->beginWidget('zii.widgets.jui.CJuiDialog',
 			array(
 				'id'=>'dialogSuccesfullCheck',
-				
 				'options'=>array(
 					'title'=>'Megerősítés',
 					'width'=>'450px',
 					'modal' => true,
 					'buttons' => array(
-						'Mentés, lezárás és elhelyezés'=>'js:function(){$(this).dialog("close");  $("#raktarhely_id").val( $("#raktarHelyek").val()); $("#anyagbeszallitasok-form").submit();}',
+						'Mentés, lezárás és elhelyezés'=>'js:function(){$(this).dialog("close"); $("#raktarhely_id").val( $("#raktarHelyek").val()); $("#anyagbeszallitasok-form").submit();}',
 						'Mégse'=>'js:function(){ $(this).dialog("close" );}',),
 					'autoOpen'=>false,
 			)));
 
-			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"", 'order'=>'nev')), 'id', 'displayTeljesNev');
+			echo "<div id='nemHozottSzoveg' stlye='display:none'>
+			Az anyagrendeléshez található beszállítás a rendszerben. Mentést követően lezárásra kerül az anyagrendelés és az anyagbeszállítás, a tételek pedig a kiválasztott raktárba kerülnek. <br /><br /> Raktár+raktárhely kiválasztása: <br /><br />
+			</div>";
+			
+			echo "<div id='hozottSzoveg' stlye='display:none'>
+			Az anyagrendeléshez található beszállítás a rendszerben. A tételek között található hozott termék, így azon tételek automatikusan a <strong> 'Hozott boríték raktárba'</strong>, az egyéb tételek pedig a kiválasztott raktárba kerülnek. <br /><br />
+			</div>";
+			
+			echo "<div id='raktarValasztoCombo'>";
+			$list = CHtml::listData(RaktarHelyek::model()->findAll(array("condition"=>"nev <> 'Hozott boríték raktár 1'", 'order'=>'nev')), 'id', 'displayTeljesNev');
 			echo CHtml::dropDownList('raktarHelyek', '', $list, array());
+			echo "</div>";
 			
 			$this->endWidget();
 			

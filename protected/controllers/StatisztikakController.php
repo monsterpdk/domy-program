@@ -3222,6 +3222,8 @@ class StatisztikakController extends Controller
 			
 		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
 		if ($model != null) {
+			$hozottBoritekRaktarHely = Utils::getHozottBoritekRaktarHely ();
+			
 			$sql = 
 			"
 				SELECT DISTINCT dom_raktar_termekek.id, dom_anyagbeszallitas_termekek.termek_id AS termek_id, REPLACE (FORMAT( ROUND (dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS keszlet_darabszam, dom_raktar_termekek.osszes_db AS keszlet_darabszam_formazatlan, ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db) AS netto_ertek_formazatlan, REPLACE (FORMAT( ROUND (dom_anyagbeszallitas_termekek.netto_darabar * dom_raktar_termekek.osszes_db), 0, 'hu_HU'), '.', ' ') AS netto_ertek FROM dom_raktar_termekek
@@ -3232,7 +3234,7 @@ class StatisztikakController extends Controller
 				INNER JOIN dom_anyagbeszallitas_termekek ON
 				dom_raktar_termekek.termek_id = dom_anyagbeszallitas_termekek.termek_id AND dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
 				
-				WHERE ABS (DATEDIFF (NOW(), dom_anyagbeszallitasok.beszallitas_datum)) >= :day
+				WHERE ABS (DATEDIFF (NOW(), dom_anyagbeszallitasok.beszallitas_datum)) >= :day AND dom_raktar_termekek.raktarhely_id <> " . $hozottBoritekRaktarHely -> id" .
 				
 				ORDER BY dom_anyagbeszallitasok.beszallitas_datum
 			";

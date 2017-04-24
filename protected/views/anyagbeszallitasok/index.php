@@ -56,12 +56,12 @@ $this->breadcrumbs=array(
 							'update' => array(
 								'label' => 'Szerkeszt',
 								'icon'=>'icon-white icon-pencil',
-								'visible' => '(Yii::app()->user->checkAccess("Anyagbeszallitasok.Update") && $data->lezarva != 1) || (Yii::app()->user->checkAccess("Admin"))',
+								'visible' => '(Yii::app()->user->checkAccess("Anyagbeszallitasok.Update") && $data->lezarva != 1)',
 							),
 							'delete' => array(
 								'label' => 'Töröl',
 								'icon'=>'icon-white icon-remove-sign',
-								'visible' => "Yii::app()->user->checkAccess('Anyagbeszallitasok.Delete')",
+								'visible' => 'Yii::app()->user->checkAccess("Anyagbeszallitasok.Delete") && $data->lezarva != 1',
 							),
 							'create_anyagrendeles' => array(
 								'label' => 'Anyagrendelés létrehozása',
