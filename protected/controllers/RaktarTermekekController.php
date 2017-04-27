@@ -19,11 +19,7 @@ class RaktarTermekekController extends Controller
 		$model->unsetAttributes();
 		if(isset($_GET['RaktarTermekek']))
 			$model->attributes=$_GET['RaktarTermekek'];
-	 	
-		$dataProvider=new CActiveDataProvider('RaktarTermekek',
-			array('criteria'=>array('order'=>'raktarhely_id ASC',), 'pagination'=>array('pageSize'=>10000))
-		);
-		
+
 		//send model object for search
 		$this->render('index',array(
 			'model'=>$model,)

@@ -108,7 +108,7 @@ class RaktarTermekek extends CActiveRecord
 		$criteria=new CDbCriteria;
 		
 		$criteria->together = true;
-		$criteria->with = array('termek', 'raktarHelyek', 'raktarHelyek.raktar');
+		$criteria->with = array('anyagbeszallitas', 'termek', 'raktarHelyek', 'raktarHelyek.raktar');
 		
 		// itt vizsgáljuk, hogy a keresés blokkban a részletes lista kapcsoló milyen állásban van
 		$reszletesLista = false;
@@ -127,16 +127,16 @@ class RaktarTermekek extends CActiveRecord
 		
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('termek_id',$this->termek_id,true);
-		$criteria->compare('anyagbeszallitas_id',$this->anyagbeszallitas_id,true);		
 		$criteria->compare('raktarhely_id',$this->raktarhely_id,true);
 		$criteria->compare('osszes_db',$this->osszes_db);
 		$criteria->compare('foglalt_db',$this->foglalt_db);
 		$criteria->compare('elerheto_db',$this->elerheto_db);
+		$criteria->compare('raktar.nev',$this->raktar_search, true);
+		$criteria->compare('raktarHelyek.nev',$this->raktar_hely_search, true);
+		$criteria->compare('termek.nev',$this->termek_search, true);
+		$criteria->compare('termek.cikkszam',$this->cikkszam_search, false);
 		
-		$criteria->compare('raktar.nev',$this->raktar_search,true);
-		$criteria->compare('raktarHelyek.nev',$this->raktar_hely_search,true);
-		$criteria->compare('termek.nev',$this->termek_search,true);
-		$criteria->compare('termek.cikkszam',$this->cikkszam_search,false);
+		$criteria->addCondition('anyagbeszallitas_id != 493');
 		
 		if ($reszletesLista) {
 			$criteria->order = 'raktarhely_id ASC';
