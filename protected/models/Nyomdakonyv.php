@@ -96,6 +96,9 @@ class Nyomdakonyv extends CActiveRecord
 	public $dsp_proforma_datum;
 	public $dsp_proforma_sorszam;
 
+	//Egyéb, adatbázisban nem tárolt mezők
+	public $hianyzoDarabszam;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -198,6 +201,7 @@ class Nyomdakonyv extends CActiveRecord
 			'gep' => array(self::BELONGS_TO, 'Nyomdagepek', 'gep_id'),
 			'munkatipus' => array(self::BELONGS_TO, 'NyomdaMunkatipusok', 'munkatipus_id'),
 			'lejelentes_sorok' => array(self::HAS_MANY, 'NyomdakonyvLejelentes', 'nyomdakonyv_id'),
+			'raktar_termekek_negativ' => array(self::HAS_ONE, 'RaktarTermekekNegativ', 'nyomdakonyv_id'),
 		);
 	}
 
@@ -297,6 +301,7 @@ class Nyomdakonyv extends CActiveRecord
 			'GyartasiIdo' => 'Gyártási idő',
 			'UtemezesBejegyzesPrint' => 'Munka részletek',
 			'SzinErtekek' => 'Színek',
+			'hianyzoDarabszam' => 'Hiányzó db',
 			
 			'dsp_szallitolevel_datum' => 'Szállítólevél dátuma',
 			'dsp_szallitolevel_sorszam' => 'Szállítólevél sorszáma',

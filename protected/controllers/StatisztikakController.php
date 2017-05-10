@@ -3234,7 +3234,7 @@ class StatisztikakController extends Controller
 				INNER JOIN dom_anyagbeszallitas_termekek ON
 				dom_raktar_termekek.termek_id = dom_anyagbeszallitas_termekek.termek_id AND dom_raktar_termekek.anyagbeszallitas_id = dom_anyagbeszallitasok.id
 				
-				WHERE ABS (DATEDIFF (NOW(), dom_anyagbeszallitasok.beszallitas_datum)) >= :day AND dom_raktar_termekek.raktarhely_id <> " . $hozottBoritekRaktarHely -> id" .
+				WHERE ABS (DATEDIFF (NOW(), dom_anyagbeszallitasok.beszallitas_datum)) >= :day AND dom_raktar_termekek.raktarhely_id <> " . $hozottBoritekRaktarHely -> id . "
 				
 				ORDER BY dom_anyagbeszallitasok.beszallitas_datum
 			";

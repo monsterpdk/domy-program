@@ -545,12 +545,6 @@ class NyomdakonyvController extends Controller
 	// Ütemezés listát előállító action.
 	public function actionUtemezes()
 	{
-/*		$model=new Nyomdakonyv('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Nyomdakonyv']))
-			$model->attributes=$_GET['Nyomdakonyv'];
-*/
-
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
 			'criteria'=>array(
 				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
@@ -635,7 +629,57 @@ class NyomdakonyvController extends Controller
         else
             throw new CHttpException(400,'Hibás kérés.');
     }
-	
+
+	//Rendelés ajánlás listát előállító action
+	public function actionRendelesAjanlas() {
+		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
+			'criteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0 and raktar_termekek_negativ.id > 0',
+				'order'=>'gyarto.id, t.hatarido',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel', 'megrendeles_tetel.termek.gyarto', 'raktar_termekek_negativ'),
+				'together'=>true,
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and raktar_termekek_negativ.id > 0',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel', 'megrendeles_tetel.termek.gyarto', 'raktar_termekek_negativ'),
+				'together'=>true,
+				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'sort'=> false,
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)		));
+
+		$result_array = array() ;
+		if ($dataProvider->totalItemCount > 0) {
+			foreach ($dataProvider->getData() as $index => $sor) {
+				$hianyzo_darabszam = $sor->raktar_termekek_negativ->darabszam ;
+				$sql = "
+					SELECT 
+						SUM(elerheto_db)
+								
+					FROM dom_raktar_termekek
+					
+					WHERE termek_id = '" . $sor->raktar_termekek_negativ->termek_id . "'
+		
+					GROUP BY termek_id
+				";
+				$elerheto_keszlet = Yii::app() -> db -> createCommand  ($sql) -> queryScalar();
+				if ($elerheto_keszlet > 0) {
+					$hianyzo_darabszam = $hianyzo_darabszam - $elerheto_keszlet ;
+				}
+				$sor["hianyzoDarabszam"] = $hianyzo_darabszam ;
+				$result_array[] = $sor ;
+			}
+		}
+
+		$dataProvider = new CArrayDataProvider($result_array, array('id' => 'id', 'sort' => array()));
+		$model=new Nyomdakonyv('search');
+
+		$this->render('rendelesAjanlas',array(
+			'dataProvider'=>$dataProvider, 'model'=>$model
+		));
+
+	}
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
