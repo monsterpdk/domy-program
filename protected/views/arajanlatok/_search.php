@@ -19,7 +19,7 @@
 	
 		<div class="row">
 			<?php echo $form->label($model,'sorszam'); ?>
-			<?php echo $form->textField($model,'sorszam',array('size'=>10,'maxlength'=>10)); ?>
+			<?php echo $form->textField($model,'sorszam',array('size'=>10,'maxlength'=>12)); ?>
 		</div>
 
 		<div class="row">

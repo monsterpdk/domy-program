@@ -4568,5 +4568,178 @@ class StatisztikakController extends Controller
             $mPDF1->Output();
         }
     }	
+
+	// új vevők felületét kezeli
+	public function actionUjVevok () {
+		$model = new StatisztikakUjVevok;
+		
+		if (isset($_POST['StatisztikakUjVevok'])) {
+            $model->attributes = $_POST['StatisztikakUjVevok'];
+
+            if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> ujVevokPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_ujVevok',array('model'=>$model,));
+			}
+			
+			return;
+        } else {
+			$model = new StatisztikakUjVevok;
+			
+			// default radio button kiválasztás beállítása
+			$model -> stat_type_filter = 'elso_arajanlat';
+
+			$this->render('_ujVevok',array(
+				'model'=>$model,)
+			);
+		}
+	}
+
+	// a kapott model alapján összeállítja az új vevők PDF-ét
+	public function ujVevokPrintPDF ($model) {
+		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+		if ($model != null) {
+
+			// tömbbe rakjuk az összes termékárat, hogy ne DB-hez nyúljunk minden lépésnél, hanem a memóriából gyorsan elérhető legyen, amire szükség van
+			// nem activerecord-ot használunk, hanem sima tömbös megoldást, az kevésbé erőforrásigényes
+			$sqlTermekArak =
+			"
+				SELECT
+					termek_id,
+					db_beszerzesi_ar,
+					datum_mettol,
+					datum_meddig
+				FROM dom_termek_arak
+				WHERE torolt = 0
+			";
+			
+			$commandTermekArak = Yii::app()->db->createCommand($sqlTermekArak);
+			$termekArak = $commandTermekArak->queryAll();
+
+			$osszUgyfelSzam = 0;
+			$osszErtek = 0;
+			$osszHaszon = 0;
+			
+			// ELSŐ ÁRAJÁNLATOKAT KERESÜNK
+			if ($model -> stat_type_filter == 'elso_arajanlat') {
+				$sql = 
+				"
+					SELECT
+						dom_ugyfelek.cegnev_teljes AS ugyfel_neve,
+						outer_arajanlatok.ajanlat_datum AS datum,
+						SUM(dom_arajanlat_tetelek.darabszam * dom_arajanlat_tetelek.netto_darabar) as netto_osszeg,
+						GROUP_CONCAT(dom_arajanlat_tetelek.termek_id) AS group_termek_id,
+						GROUP_CONCAT(dom_arajanlat_tetelek.darabszam) AS group_darabszam
+					FROM dom_arajanlat_tetelek
+
+					INNER JOIN dom_arajanlatok outer_arajanlatok ON
+					dom_arajanlat_tetelek.arajanlat_id = outer_arajanlatok.id
+
+					INNER JOIN dom_ugyfelek ON
+					outer_arajanlatok.ugyfel_id = dom_ugyfelek.id
+
+					WHERE outer_arajanlatok.torolt = 0 AND outer_arajanlatok.id = 
+					(
+						SELECT MIN(inner_arajanlatok.id) FROM dom_arajanlatok inner_arajanlatok
+						WHERE inner_arajanlatok.ugyfel_id = outer_arajanlatok.ugyfel_id
+						ORDER BY ugyfel_id, ajanlat_datum
+					) AND outer_arajanlatok.ajanlat_datum >= :mettol AND outer_arajanlatok.ajanlat_datum <= :meddig
+
+					GROUP BY outer_arajanlatok.id
+
+					ORDER BY cegnev, ajanlat_datum
+				";
+			} else {
+				// ELSŐ MEGRENDELÉSEKET KERESÜNK
+				$sql = 
+				"
+					SELECT
+						dom_ugyfelek.cegnev_teljes AS ugyfel_neve,
+						outer_megrendelesek.rendeles_idopont AS datum,
+						SUM(dom_megrendeles_tetelek.darabszam * dom_megrendeles_tetelek.netto_darabar) as netto_osszeg,
+						GROUP_CONCAT(dom_megrendeles_tetelek.termek_id) AS group_termek_id,
+						GROUP_CONCAT(dom_megrendeles_tetelek.darabszam) AS group_darabszam
+					FROM dom_megrendeles_tetelek
+
+					INNER JOIN dom_megrendelesek outer_megrendelesek ON
+					dom_megrendeles_tetelek.megrendeles_id = outer_megrendelesek.id
+
+					INNER JOIN dom_ugyfelek ON
+					outer_megrendelesek.ugyfel_id = dom_ugyfelek.id
+
+					WHERE outer_megrendelesek.torolt = 0 AND outer_megrendelesek.id = 
+					(
+						SELECT MIN(inner_megrendelesek.id) FROM dom_megrendelesek inner_megrendelesek
+						WHERE inner_megrendelesek.ugyfel_id = outer_megrendelesek.ugyfel_id
+						ORDER BY ugyfel_id, rendeles_idopont
+					) AND outer_megrendelesek.rendeles_idopont >= :mettol AND outer_megrendelesek.rendeles_idopont <= :meddig
+
+					GROUP BY outer_megrendelesek.id
+
+					ORDER BY cegnev, rendeles_idopont
+				";
+			}
+				
+			$command = Yii::app()->db->createCommand($sql);
+			
+			$command->bindParam(':mettol', $model -> statisztika_mettol);
+			$command->bindParam(':meddig', $model -> statisztika_meddig);
+			
+			$elsoArajanalatokMegrendelesek = $command->queryAll();
+			
+			//végigmegyünk az intervallumba eső első árajánlatokon
+			if ($elsoArajanalatokMegrendelesek != null) {
+				foreach ($elsoArajanalatokMegrendelesek as &$arajanlatMegrendeles) {
+					// kiszámoljuk a várható hasznot
+					$termek_id_list = explode(',', $arajanlatMegrendeles['group_termek_id']);
+					$darabszam_list = explode(',', $arajanlatMegrendeles['group_darabszam']);
+					
+					// ide történik a beszerzési árak szummázása
+					$arajanlat_beszerzesi_ar = 0;
+					
+					for ($i = 0; $i < count($termek_id_list); $i++) {
+						$termek = Termekek::model() ->findByPk ($termek_id_list[$i]);
+						if ($termek != null) {
+							foreach ($termekArak as $termekAr) {
+								if ($arajanlatMegrendeles['datum'] >= $termekAr['datum_mettol'] && $arajanlatMegrendeles['datum'] <= $termekAr['datum_meddig'] && $termekAr['termek_id'] == $termek_id_list[$i]) {
+									// megtaláltuk a termékárat: hozzáadjuk a beszerzési ár szummához és kilépünk a ciklusból
+									$arajanlat_beszerzesi_ar += $termekAr['db_beszerzesi_ar'] * $darabszam_list[$i];
+									
+									break;
+								}
+							}
+						}					
+					}
+					
+					$arajanlatMegrendeles ['haszon'] = round($arajanlatMegrendeles['netto_osszeg'] - $arajanlat_beszerzesi_ar);
+					$arajanlatMegrendeles ['netto_osszeg'] = round($arajanlatMegrendeles ['netto_osszeg']);
+					
+					$osszUgyfelSzam++;
+					$osszErtek += $arajanlatMegrendeles['netto_osszeg'];
+					$osszHaszon += $arajanlatMegrendeles ['haszon'];
+					
+					$arajanlatMegrendeles ['haszon'] = Utils::DarabszamFormazas($arajanlatMegrendeles ['haszon']);
+					$arajanlatMegrendeles ['netto_osszeg'] = Utils::DarabszamFormazas($arajanlatMegrendeles ['netto_osszeg']);
+				}
+			}
+
+			$osszUgyfelSzam = Utils::DarabszamFormazas($osszUgyfelSzam);
+			$osszErtek = Utils::DarabszamFormazas($osszErtek);
+			$osszHaszon = Utils::DarabszamFormazas($osszHaszon);
+			
+			$dataProvider = new CArrayDataProvider($elsoArajanalatokMegrendelesek, array('pagination' => false));
+			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printUjVevok', array('dataProvider' => $dataProvider, 'model' => $model, 'osszUgyfelSzam' => $osszUgyfelSzam, 'osszErtek' => $osszErtek, 'osszHaszon' => $osszHaszon), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}
 	
 }
