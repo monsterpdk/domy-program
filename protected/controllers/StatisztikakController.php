@@ -4741,5 +4741,197 @@ class StatisztikakController extends Controller
 			$mPDF1->Output();
 		}
 	}
+
+
+
+
+
+
+
+
+
+
+
+	// megrendelés forrás felületét kezeli
+	public function actionMegrendelesForras () {
+		$model = new StatisztikakMegrendelesForras;
+		
+		if (isset($_POST['StatisztikakMegrendelesForras'])) {
+            $model->attributes = $_POST['StatisztikakMegrendelesForras'];
+
+            if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> megrendelesForrasPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_megrendelesForras',array('model'=>$model,));
+			}
+			
+			return;
+        } else {
+			$model = new StatisztikakMegrendelesForras;
+			
+			$this->render('_megrendelesForras',array(
+				'model'=>$model,)
+			);
+		}
+	}
+
+	// a kapott model alapján összeállítja a megrendelés forrás PDF-ét
+	public function megrendelesForrasPrintPDF ($model) {
+		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+		if ($model != null) {
+
+			set_time_limit(1000);
+			
+			$termekcsoport_id = $model -> termekcsoport_id;
+			$aruhaz_id = $model -> aruhaz_id;
+			$ugyfel_id = $model -> ugyfel_id;
+		
+			$termekCsoport = null;
+			$aruhaz = null;
+			$ugyfel = null;
+
+			$extraWhere = "";
+			
+			if ($termekcsoport_id != null) {
+				$termekCsoport = Termekcsoportok::model()->findByPk($termekcsoport_id);
+				if ($termekCsoport == null) {
+					die("Hiba történt a statisztika generálása során!");
+				} else {
+					$extraWhere .= " AND dom_termekek.termekcsoport_id = " . Yii::app()->db->quoteValue($termekcsoport_id);
+				}
+			}
+		
+			if ($aruhaz_id != null) {
+				$aruhaz = Aruhazak::model()->findByPk($aruhaz_id);
+				if ($aruhaz == null) {
+					die("Hiba történt a statisztika generálása során!");
+				} else {
+					$extraWhere .= " AND dom_megrendelesek.megrendeles_forras_id = " . Yii::app()->db->quoteValue($aruhaz_id);
+				}
+			}
+		
+			if ($ugyfel_id != null) {
+				$ugyfel = Ugyfelek::model()->findByPk($ugyfel_id);
+				if ($ugyfel == null) {
+					die("Hiba történt a statisztika generálása során!");
+				} else {
+					$extraWhere .= " AND dom_megrendelesek.ugyfel_id = " . Yii::app()->db->quoteValue($ugyfel_id);
+				}
+			}
+		
+			// tömbbe rakjuk az összes termékárat, hogy ne DB-hez nyúljunk minden lépésnél, hanem a memóriából gyorsan elérhető legyen, amire szükség van
+			// nem activerecord-ot használunk, hanem sima tömbös megoldást, az kevésbé erőforrásigényes
+			$sqlTermekArak =
+			"
+				SELECT
+					termek_id,
+					db_beszerzesi_ar,
+					datum_mettol,
+					datum_meddig
+				FROM dom_termek_arak
+				WHERE torolt = 0
+			";
+			
+			$commandTermekArak = Yii::app()->db->createCommand($sqlTermekArak);
+			$termekArak = $commandTermekArak->queryAll();
+
+			$osszErtek = 0;
+			$osszHaszon = 0;
+			
+			// megrendelés tételek lekérdezése
+			$sql = 
+			"
+				SELECT
+
+					dom_megrendelesek.sorszam AS rendeles_sorszam,
+					dom_megrendelesek.rendeles_idopont AS rendeles_idopont,
+					dom_aruhazak.aruhaz_nev AS aruhaz_nev,
+					dom_ugyfelek.cegnev_teljes AS ugyfel_nev,
+					dom_termekek.id AS termek_id,
+					dom_megrendeles_tetelek.darabszam AS darabszam,
+					dom_megrendeles_tetelek.darabszam * dom_megrendeles_tetelek.netto_darabar AS netto_osszeg
+					
+				FROM dom_megrendeles_tetelek
+
+				INNER JOIN dom_megrendelesek ON
+					dom_megrendeles_tetelek.megrendeles_id = dom_megrendelesek.id
+
+				INNER JOIN dom_termekek ON
+					dom_megrendeles_tetelek.termek_id = dom_termekek.id
+
+				INNER JOIN dom_aruhazak ON
+					dom_megrendelesek.megrendeles_forras_id = dom_aruhazak.id
+
+				INNER JOIN dom_ugyfelek ON
+					dom_megrendelesek.ugyfel_id = dom_ugyfelek.id
+
+				WHERE
+					dom_megrendeles_tetelek.torolt = 0 AND dom_megrendelesek.torolt = 0 AND dom_megrendelesek.sztornozva = 0	AND
+					dom_megrendeles_tetelek.negativ_raktar_termek = 0 AND
+					dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= :meddig
+				
+				" . $extraWhere . " 
+				
+				ORDER BY dom_ugyfelek.cegnev_teljes
+			";
+
+			$command = Yii::app()->db->createCommand($sql);
+			
+			$command->bindParam(':mettol', $model -> statisztika_mettol);
+			$command->bindParam(':meddig', $model -> statisztika_meddig);
+			
+			$megrendelesTetelek = $command->queryAll();
+			
+			//végigmegyünk az intervallumba eső első árajánlatokon
+			if ($megrendelesTetelek != null) {
+				foreach ($megrendelesTetelek as &$megrendelesTetel) {
+					$termek = Termekek::model() ->findByPk ($megrendelesTetel['termek_id']);
+					
+					if ($termek != null) {
+						$megrendelesTetel['termek_neve'] = $termek -> getDisplayTermekTeljesNev();
+						$megrendelesTetel ['haszon'] = 0;
+						
+						// kiszámoljuk a várható hasznot
+						foreach ($termekArak as $termekAr) {
+							if ($megrendelesTetel['rendeles_idopont'] >= $termekAr['datum_mettol'] && $megrendelesTetel['rendeles_idopont'] <= $termekAr['datum_meddig'] && $termekAr['termek_id'] == $megrendelesTetel['termek_id']) {
+								// megtaláltuk a termékárat: hozzáadjuk a beszerzési ár szummához és kilépünk a ciklusból
+								$megrendelesTetel ['haszon'] = $termekAr['db_beszerzesi_ar'] * $megrendelesTetel ['darabszam'];
+								
+								break;
+							}
+						}
+					}
+					
+					$megrendelesTetel ['netto_osszeg'] = round($megrendelesTetel ['netto_osszeg']);
+					
+					$osszErtek += $megrendelesTetel['netto_osszeg'];
+					$osszHaszon += $megrendelesTetel ['haszon'];
+					
+					$megrendelesTetel ['haszon'] = Utils::DarabszamFormazas($megrendelesTetel ['haszon']);
+					$megrendelesTetel ['netto_osszeg'] = Utils::DarabszamFormazas($megrendelesTetel ['netto_osszeg']);
+				}
+			}
+
+			$osszErtek = Utils::DarabszamFormazas($osszErtek);
+			$osszHaszon = Utils::DarabszamFormazas($osszHaszon);
+			
+			$dataProvider = new CArrayDataProvider($megrendelesTetelek, array('pagination' => false));
+			
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1 -> cacheTables = true;
+			$mPDF1 -> simpleTables = true;
+			$mPDF1 -> packTableData = true;
+				
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printMegrendelesForras', array('dataProvider' => $dataProvider, 'model' => $model, 'osszErtek' => $osszErtek, 'osszHaszon' => $osszHaszon), true));
+	 
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}
 	
 }

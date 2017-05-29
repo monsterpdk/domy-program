@@ -76,6 +76,7 @@
 							array ('label'=>'Ügyfél rendelései', 'url'=> Yii::app()->createUrl('/statisztikak/UgyfelRendelesei'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.UgyfelRendelesei')),
 							array ('label'=>'Ki nem számlázott tételek', 'url'=> Yii::app()->createUrl('/statisztikak/KiNemSzamlazottTetelek'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.KiNemSzamlazottTetelek')),
 							array ('label'=>'Új vevők', 'url'=> Yii::app()->createUrl('/statisztikak/UjVevok'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.UjVevok')),
+							array ('label'=>'Megrendelés forrás', 'url'=> Yii::app()->createUrl('/statisztikak/MegrendelesForras'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.MegrendelesForras')),
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak')) ),
                         
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
