@@ -148,7 +148,7 @@
 					<td class="cim_cella szegely_felul szegely_alul"><?php echo $megrendeles["szamla_sorszam"];?>&nbsp;&nbsp;<?php echo $megrendeles["user_nev"];?></td>
 					<td class="cim_cella szegely_felul szegely_alul"><?php echo substr($megrendeles["szamla_kifizetes_datum"], 0, 10) ;?></td>
 					<td class="cim_cella szegely_felul szegely_alul"><?php echo substr($megrendeles["szamla_fizetesi_hatarido"], 0, 10);?></td>
-					<td class="cim_cella szegely_felul szegely_alul"><?php if ($megrendeles["szamla_sorszam"] != "" && date("Y-m-d") > $megrendeles["szamla_fizetesi_hatarido"] && $megrendeles["szamla_kifizetes_datum"] == "") echo "lejárt";?></td>
+					<td class="cim_cella szegely_felul szegely_alul"><?php if ($megrendeles["szamla_sorszam"] != "" && date("Y-m-d") > $megrendeles["szamla_fizetesi_hatarido"] && $megrendeles["szamla_fizetve"] == "0") echo "lejárt";?></td>
 					<td class="cim_cella szegely_felul szegely_alul">&nbsp;</td>
 				</tr>
 				<?php

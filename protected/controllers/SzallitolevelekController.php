@@ -423,6 +423,25 @@ class SzallitolevelekController extends Controller
 			}
 		}
 		
-		echo "Javítot megrendelések: " . $result;
+		echo "Javított megrendelések: " . $result;
+	}
+
+	public function actionSzallitolevelAdatokAjax(){
+		$sorszam = Yii::app()->request->getQuery('szallitolevel_szam');
+		$szallitolevel = Szallitolevelek::model()->findByAttributes(array('sorszam'=>$sorszam,'torolt'=>'0'));
+		$szallitolevel_tomb["szallitas_cegnev"] = $szallitolevel->megrendeles->ugyfel->cegnev ;
+		$szallitolevel_tomb["szallitas_cim"] = $szallitolevel->megrendeles->ugyfel->szekhely_irsz . " " . $szallitolevel->megrendeles->ugyfel->szekhely_varos_dsp->varosnev . ", " . $szallitolevel->megrendeles->ugyfel->szekhely_cim ;
+		$szallitolevel_tomb["szallitas_telefonszam"] = $szallitolevel->megrendeles->ugyfel->kapcsolattarto_telefon ;
+		if (count($szallitolevel->tetelek) > 0) {
+			foreach ($szallitolevel->tetelek as $tetel) {
+				$tetel_sor = array();
+				$tetel_sor["megnevezes"] = $tetel->megrendeles_tetel->termek->displayTermeknev;
+				$tetel_sor["darab"] = $tetel->darabszam;
+				$szallitolevel_tomb["tetelek"][] = $tetel_sor;
+			}
+		}
+
+
+		echo json_encode($szallitolevel_tomb);
 	}
 }

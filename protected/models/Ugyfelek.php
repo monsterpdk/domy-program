@@ -521,7 +521,7 @@ class Ugyfelek extends DomyModel
 		
 		foreach ($this -> ugyfelUgyintezo as $ugyintezo) {
 			if ($ugyintezo_id == 0 || $ugyintezo->id == $ugyintezo_id) {
-				if (!$alapertelmezett_ugyintezo || $ugyintezo->alapertelmezett_kapcsolattarto == true) {
+				if (!$alapertelmezett_ugyintezo || $ugyintezo->alapertelmezett_kapcsolattarto == true || $ugyintezo->id == $ugyintezo_id) {
 					$result .= (strlen($result) > 0 ? ', ' : '') . $ugyintezo -> nev;
 				}
 			}

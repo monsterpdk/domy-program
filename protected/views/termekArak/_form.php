@@ -33,13 +33,15 @@ if (!isset($termek_adatok)) {
 			<?php echo $form->labelEx($model,'termek_id'); ?>
 			<?php //echo $form->textField($model,'termek_id',array('size'=>10,'maxlength'=>10)); ?>
 			
-			<?php echo CHtml::activeDropDownList($model, 'termek_id',
-				CHtml::listData(Termekek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'displayTermekTeljesNev')
-			); ?>
+			<?php
+/*				echo CHtml::activeDropDownList($model, 'termek_id',
+					CHtml::listData(Termekek::model()->findAll(array("condition"=>"torolt=0")), 'id', 'displayTermekTeljesNev')
+				);*/
+				echo CHtml::activeDropDownList($model, 'termek_id', Termekek::getAktivArNelkuliTermekekTomb($model->termek_id));
+			?>
 			
 			<?php echo $form->error($model,'termek_id'); ?>
 		</div>
-
 		<div class="row">
 			<?php echo $form->labelEx($model,'db_beszerzesi_ar'); ?>
 			<?php echo $form->textField($model,'db_beszerzesi_ar'); ?>

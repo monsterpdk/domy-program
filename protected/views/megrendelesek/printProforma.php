@@ -18,7 +18,7 @@
 	if ($fizetesiMod == null)
 		$fizetesiMod = new FizetesiModok();
 
-	$szamlaszam = "Unicredit 10918001-00000006-23320004" ;
+	$szamlaszam = "Raiffeisen Bank 12011351-01596030-00100003" ;
 	$aruhaz = Aruhazak::model()->findByPk($model -> megrendeles_forras_id) ;
 	if ($aruhaz != null && $aruhaz -> bankszamlaszam_proforman != "") {
 		$szamlaszam = $aruhaz -> bankszamlaszam_proforman  ;
@@ -88,7 +88,7 @@
 		<td class = 'col2'><strong>Vevő</strong></td>
 	<tr>
 	<tr>
-		<td class = 'col1'>DomyPack & Press Kft. <br /> 1139 Budapest, Lomb utca 37-39.</td>
+		<td class = 'col1'>DomyPack & Press Kft. <br /> 1117 Bp. Budafoki út 111-113. 20-as épület</td>
 		<td class = 'col2'> <?php echo $ugyfel -> cegnev . "<br />" . $ugyfel -> display_ugyfel_cim; ?> </td>
 	<tr>
 	<tr>

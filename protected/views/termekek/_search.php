@@ -28,6 +28,11 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->label($model,'cikkszam'); ?>
+		<?php echo $form->textField($model,'cikkszam',array('size'=>15,'maxlength'=>15)); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->label($model,'meret_search'); ?>
 		<?php
 			echo $form->dropDownList($model, 'meret_id',

@@ -57,6 +57,8 @@ class Termekek extends CActiveRecord
 	private $displayTermekTeljesNev;
 
 	private $activeTermekAr;
+	private $activeTermekBeszerzesiAr;
+	private $activeTermekArSzamolashoz;
 	
 	/**
 	 * @return string the associated database table name
@@ -255,6 +257,8 @@ class Termekek extends CActiveRecord
 		// beírjuk a model-be az aktív termékárat
 		$termekAr = Utils::getActiveTermekar ($this->id);
 		$this->activeTermekAr = ($termekAr == 0) ? 0 : $termekAr["db_eladasi_ar"];
+		$this->activeTermekBeszerzesiAr = ($termekAr == 0) ? 0 : $termekAr["db_beszerzesi_ar"];
+		$this->activeTermekArSzamolashoz = ($termekAr == 0) ? 0 : $termekAr["darab_ar_szamolashoz"];
 	}
 
 	// LI : a 'datum' mezőt automatikusan kitöltjük létrehozáskor
@@ -349,6 +353,37 @@ class Termekek extends CActiveRecord
 	public function getActiveTermekAr ()
 	{
 		return $this->activeTermekAr;
+	}
+
+	public function getActiveTermekBeszerzesiAr ()
+	{
+		return $this->activeTermekBeszerzesiAr;
+	}
+
+	public function getActiveTermekArSzamolashoz ()
+	{
+		return $this->activeTermekArSzamolashoz;
+	}
+
+	public static function getAktivArNelkuliTermekekTomb($termek_id) {
+		$criteria=new CDbCriteria;
+		$criteria->join = "left join dom_termek_arak as termekar on (t.id = termekar.termek_id)";
+		/*		$criteria->compare('t.id',$this->id,true);*/
+		$criteria->compare('t.torolt', 0, false);
+
+		$lapozo = array('pagination'=>false);
+
+		$alapDataProvider=new CActiveDataProvider('Termekek', array_merge(array('criteria'=>$criteria), $lapozo));
+
+		$megjelenitendo_sorok = array() ;
+		if ($alapDataProvider->totalItemCount > 0) {
+			foreach ($alapDataProvider->getData() as $sor) {
+				if ($sor->ActiveTermekAr == "" || $sor->ActiveTermekAr <= 0 || $sor->id == $termek_id) {
+				$megjelenitendo_sorok[$sor->id] = $sor->DisplayTermekTeljesNev;
+				}
+			}
+		}
+		return $megjelenitendo_sorok;
 	}
 
 }

@@ -53,7 +53,7 @@
 				'enablePagination' => false,
 				'dataProvider'=>$dataProviderTermekek,
 				'columns'=>array(
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
 								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),

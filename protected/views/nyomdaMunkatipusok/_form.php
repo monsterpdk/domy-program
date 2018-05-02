@@ -93,6 +93,14 @@
 					'onclick'=>new CJavaScriptExpression('function() { addTermek(); }'),
 					'htmlOptions'=>array('class'=>'btn btn-success'),
 				));
+
+				$this->widget('zii.widgets.jui.CJuiButton', array(
+					'name'=>'button_create_termek_termekcsoport',
+					'caption'=>'Termékcsoport termékeinek hozzáadása / kivétele',
+					'buttonType'=>'link',
+					'onclick'=>new CJavaScriptExpression('function() { addTermekcsoport(); }'),
+					'htmlOptions'=>array('class'=>'btn btn-success'),
+				));
 			}
 
 			// GRIDVIEW BEGIN
@@ -124,13 +132,29 @@
 			
 			$this->endWidget('zii.widgets.jui.CJuiDialog');
 			// CJUIDIALOG END
+
+			// CJUIDIALOG BEGIN
+			$this->beginWidget('zii.widgets.jui.CJuiDialog',
+				array(   'id'=>'nyomda-munkatipus-termekcsoport-dialog',
+					'options'=>array(
+						'title'=>'Termékcsoport kiválasztása',
+						'width'=>'auto',
+						'autoOpen'=>false,
+					),
+				));
+
+			echo "<div class='divForFormTermekcsoportok'></div>";
+
+			$this->endWidget('zii.widgets.jui.CJuiDialog');
+			// CJUIDIALOG END
+
 			
 			$this->widget('zii.widgets.grid.CGridView', array(
 				'id' => 'termekek-grid',
 				'enablePagination' => false,
 				'dataProvider'=>$dataProvider,
 				'columns'=>array(
-					'termek.nev',
+					'termek.DisplayTermekTeljesNev',
 					array(
 								'class' => 'bootstrap.widgets.TbButtonColumn',
 								'htmlOptions'=>array('style'=>'width: 130px; text-align: center;'),
@@ -168,8 +192,8 @@
 	
 	?>
 <?php $this->endWidget(); ?>
-	
-	
+
+
 <?php // MŰVELETEK
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>"<strong>Műveletek</strong>",
@@ -323,6 +347,37 @@
 		$("#nyomda-munkatipus-termek-dialog").dialog("open");
 		
 		return false; 		
+	}
+
+	function addTermekcsoport ()
+	{
+		id = $("#NyomdaMunkatipusok_id").val();
+
+		<?php echo CHtml::ajax(array(
+			'url'=> "js:'/index.php/nyomdaMunkatipusTermekek/createCsoport/id/' + id + '/grid_id/' + new Date().getTime()",
+			'data'=> "js:$(this).serialize()",
+			'type'=>'post',
+			'id' => 'send-munkatipus-termekcsoport-'.uniqid(),
+			'replace' => '',
+			'dataType'=>'json',
+			'success'=>"function(data)
+				{
+					if (data.status == 'failure')
+					{
+						$('#nyomda-munkatipus-termekcsoport-dialog div.divForFormTermekcsoportok').html(data.div);
+					}
+					else
+					{
+						$('#nyomda-munkatipus-termekcsoport-dialog div.divForFormTermekcsoportok').html(data.div);
+						$('#nyomda-munkatipus-termekcsoport-dialog').dialog('close');
+					}
+	 
+				} ",
+		))?>;
+
+		$("#nyomda-munkatipus-termekcsoport-dialog").dialog("open");
+
+		return false;
 	}
 	
 	function addMuvelet ()

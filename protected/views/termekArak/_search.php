@@ -61,6 +61,12 @@
 			<?php echo $form->textField($model,'kodszam_search',array('size'=>10,'maxlength'=>30)); ?>
 		</div>
 
+		<div class="row" style="text-align: center;">
+			<?php echo $form->label($model,'nincs_aktualis_ar_search'); ?>
+			<?php echo $form->checkBox($model,'nincs_aktualis_ar_search'); ?>
+		</div>
+
+
 		<div class="row buttons">
 			<?php echo CHtml::submitButton('Keresés'); ?>
 		</div>

@@ -533,6 +533,10 @@ li.almenu-balra span.caret, li.almenu-jobbra span.caret {
 	padding: 15px 0;
 }
 
+.utemezes-grid {
+	padding-top: 0px;
+}
+
 .grid-view table.group-grid-view
 {
 	background: white;
@@ -1103,18 +1107,29 @@ table tr td.red {
 	margin-left: 0px ;	
 }
 
-#utemezes_grid1 table.items th, .grid-view table.items td {
+.utemezes-grid table.items th, .grid-view table.items td {
 	border: 1px solid gray !important;
 } 
 
 /* disable selected for merged cells */     
-#utemezes_grid1 td.merge {
+.utemezes-grid td.merge {
    background: none repeat scroll 0 0 #F8F8F8; 
 }     
 
 /* disable selected for extrarow in bootstrap */     
-#utemezes_grid1 table.table td.extrarow, table.table td.extrarow:hover {
+.utemezes-grid table.table td.extrarow, table.table td.extrarow:hover {
    background: none repeat scroll 0 0 #E0E0E0; 
+}
+
+p.utemezes_munkatipus_nev {
+	margin-bottom: 0px;
+	font-size: 1.2em;
+	background-color: #c4e3f3;
+	padding: 2px 2px 2px 5px;
+}
+
+#button_print_utemezes {
+	margin-bottom: 15px;
 }
 
 #megrendelesek-form #yw4 {
@@ -1151,4 +1166,58 @@ tr.updated-row {
 .hozottChooser label {
 	display: inline;
 	margin-left: 5px;
+}
+
+#szallito-futarlevelek-form .portlet {
+	width: 45%;
+	float: left;
+	margin: 10px;
+}
+
+#szallito-futarlevelek-form #yw2 {
+	width: 92%;
+}
+
+#szallito-futarlevelek-form #yw3 td {
+	padding: 5px 20px 0px 5px;
+}
+
+#szallito-futarlevelek-form #yw3_c1 {
+	width: 10%;
+}
+
+.editable-column-100 {
+	width: 100%;
+}
+
+.editable-column-80 {
+	width: 80%;
+}
+
+.editable-column-60 {
+	width: 60%;
+}
+
+.editable-column-40 {
+	width: 40%;
+}
+
+.editable-column-20 {
+	width: 20%;
+}
+
+.editable-column-hidden {
+	display: none;
+}
+
+.editable-column-input-szeles {
+	width: 100%;
+}
+
+.editable-column-input-rovid {
+	width: 50%;
+}
+
+.selected-to-delete {
+	background-color: #ce8483 !important;
 }

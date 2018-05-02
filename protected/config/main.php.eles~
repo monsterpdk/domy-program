@@ -118,7 +118,7 @@ return array(
 		// MSSQL kapcsolat az ACTUAL könyvelőprogram adatbázisához
 		'db_actual'=>array(
 			'class'=>'CDbConnection',
-			'connectionString' => 'sqlsrv:Server=DOMYSRV\ACTUAL;Database=Kronos0001',
+			'connectionString' => 'sqlsrv:Server=DOMYSRV\ACTUAL1;Database=Kronos0001',
 //			'emulatePrepare' => false,
 			'username' => 'sa',
 			'password' => 'SQL2005Express',

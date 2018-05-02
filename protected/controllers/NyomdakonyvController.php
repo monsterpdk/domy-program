@@ -143,10 +143,12 @@ class NyomdakonyvController extends Controller
 				$nyomdakonyv -> sztornozva = 1;
 				
 				$megrendelesTetel = MegrendelesTetelek::model()->findByPk($nyomdakonyv->megrendeles_tetel_id);
-				
+
 				$nyomdakonyv -> save(false);
 
+				$megrendeles_id = null ;
 				if ($megrendelesTetel != null) {
+					$megrendeles_id = $megrendelesTetel->megrendeles_id ;
 					// a raktárban töröljük az ide vonatkozó foglalást
 					if (!Utils::isMunkaInNegativRaktar($nyomdakonyv -> id)) {
 						// ha NEM mínuszos a darabszám
@@ -180,6 +182,22 @@ class NyomdakonyvController extends Controller
 						// töröljük a megrendelés tételről is, hogy ő egy negatív raktártermék tétel
 						$megrendelesTetel -> negativ_raktar_termek = 0;
 						$megrendelesTetel -> save (false);
+					}
+				}
+
+				if ($megrendeles_id != null) {
+					$sql = "
+							select dom_nyomdakonyv.id from dom_nyomdakonyv
+							inner join dom_megrendeles_tetelek on dom_nyomdakonyv.megrendeles_tetel_id = dom_megrendeles_tetelek.id
+							where dom_megrendeles_tetelek.megrendeles_id = '" . $megrendeles_id . "' and dom_nyomdakonyv.sztornozva = 0
+							" ;
+					$command = Yii::app()->db->createCommand($sql);
+					$result = $command -> queryAll();
+					if ($result == null || count($result) == 0) {
+						//Nincs már nem sztornózott nyomdakönyvi munka a megrendeléshez
+						$megrendeles = Megrendelesek::model()->findByPk($megrendeles_id) ;
+						$megrendeles->nyomdakonyv_munka_id = 0 ;
+						$megrendeles->save(false) ;
 					}
 				}
 			}
@@ -541,62 +559,111 @@ class NyomdakonyvController extends Controller
 			}
 		}
 	}
-	
+
 	// Ütemezés listát előállító action.
 	public function actionUtemezes()
 	{
+		$eredmenyek = array() ;
+
+		$munkatipusok = NyomdaMunkatipusok::model()->findAllByAttributes(array('torolt'=>0)) ;
+
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
 			'criteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
+				'condition'=>'munkatipus_id = 0 and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
 				'order'=>'hatarido, ugyfel_id',
 				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
 				'together'=>true,
 			),
 			'countCriteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
+				'condition'=>'munkatipus_id = 0 and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
 				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
 				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,
 			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)		));
-		
+		$eredmenyek["Nincs munkatípus"] = $dataProvider ;
+		if (count($munkatipusok) > 0) {
+			foreach ($munkatipusok as $munkatipus) {
+				$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
+					'criteria'=>array(
+						'condition'=>'munkatipus_id = ' . $munkatipus->id . ' and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
+						'order'=>'hatarido, ugyfel_id',
+						'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+						'together'=>true,
+					),
+					'countCriteria'=>array(
+						'condition'=>'munkatipus_id = ' . $munkatipus->id . ' and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
+						'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+						'together'=>true,
+						// 'order' and 'with' clauses have no meaning for the count query
+					),
+					'sort'=> false,
+					'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)		));
+				$eredmenyek[$munkatipus->munkatipus_nev] = $dataProvider ;
+			}
+		}
 		$this->render('utemezes',array(
-			'dataProvider'=>$dataProvider,
-		));		
-	}	
-	
+			'eredmenyek'=>$eredmenyek,
+		));
+	}
+
 	// Ütemezés lista PDF-et előállító action.
 	public function actionPrintUtemezes()
 	{
+		$eredmenyek = array() ;
+
+		$munkatipusok = NyomdaMunkatipusok::model()->findAllByAttributes(array('torolt'=>0)) ;
+
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
 			'criteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
+				'condition'=>'munkatipus_id = 0 and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
 				'order'=>'hatarido, ugyfel_id',
 				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
 				'together'=>true,
 			),
 			'countCriteria'=>array(
-				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
+				'condition'=>'munkatipus_id = 0 and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
 				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
 				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query
 			),
 			'sort'=> false,
-			'pagination'=>false,
-/*			'pagination'=>array(
-				'pageSize'=>20,
-			),*/
-		));
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)		));
+		$eredmenyek["Nincs munkatípus"] = $dataProvider ;
+		if (count($munkatipusok) > 0) {
+			foreach ($munkatipusok as $munkatipus) {
+				$dataProvider = new CActiveDataProvider('Nyomdakonyv', array(
+					'criteria' => array(
+						'condition' => 'munkatipus_id = ' . $munkatipus->id . ' and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0',
+						'order' => 'hatarido, ugyfel_id',
+						'with' => array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+						'together' => true,
+					),
+					'countCriteria' => array(
+						'condition' => 'munkatipus_id = ' . $munkatipus->id . ' and t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null',
+						'with' => array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
+						'together' => true,
+						// 'order' and 'with' clauses have no meaning for the count query
+					),
+					'sort' => false,
+					'pagination' => false,
+					/*			'pagination'=>array(
+                                    'pageSize'=>20,
+                                ),*/
+				));
+				$eredmenyek[$munkatipus->munkatipus_nev] = $dataProvider;
+			}
+		}
 			
-		if ($dataProvider != null) {
+		if ($eredmenyek != null) {
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
 
 			$mPDF1->SetHtmlHeader("Nyomdakönyv ütemezés");
 
 			# render
-			$mPDF1->WriteHTML($this->renderPartial("printUtemezes", array('dataProvider' => $dataProvider), true));
+			$mPDF1->WriteHTML($this->renderPartial("printUtemezes", array('eredmenyek' => $eredmenyek), true));
 	 
 			# Outputs ready PDF
 			$mPDF1->Output();
@@ -677,6 +744,69 @@ class NyomdakonyvController extends Controller
 		$this->render('rendelesAjanlas',array(
 			'dataProvider'=>$dataProvider, 'model'=>$model
 		));
+
+	}
+
+	//Rendelés ajánlás listát előállító action
+	public function actionPrintRendelesAjanlas() {
+		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
+			'criteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and megrendeles.sztornozva=0 and megrendeles.torolt=0 and raktar_termekek_negativ.id > 0',
+				'order'=>'gyarto.id, t.hatarido',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel', 'megrendeles_tetel.termek.gyarto', 'raktar_termekek_negativ'),
+				'together'=>true,
+			),
+			'countCriteria'=>array(
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles_tetel.megrendeles_id is not null and raktar_termekek_negativ.id > 0',
+				'with'=>array('megrendeles_tetel', 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel', 'megrendeles_tetel.termek.gyarto', 'raktar_termekek_negativ'),
+				'together'=>true,
+				// 'order' and 'with' clauses have no meaning for the count query
+			),
+			'sort'=> false,
+			'pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber(),)		));
+
+		$result_array = array() ;
+		if ($dataProvider->totalItemCount > 0) {
+			foreach ($dataProvider->getData() as $index => $sor) {
+				$hianyzo_darabszam = $sor->raktar_termekek_negativ->darabszam ;
+				$sql = "
+					SELECT 
+						SUM(elerheto_db)
+								
+					FROM dom_raktar_termekek
+					
+					WHERE termek_id = '" . $sor->raktar_termekek_negativ->termek_id . "'
+		
+					GROUP BY termek_id
+				";
+				$elerheto_keszlet = Yii::app() -> db -> createCommand  ($sql) -> queryScalar();
+				if ($elerheto_keszlet > 0) {
+					$hianyzo_darabszam = $hianyzo_darabszam - $elerheto_keszlet ;
+				}
+				$sor["hianyzoDarabszam"] = $hianyzo_darabszam ;
+				$sor["hianyzoDarabszamFormazott"] = Utils::DarabszamFormazas($hianyzo_darabszam) ;
+				$result_array[] = $sor ;
+			}
+		}
+
+		$dataProvider = new CArrayDataProvider($result_array, array('id' => 'id', 'sort' => array()));
+		$model=new Nyomdakonyv('search');
+
+		if ($dataProvider != null) {
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf('','A4-L');
+
+			$mPDF1->SetHtmlHeader("Rendelés ajánlás");
+
+			# render
+			$mPDF1->WriteHTML($this->renderPartial("printRendelesAjanlas", array('dataProvider' => $dataProvider, 'nyomdakonyv_model' => $model), true));
+
+			# Outputs ready PDF
+			$mPDF1->Output();
+			/*			$this->render('printUtemezes',array(
+                            'dataProvider'=>$dataProvider,
+                        ));*/
+		}
 
 	}
 

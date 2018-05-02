@@ -17,6 +17,19 @@ $this->breadcrumbs=array(
 </div>
 
 <?php
+if (Yii::app()->user->checkAccess('Termekek.PrintTermekek')) {
+	$this->widget('zii.widgets.jui.CJuiButton', array(
+		'name' => 'button_print_termeklista',
+		'caption' => 'Lista nyomtatás (CSV)',
+		'buttonType' => 'link',
+		//		'onclick'=>'openPrintDialog()',
+		'url' => Yii::app()->createUrl("termekek/printTermekek"),
+		'htmlOptions' => array('class' => 'btn btn-success', 'target' => '_blank'),
+	));
+}
+?>
+
+<?php
 	if (Yii::app()->user->checkAccess('Termekek.Create')) {
 		$this->widget('zii.widgets.jui.CJuiButton', array(
 			'name'=>'button_create_termek',

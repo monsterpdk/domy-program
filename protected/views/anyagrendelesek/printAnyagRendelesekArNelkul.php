@@ -84,7 +84,7 @@
 	<tr>
 	<tr>
 		<td class = 'col1'></td>
-		<td class = 'col2'>1139 Budapest, Lomb utca 37-39.</td>
+		<td class = 'col2'>1117 Bp. Budafoki út 111-113. 20-as épület</td>
 		<td class = 'col3'><strong>Szállító</strong></td>
 		<td class = 'col4'><strong><?php echo $szallito -> cegnev; ?></strong></td>
 	<tr>

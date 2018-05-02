@@ -44,6 +44,46 @@ class NyomdaMunkatipusTermekekController extends Controller
 		
 	}
 
+	public function actionCreateCsoport($id, $grid_id) {
+		if ($id != null) {
+			$model = NyomdaMunkatipusok::model()->findByPk($id);
+		} else exit();
+
+		// Keresés esetén visszaadjuk a szűrt listát és kilépünk a metódusból
+		$termekcsoport=new Termekcsoportok('search');
+		$termekcsoport->unsetAttributes();  // clear any default values
+
+		if (isset($_GET['ajax']) && strpos($_GET['ajax'], 'nyomda-munkatipus-termekcsoport-grid') !== FALSE) {
+			if(isset($_GET['Termekcsoportok'])) {
+				$termekcsoport->attributes=$_GET['Termekcsoportok'];
+			}
+
+			// Stop jQuery from re-initialization
+			Yii::app()->clientScript->scriptMap['*.js'] = false;
+			Yii::app()->clientScript->scriptMap['*.css'] = false;
+
+			$this->renderPartial('_csoportform', array('model' => $model, 'termekcsoport' => $termekcsoport, 'grid_id'=>$grid_id), false, true);
+
+			exit;
+		}
+
+		if (Yii::app()->request->isAjaxRequest)
+		{
+			// Stop jQuery from re-initialization
+			Yii::app()->clientScript->scriptMap['*.js'] = false;
+			Yii::app()->clientScript->scriptMap['*.css'] = false;
+
+			echo CJSON::encode(array(
+				'status'=>'failure',
+				'div'=>$this->renderPartial('_csoportform', array('model' => $model, 'termekcsoport' => $termekcsoport, 'grid_id'=>$grid_id), true, true)));
+			exit;
+		}
+		else {
+			$this->render('create',array('termekcsoport'=>$termekcsoport,));
+		}
+	}
+
+
 	public function actionDelete($id)
 	{
 		$model=$this->loadModel($id);
@@ -72,6 +112,48 @@ class NyomdaMunkatipusTermekekController extends Controller
 			}
 		}
 	}
+
+	public function actionAssignTermekcsoportToMunkatipus ($id, $termekcsoport_id) {
+		if ($id != null & $termekcsoport_id != null) {
+			$munkatipus = NyomdaMunkatipusok::model() -> findByPk($id);
+			$termekek = Termekek::model() -> findAllByAttributes(array("termekcsoport_id"=>$termekcsoport_id));
+			$hibasak = 0 ;
+			foreach ($termekek as $termek) {
+				if ($munkatipus != null && $termek != null) {
+					if (NyomdaMunkatipusTermekek::model() -> findByAttributes(array("munkatipus_id"=>$id, "termek_id"=>$termek->id)) == null) {
+						$munkatipusTermek = new NyomdaMunkatipusTermekek ();
+						$munkatipusTermek->munkatipus_id = $id;
+						$munkatipusTermek->termek_id = $termek->id;
+						$munkatipusTermek->save();
+					}
+				}
+				else
+				{
+					$hibasak++ ;
+				}
+			}
+			$status = "success" ;
+			if ($hibasak > 0) {
+				$status = "error" ;
+			}
+			echo CJSON::encode(array(
+				'status' => $status,
+				'div' => ''));
+			exit;
+		}
+	}
+
+	public function actionRemoveTermekcsoportFromMunkatipus ($id, $termekcsoport_id) {
+		if ($id != null & $termekcsoport_id != null) {
+			Yii::app()->db->createCommand('delete dom_nyomda_munkatipus_termekek.* from dom_nyomda_munkatipus_termekek left join dom_termekek on (dom_nyomda_munkatipus_termekek.termek_id = dom_termekek.id) where munkatipus_id = :id and dom_termekek.termekcsoport_id = :termekcsoport_id')->bindValue('id',$id)->bindValue('termekcsoport_id',$termekcsoport_id)->query();
+			$status = "success" ;
+			echo CJSON::encode(array(
+				'status' => $status,
+				'div' => ''));
+			exit;
+		}
+	}
+
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

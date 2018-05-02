@@ -41,7 +41,7 @@ $this->breadcrumbs=array(
 </div>
 
 <?php $gridWidget = $this->widget('zii.widgets.grid.CGridView', array(
-	'dataProvider'=>$model -> search(),
+	'dataProvider'=>$dataProvider,
 	'template' => '{items} {summary} {pager}',
 	'enableHistory' => true,
 	'columns'=>array(
@@ -89,9 +89,9 @@ $this->breadcrumbs=array(
 				),
 				*/
 				'termek.gyarto.cegnev',
-				
+
 				array(										
-					'name'=>'Státusz',
+					'name'=>'Statusz',
 					'type'=>'raw',
 					'value'=>function ($model, $index, $widget) {
 						$most = date("Y-m-d H:i:s");
@@ -109,7 +109,7 @@ $this->breadcrumbs=array(
 					'name'=>'csomag_beszerzesi_ar',
 					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->csomag_beszerzesi_ar, "Ft")',
 					'htmlOptions'=>array('style' => 'text-align: right;'),					
-				),				
+				),
 				array(
 					'name'=>'db_beszerzesi_ar',
 					'value'=>'Yii::app()->numberFormatter->formatCurrency($data->db_beszerzesi_ar, "Ft")',

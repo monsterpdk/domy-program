@@ -46,7 +46,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 		<?php echo $form->hiddenField($model, 'user_id'); ?>
 
 		<?php echo CHtml::hiddenField('raktarhely_id' , '', array('id' => 'raktarhely_id')); ?>
-		
+
 		<?php if (!$model->gyarto_id == null): ?>
 			<?php echo $form->hiddenField($model, 'gyarto_id'); ?>
 		<?php endif; ?>
@@ -54,7 +54,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 		<?php if (!$model->anyagrendeles_id == null): ?>
 			<?php echo $form->hiddenField($model, 'anyagrendeles_id'); ?>
 		<?php endif; ?>
-		
+
 		<div class="row">
 			<?php echo $form->labelEx($model,'gyarto_id'); ?>
 			
@@ -107,7 +107,7 @@ Yii::app() -> clientScript->registerScript('updateGridView', '
 							'htmlOptions'=>array('class' => 'bt btn-info search-button', 'style' => 'margin-left:10px; height:32px', 'target' => '_blank'),
 						));
 					?>
-				
+
 				<?php echo $form->error($model,'beszallitas_datum'); ?>
 			</div>
 

@@ -36,13 +36,20 @@
 		padding: 0px;
 	}
 	
-	#utemezes_grid1 table.items th, #utemezes_grid1 table.items td {
+	.utemezes-grid table.items th, .utemezes-grid table.items td {
 		border-bottom: 1px solid gray;
     }
-	#utemezes_grid1 table.group-grid-view th {
+	.utemezes-grid table.group-grid-view th {
 		background-color: silver ;
 		text-align: center;
-	}    
+	}
+
+	p.utemezes_munkatipus_nev {
+		margin-bottom: 0px;
+		font-size: 1.2em;
+		background-color: #c4e3f3;
+		padding: 2px 2px 2px 5px;
+	}
 	
 	.blokk_table {
 		width: 100% ;	
@@ -99,26 +106,34 @@
 </div>
 
 <?php
-    $this->widget('ext.groupgridview.BootGroupGridView', array(
-      'id' => 'utemezes_grid1',
-      'itemsCssClass'=>'items group-grid-view',
-      'dataProvider' => $dataProvider,
-      'extraRowColumns' => array('HataridoFormazott'),
-      'mergeColumns' => array('HataridoFormazott'),
-      'extraRowPos' => 'above',
-      'maxMergedRows' => 10,
-      'columns' => array(
-      	  				 array(
-      	  				 	'name'=>'HataridoFormazott',
-      	  				 	'headerHtmlOptions'=>array('style'=>'width:170px;'),
-      	  				 	),
-						 array(
-							'name'=>'UtemezesBejegyzesPrint',
-							'type'=>'raw',
-/*							'headerHtmlOptions'=>array('style'=>'width: 800px;'),*/							
-							),      	  				
-      ),
-    ));
+	if (count($eredmenyek) > 0) {
+		$i = -1;
+		foreach ($eredmenyek as $munkatipus_nev => $dataProvider) {
+			$i++;
+			echo '<p class="utemezes_munkatipus_nev">Munkatípus: ' . $munkatipus_nev . '</p>';
+			$this->widget('ext.groupgridview.BootGroupGridView', array(
+				'id' => 'utemezes_grid' . $i,
+				'htmlOptions' => array('class' => 'grid-view utemezes-grid'),
+				'itemsCssClass' => 'items group-grid-view',
+				'dataProvider' => $dataProvider,
+				'extraRowColumns' => array('HataridoFormazott'),
+				'mergeColumns' => array('HataridoFormazott'),
+				'extraRowPos' => 'above',
+				'maxMergedRows' => 10,
+				'columns' => array(
+					array(
+						'name' => 'HataridoFormazott',
+						'headerHtmlOptions' => array('style' => 'width:170px;'),
+					),
+					array(
+						'name' => 'UtemezesBejegyzesPrint',
+						'type' => 'raw',
+						/*							'headerHtmlOptions'=>array('style'=>'width: 800px;'),*/
+					),
+				),
+			));
+		}
+	}
 ?>
 
 <htmlpagefooter name="myFooter2" style="display:none">

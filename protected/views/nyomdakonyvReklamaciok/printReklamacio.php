@@ -98,7 +98,7 @@
 		<td class = 'col1'><strong>Megrendelő</strong></td>
 		<td class = 'col2'> <?php echo $ugyfel -> display_ugyfel_ugyintezok; ?> </td>
 		<td class = 'col3'><strong>Szállító</strong></td>
-		<td class = 'col4'>DomyPack & Press Kft. <br /> 1139 Budapest, Lomb utca 37-39.</td>
+		<td class = 'col4'>DomyPack & Press Kft. <br /> 1117 Bp. Budafoki út 111-113. 20-as épület</td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Cég</strong></td>

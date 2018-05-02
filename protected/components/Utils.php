@@ -804,9 +804,9 @@
 		function szamla_sorszam_beolvas($megrendeles_id) {
 			$return = 0;
 			$sql = "select BSorszam, Esedekes, Kiallitas from kerBFejlec where BSorszam2 = 'WEB-" . $megrendeles_id . "'" ;
-			$fp = fopen('szamla_sorszamok_queryk.txt', 'a');
+/*			$fp = fopen('szamla_sorszamok_queryk.txt', 'a');
 			fwrite($fp, $sql . "\n");
-			fclose($fp);			
+			fclose($fp);*/
 			$szamla_fej = Yii::app()->db_actual->createCommand($sql)->queryRow();
 			if (is_array($szamla_fej)) {
 				$return = $szamla_fej ;	
@@ -821,10 +821,16 @@
 													->from('dom_megrendelesek')
 													->where("szamla_sorszam != '' and szamla_fizetve = 0") 
 													->queryAll();
+/*			$fp = fopen('data.txt', 'a');
+			fwrite($fp, date("Y-m-d H:i:s") . " - Nyitott szamlak: " . count($nyitott_szamlak) . "\n");
+			fclose($fp);*/
 			if (count($nyitott_szamlak) > 0) {
 				foreach ($nyitott_szamlak as $szamla) {
-					$sql = "select penBFejlec.Sorszam, penBFejlec.OsszegBevHUF, penBFejlec.BizonylatDatum, penBSor.Bizonylatszam from penBSor join penBFejlec on penBSor.BFejlecID = penBFejlec.BFejlecID where penBSor.BSorszam = '" . $szamla["szamla_sorszam"] . "'" ;		
-	//				echo $sql . "<br />" ;
+					$sql = "select penBFejlec.Sorszam, penBFejlec.OsszegBevHUF, penBFejlec.BizonylatDatum, penBSor.Bizonylatszam from penBSor join penBFejlec on penBSor.BFejlecID = penBFejlec.BFejlecID where penBSor.BSorszam = '" . $szamla["szamla_sorszam"] . "'" ;
+/*					$fp = fopen('data.txt', 'a');
+					fwrite($fp, date("Y-m-d H:i:s") . " - " . $sql . "\n");
+					fclose($fp);*/
+//					echo $sql . "<br />" ;
 					$kiegyenlites_adatok = Yii::app()->db_actual->createCommand($sql)->queryRow();
 					if (is_array($kiegyenlites_adatok)) {						
 //						echo "Találat: " .	$kiegyenlites_adatok["OsszegBevHUF"] . " Ft, " . substr($kiegyenlites_adatok["BizonylatDatum"], 0, 10) . "<br />" ; 	
@@ -834,6 +840,10 @@
 						$tranzakciok_osszeg = 0 ;
 						$mar_rogzitett = false ;
 						$kiegyenlitve = 0 ;
+/*						$fp = fopen('data.txt', 'a');
+						fwrite($fp, date("Y-m-d H:i:s") . " - Van kiegyenlítési adat ehhez:" . $megrendeles->id . " -> Bizonylatszam:" . $kiegyenlites_adatok["Bizonylatszam"] . "\n");
+						fwrite($fp, date("Y-m-d H:i:s") . " - Tranzakciok:" . count($tranzakciok) . "\n");
+						fclose($fp);*/
 						if (count($tranzakciok) > 0) {
 							foreach ($tranzakciok as $tranzakcio) {
 								$tranzakciok_osszeg += $tranzakcio->osszeg ;
@@ -841,6 +851,9 @@
 									$mar_rogzitett = true ;	
 								}
 							}
+/*							$fp = fopen('data.txt', 'a');
+							fwrite($fp, date("Y-m-d H:i:s") . " Tranzakcio osszeg -> " . $tranzakciok_osszeg . "\n");
+							fclose($fp);*/
 							if (!$mar_rogzitett) {
 								$tranzakcio_mod = "Bank" ;
 								if (strpos($kiegyenlites_adatok["Bizonylatszam"], "PENZT") !== false) {
@@ -883,11 +896,17 @@
 								$megrendeles_ertek["brutto_osszeg_kerekitett"]	= substr($megrendeles_ertek_kerekitett, 0, count($megrendeles_ertek_kerekitett) - 2) . "5" ;
 							}
 						}
-						if ($megrendeles_ertek["brutto_osszeg_kerekitett"] <= $tranzakciok_osszeg) {
+/*						$fp = fopen('data.txt', 'a');
+						fwrite($fp, date("Y-m-d H:i:s") . " Kiegyenlites -> " . $megrendeles_ertek["brutto_osszeg_kerekitett"] . " <= " . $tranzakciok_osszeg . "\n");
+						fclose($fp);*/
+						if ($megrendeles_ertek["brutto_osszeg_kerekitett"] <= $tranzakciok_osszeg + 5) {
 							$kiegyenlitve = 1 ;
 							$megrendeles->setAttribute("szamla_fizetve", $kiegyenlitve);
 							$megrendeles->setAttribute("szamla_kiegyenlites_datum", substr($kiegyenlites_adatok["BizonylatDatum"], 0, 10)) ;
 							$megrendeles->save();
+							$fp = fopen('data.txt', 'a');
+							fwrite($fp, date("Y-m-d H:i:s") . " Megrendeles kiegyenlitve -> " . $megrendeles->id . "\n");
+							fclose($fp);
 							Utils::SetUgyfelFizetesiMoralMegrendelesAlapjan($megrendeles) ;
 						}
 					}
@@ -2239,9 +2258,18 @@
 			$nyomdakonyv_controller = $nyc[0] ;
 
 			$nyomdakonyv_controller->NyitottNyomdakonyvAdatszinkron() ;
+			$fp = fopen('szinkron_log.txt', 'a');
+			fwrite($fp, date("Y-m-d H:i:s") . ": Nyomdakönyv adatszinkron kész\n");
+			fclose($fp);
 			// Nyomdakönyvi munkák szinkronizációja eddig
 			// Megrendelések begyűjtése és számlák szinkronizációja
+			$fp = fopen('szinkron_log.txt', 'a');
+			fwrite($fp, date("Y-m-d H:i:s") . ": Számlakiegyenlítettség adatszinkron indult\n");
+			fclose($fp);
 			Utils::szamla_kiegyenlitettseg_szinkron() ;
+			$fp = fopen('szinkron_log.txt', 'a');
+			fwrite($fp, date("Y-m-d H:i:s") . ": Számlakiegyenlítettség adatszinkron kész\n");
+			fclose($fp);
 			$mc = Yii::app()->createController('Megrendelesek');
 			$megrendelesek_controller = $mc[0] ;
 			$megrendelesek_controller->webaruhazMegrendelesekBegyujt() ;

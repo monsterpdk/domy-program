@@ -110,16 +110,50 @@ class TermekArakController extends Controller
 		if(isset($_GET['TermekArak']))
 			$model->attributes=$_GET['TermekArak'];
 	 	
-		$non_admin_criteria=new CDbCriteria;
+		$criteria=new CDbCriteria;
 
-		$non_admin_criteria->together = true;
-		$non_admin_criteria->with = array('termek', 'termek.gyarto', 'termek.meret', 'termek.zaras');
-		$non_admin_criteria->compare('t.torolt', 0, false);
-		$non_admin_criteria->compare('termek.torolt', 0, false);
-		
-		$dataProvider=new CActiveDataProvider('TermekArak',
-			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'id DESC',),) : array('criteria'=>$non_admin_criteria)
-		);
+		$criteria->together = true;
+		$criteria->with = array('termek', 'termek.gyarto', 'termek.meret', 'termek.zaras');
+/*		$criteria->compare('t.id',$this->id,true);*/
+
+		$criteria->compare('termek.nev', $_GET["TermekArak"]['termeknev_search'], true );
+		$criteria->compare('gyarto.cegnev', $_GET["TermekArak"]['gyarto_search'], true );
+		$criteria->compare('meret.id', $_GET["TermekArak"]['meret_search'], true );
+		$criteria->compare('zaras.id', $_GET["TermekArak"]['zaras_search'], true );
+		$criteria->compare('termek.cikkszam', $_GET["TermekArak"]['cikkszam_search'], true );
+		$criteria->compare('termek.kodszam', $_GET["TermekArak"]['kodszam_search'], true );
+		if (!Yii::app()->user->checkAccess('Admin')) {
+			$criteria->compare('t.torolt', 0, false);
+			$criteria->compare('termek.torolt', 0, false);
+		}
+
+
+		$lapozo = array('pagination'=>array('pageSize'=>Utils::getIndexPaginationNumber())) ;
+		if ($this->isExportRequest() || $_GET["TermekArak"]["nincs_aktualis_ar_search"] == 1) {
+			$lapozo = array('pagination'=>false);
+		}
+
+		$alapDataProvider=new CActiveDataProvider('TermekArak', array_merge(array('criteria'=>$criteria), $lapozo));
+
+		$megjelenitendo_sorok = array() ;
+		if ($_GET["TermekArak"]["nincs_aktualis_ar_search"] != 1) {
+			$dataProvider = $alapDataProvider ;
+		}
+		else {
+			if ($alapDataProvider->totalItemCount > 0) {
+				foreach ($alapDataProvider->getData() as $sor) {
+					if ($sor->termek->ActiveTermekAr <= 0) {
+						$megjelenitendo_sorok[] = $sor;
+					}
+				}
+				$dataProvider = new CArrayDataProvider($megjelenitendo_sorok, array(
+					'id' => 'TermekArak',
+					'pagination' => array(
+						'pageSize' => Utils::getIndexPaginationNumber(),
+					),
+				));
+			}
+		}
 
 /*		$dataProvider=new CActiveDataProvider('TermekArak',
 			Yii::app()->user->checkAccess('Admin') ? array('criteria'=>array('order'=>'id DESC',),) : array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'id DESC',),)
@@ -133,7 +167,7 @@ class TermekArakController extends Controller
             $this->exportCSV(array(), null, false);
 			
 			// mindig az aktuális
-            $this->exportCSV($dataProvider, array('id', 'termek.nev', 'termek.id', 'termek.belesnyomott', 'csomag_beszerzesi_ar', 'db_beszerzesi_ar', 'darab_ar_szamolashoz', 'csomag_ar_nyomashoz', 'db_ar_nyomashoz', 'csomag_eladasi_ar', 'db_eladasi_ar', 'datum_mettol', 'datum_meddig', 'torolt'));
+            $this->exportCSV($alapDataProvider, array('id', 'termek.nev', 'termek.id', 'termek.belesnyomott', 'csomag_beszerzesi_ar', 'db_beszerzesi_ar', 'darab_ar_szamolashoz', 'csomag_ar_nyomashoz', 'db_ar_nyomashoz', 'csomag_eladasi_ar', 'db_eladasi_ar', 'datum_mettol', 'datum_meddig', 'torolt'));
         }
 		
 		// LI : importhoz kell ez
@@ -143,6 +177,7 @@ class TermekArakController extends Controller
 		$this->render('index', array(
 			'importModel' => $importModel,
 			'model' => $model,
+			'dataProvider' => $dataProvider
 		));
 	}
 

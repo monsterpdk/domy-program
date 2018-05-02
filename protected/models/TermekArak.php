@@ -25,6 +25,7 @@ class TermekArak extends CActiveRecord
 	public $zaras_search;
 	public $cikkszam_search;
 	public $kodszam_search;
+	public $nincs_aktualis_ar_search;
 	
 	/**
 	 * @return string the associated database table name
@@ -57,7 +58,7 @@ class TermekArak extends CActiveRecord
 			array('termek_id', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, termek_id, termeknev_search, db_beszerzesi_ar, darab_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, datum_mettol, datum_meddig, gyarto_search, meret_search, zaras_search, cikkszam_search, kodszam_search, torolt', 'safe', 'on'=>'search'),
+			array('id, termek_id, termeknev_search, db_beszerzesi_ar, darab_ar_szamolashoz, csomag_ar_nyomashoz, db_ar_nyomashoz, csomag_eladasi_ar, db_eladasi_ar, datum_mettol, datum_meddig, gyarto_search, meret_search, zaras_search, cikkszam_search, kodszam_search, nincs_aktualis_ar_search, torolt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -113,7 +114,8 @@ class TermekArak extends CActiveRecord
 			'meret_search' => 'Méret',
 			'zaras_search' => 'Zárásmód',
 			'cikkszam_search' => 'Cikkszám',
-			'kodszam_search' => 'Kódszám'
+			'kodszam_search' => 'Kódszám',
+			'nincs_aktualis_ar_search' => 'Csak a 0 Ft-os aktuális árúak'
 		);
 	}
 
@@ -146,9 +148,7 @@ class TermekArak extends CActiveRecord
 		$criteria->compare('db_ar_nyomashoz',$this->db_ar_nyomashoz);
 		$criteria->compare('csomag_eladasi_ar',$this->csomag_eladasi_ar);
 		$criteria->compare('db_eladasi_ar',$this->db_eladasi_ar);
-		$criteria->compare('datum_mettol',$this->datum_mettol,true);
-		$criteria->compare('datum_meddig',$this->datum_meddig,true);
-		
+
 		$criteria->compare('termek.nev', $this->termeknev_search, true );
 		$criteria->compare('gyarto.cegnev', $this->gyarto_search, true );
 		$criteria->compare('meret.id', $this->meret_search, true );

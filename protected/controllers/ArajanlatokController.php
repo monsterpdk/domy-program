@@ -415,6 +415,7 @@ class ArajanlatokController extends Controller
 				
 				// LI: online megrendeléshez link
 				$email_verification_code = md5($model->sorszam . uniqid(rand(), true));
+				Yii::app()->getRequest()->setHostInfo(Yii::app()->params['hostInfo']) ;
 				$ajanlat_url = $this->createAbsoluteUrl('megrendelesek/megrendelesKeszites',array('token'=>$email_verification_code));
 				
 				

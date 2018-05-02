@@ -230,12 +230,12 @@ class StatisztikakController extends Controller
 	public function getMunkakFolyamatban() {
 		$dataProvider=new CActiveDataProvider('Nyomdakonyv', array(
 			'criteria'=>array(
-				'condition'=>'t.torolt=0 and megrendeles_tetel.megrendeles_id IS NOT NULL and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and megrendeles_tetel.megrendeles_id IS NOT NULL and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles.sztornozva=0 and megrendeles.torolt=0',
 				'with'=>array('megrendeles_tetel' => array('termek' => array('termekar')), 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
 				'together'=>true,
 			),
 			'countCriteria'=>array(
-				'condition'=>'t.torolt=0 and megrendeles_tetel.megrendeles_id IS NOT NULL and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\'',
+				'condition'=>'t.torolt=0 and t.sztornozva=0 and megrendeles_tetel.megrendeles_id IS NOT NULL and t.elkeszulesi_datum=\'0000-00-00 00:00:00\' and t.hatarido>\'0000-00-00 00:00:00\' and megrendeles.sztornozva=0 and megrendeles.torolt=0',
 				'with'=>array('megrendeles_tetel' => array('termek' => array('termekar')), 'megrendeles_tetel.megrendeles', 'megrendeles_tetel.megrendeles.ugyfel'),
 				'together'=>true,
 				// 'order' and 'with' clauses have no meaning for the count query				
@@ -1373,11 +1373,21 @@ class StatisztikakController extends Controller
 							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["szinekszama"] = $tetel_sor->szinek_szama1 . " + " . $tetel_sor->szinek_szama2 ;
 						}
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] = $tetel_sor->netto_darabar * $tetel_sor->darabszam ;
-						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] = round((($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) / ($tetel_sor->netto_darabar * $tetel_sor->darabszam) * 100), 2) ;
+						if ($tetel_sor->netto_darabar * $tetel_sor->darabszam > 0) {
+							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] = round((($ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam) / ($tetel_sor->netto_darabar * $tetel_sor->darabszam) * 100), 2);
+						}
+						else {
+							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_szazalek"] = 0 ;
+						}
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] = $ervenyes_termekar_rekord->darab_ar_szamolashoz * $tetel_sor->darabszam ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["db_koltseg"] = $ervenyes_termekar_rekord->darab_ar_szamolashoz ;
 						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] = $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] - $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
-						$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] = round(($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] / $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] * 100), 2) ;
+						if ($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] > 0) {
+							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] = round(($megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] / $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] * 100), 2);
+						}
+						else {
+							$megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon_szazalek"] = 0 ;
+						}
 						$megrendeles_eladas_rekord["netto_osszeg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["netto_osszeg"] ;
 						$megrendeles_eladas_rekord["anyagkoltseg"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["anyag_koltseg"] ;
 						$megrendeles_eladas_rekord["haszon"] += $megrendeles_eladas_rekord["tetelek"][$eladas_tetel_index]["haszon"] ;
@@ -4742,16 +4752,6 @@ class StatisztikakController extends Controller
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
 	// megrendelés forrás felületét kezeli
 	public function actionMegrendelesForras () {
 		$model = new StatisztikakMegrendelesForras;
@@ -4836,6 +4836,15 @@ class StatisztikakController extends Controller
 			
 			$commandTermekArak = Yii::app()->db->createCommand($sqlTermekArak);
 			$termekArak = $commandTermekArak->queryAll();
+			$termekArak_indexelt = array() ;
+			for ($i=0; $i < count($termekArak); $i++)
+			{
+				$termekar_sor = array() ;
+				$termekar_sor["db_beszerzesi_ar"] = $termekArak[$i]["db_beszerzesi_ar"] ;
+				$termekar_sor["datum_mettol"] = $termekArak[$i]["datum_mettol"] ;
+				$termekar_sor["datum_meddig"] = $termekArak[$i]["datum_meddig"] ;
+				$termekArak_indexelt[$termekArak[$i]["termek_id"]][] = $termekar_sor ;
+			}
 
 			$osszErtek = 0;
 			$osszHaszon = 0;
@@ -4870,7 +4879,8 @@ class StatisztikakController extends Controller
 				WHERE
 					dom_megrendeles_tetelek.torolt = 0 AND dom_megrendelesek.torolt = 0 AND dom_megrendelesek.sztornozva = 0	AND
 					dom_megrendeles_tetelek.negativ_raktar_termek = 0 AND
-					dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= :meddig
+					dom_megrendelesek.rendeles_idopont >= :mettol AND dom_megrendelesek.rendeles_idopont <= :meddig AND
+					dom_termekek.tipus != 'Szolgáltatás'
 				
 				" . $extraWhere . " 
 				
@@ -4894,13 +4904,21 @@ class StatisztikakController extends Controller
 						$megrendelesTetel ['haszon'] = 0;
 						
 						// kiszámoljuk a várható hasznot
-						foreach ($termekArak as $termekAr) {
-							if ($megrendelesTetel['rendeles_idopont'] >= $termekAr['datum_mettol'] && $megrendelesTetel['rendeles_idopont'] <= $termekAr['datum_meddig'] && $termekAr['termek_id'] == $megrendelesTetel['termek_id']) {
-								// megtaláltuk a termékárat: hozzáadjuk a beszerzési ár szummához és kilépünk a ciklusból
-								$megrendelesTetel ['haszon'] = $termekAr['db_beszerzesi_ar'] * $megrendelesTetel ['darabszam'];
-								
-								break;
+
+						if (isset($termekArak_indexelt[$megrendelesTetel['termek_id']])) {
+							$akt_termek_arak = $termekArak_indexelt[$megrendelesTetel['termek_id']];
+							foreach ($akt_termek_arak as $termekAr) {
+								if ($megrendelesTetel['rendeles_idopont'] >= $termekAr['datum_mettol'] && $megrendelesTetel['rendeles_idopont'] <= $termekAr['datum_meddig']) {
+									// megtaláltuk a termékárat: hozzáadjuk a beszerzési ár szummához és kilépünk a ciklusból
+									$megrendelesTetel['beszerzesi_ar'] = $termekAr['db_beszerzesi_ar'] ;
+									$megrendelesTetel ['haszon'] = $megrendelesTetel["netto_osszeg"] - ($termekAr['db_beszerzesi_ar'] * $megrendelesTetel ['darabszam']);
+									break;
+								}
 							}
+						}
+						else
+						{
+							$megrendelesTetel ['haszon'] = $megrendelesTetel["netto_osszeg"];
 						}
 					}
 					
@@ -4916,7 +4934,7 @@ class StatisztikakController extends Controller
 
 			$osszErtek = Utils::DarabszamFormazas($osszErtek);
 			$osszHaszon = Utils::DarabszamFormazas($osszHaszon);
-			
+
 			$dataProvider = new CArrayDataProvider($megrendelesTetelek, array('pagination' => false));
 			
 			# mPDF
@@ -4933,5 +4951,324 @@ class StatisztikakController extends Controller
 			$mPDF1->Output();
 		}
 	}
+
+
+	// Utókalkuláció felületét kezeli
+	public function actionUtokalkulacio () {
+		$model = new StatisztikakUtokalkulacio;
+
+		if (isset($_POST['StatisztikakUtokalkulacio'])) {
+			$model->attributes = $_POST['StatisztikakUtokalkulacio'];
+
+			if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> megrendelesForrasPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_utokalkulacio',array('model'=>$model,));
+			}
+
+			return;
+		} else {
+			$model = new StatisztikakUtokalkulacio;
+
+			$this->render('_utokalkulacio',array(
+					'model'=>$model,)
+			);
+		}
+	}
+
+	// a kapott model alapján összeállítja az utókalkuláció PDF-ét
+	public function utokalkulacioPrintPDF ($model) {
+		// ilyen elvileg nem lehet, de biztos ami biztos, akár a jövőre nézve is
+		if ($model != null) {
+
+			set_time_limit(1000);
+
+
+			$dataProvider = new CArrayDataProvider($utokalkulacioTetelek, array('pagination' => false));
+
+
+			$osszErtek = Utils::DarabszamFormazas($osszErtek);
+			$osszHaszon = Utils::DarabszamFormazas($osszHaszon);
+
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1 -> cacheTables = true;
+			$mPDF1 -> simpleTables = true;
+			$mPDF1 -> packTableData = true;
+
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printUtokalkulacio', array('dataProvider' => $dataProvider, 'model' => $model, 'osszErtek' => $osszErtek, 'osszHaszon' => $osszHaszon), true));
+
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}
+
+
+	// termékeladás statisztika felületét kezeli
+	public function actionTermekcsoportVevokStatisztika () {
+		$model = new StatisztikakTermekcsoportVevokStatisztika;
+
+		if (isset($_POST['StatisztikakTermekcsoportVevokStatisztika'])) {
+			$model->attributes = $_POST['StatisztikakTermekcsoportVevokStatisztika'];
+
+			if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> termekcsoportVevokStatisztikaPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_termekcsoportVevokStatisztika',array('model'=>$model,));
+			}
+
+			return;
+		} else {
+			$model = new StatisztikakTermekcsoportVevokStatisztika;
+			$this->render('_termekcsoportVevokStatisztika',array(
+					'model'=>$model,)
+			);
+		}
+	}
+
+	private function vevok_szerint_rendez($a, $b) {
+		if ($a["ugyfel_id"] == $b["ugyfel_id"]) {
+			return 0;
+		}
+		return ($a["ugyfel_id"] < $b["ugyfel_id"]) ? -1 : 1;
+	}
+
+	private function osszeg_szerint_rendez($a, $b) {
+		if (intval($a["osszeg"]) == intval($b["osszeg"])) {
+			return 0;
+		}
+		return (intval($a["osszeg"]) > intval($b["osszeg"])) ? -1 : 1;
+	}
+
+	// a kapott model alapján összeállítja a termékeladás statisztika PDF-ét
+	public function termekcsoportVevokStatisztikaPrintPDF ($model) {
+		set_time_limit(0);
+		$resultArray = array();
+
+		$time_start = microtime(true);
+
+		// mivel kliens oldalon bármit beírhattak a cikkszámválasztóba, ezért itt szerver oldalon is ellenőrizni kell,
+		// hogy valóban a termékcsoporthoz tartozó cikkszámok lettek-e beírva (ha ki van töltve persze a termékcsoport)
+
+		$termekcsoportId = ($model -> termekcsoport_id != null && $model -> termekcsoport_id != "") ? $model -> termekcsoport_id : '';
+
+		// összerakjuk a szűrőfeltételek alapján az SQL where-es párját
+		$sqlWhere = '';
+		$sqlWhere .= ($termekcsoportId == '') ? '' : ' AND dom_termekek.termekcsoport_id = :termekcsoportId';
+
+		if ($model != null) {
+
+			// az összes, ide vonatkozó tranzakciós tétel lekérdezése
+			$sqlTranzakciok =
+				"
+				SELECT
+					dom_raktar_termekek_tranzakciok.id AS tranzakcio_id,
+					dom_szallitolevelek.id,
+					dom_anyagbeszallitasok.id AS anyagbeszallitas_id,
+					dom_anyagbeszallitasok.beszallitas_datum,
+					dom_raktar_termekek_tranzakciok.termek_id AS termek_id,
+					dom_termekek.cikkszam AS cikkszam,
+					dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam * -1 AS darabszam,
+					dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id AS szallitolevel_id,
+					dom_termekcsoportok.nev AS termekcsoport,
+					dom_megrendeles_tetelek.termek_id AS megrendeles_tetel_termek_id,
+					dom_megrendeles_tetelek.netto_darabar AS megrendeles_tetel_netto_darabar,
+					dom_szallitolevel_tetelek.darabszam AS szallitolevel_tetel_darabszam,
+					dom_ugyfelek.id AS ugyfel_id,
+					dom_ugyfelek.cegnev AS ugyfel_cegnev
+					
+				FROM dom_raktar_termekek_tranzakciok
+
+				INNER JOIN dom_anyagbeszallitasok ON
+				dom_raktar_termekek_tranzakciok.anyagbeszallitas_id = dom_anyagbeszallitasok.id
+
+				INNER JOIN dom_termekek ON
+				dom_raktar_termekek_tranzakciok.termek_id = dom_termekek.id
+
+				INNER JOIN dom_termekcsoportok ON
+				dom_termekek.termekcsoport_id = dom_termekcsoportok.id
+
+				LEFT OUTER JOIN dom_szallitolevelek ON
+				dom_raktar_termekek_tranzakciok.szallitolevel_nyomdakonyv_id=dom_szallitolevelek.id
+
+				INNER JOIN dom_szallitolevel_tetelek ON
+				dom_szallitolevelek.id=dom_szallitolevel_tetelek.szallitolevel_id
+		
+				INNER JOIN dom_megrendeles_tetelek ON
+				dom_szallitolevel_tetelek.megrendeles_tetel_id=dom_megrendeles_tetelek.id
+				
+				INNER JOIN dom_megrendelesek ON
+				dom_megrendeles_tetelek.megrendeles_id=dom_megrendelesek.id
+
+				INNER JOIN dom_ugyfelek ON
+				dom_megrendelesek.ugyfel_id = dom_ugyfelek.id
+
+				WHERE dom_raktar_termekek_tranzakciok.betesz_kivesz_darabszam < 0 AND dom_szallitolevelek.datum >= :mettol AND dom_szallitolevelek.datum <= :meddig" . $sqlWhere . "
+				
+				ORDER BY cikkszam, termek_id
+			";
+
+			$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+			$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+			$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
+
+			if ($termekcsoportId != '') {
+				$commandTranzakcio->bindParam(':termekcsoportId', $termekcsoportId);
+			}
+
+			$eladasTetelek = $commandTranzakcio->queryAll();
+
+			// kikeressük az eladott termékek mellé az összegeket
+			// ha találunk a szállítólevélen darabra pontos tételt, akkor azét vesszük, ha nem, akkor az első olyan szállítólevél tételét, aminek a termék ID-ja egyezett az eladott darabéval
+			// ez sajnos nem 100%-os, de a most mentett adatokat felhasználva csak így tudtam megoldani
+			if ($eladasTetelek != null) {
+				foreach ($eladasTetelek as &$eladasTetel) {
+					$osszeg = null;
+					if ($eladasTetel['megrendeles_tetel_termek_id'] != null) {
+						if ($eladasTetel['megrendeles_tetel_termek_id'] == $eladasTetel['termek_id'] && $eladasTetel['szallitolevel_tetel_darabszam'] == $eladasTetel['darabszam']) {
+							// komplett termék ID és darabszám találat
+							$osszeg = $eladasTetel['megrendeles_tetel_netto_darabar'];
+						} else if ( ($osszeg == null && $eladasTetel['megrendeles_tetel_termek_id'] == $eladasTetel['termek_id'])) {
+							// elsőnek talált termék ID, ami egyezik a keresettel
+							$osszeg = $eladasTetel['megrendeles_tetel_netto_darabar'];
+						}
+					}
+
+					if ($osszeg != null) {
+						$eladasTetel['osszeg'] = $osszeg * $eladasTetel['darabszam'];
+					} else {
+						$eladasTetel['osszeg'] = 0;
+					}
+				}
+
+				unset($eladasTetel);
+			}
+
+			// az eladások mellé keresünk árat a beszállításokból, ami a haszon kalkulálásához kell
+			if ($eladasTetelek != null) {
+
+				$anyagbeszallitasTermek = null;
+				$feldolgozottTranzakciok = array();
+				foreach ($eladasTetelek as $eladasTetel) {
+					if (!in_array($eladasTetel['tranzakcio_id'], $feldolgozottTranzakciok)) {
+						array_push ($feldolgozottTranzakciok, $eladasTetel['tranzakcio_id']);
+
+						$termek = Termekek::model() ->findByPk ($eladasTetel['termek_id']);
+						$anyagbeszallitasTermek = AnyagbeszallitasTermekek::model() ->findByAttributes (array('anyagbeszallitas_id' => $eladasTetel['anyagbeszallitas_id'], 'termek_id' => $eladasTetel['termek_id']));
+					}
+
+					if ($termek != null) {
+						$eladasTetel['termek_nev'] = $termek -> getDisplayTermekTeljesNev();
+					}
+
+					if ($anyagbeszallitasTermek != null) {
+						$eladasTetel['bevetelOsszeg'] = $anyagbeszallitasTermek -> netto_darabar * $eladasTetel['darabszam'];
+					} else {
+						$eladasTetel['bevetelOsszeg'] = 0;
+					}
+
+					if ($eladasTetel['osszeg'] > 0) {
+						array_push($resultArray, $eladasTetel);
+					}
+				}
+
+				// formázzuk az összegeket, valamint megpróbáljuk pótolni a hiányzó termékárakat
+				$osszesNettoErtek = 0;
+				$osszesBeszerzesiAr = 0;
+				$osszesHaszon = 0;
+
+				// tömbbe rakjuk az összes termékárat, hogy ne DB-hez nyúljunk minden lépésnél, hanem a memóriából gyorsan elérhető legyen, amire szükség van
+				// nem activerecord-ot használunk, hanem sima tömbös megoldást, az kevésbé erőforrásigényes
+				$sqlTermekArak =
+					"
+					SELECT
+						termek_id,
+						db_beszerzesi_ar,
+						datum_mettol,
+						datum_meddig
+					FROM dom_termek_arak
+				";
+
+				$commandTermekArak = Yii::app()->db->createCommand($sqlTermekArak);
+				$termekArak = $commandTermekArak->queryAll();
+
+				foreach ($resultArray as $i => $resultItem) {
+					if ($resultArray[$i]['bevetelOsszeg'] == 0) {
+						// nincs ár az anyagbeszállítás termék rekordban, ezért kikeressük a termékár listából, ha ott nincs, akkor marad 0
+						foreach ($termekArak as $termekAr) {
+							if ($resultItem['beszallitas_datum'] >= $termekAr['datum_mettol'] && $resultItem['beszallitas_datum'] <= $termekAr['datum_meddig'] && $termekAr['termek_id'] == $resultItem['termek_id']) {
+								// megtaláltuk a termékárat: beírjuk az adott tömbelembe és kilépünk a ciklusból
+								$resultArray[$i]['bevetelOsszeg'] = $termekAr['db_beszerzesi_ar'] * $resultItem['darabszam'];
+								break;
+							}
+						}
+					}
+
+					// összegző számolása
+					$osszesNettoErtek += round($resultArray[$i]['osszeg']);
+					$osszesBeszerzesiAr += round($resultArray[$i]['bevetelOsszeg']);
+					$osszesHaszon += round($resultArray[$i]['osszeg'] - $resultArray[$i]['bevetelOsszeg']);
+
+				}
+				unset($resultItem);
+
+				usort($resultArray, array($this,"vevok_szerint_rendez")) ;
+				// kézzel megcsináljuk az egyes tételekre a SUM műveletet (összeg + darabszám)
+				$elozoRekord = null;
+				$eladasokLista = array();
+				foreach ($resultArray as $i => $eladasTetel) {
+					if ($elozoRekord != null) {
+						if (
+							$resultArray[$i]['ugyfel_id'] == $elozoRekord['ugyfel_id']
+						) {
+							$resultArray[$i]['osszeg'] += $elozoRekord['osszeg'];
+							$resultArray[$i]['bevetelOsszeg'] += $elozoRekord['bevetelOsszeg'];
+							$resultArray[$i]['darabszam'] += $elozoRekord['darabszam'];
+							$resultArray[$i]['haszon'] = round($resultArray[$i]['osszeg'] - $resultArray[$i]['bevetelOsszeg']);
+
+							$elozoRekord = $resultArray[$i];
+							array_pop($eladasokLista);
+						}
+					}
+
+					$elozoRekord = $resultArray[$i];
+					array_push($eladasokLista, $resultArray[$i]);
+				}
+
+				usort($eladasokLista, array($this, "osszeg_szerint_rendez")) ;
+				for ($i = 0; $i < count($eladasokLista); $i++) {
+					// szám formázások
+					$eladasokLista[$i]['haszon'] = Utils::DarabszamFormazas($eladasokLista[$i]['osszeg'] - $eladasokLista[$i]['bevetelOsszeg']);
+					$eladasokLista[$i]['osszeg'] = Utils::DarabszamFormazas($eladasokLista[$i]['osszeg']);
+					$eladasokLista[$i]['darabszam'] = Utils::DarabszamFormazas($eladasokLista[$i]['darabszam']);
+					$eladasokLista[$i]['bevetelOsszeg'] = Utils::DarabszamFormazas($eladasokLista[$i]['bevetelOsszeg']);
+				}
+			}
+
+			$dataProvider = new CArrayDataProvider($eladasokLista, array('pagination' => false));
+
+			# mPDF
+			$mPDF1 = Yii::app()->ePdf->mpdf();
+
+			$mPDF1->SetHtmlHeader("Termékcsoport vevők statisztika: " . $model->statisztika_mettol . " - " . $model->statisztika_meddig);
+
+			# render
+			$mPDF1->WriteHTML($this->renderPartial('printTermekcsoportVevokStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+				'osszesNettoErtek' => Utils::DarabszamFormazas($osszesNettoErtek),
+				'osszesBeszerzesiAr' => Utils::DarabszamFormazas($osszesBeszerzesiAr),
+				'osszesHaszon' => Utils::DarabszamFormazas($osszesHaszon),
+			), true));
+
+			# Outputs ready PDF
+			$mPDF1->Output();
+		}
+	}
+
 	
 }

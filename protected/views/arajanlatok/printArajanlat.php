@@ -78,7 +78,7 @@
 <table>
 	<tr>
 		<td class = 'col1'><strong>Feladó</strong></td>
-		<td class = 'col2'> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok(0, true); ?> </td>
+		<td class = 'col2'> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok($model->ugyintezo_id, true); ?> </td>
 		<td class = 'col3'><strong>Sorszám</strong></td>
 		<td class = 'col4'><?php echo $model -> sorszam; ?></td>
 	<tr>
@@ -86,7 +86,7 @@
 		<td class = 'col1'><strong>Cég</strong></td>
 		<td class = 'col2'> <?php echo $ugyfel -> cegnev . "<br />" . $ugyfel -> display_ugyfel_cim; ?> </td>
 		<td class = 'col3'><strong>Címzett</strong></td>
-		<td class = 'col4'>DomyPack & Press Kft. <br /> 1139 Budapest, Lomb utca 37-39.</td>
+		<td class = 'col4'>DomyPack & Press Kft. <br /> 1117 Bp. Budafoki út 111-113. 20-as épület</td>
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Email</strong></td>
@@ -116,7 +116,7 @@
 
 <div align = "right"> Az ajánlat érvényes: <strong> <?php echo $model -> ervenyesseg_datum; ?> </strong> </div>
 
-<p style = "font-size : 12pt;"> <strong> <I>Tisztelt <?php echo $ugyfel -> display_ugyfel_ugyintezok; ?> !</I> </strong> </p>
+<p style = "font-size : 12pt;"> <strong> <I>Tisztelt <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok($model->ugyintezo_id, true); ?> !</I> </strong> </p>
 <p> Megbeszélésünkre hivatkozva megadom az árat a kért munkára. </p>
 
 <!-- Ajánlat tételek táblázat -->
@@ -266,7 +266,7 @@
 			</tr>
 			<tr>
 				<td></td>
-				<td align=center> <?php echo $ugyfel -> display_ugyfel_ugyintezok . ', ' . $ugyfel -> cegnev; ?> </td>
+				<td align=center> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok($model->ugyintezo_id, true) . ', ' . $ugyfel -> cegnev; ?> </td>
 			</tr>
 		</table>
 	</p>

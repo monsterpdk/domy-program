@@ -98,6 +98,7 @@ class Nyomdakonyv extends CActiveRecord
 
 	//Egyéb, adatbázisban nem tárolt mezők
 	public $hianyzoDarabszam;
+	public $hianyzoDarabszamFormazott;
 
 	/**
 	 * @return string the associated database table name
@@ -302,6 +303,7 @@ class Nyomdakonyv extends CActiveRecord
 			'UtemezesBejegyzesPrint' => 'Munka részletek',
 			'SzinErtekek' => 'Színek',
 			'hianyzoDarabszam' => 'Hiányzó db',
+			'hianyzoDarabszamFormazott' => 'Hiányzó db',
 			
 			'dsp_szallitolevel_datum' => 'Szállítólevél dátuma',
 			'dsp_szallitolevel_sorszam' => 'Szállítólevél sorszáma',
@@ -500,7 +502,10 @@ class Nyomdakonyv extends CActiveRecord
 	//Várható gyártási idő visszaadása formázott módon. A normaszámításból jön az idő
 	public function getGyartasiIdo() {
 		$norma = Utils::getNormaadat($this->megrendeles_tetel_id, $this->gep_id, $this->munkatipus_id, $this->max_fordulat);
-		return $norma ;
+		if ($norma) {
+			return $norma["normaido"] ;
+		}
+		return false ;
 	}
 	
 	//A nyomdai munkánál megadott színkódokat, színeket adja vissza listában, nyomtatásban megjelenítéshez

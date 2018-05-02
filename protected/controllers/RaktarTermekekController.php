@@ -214,6 +214,8 @@ class RaktarTermekekController extends Controller
 			}
 		}
 
+		$where .= (strlen($where) > 0 ? ' AND ' : ' WHERE ') . 'dom_termekek.torolt = 0' ;
+
 		$sql = 
 		"
 			SELECT 
@@ -228,9 +230,9 @@ class RaktarTermekekController extends Controller
 				ROUND(AVG(dom_anyagbeszallitas_termekek.netto_darabar), 2) as netto_darabar,
 				ROUND(SUM(osszes_db) * AVG(dom_anyagbeszallitas_termekek.netto_darabar)) AS ertek
 
-			FROM dom_raktar_termekek
+			FROM dom_termekek
 
-			INNER JOIN dom_termekek ON
+			LEFT JOIN dom_raktar_termekek  ON
 			dom_raktar_termekek.termek_id = dom_termekek.id
 
 			INNER JOIN dom_termekcsoportok ON

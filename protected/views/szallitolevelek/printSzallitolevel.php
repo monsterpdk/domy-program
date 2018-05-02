@@ -110,7 +110,7 @@
 	<tr>
 	<tr>
 		<td class = 'col1'><strong>Szállító</strong></td>
-		<td class = 'col2'>DomyPack & Press Kft. <br /> 1139 Budapest, Lomb utca 37-39.</td>
+		<td class = 'col2'>DomyPack & Press Kft. <br /> 1117 Bp. Budafoki út 111-113. 20-as épület</td>
 		<td class = 'col3'><strong>Megrendelő</strong></td>
 		<td class = 'col4'> <?php echo $ugyfel -> getDisplay_ugyfel_ugyintezok($arajanlat_ugyintezo_id); ?> </td>
 	<tr>
@@ -131,7 +131,13 @@
 		<td class = 'col2'>265-0629</td>
 		<td class = 'col3'><strong>Fax</strong></td>
 		<td class = 'col4'>  <?php echo $ugyfel -> ceg_fax; ?> </td>
-	<tr>	
+	<tr>
+	<tr>
+		<td class = 'col1'>&nbsp;</td>
+		<td class = 'col2'>&nbsp;</td>
+		<td class = 'col3'><strong>E-mail:</strong></td>
+		<td class = 'col4'>  <?php echo $ugyfel -> ceg_email; ?> </td>
+	<tr>
 	<tr>
 		<td></td>
 		<td></td>

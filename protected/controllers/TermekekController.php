@@ -160,6 +160,31 @@ class TermekekController extends Controller
 		));
 	}
 
+	// Termékek listájának nyomtatása
+	public function actionPrintTermekek()
+	{
+		$dataProvider=new CActiveDataProvider('Termekek',
+			array('criteria'=>array('condition'=>"torolt = 0 ",'order'=>'nev DESC',), 'pagination'=>false,)
+		);
+
+		if ($dataProvider != null) {
+			$data_array = array() ;
+			if ($dataProvider->totalItemCount > 0) {
+				foreach($dataProvider->getData() as $key => $row) {
+					$data_array[] = array('Név'=>$row->nev, 'Zárás'=>$row->zaras->nev, 'Papír súly'=>$row->papirtipus->suly, 'Papír típus'=>$row->papirtipus->nev, 'Ablakméret'=>$row->ablakmeret->nev, 'Ablak hely'=>$row->ablakhely->nev, 'Bélésnyomott'=>$row->belesnyomott, 'Gyártó'=>$row->gyarto->cegnev, 'Csomagolás egység'=>$row->csom_egys, 'Beszerzési ár'=>$row->ActiveTermekBeszerzesiAr, 'Ár számoláshoz'=>$row->ActiveTermekArSzamolashoz, 'Eladási ár'=>$row->ActiveTermekAr, 'Árkalkulációban megjelenik'=>$row->arkalkulacioban_megjelenik) ;
+				}
+			}
+			CsvExport::export(
+				$data_array, // a CActiveRecord array OR any CModel array
+				array('Név'=>array('text'),'Zárás'=>array('text'),'Papír súly'=>array('text'),'Papír típus'=>array('text'),'Ablakméret'=>array('text'),'Ablak hely'=>array('text'),'Bélésnyomott'=>array('text'),'Gyártó'=>array('text'),'Csomagolás egység'=>array('text'),'Beszerzési ár'=>array('text'),'Ár számoláshoz'=>array('text'),'Eladási ár'=>array('text'),'Árkalkulációban megjelenik'=>array('text')),
+				true, // boolPrintRows
+				'termeklista-'.date('d-m-Y_H-i').'.csv'
+			);
+		}
+
+	}
+
+
 	/**
 	 * Manages all models.
 	 */
