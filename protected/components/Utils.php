@@ -886,8 +886,8 @@
 						}
 						$megrendeles_ertek = $megrendeles->getMegrendelesOsszeg() ;
 						$megrendeles_ertek_kerekitett = round($megrendeles_ertek["brutto_osszeg"]) ;
-						$megrendeles_ertek_utolso_szamjegy = substr($megrendeles_ertek_kerekitett, count($megrendeles_ertek_kerekitett) - 2) ; 
 						$megrendeles_ertek["brutto_osszeg_kerekitett"] = $megrendeles_ertek_kerekitett ;
+/*						$megrendeles_ertek_utolso_szamjegy = substr($megrendeles_ertek_kerekitett, count($megrendeles_ertek_kerekitett) - 2) ;
 						if ($tranzakciok_osszeg - $megrendeles_ertek_kerekitett <= 2) {
 							if ($megrendeles_ertek_utolso_szamjegy == 1 || $megrendeles_ertek_utolso_szamjegy == 2) {
 								$megrendeles_ertek["brutto_osszeg_kerekitett"]	= substr($megrendeles_ertek_kerekitett, 0, count($megrendeles_ertek_kerekitett) - 2) . "0" ;
@@ -895,11 +895,12 @@
 							else if ($megrendeles_ertek_utolso_szamjegy == 6 || $megrendeles_ertek_utolso_szamjegy == 7) {
 								$megrendeles_ertek["brutto_osszeg_kerekitett"]	= substr($megrendeles_ertek_kerekitett, 0, count($megrendeles_ertek_kerekitett) - 2) . "5" ;
 							}
-						}
+						}*/
 /*						$fp = fopen('data.txt', 'a');
 						fwrite($fp, date("Y-m-d H:i:s") . " Kiegyenlites -> " . $megrendeles_ertek["brutto_osszeg_kerekitett"] . " <= " . $tranzakciok_osszeg . "\n");
 						fclose($fp);*/
-						if ($megrendeles_ertek["brutto_osszeg_kerekitett"] <= $tranzakciok_osszeg + 5) {
+//						if ($megrendeles_ertek["brutto_osszeg_kerekitett"] <= $tranzakciok_osszeg + 5) {
+						if (abs($megrendeles_ertek["brutto_osszeg_kerekitett"] - $tranzakciok_osszeg) < 10) {
 							$kiegyenlitve = 1 ;
 							$megrendeles->setAttribute("szamla_fizetve", $kiegyenlitve);
 							$megrendeles->setAttribute("szamla_kiegyenlites_datum", substr($kiegyenlites_adatok["BizonylatDatum"], 0, 10)) ;
