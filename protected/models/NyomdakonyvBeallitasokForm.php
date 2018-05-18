@@ -8,6 +8,7 @@ class NyomdakonyvBeallitasokForm extends CFormModel
         public $NyomDbfPath;
         public $WorkflowDbfPath;
         public $MunkataskaXmlExportPath;
+		public $NyomdakonyvPicEmailText;
 		
         /**
          * Declares the validation rules.
@@ -32,6 +33,7 @@ class NyomdakonyvBeallitasokForm extends CFormModel
 					'NyomDbfPath' => 'NYOM.dbf elérési út (géptermi programhoz)',
 					'WorkflowDbfPath' => 'WORKFLOW.dbf elérési út (géptermi programhoz)',
 					'MunkataskaXmlExportPath' => 'Munkatáskák XML exportjának elérési útja (másik géptermi programhoz)',
+					'NyomdakonyvPicEmailText' => 'Nyomdakönyvi kép e-mailes küldésénél alapértelmezett szöveg'
                 );
         }
         public function save() {
@@ -40,6 +42,8 @@ class NyomdakonyvBeallitasokForm extends CFormModel
                 Yii::app()->config->set('WorkflowDbfPath', $this->WorkflowDbfPath);
 
                 Yii::app()->config->set('MunkataskaXmlExportPath', $this->MunkataskaXmlExportPath);
+
+                Yii::app()->config->set('NyomdakonyvPicEmailText', $this->NyomdakonyvPicEmailText);
                 
                 return true;
         }

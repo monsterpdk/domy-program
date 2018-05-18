@@ -40,6 +40,12 @@
 		<?php echo $form->error($model,'MunkataskaXmlExportPath'); ?>
 	</div>
 	
+	<div class="row">
+		<?php echo $form->labelEx($model,'NyomdakonyvPicEmailText'); ?>
+		<?php echo $form->textArea($model,'NyomdakonyvPicEmailText', array('rows' => 6, 'maxlength'=>1024)); ?>
+		<?php echo $form->error($model,'NyomdakonyvPicEmailText'); ?>
+	</div>
+	
 	<div class="row buttons">
 			<?php $this->widget('zii.widgets.jui.CJuiButton', 
 					 array(

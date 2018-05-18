@@ -70,7 +70,7 @@ return array(
 		   'class' => 'CDbHttpSession',
 		   'timeout' => 1200,
 		),
-		// LI : bootsrtap widget library
+		// LI : bootstrap widget library
 		'bootstrap'=>array(
             'class' => 'bootstrap.components.Bootstrap',
         ),

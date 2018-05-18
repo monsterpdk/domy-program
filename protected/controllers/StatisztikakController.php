@@ -5032,6 +5032,121 @@ class StatisztikakController extends Controller
 		}
 	}
 
+	/* FUTÁR STATISZTIKÁK */
+	
+	/**
+	 * Futároknál lévő pénz összesítve
+	 */
+	public function actionFutaroknalLevoPenz () {
+		$this -> futaroknalLevoPenzStatisztikaPrintPDF();
+	}
+	
+	/**
+	 * Futár kiszállításai időszakra
+	 */
+	public function actionFutarKiszallitasaiIdoszakra () {
+		$model = new StatisztikakFutarKiszallitasaiIdoszakraStatisztika;
+
+		if (isset($_POST['StatisztikakFutarKiszallitasaiIdoszakraStatisztika'])) {
+			$model->attributes = $_POST['StatisztikakFutarKiszallitasaiIdoszakraStatisztika'];
+
+			if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, ki van választva futára mehet a lekérdezés
+				$this -> futarKiszallitasaiIdoszakraStatisztikaPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_futarKiszallitasaiIdoszakraStatisztika',array('model'=>$model,));
+			}
+
+			return;
+		} else {
+			$model = new StatisztikakFutarKiszallitasaiIdoszakraStatisztika;
+			$this->render('_futarKiszallitasaiIdoszakraStatisztika',array(
+					'model' => $model,)
+			);
+		}
+	}
+	
+	/**
+	 * Nem elszámolt tételek
+	 */
+	public function actionNemElszamoltTetelek () {
+		$model = new StatisztikakNemElszamoltTetelekStatisztika;
+
+		if (isset($_POST['StatisztikakNemElszamoltTetelekStatisztika'])) {
+			$model->attributes = $_POST['StatisztikakNemElszamoltTetelekStatisztika'];
+
+			if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> nemElszamoltTetelekStatisztikaPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_nemElszamoltTetelekStatisztika',array('model'=>$model,));
+			}
+
+			return;
+		} else {
+			$model = new StatisztikakNemElszamoltTetelekStatisztika;
+			$this->render('_nemElszamoltTetelekStatisztika',array(
+					'model' => $model,)
+			);
+		}
+	}
+
+	/**
+	 * Futárdíjak részletes
+	 */
+	public function actionFutardijakReszletes () {
+		$model = new StatisztikakFutardijakReszletesStatisztika;
+
+		if (isset($_POST['StatisztikakFutardijakReszletesStatisztika'])) {
+			$model->attributes = $_POST['StatisztikakFutardijakReszletesStatisztika'];
+
+			if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> futardijakReszletesStatisztikaPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_futardijakReszletesStatisztika',array('model'=>$model,));
+			}
+
+			return;
+		} else {
+			$model = new StatisztikakFutardijakReszletesStatisztika;
+			$this->render('_futardijakReszletesStatisztika',array(
+					'model' => $model,)
+			);
+		}
+	}
+	
+	/**
+	 * Futárdíjak összesített
+	 */
+	public function actionFutardijakOsszesitett () {
+		$model = new StatisztikakFutardijakOsszesitettStatisztika;
+
+		if (isset($_POST['StatisztikakFutardijakOsszesitettStatisztika'])) {
+			$model->attributes = $_POST['StatisztikakFutardijakOsszesitettStatisztika'];
+
+			if ($model->validate()) {
+				// minden rendben, jók a dátumszűrők, mehet a lekérdezés
+				$this -> futardijakOsszesitettStatisztikaPrintPDF($model);
+			} else {
+				// nincs kitöltve/jól kitöltve valamelyik szűrőmező
+				$this->render('_futardijakOsszesitettStatisztika',array('model'=>$model,));
+			}
+
+			return;
+		} else {
+			$model = new StatisztikakFutardijakOsszesitettStatisztika;
+			$this->render('_futardijakOsszesitettStatisztika',array(
+					'model' => $model,)
+			);
+		}
+	}
+	
+	/* FUTÁR STATISZTIKÁK VÉGE */
+	
 	private function vevok_szerint_rendez($a, $b) {
 		if ($a["ugyfel_id"] == $b["ugyfel_id"]) {
 			return 0;
@@ -5046,6 +5161,257 @@ class StatisztikakController extends Controller
 		return (intval($a["osszeg"]) > intval($b["osszeg"])) ? -1 : 1;
 	}
 
+	// összeállítja a futároknál levő pénz statisztika PDF-ét
+	public function futaroknalLevoPenzStatisztikaPrintPDF () {
+		// az összes, ide vonatkozó tranzakciós tétel lekérdezése
+			$sqlTranzakciok = "
+				SELECT dom_szallito_futarok.nev AS nev, dom_szallito_futarok.telefon AS telefon, SUM(dom_szallitas_futarlevelek.utanvet_osszeg) AS osszeg FROM dom_szallitas_futarlevelek
+				INNER JOIN dom_szallito_futarok ON dom_szallitas_futarlevelek.szallito_futar = dom_szallito_futarok.id
+				WHERE utanvet_visszahozas_datum = '0000-00-00 00:00:00' AND dom_szallito_futarok.torolt = 0 AND dom_szallitas_futarlevelek.torolt = 0
+				GROUP BY dom_szallito_futarok.nev
+				ORDER BY dom_szallito_futarok.nev
+			";
+
+			$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+
+			$futaroknalLevoPenzek = $commandTranzakcio -> queryAll();
+
+			if ($futaroknalLevoPenzek != null) {
+				$osszesen = 0;
+				foreach ($futaroknalLevoPenzek as $key => $futaroknalLevoPenz) {
+					$osszesen += $futaroknalLevoPenz['osszeg'];
+					$futaroknalLevoPenzek[$key]['osszeg'] = Utils::OsszegFormazas($futaroknalLevoPenz['osszeg'], 0);
+				}
+				
+				$dataProvider = new CArrayDataProvider($futaroknalLevoPenzek, array('pagination' => false));
+
+				# mPDF
+				$mPDF1 = Yii::app() -> ePdf -> mpdf();
+
+				$mPDF1->SetHtmlHeader("Futároknál levő pénz");
+
+				# render
+				$mPDF1->WriteHTML($this->renderPartial('printFutaroknalLevoPenzStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+					'osszesen' => $osszesen
+				), true));
+
+				# Outputs ready PDF
+				$mPDF1->Output();
+			}
+	}
+
+	// összeállítja a futár kiszállításai időszakra statisztika PDF-ét
+	public function futarKiszallitasaiIdoszakraStatisztikaPrintPDF ($model) {
+		$futarId = ($model -> futar_id != null && $model -> futar_id != "") ? $model -> futar_id : '';
+		
+		// összerakjuk a szűrőfeltételek alapján az SQL where-es párját
+		$sqlWhere = '';
+		$sqlWhere .= ($futarId == '') ? '' : ' AND dom_szallitas_futarlevelek.szallito_futar = :futarId';
+
+		// az összes, ide vonatkozó tranzakciós tétel lekérdezése
+		$sqlTranzakciok = "
+			SELECT 	
+					dom_szallito_futarok.nev AS futar,
+					dom_szallitas_futarlevelek.szallitas_cegnev AS megrendelo,
+					dom_szallitas_futarlevel_tetelek.megnevezes AS termek,
+					dom_szallitas_futarlevel_tetelek.darab AS darab,
+					dom_szallitas_futarlevel_tetelek.megjegyzes AS megjegyzes
+			FROM dom_szallitas_futarlevel_tetelek
+			
+			INNER JOIN dom_szallitas_futarlevelek ON dom_szallitas_futarlevel_tetelek.futarlevel_id = dom_szallitas_futarlevelek.id
+			INNER JOIN dom_szallito_futarok ON dom_szallitas_futarlevelek.szallito_futar = dom_szallito_futarok.id
+			WHERE dom_szallitas_futarlevelek.torolt = 0 AND dom_szallitas_futarlevel_tetelek.torolt = 0 AND dom_szallitas_futarlevelek.felvetel_ideje >= :mettol AND dom_szallitas_futarlevelek.felvetel_ideje <= :meddig" . $sqlWhere . "
+			
+			ORDER BY dom_szallito_futarok.nev, dom_szallitas_futarlevelek.szallitas_cegnev, dom_szallitas_futarlevel_tetelek.megnevezes
+		";
+
+		$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+
+		$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+		$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
+
+		if ($futarId != '') {
+			$commandTranzakcio->bindParam(':futarId', $futarId);
+		}
+		
+		$kiszallitasok = $commandTranzakcio -> queryAll();
+
+		if ($kiszallitasok == null) {
+			$kiszallitasok = array();
+		}
+		
+		$osszesen = 0;
+		foreach ($kiszallitasok as $key => $kiszallitas) {
+			$osszesen += $kiszallitas['darab'];
+			$kiszallitasok[$key]['darab_dsp'] = Utils::DarabszamFormazas($kiszallitas['darab']);
+		}
+		
+		$dataProvider = new CArrayDataProvider($kiszallitasok, array('pagination' => false));
+
+		# mPDF
+		$mPDF1 = Yii::app() -> ePdf -> mpdf();
+
+		$mPDF1->SetHtmlHeader("Futár kiszállításai időszakra");
+
+		# render
+		$mPDF1->WriteHTML($this->renderPartial('printFutarKiszallitasaiIdoszakraStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+			'osszesen' => $osszesen
+		), true));
+
+		# Outputs ready PDF
+		$mPDF1->Output();
+	}
+	
+	// összeállítja a nem elszámolt tételek statisztika PDF-ét
+	public function nemElszamoltTetelekStatisztikaPrintPDF ($model) {
+		// az összes, ide vonatkozó tranzakciós tétel lekérdezése
+		$sqlTranzakciok = "
+			SELECT
+					dom_szallito_cegek.nev AS futar_ceg,
+					dom_szallito_futarok.nev AS futar,
+					dom_szallitas_futarlevelek.szallitas_cegnev AS megrendelo,
+					dom_szallitas_futarlevel_tetelek.megnevezes AS termek,
+					dom_szallitas_futarlevel_tetelek.darab AS darab,
+					dom_szallitas_futarlevelek.utanvet_osszeg AS utanvet_osszeg
+			FROM dom_szallitas_futarlevel_tetelek
+			
+			INNER JOIN dom_szallitas_futarlevelek ON dom_szallitas_futarlevel_tetelek.futarlevel_id = dom_szallitas_futarlevelek.id
+			INNER JOIN dom_szallito_futarok ON dom_szallitas_futarlevelek.szallito_futar = dom_szallito_futarok.id
+			INNER JOIN dom_szallito_cegek ON dom_szallitas_futarlevelek.szallito_ceg = dom_szallito_cegek.id	
+			
+			WHERE dom_szallitas_futarlevelek.torolt = 0 AND dom_szallitas_futarlevel_tetelek.torolt = 0 AND dom_szallitas_futarlevelek.utanvet_visszahozas_datum = '0000-00-00 00:00:00' AND dom_szallitas_futarlevelek.felvetel_ideje >= :mettol AND dom_szallitas_futarlevelek.felvetel_ideje <= :meddig
+			
+			ORDER BY dom_szallito_cegek.nev, dom_szallito_futarok.nev, dom_szallitas_futarlevelek.szallitas_cegnev, dom_szallitas_futarlevel_tetelek.megnevezes				
+		";
+
+		$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+
+		$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+		$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
+
+		$nemElszamoltTetelek = $commandTranzakcio -> queryAll();
+
+		if ($nemElszamoltTetelek == null) {
+			$nemElszamoltTetelek = array();
+		}
+		
+		foreach ($nemElszamoltTetelek as $key => $nemElszamoltTetel) {
+			$nemElszamoltTetelek[$key]['darab_dsp'] = Utils::DarabszamFormazas($nemElszamoltTetel['darab']);
+		}
+		
+		$dataProvider = new CArrayDataProvider($nemElszamoltTetelek, array('pagination' => false));
+
+		# mPDF
+		$mPDF1 = Yii::app() -> ePdf -> mpdf();
+
+		$mPDF1->SetHtmlHeader("Nem elszámolt tételek");
+
+		# render
+		$mPDF1->WriteHTML($this->renderPartial('printNemElszamoltTetelekStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+		), true));
+
+		# Outputs ready PDF
+		$mPDF1->Output();
+	}
+
+	// összeállítja a futárdíjak részletes statisztika PDF-ét
+	public function futardijakReszletesStatisztikaPrintPDF ($model) {
+		// az összes, ide vonatkozó tranzakciós tétel lekérdezése
+		$sqlTranzakciok = "
+			SELECT
+					dom_szallito_cegek.nev AS futar_ceg,
+					dom_szallito_futarok.nev AS futar,
+					dom_szallitas_futarlevelek.szallitas_cegnev AS megrendelo,
+					dom_szallitas_futarlevel_tetelek.megnevezes AS termek,
+					dom_szallitas_futarlevel_tetelek.darab AS darab,
+					dom_szallitas_futarlevelek.szallitas_dij AS szallitas_dij
+			FROM dom_szallitas_futarlevel_tetelek
+			
+			INNER JOIN dom_szallitas_futarlevelek ON dom_szallitas_futarlevel_tetelek.futarlevel_id = dom_szallitas_futarlevelek.id
+			INNER JOIN dom_szallito_futarok ON dom_szallitas_futarlevelek.szallito_futar = dom_szallito_futarok.id
+			INNER JOIN dom_szallito_cegek ON dom_szallitas_futarlevelek.szallito_ceg = dom_szallito_cegek.id	
+			
+			WHERE dom_szallitas_futarlevelek.torolt = 0 AND dom_szallitas_futarlevel_tetelek.torolt = 0 AND dom_szallitas_futarlevelek.felvetel_ideje >= :mettol AND dom_szallitas_futarlevelek.felvetel_ideje <= :meddig
+			
+			ORDER BY dom_szallito_cegek.nev, dom_szallito_futarok.nev, dom_szallitas_futarlevelek.szallitas_cegnev, dom_szallitas_futarlevel_tetelek.megnevezes				
+		";
+
+		$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+
+		$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+		$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
+
+		$tetelek = $commandTranzakcio -> queryAll();
+
+		if ($tetelek == null) {
+			$tetelek = array();
+		}
+		
+		foreach ($tetelek as $key => $tetel) {
+			$tetelek[$key]['darab_dsp'] = Utils::DarabszamFormazas($tetel['darab']);
+		}
+		
+		$dataProvider = new CArrayDataProvider($tetelek, array('pagination' => false));
+
+		# mPDF
+		$mPDF1 = Yii::app() -> ePdf -> mpdf();
+
+		$mPDF1->SetHtmlHeader("Futárdíjak részletes");
+
+		# render
+		$mPDF1->WriteHTML($this->renderPartial('printFutardijakReszletesStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+		), true));
+
+		# Outputs ready PDF
+		$mPDF1->Output();
+	}
+
+	// összeállítja a futárdíjak összesített statisztika PDF-ét
+	public function futardijakOsszesitettStatisztikaPrintPDF ($model) {
+		// az összes, ide vonatkozó tranzakciós tétel lekérdezése
+		$sqlTranzakciok = "
+			SELECT
+					dom_szallito_cegek.nev AS futar_ceg,
+					dom_szallito_futarok.nev AS futar,
+					SUM(dom_szallitas_futarlevelek.szallitas_dij) AS szallitas_dij
+			FROM dom_szallitas_futarlevelek
+			
+			INNER JOIN dom_szallito_futarok ON dom_szallitas_futarlevelek.szallito_futar = dom_szallito_futarok.id
+			INNER JOIN dom_szallito_cegek ON dom_szallitas_futarlevelek.szallito_ceg = dom_szallito_cegek.id	
+			
+			WHERE dom_szallitas_futarlevelek.torolt = 0 AND dom_szallitas_futarlevelek.felvetel_ideje >= :mettol AND dom_szallitas_futarlevelek.felvetel_ideje <= :meddig
+			
+			GROUP BY dom_szallito_futarok.nev
+			
+			ORDER BY dom_szallito_cegek.nev, dom_szallito_futarok.nev, dom_szallitas_futarlevelek.szallitas_cegnev			
+		";
+
+		$commandTranzakcio = Yii::app()->db->createCommand($sqlTranzakciok);
+
+		$commandTranzakcio->bindParam(':mettol', $model -> statisztika_mettol);
+		$commandTranzakcio->bindParam(':meddig', $model -> statisztika_meddig);
+
+		$tetelek = $commandTranzakcio -> queryAll();
+
+		if ($tetelek == null) {
+			$tetelek = array();
+		}
+		
+		$dataProvider = new CArrayDataProvider($tetelek, array('pagination' => false));
+
+		# mPDF
+		$mPDF1 = Yii::app() -> ePdf -> mpdf();
+
+		$mPDF1->SetHtmlHeader("Futárdíjak részletes");
+
+		# render
+		$mPDF1->WriteHTML($this->renderPartial('printFutardijakOsszesitettStatisztika', array('dataProvider' => $dataProvider, 'model' => $model,
+		), true));
+
+		# Outputs ready PDF
+		$mPDF1->Output();
+	}
+	
 	// a kapott model alapján összeállítja a termékeladás statisztika PDF-ét
 	public function termekcsoportVevokStatisztikaPrintPDF ($model) {
 		set_time_limit(0);

@@ -291,6 +291,15 @@ class NyomdakonyvController extends Controller
 		$pdfTemplateName = (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) ? 'printCtpTaska' : 'printTaska';
 		
 		if ($model != null) {
+			// digitális táska esetén a digitális táska template-et kell használni
+			if ($model -> munkatipus != null) {
+				$pos = stripos($model -> munkatipus -> munkatipus_nev, "digitális");
+				
+				if ($pos !== false) {
+					$pdfTemplateName = 'printTaskaDigitalis';
+				}
+			}
+			
 			// növeljük eggyel a megfelelő, nyomtatást számláló mezőt
 			if (isset($_GET['isCtp']) && ($_GET['isCtp'] == 1) ) {
 				// CTP táska nyomtatása történik
@@ -304,7 +313,9 @@ class NyomdakonyvController extends Controller
 			
 			# mPDF
 			$mPDF1 = Yii::app()->ePdf->mpdf();
-
+			// DEBUG-hoz:
+			// $mPDF1->showImageErrors = true;
+			
 			$mPDF1->SetHtmlHeader("Munkatáska #" . $model->taskaszam);
 			
 			# render
@@ -808,6 +819,82 @@ class NyomdakonyvController extends Controller
                         ));*/
 		}
 
+	}
+
+	/**
+	 * Elforgatja a megadott képet a megadott fokkal.
+	 */
+	public function actionRotateNyomdakonyvImage ($filename, $degree) {
+		$filenameWithFullPath = dirname(Yii::app()->request->scriptFile) . urldecode($filename);
+		
+		$size = getimagesize($filenameWithFullPath);
+		$type = '';
+		
+		switch($size["mime"]){
+			case "image/jpeg":
+				$type = "jpg";
+				$image = imagecreatefromjpeg($filenameWithFullPath);
+				break;
+			
+			case "image/gif":
+				$type = "gif";
+				$image = imagecreatefromgif($filenameWithFullPath);
+				break;
+			
+			case "image/png":
+				$type = "png";
+				$image = imagecreatefrompng($filenameWithFullPath);
+				break;
+			
+			default:
+				$image = false;
+				
+			break;
+		}
+	
+		if ($image) {
+			$rotate = imagerotate($image, $degree, 0);
+
+			if ($type == 'jpg') {
+				imagejpeg($rotate, $filenameWithFullPath);
+			} else if ($type == 'gif') {
+				imagegif($rotate, $filenameWithFullPath);
+			} if ($type == 'png') {
+				imagepng($rotate, $filenameWithFullPath);
+			}
+		}
+
+		echo $filename;
+	}
+
+	/**
+	 * Elküldi e-mailben a megadott képet a megadott szöveggel a megrendelő e-mail címére.
+	 * Küldés előtt a beállításokba menti az utoljára módosított e-mail szövegét.
+	 */
+	public function actionEmailPicture ($nyomdakonyv_id, $filename, $email_body) {
+		if (($nyomdakonyv = $this -> loadModel($nyomdakonyv_id)) !== null) {
+			$email_body = urldecode($email_body);
+			$filename = dirname(Yii::app()->request->scriptFile) . urldecode($filename);
+			
+			Yii::app()->config->set('NyomdakonyvPicEmailText', $email_body);
+
+			try {
+				$ugyfel = $nyomdakonyv -> megrendeles_tetel -> megrendeles -> ugyfel;
+				$recipient = $ugyfel -> kapcsolattarto_email;
+				
+				if ($recipient == "") {
+					$recipient = $ugyfel -> ceg_email;
+				}
+				
+				if ($recipient != "") {
+					Utils::sendEmail ($recipient, "Nyomdakönyvi kép ellenőrzése", $email_body . '<br /><br /> <img src="cid:image" />', $filename);
+				}
+			} catch (Exception $e) {}
+			
+			return;
+		}
+		
+		echo "ERROR";
 	}
 
 	/**

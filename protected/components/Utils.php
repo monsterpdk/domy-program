@@ -1408,8 +1408,12 @@
 		}
 	
 		// LI: 'általános' e-mailküldő metódus, első körben a raktárkészlettel kapcsolatos figyelmeztető üzenetek kiküldéséhez használom
-		function sendEmail ($recipients, $subject, $body_text) {
+		function sendEmail ($recipients, $subject, $body_text, $attach_filename = null) {
 			$mailer = Yii::app()->mailer;
+			
+			// debug-hoz
+			// $mailer->SMTPDebug = 2;
+			
 			$validator = new CEmailValidator;
 
 			// A $recipients lehet sima string, vagy akár tömb is, ha több címzettnek akarjuk küldeni az e-mailt.
@@ -1466,7 +1470,12 @@
 				$mailer ->Password = $ArajanlatKuldoSMTPPassword;	// Az smtp bejelentkezéshez a jelszó -> admin beállításokból				
 			}
 			
-			$mailer ->CharSet = "utf-8";			
+			if ($attach_filename != null) {
+				$mailer -> AddEmbeddedImage($attach_filename, "image", $attach_filename);
+			}
+			
+			$mailer ->CharSet = "utf-8";
+			$mailer ->Encoding = "base64";		
 			$mailer ->Subject = $subject;
 			$mailer ->Body = $body_text;
 			

@@ -32,6 +32,9 @@ class BootGroupGridView extends TbGridView {
     //totals expression: function($data, $row, &$totals)
     public $extraRowTotals;
     
+	// LI
+	public $bottomExtraRowExpression;
+	
     //array with groups
     private $_groups = array();
 
@@ -234,7 +237,6 @@ class BootGroupGridView extends TbGridView {
             else
                 echo '<tr>';
 
-
         foreach($this->columns as $column) {
             $isGroupColumn = property_exists($column, 'name') && in_array($column->name, $this->mergeColumns);
 
@@ -272,7 +274,12 @@ class BootGroupGridView extends TbGridView {
         }
 
         echo "</tr>\n";
-        
+
+		// LI: render bottom extra row
+        if ($this->bottomExtraRowExpression && isset($extraRowEdge['end'])) {
+            $this->renderBottomExtraRow($row, $extraRowEdge['group']['totals']);
+        }
+		
         //extraRowPos = after
         if(count($this->extraRowColumns) && $this->extraRowPos == 'below' && isset($extraRowEdge['end'])) {
             $this->renderExtraRow($row, $extraRowEdge['group']['totals']);
@@ -313,23 +320,46 @@ class BootGroupGridView extends TbGridView {
     private function renderExtraRow($row, $totals)
     {
         $data = $this->dataProvider->data[$row]; 
+		
+		$colspan = count($this->columns);
+		
         if($this->extraRowExpression) { //user defined expression, use it!
             $content = $this->evaluateExpression($this->extraRowExpression, array('data'=>$data, 'row'=>$row, 'totals' => $totals));
         } else {  //generate value
             $values = array();
+			$i = 0;
             foreach($this->extraRowColumns as $colName) {
-                $values[] = CHtml::encode(CHtml::value($data, $colName));
+		        echo '<tr>';
+				echo '<td class="extrarow" colspan="' . $colspan . '" style="padding-left: ' . $i * 20 . ' px;width: 100%"> <strong> ' . CHtml::encode(CHtml::value($data, $colName)) . '</strong></td>';
+				echo '</tr>';
+				
+				$i++;
             }
-            $content = '<strong>'.implode(' :: ', $values).'</strong>';  
+        }
+
+    }
+
+   /**
+    * LI: renders extra bottom row
+    * 
+    * @param mixed $row
+    * @param mixed $change
+    */
+    private function renderBottomExtraRow($row, $totals)
+    {
+        $data = $this->dataProvider->data[$row]; 
+        if($this->bottomExtraRowExpression) { //user defined expression, use it!
+            $content = $this->evaluateExpression($this->bottomExtraRowExpression, array('data'=>$data, 'row'=>$row, 'totals' => $totals));
         }
 
         $colspan = count($this->columns);
 
         echo '<tr>';
-        echo '<td class="extrarow" colspan="'.$colspan.'">'.$content.'</td>';
+        echo '<td align="right" class="extrarow" colspan="'.$colspan.'" style="padding-right: 10px">'.$content.'</td>';
         echo '</tr>';
     }
-
+	
+	
     /**
     * need to rewrite this function as it is protected in CDataColumn: it is strange as all methods inside are public 
     * 

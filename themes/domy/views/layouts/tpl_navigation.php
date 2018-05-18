@@ -85,6 +85,16 @@
 							array ('label'=>'Megrendelés forrás', 'url'=> Yii::app()->createUrl('/statisztikak/MegrendelesForras'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.MegrendelesForras')),
 							array ('label'=>'Termékcsoport vevők', 'url'=> Yii::app()->createUrl('/statisztikak/TermekcsoportVevokStatisztika'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.TermekcsoportVevok')),
 /*							array ('label'=>'Utókalkuláció', 'url'=> Yii::app()->createUrl('/statisztikak/Utokalkulacio'), 'visible' => Yii::app()->user->checkAccess('admin') || !Yii::app()->user->isGuest && Yii::app()->user->checkAccess('Menu.Statisztikak.Utokalkulacio')),*/
+
+							array ('label'=>'Futár statisztikák <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'almenu-jobbra','tabindex'=>"-1"), 
+		                        'items'=>array (
+	                            	array ('label'=>'Futároknál lévő pénz', 'url'=> Yii::app()->createUrl('/statisztikak/FutaroknalLevoPenz'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak.FutaroknalLevoPenz')),
+	                            	array ('label'=>'Futár kiszállításai időszakra', 'url'=> Yii::app()->createUrl('/statisztikak/FutarKiszallitasaiIdoszakra'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak.FutarKiszallitasaiIdoszakra')),
+	                            	array ('label'=>'Nem elszámolt tételek', 'url'=> Yii::app()->createUrl('/statisztikak/NemElszamoltTetelek'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak.NemElszamoltTetelek')),
+	                            	array ('label'=>'Futárdíjak részletes', 'url'=> Yii::app()->createUrl('/statisztikak/FutardijakReszletes'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak.FutardijakReszletes')),
+	                            	array ('label'=>'Futárdíjak összesített', 'url'=> Yii::app()->createUrl('/statisztikak/FutardijakOsszesitett'), 'visible'=>Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak.FutardijakOsszesitett')),
+								), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak.FutarStatisztikak')) ),
+															
                         ), 'visible' => !Yii::app()->user->isGuest && (Yii::app()->user->checkAccess('admin') || Yii::app()->user->checkAccess('Menu.Statisztikak')) ),
                         
                         array ('label'=>'Ügyfelek <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 

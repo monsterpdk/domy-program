@@ -1221,3 +1221,8 @@ tr.updated-row {
 .selected-to-delete {
 	background-color: #ce8483 !important;
 }
+
+#nyomdakonyv_image img {
+	padding: 5px;
+	border: 1px solid #BBB;
+}
