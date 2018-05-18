@@ -16,7 +16,7 @@
 		font-size: 10pt;
 	}
 
-	table {
+	.tetelek {
 		border: solid thin gray;
 		font-family: arial;
 		font-size: 10pt;
@@ -28,11 +28,11 @@
 		background-color: silver ;
 	}
 	
-	table th {
+	.tetelek th {
 		color: black ;
 	}
 	
-	table td {
+	.tetelek td {
 		border-right: 2px solid #000000;
 		padding: 2px;
 		background-color: white ;
@@ -58,7 +58,7 @@
 <?php
 	echo '<table class = "tetelek">';
 	echo '<tr>
-			<th>Termék</th>
+			<th width="400">Termék</th>
 			<th>Darab</th>
 			<th>Utánvét összeg (Ft)</th>
 		 </tr>';

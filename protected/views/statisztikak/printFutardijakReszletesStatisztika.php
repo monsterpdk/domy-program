@@ -16,7 +16,7 @@
 		font-size: 10pt;
 	}
 
-	table {
+	.table {
 		border: solid thin gray;
 		font-family: arial;
 		font-size: 10pt;
@@ -25,17 +25,17 @@
 		border-spacing: 1px;
 		border-collapse: separate;	
 		box-decoration-break: clone;
-		background-color: silver ;
+		background-color: silver;
 	}
 	
-	table th {
-		color: black ;
+	.table th {
+		color: black;
 	}
 	
-	table td {
+	.table td {
 		border-right: 2px solid #000000;
 		padding: 2px;
-		background-color: white ;
+		background-color: white;
 	}
 	
 	@page {
@@ -56,7 +56,7 @@
 </p>
 
 <?php
-	echo '<table class = "tetelek">';
+	echo '<table class = "table">';
 	echo '<tr>
 			<th>Termék</th>
 			<th>Darab</th>

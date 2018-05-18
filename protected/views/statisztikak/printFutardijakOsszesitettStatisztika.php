@@ -16,7 +16,7 @@
 		font-size: 10pt;
 	}
 
-	table {
+	.table {
 		border: solid thin gray;
 		font-family: arial;
 		font-size: 10pt;
@@ -28,11 +28,11 @@
 		background-color: silver ;
 	}
 	
-	table th {
+	.table th {
 		color: black ;
 	}
 	
-	table td {
+	.table td {
 		border-right: 2px solid #000000;
 		padding: 2px;
 		background-color: white ;
@@ -56,7 +56,7 @@
 </p>
 
 <?php
-	echo '<table class = "tetelek">';
+	echo '<table class = "table">';
 	echo '<tr>
 			<th>Futár</th>
 			<th>Szállítás díja (Ft)</th>
