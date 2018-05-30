@@ -67,6 +67,8 @@
  * @property string $nyomas_kezdes_datum
  * @property string $raktarbol_kiadva_datum
  * @property string $kep_file_nev
+ * @property string $kep_file_nev2
+ * @property string $kep_file_nev3
  * @property string $sztornozas_oka 
  * @property integer $sztornozva
  * @property integer $nyomtatva_taska
@@ -125,8 +127,8 @@ class Nyomdakonyv extends CActiveRecord
 			array('ctp, film, sos, szin_c_elo, szin_m_elo, szin_y_elo, szin_k_elo, szin_c_hat, szin_m_hat, szin_y_hat, szin_k_hat, szin_mutaciok, szin_mutaciok_szam, kifuto_bal, kifuto_fent, kifuto_jobb, kifuto_lent, forditott_levezetes, hossziranyu_levezetes, gep_id, munkatipus_id, max_fordulat, kifutos, fekete_flekkben_szin_javitando, magas_szinterheles_nagy_feluleten, magas_szinterheles_szovegben, ofszet_festek, nyomas_minta_szerint, nyomas_vagojel_szerint, nyomas_domy_szerint, gepindulasra_jon_ugyfel, nyomhato sztornozva, nyomtatva_taska, nyomtatva_ctp_taska, torolt', 'numerical', 'integerOnly'=>true),
 			array('megrendeles_tetel_id', 'length', 'max'=>10),
 			array('taskaszam, szallitolevel_sorszam', 'length', 'max'=>12),
-			array('kep_file_nev', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true, 'safe' => false),
-			array('kep_file_nev', 'length', 'max'=>255, 'on'=>'insert,update'),
+			array('kep_file_nev, kep_file_nev2, kep_file_nev3', 'file', 'types'=>'jpg, jpeg, gif, png', 'allowEmpty'=>true, 'safe' => false),
+			array('kep_file_nev, kep_file_nev2, kep_file_nev3', 'length', 'max'=>255, 'on'=>'insert,update'),
 			array('pantone, szin_pantone, utannyomas_valtoztatassal, utasitas_ctp_nek, utasitas_gepmesternek, kiszallitasi_informaciok, ctp_belenyulasok, ctp_hibalista', 'length', 'max'=>255),
 			array('szamla_sorszam, jovahagyas, erkezett', 'length', 'max'=>15),
 			array('szin_mutaciok_szam', 'length', 'max'=>3),
@@ -281,6 +283,8 @@ class Nyomdakonyv extends CActiveRecord
 			'nyomas_kezdes_datum' => 'Nyomás elkezdve',
 			'raktarbol_kiadva_datum' => 'Raktárból kiadva',
 			'kep_file_nev' => 'Kép csatolása',
+			'kep_file_nev2' => 'Kép csatolása',
+			'kep_file_nev3' => 'Kép csatolása',
 			'sztornozas_oka' => 'Sztornózás oka',
 			'sztornozva' => 'Sztornózva',
 			'torolt' => 'Törölt',

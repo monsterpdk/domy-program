@@ -942,127 +942,6 @@
 		));
 	?>
 
-		<div class="row" style = "margin: 0px">
-			<?php echo $form->labelEx($model,'kep_file_nev'); ?>
-			<?php echo CHtml::activeFileField($model, 'kep_file_nev'); ?>
-			<?php echo $form->error($model,'kep_file_nev'); ?>
-		</div>
-		
-		<?php if ($model -> isNewRecord != '1' && !empty($model -> kep_file_nev)) { ?>
-			
-			<div style = "float: left; margin-right: 10px">
-				<a id = "nyomdakonyv_image" href="<?php echo Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev  . "?t=" . time(); ?> ">
-					<?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev . "?t=" . time(), "Feltöltött kép", array("width" => 180)); ?>
-				</a>
-			</div>
-			
-			<div style = "float: left">
-				<?php
-					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'rotate_image_left',
-						'caption' => 'Balra forgat',
-						'buttonType'=>'link',
-						'options'=>array(
-							'icons'=>array(
-								'primary'=>'ui-icon-circle-arrow-w',
-							)
-						),						
-						'onclick'=>new CJavaScriptExpression('function() {  
-							$.post( "' . $this->createUrl('rotateNyomdakonyvImage', array("filename" => urlencode(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev), "degree" => 90)) . '", function (data) {
-												$("#nyomdakonyv_image img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
-												$("#nyomdakonyv_image").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
-											});
-						}'),
-						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
-					));
-				?>
-
-				<br />
-
-				<?php
-					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'rotate_image_right',
-						'caption' => 'Jobbra forgat',
-						'buttonType'=>'link',
-						'options'=>array(
-							'icons'=>array(
-								'primary'=>'ui-icon-circle-arrow-e',
-							)
-						),
-						'onclick'=>new CJavaScriptExpression('function() {  
-							$.post( "' . $this->createUrl('rotateNyomdakonyvImage', array("filename" => urlencode(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev), "degree" => -90)) . '", function (data) {
-												$("#nyomdakonyv_image img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
-												$("#nyomdakonyv_image").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
-											});
-						}'),
-						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
-					));
-				?>
-				
-				<br />
-				
-				<?php
-					$this->widget('zii.widgets.jui.CJuiButton', array(
-						'name'=>'send_image',
-						'caption' => 'Kép küldése',
-						'buttonType' => 'link',
-						'options' => array(
-							'icons' => array(
-								'primary' => 'ui-icon-mail-closed',
-							)
-						),
-						'onclick'=>new CJavaScriptExpression('function() {
-							$("#juiDialogEmailBody").dialog("open");
-						}'),
-						'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
-					));
-				?>
-				
-				<?php 
-					$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
-									'id' => 'juiDialogEmailBody',
-									'options' => array(
-											'title' => 'Kép küldése e-mail-ben',
-											'autoOpen' => false,
-											'modal' => true,
-											'width' => '400px',
-											'height' => 'auto',
-										),
-									));
-
-						echo '<label for="textAreaEmailBody">E-mail szövege</label>';
-						echo CHtml::textArea('textAreaEmailBody', Yii::app()->config->get('NyomdakonyvPicEmailText'), array('rows' => 6, 'maxlength' => 1024, 'style' => 'width: 352px')); 
-						
-						echo "<div align='center'>";
-							$this->widget('zii.widgets.jui.CJuiButton', array(
-								'name'=>'send_image_to_server',
-								'caption' => 'Küldés',
-								'buttonType' => 'link',
-								'options' => array(
-									'icons' => array(
-										'primary' => 'ui-icon-mail-closed',
-									)
-								),
-								'onclick'=>new CJavaScriptExpression('function() {
-										$.post( "' . $this->createUrl('emailPicture', array("nyomdakonyv_id" => $model->id, "filename" => urlencode(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev))) . '&email_body=" + encodeURIComponent($("#textAreaEmailBody").val()), function (data) {
-											if (data == "ERROR") {
-												alert("Az e-mail küldése során hiba lépett fel!");
-											} else {
-												alert("Az e-mail sikeresen elküldve!");
-											}
-											
-											$("#juiDialogEmailBody").dialog("close");
-										});								
-								}'),
-								'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
-							));
-						echo "</div>";
-						
-					$this->endWidget();
-				?>
-			</div>
-		<?php } ?>
-
 		<?php if ($model -> sztornozva == 1): ?>
 			<div class="row">
 				<?php echo $form->labelEx($model,'sztornozas_oka'); ?>
@@ -1099,8 +978,596 @@
 						'htmlOptions' => array ('class' => 'btn btn-info btn-lg', 'submit' => Yii::app()->request->urlReferrer),
 					 )); ?>
 		</div>
+	<?php $this->endWidget();?>
+	
+	
+	<!-- --------------------- Képek ----------------------------- -->
+	<?php
+		$this->beginWidget('zii.widgets.CPortlet', array(
+			'title'=>"<strong>Képek</strong>",
+		));
+	?>
 
-	<?php $this->endWidget();?>	
+	<!-- KÉP #1 -->
+	<p> <strong> Kép #1 </strong> </p>
+		<?php
+		if ($model -> isNewRecord != '1') {
+			$this->widget('ext.EFineUploader.EFineUploader',
+				array(
+					'id'=>'FineUploader',
+					'config'=>array(
+							   'template'=>'qq-thumbnails-template',
+							   'autoUpload'=>true,
+							   'multiple'=>true,
+							   'text'=> array(
+									'uploadButton'=>"<i class='icon-plus icon-white'></i> Kép feltöltése"
+								),
+							   'request'=>array(
+									'endpoint'=>$this->createUrl('uploadImage'),
+									'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken, 'nyomdakonyvId' => $model -> id, 'kepSorszam' => ''),
+								),
+								'deleteFile'=> array(
+									'enabled'=>true,
+									'forceConfirm'=>true,
+									'method'=>'POST',
+									'endpoint'=>$this->createUrl('deleteImage'),
+								),	   
+								'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+								'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+								'callbacks'=>array(
+												'onComplete'=>"js:function(id, name, response){
+													var serverPathToFile = response.filePath,
+													fileItem = this.getItemByFileId(id);
+
+													if (response.success) {
+														var viewBtn = qq(fileItem).getByClass(\"view-link\")[0];
+														viewBtn.setAttribute(\"href\", response.imageUrl);
+														
+														$('#FineUploader').hide();
+														
+														$('#nyomdakonyv_image img').attr( 'src', decodeURIComponent(response.imageUrl.replace(/\+/g, ' ')) + '?dt=' + (new Date()) );
+														$('#nyomdakonyv_image').attr( 'href', decodeURIComponent(response.imageUrl.replace(/\+/g, ' ')) + '?dt=' + (new Date()) );
+														$('#nyomdakonyv_image_div').show();
+													}
+												}",
+												'onSubmitDelete' => "js:function(id) {
+													this.setDeleteFileParams({filename: this.getName(id), nyomdakonyvId: $('#Nyomdakonyv_id').val(), kepSorszam: ''}, id);
+												}",
+												'onValidateBatch' => "js:function(fileOrBlobData) {}",
+												 ),
+								'validation'=>array(
+										 'allowedExtensions'=>array('jpg', 'jpeg', 'gif', 'png'),
+										 // max. file limit 5 MB
+										 'sizeLimit'=>5 * 1024 * 1024,
+												),
+				)
+			  ));
+			}	 
+		?>
+
+		<div id = 'nyomdakonyv_image_div' style = '<?php echo ($model -> isNewRecord == '1' || empty($model -> kep_file_nev)) ? "display:none;" : "" ?>'>
+			
+			<div style = "float: left; margin-right: 10px">
+				<a id = "nyomdakonyv_image" href="<?php echo Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev  . "?dt=" . time(); ?> ">
+					<?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev . "?dt=" . time(), "Feltöltött kép", array("width" => 180)); ?>
+				</a>
+			</div>
+			
+			<div style = "float: left">
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'rotate_image_left',
+						'caption' => 'Balra forgat',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-circle-arrow-w',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../rotateNyomdakonyvImage?filename=" + encodeURIComponent($("#nyomdakonyv_image img").attr( "src").split("?dt=")[0]) + "&degree=90", function (data) {
+												$("#nyomdakonyv_image img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+												$("#nyomdakonyv_image").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'send_image',
+						'caption' => 'Kép küldése',
+						'buttonType' => 'link',
+						'options' => array(
+							'icons' => array(
+								'primary' => 'ui-icon-mail-closed',
+							)
+						),
+						'onclick'=>new CJavaScriptExpression('function() {
+							$("#juiDialogEmailBody").dialog("open");
+						}'),
+						'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+				
+				<br />
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'rotate_image_right',
+						'caption' => 'Jobbra forgat',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-circle-arrow-e',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../rotateNyomdakonyvImage?filename=" + encodeURIComponent($("#nyomdakonyv_image img").attr( "src").split("?dt=")[0]) + "&degree=-90", function (data) {
+												$("#nyomdakonyv_image img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+												$("#nyomdakonyv_image").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'delete_image',
+						'caption' => 'Törlés',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-trash',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../deleteImage?filename=" + encodeURIComponent($("#nyomdakonyv_image img").attr( "src").split("?dt=")[0]) + "&kepSorszam=&nyomdakonyvId=" + $("#Nyomdakonyv_id").val(), function (data) {
+												$("#nyomdakonyv_image_div").hide();
+												$(".qq-upload-list-selector").empty();
+												
+												$("#FineUploader").show();
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+
+				<?php 
+					$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
+									'id' => 'juiDialogEmailBody',
+									'options' => array(
+											'title' => 'Kép küldése e-mail-ben',
+											'autoOpen' => false,
+											'modal' => true,
+											'width' => '400px',
+											'height' => 'auto',
+										),
+									));
+
+						echo '<label for="textAreaEmailBody">E-mail szövege</label>';
+						echo CHtml::textArea('textAreaEmailBody', Yii::app()->config->get('NyomdakonyvPicEmailText'), array('rows' => 6, 'maxlength' => 1024, 'style' => 'width: 352px')); 
+						
+						echo "<div align='center'>";
+							$this->widget('zii.widgets.jui.CJuiButton', array(
+								'name'=>'send_image_to_server2',
+								'caption' => 'Küldés',
+								'buttonType' => 'link',
+								'options' => array(
+									'icons' => array(
+										'primary' => 'ui-icon-mail-closed',
+									)
+								),
+								'onclick'=>new CJavaScriptExpression('function() {
+										$.post( "../emailPicture?filename=" + encodeURIComponent($("#nyomdakonyv_image img").attr( "src").split("?dt=")[0]) + "&nyomdakonyv_id=" + $("#Nyomdakonyv_id").val() + "&email_body=" + encodeURIComponent($("#textAreaEmailBody").val()), function (data) {
+											if (data == "ERROR") {
+												alert("Az e-mail küldése során hiba lépett fel!");
+											} else {
+												alert("Az e-mail sikeresen elküldve!");
+											}
+											
+											$("#juiDialogEmailBody").dialog("close");
+										});								
+								}'),
+								'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+							));
+						echo "</div>";
+						
+					$this->endWidget();
+				?>
+			</div>
+			<div style = 'clear: both'> </div>
+		</div>
+	
+	<!-- KÉP #2 -->
+	<p style = 'margin-top: 10px;'> <strong> Kép #2 </strong> </p>
+		<?php
+		if ($model -> isNewRecord != '1') {
+			$this->widget('ext.EFineUploader.EFineUploader',
+				array(
+					'id'=>'FineUploader2',
+					'config'=>array(
+							   'template'=>'qq-thumbnails-template',
+							   'autoUpload'=>true,
+							   'multiple'=>true,
+							   'text'=> array(
+									'uploadButton'=>"<i class='icon-plus icon-white'></i> Kép feltöltése"
+								),
+							   'request'=>array(
+									'endpoint'=>$this->createUrl('uploadImage'),
+									'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken, 'nyomdakonyvId' => $model -> id, 'kepSorszam' => 2),
+								),
+								'deleteFile'=> array(
+									'enabled'=>true,
+									'forceConfirm'=>true,
+									'method'=>'POST',
+									'endpoint'=>$this->createUrl('deleteImage'),
+								),	   
+								'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+								'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+								'callbacks'=>array(
+												'onComplete'=>"js:function(id, name, response){
+													var serverPathToFile = response.filePath,
+													fileItem = this.getItemByFileId(id);
+
+													if (response.success) {
+														var viewBtn = qq(fileItem).getByClass(\"view-link\")[0];
+														viewBtn.setAttribute(\"href\", response.imageUrl);
+														
+														$('#FineUploader2').hide();
+														
+														$('#nyomdakonyv_image2 img').attr( 'src', decodeURIComponent(response.imageUrl.replace(/\+/g, ' ')) + '?dt=' + (new Date()) );
+														$('#nyomdakonyv_image2').attr( 'href', decodeURIComponent(response.imageUrl.replace(/\+/g, ' ')) + '?dt=' + (new Date()) );
+														$('#nyomdakonyv_image2_div').show();
+													}
+												}",
+												'onSubmitDelete' => "js:function(id) {
+													this.setDeleteFileParams({filename: this.getName(id), nyomdakonyvId: $('#Nyomdakonyv_id').val(), kepSorszam: 2}, id);
+												}",
+												'onValidateBatch' => "js:function(fileOrBlobData) {}",
+												 ),
+								'validation'=>array(
+										 'allowedExtensions'=>array('jpg', 'jpeg', 'gif', 'png'),
+										 // max. file limit 5 MB
+										 'sizeLimit'=>5 * 1024 * 1024,
+												),
+				)
+			  ));
+			}	 
+		?>
+
+	<div id = 'nyomdakonyv_image2_div' style = '<?php echo ($model -> isNewRecord == '1' || empty($model -> kep_file_nev2)) ? "display:none;" : "" ?>'>
+			
+			<div style = "float: left; margin-right: 10px">
+				<a id = "nyomdakonyv_image2" href="<?php echo Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev2  . "?dt=" . time(); ?> ">
+					<?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev2 . "?dt=" . time(), "Feltöltött kép", array("width" => 180)); ?>
+				</a>
+			</div>
+			
+			<div style = "float: left">
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'rotate_image_left2',
+						'caption' => 'Balra forgat',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-circle-arrow-w',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../rotateNyomdakonyvImage?filename=" + encodeURIComponent($("#nyomdakonyv_image2 img").attr( "src").split("?dt=")[0]) + "&degree=90", function (data) {
+												$("#nyomdakonyv_image2 img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+												$("#nyomdakonyv_image2").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'send_image2',
+						'caption' => 'Kép küldése',
+						'buttonType' => 'link',
+						'options' => array(
+							'icons' => array(
+								'primary' => 'ui-icon-mail-closed',
+							)
+						),
+						'onclick'=>new CJavaScriptExpression('function() {
+							$("#juiDialogEmailBody2").dialog("open");
+						}'),
+						'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+				
+				<br />
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'rotate_image_right2',
+						'caption' => 'Jobbra forgat',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-circle-arrow-e',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../rotateNyomdakonyvImage?filename=" + encodeURIComponent($("#nyomdakonyv_image2 img").attr( "src").split("?dt=")[0]) + "&degree=-90", function (data) {
+												$("#nyomdakonyv_image2 img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+												$("#nyomdakonyv_image2").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'delete_image2',
+						'caption' => 'Törlés',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-trash',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../deleteImage?filename=" + encodeURIComponent($("#nyomdakonyv_image2 img").attr( "src").split("?dt=")[0]) + "&kepSorszam=2&nyomdakonyvId=" + $("#Nyomdakonyv_id").val(), function (data) {
+												$("#nyomdakonyv_image2_div").hide();
+												$(".qq-upload-list-selector").empty();
+												
+												$("#FineUploader2").show();
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+
+				<?php 
+					$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
+									'id' => 'juiDialogEmailBody2',
+									'options' => array(
+											'title' => 'Kép küldése e-mail-ben',
+											'autoOpen' => false,
+											'modal' => true,
+											'width' => '400px',
+											'height' => 'auto',
+										),
+									));
+
+						echo '<label for="textAreaEmailBody">E-mail szövege</label>';
+						echo CHtml::textArea('textAreaEmailBody', Yii::app()->config->get('NyomdakonyvPicEmailText'), array('rows' => 6, 'maxlength' => 1024, 'style' => 'width: 352px')); 
+						
+						echo "<div align='center'>";
+							$this->widget('zii.widgets.jui.CJuiButton', array(
+								'name'=>'send_image_to_server2',
+								'caption' => 'Küldés',
+								'buttonType' => 'link',
+								'options' => array(
+									'icons' => array(
+										'primary' => 'ui-icon-mail-closed',
+									)
+								),
+								'onclick'=>new CJavaScriptExpression('function() {
+										$.post( "../emailPicture?filename=" + encodeURIComponent($("#nyomdakonyv_image2 img").attr( "src").split("?dt=")[0]) + "&nyomdakonyv_id=" + $("#Nyomdakonyv_id").val() + "&email_body=" + encodeURIComponent($("#textAreaEmailBody").val()), function (data) {
+											if (data == "ERROR") {
+												alert("Az e-mail küldése során hiba lépett fel!");
+											} else {
+												alert("Az e-mail sikeresen elküldve!");
+											}
+											
+											$("#juiDialogEmailBody2").dialog("close");
+										});								
+								}'),
+								'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+							));
+						echo "</div>";
+						
+					$this->endWidget();
+				?>
+			</div>
+			<div style = 'clear: both'> </div>
+		</div>
+		
+<!-- KÉP #3 -->
+	<p style = 'margin-top: 10px;'> <strong> Kép #3 </strong> </p>
+		<?php
+		if ($model -> isNewRecord != '1') {
+			$this->widget('ext.EFineUploader.EFineUploader',
+				array(
+					'id'=>'FineUploader3',
+					'config'=>array(
+							   'template'=>'qq-thumbnails-template',
+							   'autoUpload'=>true,
+							   'multiple'=>true,
+							   'text'=> array(
+									'uploadButton'=>"<i class='icon-plus icon-white'></i> Kép feltöltése"
+								),
+							   'request'=>array(
+									'endpoint'=>$this->createUrl('uploadImage'),
+									'params'=>array('YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken, 'nyomdakonyvId' => $model -> id, 'kepSorszam' => 3),
+								),
+								'deleteFile'=> array(
+									'enabled'=>true,
+									'forceConfirm'=>true,
+									'method'=>'POST',
+									'endpoint'=>$this->createUrl('deleteImage'),
+								),	   
+								'retry'=>array('enableAuto'=>true,'preventRetryResponseProperty'=>true),
+								'chunking'=>array('enable'=>true,'partSize'=>100),//bytes
+								'callbacks'=>array(
+												'onComplete'=>"js:function(id, name, response){
+													var serverPathToFile = response.filePath,
+													fileItem = this.getItemByFileId(id);
+
+													if (response.success) {
+														var viewBtn = qq(fileItem).getByClass(\"view-link\")[0];
+														viewBtn.setAttribute(\"href\", response.imageUrl);
+														
+														$('#FineUploader3').hide();
+														
+														$('#nyomdakonyv_image3 img').attr( 'src', decodeURIComponent(response.imageUrl.replace(/\+/g, ' ')) + '?dt=' + (new Date()) );
+														$('#nyomdakonyv_image3').attr( 'href', decodeURIComponent(response.imageUrl.replace(/\+/g, ' ')) + '?dt=' + (new Date()) );
+														$('#nyomdakonyv_image3_div').show();
+													}
+												}",
+												'onSubmitDelete' => "js:function(id) {
+													this.setDeleteFileParams({filename: this.getName(id), nyomdakonyvId: $('#Nyomdakonyv_id').val(), kepSorszam: 3}, id);
+												}",
+												'onValidateBatch' => "js:function(fileOrBlobData) {}",
+												 ),
+								'validation'=>array(
+										 'allowedExtensions'=>array('jpg', 'jpeg', 'gif', 'png'),
+										 // max. file limit 5 MB
+										 'sizeLimit'=>5 * 1024 * 1024,
+												),
+				)
+			  ));
+			}	 
+		?>
+
+	<div id = 'nyomdakonyv_image3_div' style = '<?php echo ($model -> isNewRecord == '1' || empty($model -> kep_file_nev3)) ? "display:none;" : "" ?>'>
+			
+			<div style = "float: left; margin-right: 10px">
+				<a id = "nyomdakonyv_image3" href="<?php echo Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev3  . "?dt=" . time(); ?> ">
+					<?php echo CHtml::image(Yii::app()->request->baseUrl . '/uploads/nyomdakonyv/' . $model->id . '/' . $model->kep_file_nev3 . "?dt=" . time(), "Feltöltött kép", array("width" => 180)); ?>
+				</a>
+			</div>
+			
+			<div style = "float: left">
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'rotate_image_left3',
+						'caption' => 'Balra forgat',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-circle-arrow-w',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../rotateNyomdakonyvImage?filename=" + encodeURIComponent($("#nyomdakonyv_image3 img").attr( "src").split("?dt=")[0]) + "&degree=90", function (data) {
+												$("#nyomdakonyv_image3 img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+												$("#nyomdakonyv_image3").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+				
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'send_image3',
+						'caption' => 'Kép küldése',
+						'buttonType' => 'link',
+						'options' => array(
+							'icons' => array(
+								'primary' => 'ui-icon-mail-closed',
+							)
+						),
+						'onclick'=>new CJavaScriptExpression('function() {
+							$("#juiDialogEmailBody3").dialog("open");
+						}'),
+						'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+				
+				<br />
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'rotate_image_right3',
+						'caption' => 'Jobbra forgat',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-circle-arrow-e',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../rotateNyomdakonyvImage?filename=" + encodeURIComponent($("#nyomdakonyv_image3 img").attr( "src").split("?dt=")[0]) + "&degree=-90", function (data) {
+												$("#nyomdakonyv_image3 img").attr( "src", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+												$("#nyomdakonyv_image3").attr( "href", decodeURIComponent(data.replace(/\+/g, " ")) + "?dt=" + (new Date()) );
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+
+				<?php
+					$this->widget('zii.widgets.jui.CJuiButton', array(
+						'name'=>'delete_image3',
+						'caption' => 'Törlés',
+						'buttonType'=>'link',
+						'options'=>array(
+							'icons'=>array(
+								'primary'=>'ui-icon-trash',
+							)
+						),						
+						'onclick'=>new CJavaScriptExpression('function() {
+							$.post( "../deleteImage?filename=" + encodeURIComponent($("#nyomdakonyv_image3 img").attr( "src").split("?dt=")[0]) + "&kepSorszam=3&nyomdakonyvId=" + $("#Nyomdakonyv_id").val(), function (data) {
+												$("#nyomdakonyv_image3_div").hide();
+												$(".qq-upload-list-selector").empty();
+												
+												$("#FineUploader3").show();
+											});
+						}'),
+						'htmlOptions'=>array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+					));
+				?>
+
+				<?php 
+					$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
+									'id' => 'juiDialogEmailBody3',
+									'options' => array(
+											'title' => 'Kép küldése e-mail-ben',
+											'autoOpen' => false,
+											'modal' => true,
+											'width' => '400px',
+											'height' => 'auto',
+										),
+									));
+
+						echo '<label for="textAreaEmailBody">E-mail szövege</label>';
+						echo CHtml::textArea('textAreaEmailBody', Yii::app()->config->get('NyomdakonyvPicEmailText'), array('rows' => 6, 'maxlength' => 1024, 'style' => 'width: 352px')); 
+						
+						echo "<div align='center'>";
+							$this->widget('zii.widgets.jui.CJuiButton', array(
+								'name'=>'send_image_to_server3',
+								'caption' => 'Küldés',
+								'buttonType' => 'link',
+								'options' => array(
+									'icons' => array(
+										'primary' => 'ui-icon-mail-closed',
+									)
+								),
+								'onclick'=>new CJavaScriptExpression('function() {
+										$.post( "../emailPicture?filename=" + encodeURIComponent($("#nyomdakonyv_image3 img").attr( "src").split("?dt=")[0]) + "&nyomdakonyv_id=" + $("#Nyomdakonyv_id").val() + "&email_body=" + encodeURIComponent($("#textAreaEmailBody").val()), function (data) {
+											if (data == "ERROR") {
+												alert("Az e-mail küldése során hiba lépett fel!");
+											} else {
+												alert("Az e-mail sikeresen elküldve!");
+											}
+											
+											$("#juiDialogEmailBody3").dialog("close");
+										});								
+								}'),
+								'htmlOptions' => array('class' => 'btn', 'style' => 'height:32px; width:140px; margin-bottom: 20px', 'target' => '_blank'),
+							));
+						echo "</div>";
+						
+					$this->endWidget();
+				?>
+			</div>
+			<div style = 'clear: both'> </div>
+		</div>
+		
+	<?php $this->endWidget();?>
 </div>
 
 <?php $this->endWidget(); ?>
@@ -1126,6 +1593,66 @@
 ?>
 
 </div><!-- form -->
+
+<script type="text/template" id="qq-thumbnails-template">
+	<div class="qq-uploader-selector qq-uploader" qq-drop-area-text="Húzza a feltöltendő képet ide" style="min-height:110px">
+		<div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+			<div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+		</div>
+		<div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+			<span class="qq-upload-drop-area-text-selector"></span>
+		</div>
+		<div class="qq-upload-button-selector qq-upload-button">
+			<div><i class="icon-plus icon-white"></i> Kép feltöltése</div>
+		</div>
+		<span class="qq-drop-processing-selector qq-drop-processing">
+			<span>Képek feldolgozása...</span>
+			<span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+		</span>
+		
+		<ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+			<li>
+				<div class="qq-progress-bar-container-selector">
+					<div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+				</div>
+				<span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+				<a target='_blank' class="view-link"> <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale> </a>
+				<span class="qq-upload-file-selector qq-upload-file"></span>
+				<span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Fájlnév szerkesztése"></span>
+				<input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+				<span class="qq-upload-size-selector qq-upload-size"></span>
+				<button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Mégse</button>
+				<button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Újra</button>
+				<button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Törlés</button>
+				<span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+			</li>
+		</ul>
+
+		<dialog class="qq-alert-dialog-selector">
+			<div class="qq-dialog-message-selector"></div>
+			<div class="qq-dialog-buttons">
+				<button type="button" class="qq-cancel-button-selector">Bezár</button>
+			</div>
+		</dialog>
+
+		<dialog class="qq-confirm-dialog-selector">
+			<div class="qq-dialog-message-selector"></div>
+			<div class="qq-dialog-buttons">
+				<button type="button" class="qq-cancel-button-selector">Nem</button>
+				<button type="button" class="qq-ok-button-selector">Igen</button>
+			</div>
+		</dialog>
+
+		<dialog class="qq-prompt-dialog-selector">
+			<div class="qq-dialog-message-selector"></div>
+			<input type="text">
+			<div class="qq-dialog-buttons">
+				<button type="button" class="qq-cancel-button-selector">Mégse</button>
+				<button type="button" class="qq-ok-button-selector">Ok</button>
+			</div>
+		</dialog>
+	</div>
+</script>
 
 <script type="text/javascript">
 
@@ -1295,6 +1822,26 @@
 
 $( document ).ready(function() {
 	$("a#nyomdakonyv_image").fancybox();
+	$("a#nyomdakonyv_image2").fancybox();
+	$("a#nyomdakonyv_image3").fancybox();
+	
+	<?php
+		if (!empty($model -> kep_file_nev)) {
+			echo '$("#FineUploader").hide();';
+		}
+	?>
+
+	<?php
+		if (!empty($model -> kep_file_nev2)) {
+			echo '$("#FineUploader2").hide();';
+		}
+	?>
+	
+	<?php
+		if (!empty($model -> kep_file_nev3)) {
+			echo '$("#FineUploader3").hide();';
+		}
+	?>
 	
 	$("#button_norma_szamitasa").attr('disabled', 'disabled');
 	

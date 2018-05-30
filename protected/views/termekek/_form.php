@@ -371,7 +371,7 @@
 							<span class="qq-upload-file-selector qq-upload-file"> ' . basename($image) . ' </span>
 				';
 							echo CHtml::ajaxButton(
-								"Törlése",
+								"Törlés",
 								$this->createUrl('deleteImage'),
 								array (
 									'context'=>'js:$(this)',

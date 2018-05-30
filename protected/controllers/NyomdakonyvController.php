@@ -93,31 +93,14 @@ class NyomdakonyvController extends Controller
 		if(isset($_POST['Nyomdakonyv']))
 		{
 			$model->attributes=$_POST['Nyomdakonyv'];
-            $uploadedFile = CUploadedFile::getInstance($model,'kep_file_nev');
-
-			if (!empty($uploadedFile)) {
-				$model->kep_file_nev = $uploadedFile->name;
-			}
 			
 			if($model->save()) {
 				// szükség esetén firssítjük az űrlapon a csatolt képet
 				if ($model->hatarido != "0000-00-00 00:00:00" && $model->taska_kiadasi_datum != "0000-00-00 00:00:00") {
 					$this->actionGepteremHivas($model->id, false, true) ;	//A géptermi program adatbázisában létrehozzuk a bejegyzést, ha a szükséges mezők ki lettek töltve										
 					Utils::munkaTaskaXMLGeneralas($model) ;	// A nyomdakönyvbe kerülő munkákról legenerálunk egy xml-t egy külső program számára
-
 				}
-				if(!empty($uploadedFile))
-                {
-					// ha nem létezik még a nyomdakönyvhöz tartozó upload könyvtár, akkor létrehozzuk
-					$nyomdakonyv_upload_folder = Yii::app()->basePath . '/../uploads/nyomdakonyv/' . $model->id;
-					if(!is_dir($nyomdakonyv_upload_folder)) {
-						//echo $nyomdakonyv_upload_folder; die();
-						mkdir ($nyomdakonyv_upload_folder, 0777, true);
-					}
-					
-                    $uploadedFile->saveAs(Yii::app()->basePath . '/../uploads/nyomdakonyv/' . $model->id. '/' .$uploadedFile->name);
-                }
-				
+
 				Utils::goToPrevPage("nyomdakonyvIndex");
 			}
 		}
@@ -127,6 +110,78 @@ class NyomdakonyvController extends Controller
 		));
 	}
 
+	/**
+	 * Nyomdakönyvhöz képek feltöltését végzi.
+	 */	
+	public function actionUploadImage () {
+		// ha nem létezik még a nyomdakönyvhöz tartozó upload könyvtár, akkor létrehozzuk
+		$nyomdakonyv_upload_folder = Yii::app()->basePath . '/../uploads/nyomdakonyv/' . $_POST['nyomdakonyvId'];
+		$nyomdakonyv_chunk_upload_folder = Yii::app()->basePath . '/../uploads/nyomdakonyv/chunk';
+		$kep_sorszam = 'kep_file_nev' . (isset($_POST['kepSorszam']) ? $_POST['kepSorszam'] : '');
+		
+		
+		if(!is_dir($nyomdakonyv_upload_folder)) {
+			mkdir ($nyomdakonyv_upload_folder, 0777, true);
+		}
+		if (!is_dir($nyomdakonyv_chunk_upload_folder)) {
+			mkdir($nyomdakonyv_chunk_upload_folder, 0777, TRUE);
+		}
+
+		Yii::import("ext.EFineUploader.qqFileUploader");
+
+		$uploader = new qqFileUploader();
+		$uploader->allowedExtensions = array('jpg', 'jpeg', 'gif', 'png');
+		//maximum fájlméret egyelőre 5 MB
+		$uploader->sizeLimit = 5 * 1024 * 1024;
+		$uploader->chunksFolder = $nyomdakonyv_chunk_upload_folder;
+
+		$result = $uploader->handleUpload($nyomdakonyv_upload_folder);
+		$result['filename'] = $uploader->getUploadName();
+		$result['folder'] = $nyomdakonyv_upload_folder;
+		$result['imageUrl'] = '/../uploads/nyomdakonyv/' . $_POST['nyomdakonyvId'] . '/' . $result['filename'];
+
+		$nyomdakonyv = Nyomdakonyv::model() -> findByPk ($_POST['nyomdakonyvId']);
+		if ($nyomdakonyv != null) {
+			$nyomdakonyv -> $kep_sorszam = $result['filename'];
+			$nyomdakonyv -> save (false);
+		}
+		
+		header("Content-Type: text/plain");
+		$result=htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+		echo $result;
+		Yii::app()->end();
+	}
+
+	/**
+	 * Nyomdakönyvhöz feltöltött képek feltöltésénél a törléshez kell.
+	 */
+	public function actionDeleteImage () {
+		if (isset($_GET['filename'])) {
+			$filename = $_GET['filename'];
+			$pos = strpos($filename, '/..');			
+
+			if ($pos === false) {
+				$filename = '/..' . $filename;
+			}
+			
+			$nyomdakonyvId = $_GET['nyomdakonyvId'];
+			
+			$tempFolder = Yii::app()->basePath;
+
+			if (file_exists($tempFolder . $filename)) {
+				unlink ($tempFolder . $filename);
+			}
+
+			$kep_sorszam = 'kep_file_nev' . (isset($_GET['kepSorszam']) ? $_GET['kepSorszam'] : '');
+			$nyomdakonyv = Nyomdakonyv::model() -> findByPk ($_GET['nyomdakonyvId']);
+			
+			if ($nyomdakonyv != null) {
+				$nyomdakonyv -> $kep_sorszam = '';
+				$nyomdakonyv -> save (false);
+			}
+		}
+	}
+	
 	/**
 	 * Nyomdakönyv sztornózása.
 	 */
@@ -825,6 +880,7 @@ class NyomdakonyvController extends Controller
 	 * Elforgatja a megadott képet a megadott fokkal.
 	 */
 	public function actionRotateNyomdakonyvImage ($filename, $degree) {
+		$filename = str_replace ("/..", "", $filename);
 		$filenameWithFullPath = dirname(Yii::app()->request->scriptFile) . urldecode($filename);
 		
 		$size = getimagesize($filenameWithFullPath);
@@ -875,6 +931,7 @@ class NyomdakonyvController extends Controller
 		if (($nyomdakonyv = $this -> loadModel($nyomdakonyv_id)) !== null) {
 			$email_body = urldecode($email_body);
 			$filename = dirname(Yii::app()->request->scriptFile) . urldecode($filename);
+			$filename = str_replace ("/..", "", $filename);
 			
 			Yii::app()->config->set('NyomdakonyvPicEmailText', $email_body);
 
